@@ -1,0 +1,135 @@
+<style>
+    .btnlogin{
+        /*background: rgb(2,0,36);*/
+        /*background: linear-gradient(35deg, rgba(2,0,36,1) 0%, rgba(9,9,121,0.9528186274509804) 0%, rgba(0,212,255,1) 100%);*/
+        /*background: rgb(2,0,36);*/
+        background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(33,47,61,1) 17%, rgba(8,122,145,1) 100%);
+    }
+    input[type="text"]{
+        font-size: 1.5rem;
+    }
+    input[type="password"]{
+        font-size: 1.5rem;
+    }
+
+    label{
+        font-size: 1.5rem;
+    }
+</style>
+<!--jquery ui min js-->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+<div class="col-xs-12 col-md-5 col-sm-7 col-lg-4 col-centered" >
+    <br>
+    <br>
+
+    <div  class="form-uic" style="background-color: #ffffff; width: 100%">
+
+        <div class="form-group col-sm-12 col-xs-12" style="padding: 10px">
+
+            <br>
+
+            <img  width="35%" class="img-rounded center-block" src="<?php echo DOL_HTTP .'/application/system/login/img/dental_icon.png'?>" alt="">
+
+            <div class="form-group">
+                <div class="col-3">
+                    <label for=""> <i class="fa fa-2x fa-fw fa-user"></i> <b>username</b> </label>
+                    <input class="effect-2 outlogintext" type="text" autocomplete="off" placeholder="Ingrese su Usuario" id="usu">
+                    <span class="focus-border"></span>
+                    <small style="color: red;" id="msg_usuario"></small>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-3">
+                    <label for=""> <i class="fa fa-2x fa-fw fa-unlock-alt"></i> <b>password</b> </label>
+                    <input class="effect-2 outlogintext" type="password" autocomplete="off" placeholder="Ingrese su Password" id="pass">
+                    <span class="focus-border"></span>
+                    <small style="color: red;" id="msg_password"></small>
+                </div>
+            </div>
+
+        </div>
+
+        <div style="width: 100%;  " >
+            <input type="button" id="btn_logearse" value="LOGIN" class="btnlogin"  style="width: 100%;height: 50px;   !important; font-size: 1.5rem; font-weight: bolder;  color: #ffffff; outline: none" >
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    function logearse()
+    {
+        var usu  =  $('#usu').val();
+        var pass = $('#pass').val();
+
+        var param = {
+            'accion': 'logearse',
+            'ajaxSend':'ajaxSend',
+            'usua': usu,
+            'pass': pass,
+        };
+        $.ajax({
+            url: "<?php echo DOL_HTTP .'/application/system/login/controller/controller_login.php'?>",
+            type:'POST',
+            data: param,
+            dataType:'json',
+            async:false,
+            success:function(resp)
+            {
+                if(resp.error == "SesionIniciada")
+                {
+                    location.href = "<?php echo DOL_HTTP.'/index.php?view=inicio' ?>";
+
+                }else{
+
+                    if(resp['msg_err']!=''){
+                        Swal.fire('Información' , resp['msg_err'], 'question');
+                    }else{
+                        var text = " <i class='fa fa-fw fa-user'></i> Usuario: " + $('#usu').val() + " <br> " +
+                            "<b>" +
+                            "   <small> usuario no encontrado <br> <span class=''> compruebe la información antes de iniciar <i class='fa fa-fw fa-times-circle'></i> </span> </small>" +
+                            "</b>";
+                        Swal.fire('Error' , text, 'error');
+                    }
+                }
+            }
+
+        });
+    }
+
+    $('#btn_logearse').on('click', function() {
+
+        var $puedo = 0;
+
+        var usu  =  $('#usu').val();
+        var pass = $('#pass').val();
+
+        if( usu == '' ) {
+            $puedo++;
+            $('#msg_usuario').text('Ingrese el usuario');
+        }
+        if( pass == '' ) {
+            $puedo++;
+            $('#msg_password').text('Ingrese la contraseña');
+        }
+
+        if( $puedo == 0 ){
+            logearse();
+        }
+
+        setTimeout(function() {
+            $('#msg_usuario').text(null);
+            $('#msg_password').text(null);
+        }, 2500);
+
+    });
+
+    $(document).ready(function() {
+
+    });
+
+</script>

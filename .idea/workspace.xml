@@ -1,0 +1,1291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BookmarkManager">
+    <bookmark url="file://$PROJECT_DIR$/application/system/configuraciones/view/form_configuraciones_prestaciones.php" line="45" />
+    <bookmark url="file://$PROJECT_DIR$/application/system/login/controller/controller_login.php" line="142" />
+    <bookmark url="file://$PROJECT_DIR$/application/config/conneccion_entidad.php" line="42" />
+    <bookmark url="file://$PROJECT_DIR$/application/system/agenda/controller/agenda_controller.php" line="65" />
+    <bookmark url="file://$PROJECT_DIR$/public/view" />
+    <bookmark url="file://$PROJECT_DIR$/admin_entidades_dentales/class/create_clinica.class.php" line="105" mnemonic="9" />
+    <bookmark url="file://$PROJECT_DIR$/application/system/agenda/js/agent.js" line="35" mnemonic="8" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="948b3356-947b-4215-9243-67d8ff74bc7d" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin_entidades_dentales/database/tab_odontograma_paciente_cab.sql" beforeDir="false" afterPath="$PROJECT_DIR$/admin_entidades_dentales/database/tab_odontograma_paciente_cab.sql" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/admin_entidades_dentales/view/nav_barra_navegacion.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin_entidades_dentales/view/nav_barra_navegacion.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/config/configuration.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/config/configuration.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/config/conneccion_entidad.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/config/conneccion_entidad.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/config/lib.global.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/config/lib.global.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/config/main.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/config/main.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/controllers/controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/controller.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/controllers/controller_peticiones_globales.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/controller_peticiones_globales.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/agenda/controller/agenda_controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/agenda/controller/agenda_controller.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/agenda/export/export_pdf_agenda_diariaglobal.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/agenda/export/export_pdf_agenda_diariaglobal.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/agenda/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/agenda/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/agenda/js/agent.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/agenda/js/agent.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/agenda/js/agentcreate.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/agenda/js/agentcreate.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/agenda/view/agendadd.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/agenda/view/agendadd.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/agenda/view/list_diaria.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/agenda/view/list_diaria.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/agenda/view/principal.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/agenda/view/principal.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/agenda/view/status_modal.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/agenda/view/status_modal.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/configuraciones/controller/conf_controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/controller/conf_controller.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/configuraciones/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/configuraciones/js/NewEditoOdontUsuario.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/js/NewEditoOdontUsuario.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/configuraciones/js/UsuariosOdonti.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/js/UsuariosOdonti.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/configuraciones/js/convenios_config.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/js/convenios_config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/configuraciones/js/odontespecialidades.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/js/odontespecialidades.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/configuraciones/js/prestaciones.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/js/prestaciones.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/configuraciones/view/form_configuraciones_prestaciones.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/view/form_configuraciones_prestaciones.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/configuraciones/view/form_convenios_desc.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/view/form_convenios_desc.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/configuraciones/view/form_gestion_odontologos_especialidades.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/view/form_gestion_odontologos_especialidades.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/configuraciones/view/form_laboratorios_conf.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/view/form_laboratorios_conf.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/configuraciones/view/view_configuration.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/view/view_configuration.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/conneccion/conneccion.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/conneccion/conneccion.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/documentos_clinicos/controller_documentos/controller_document.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/documentos_clinicos/controller_documentos/controller_document.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/documentos_clinicos/export/export_ficha_clinica.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/documentos_clinicos/export/export_ficha_clinica.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/documentos_clinicos/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/documentos_clinicos/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/documentos_clinicos/js/indx_documclin.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/documentos_clinicos/view/listdocumment.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/documentos_clinicos/view/listdocumment.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/login/controller/controller_login.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/login/controller/controller_login.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/login/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/login/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/login/view/viewlogin.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/login/view/viewlogin.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/class/class_paciente.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/class/class_paciente.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/controller/directorio_paciente_controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/controller/directorio_paciente_controller.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/export/export_pdf_directorio.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/export/export_pdf_directorio.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/js/direct_pacient.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/view/form_directorio.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/view/form_directorio.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/nuevo_paciente/controller/nuevo_pacit_controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/nuevo_paciente/controller/nuevo_pacit_controller.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/nuevo_paciente/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/nuevo_paciente/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/nuevo_paciente/js/paciente.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/nuevo_paciente/js/paciente.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/nuevo_paciente/view/form_nuevo_paciente.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/nuevo_paciente/view/form_nuevo_paciente.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/archivos_ficheros/js/ficherosp.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/archivos_ficheros/js/ficherosp.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/archivos_ficheros/js/input_file.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/archivos_ficheros/js/input_file.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/archivos_ficheros/view/form_ficheros_pacientes.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/archivos_ficheros/view/form_ficheros_pacientes.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/citas_asociadas/js/citasoci.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/citas_asociadas/js/citasoci.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/citas_asociadas/view/citasoci.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/citas_asociadas/view/citasoci.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/comment_pacientes/js/commentp.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/comment_pacientes/js/commentp.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/comment_pacientes/view/comment_update.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/comment_pacientes/view/comment_update.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/comment_pacientes/view/commentp.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/comment_pacientes/view/commentp.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/datos_personales/js/pacientesdatos.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/datos_personales/js/pacientesdatos.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/datos_personales/view/dop_formulario.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/datos_personales/view/dop_formulario.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_sent/controller/controller_emailsent.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_sent/controller/controller_emailsent.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_sent/js/email_prinpsent.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_sent/js/email_prinpsent.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_sent/view/list_emailsent.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_sent/view/list_emailsent.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_sent/view/principl_email.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_sent/view/principl_email.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/js/fetch_odontograma_paint.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/js/fetch_odontograma_paint.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/js/odont.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/js/odont.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/js/odont2.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/js/odont2.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/view/add_odontograma_modal.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/view/add_odontograma_modal.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/view/odontogram_tram_form.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/view/odontogram_tram_form.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/view/picture_piezas_odontograma.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/view/picture_piezas_odontograma.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/view/principal_odontograma.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/view/principal_odontograma.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_pacientes/controller_pagos/controller_pag.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_pacientes/controller_pagos/controller_pag.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_pacientes/js/pay_independiente.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_pacientes/js/pay_independiente.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_pacientes/view/pagos_independientes.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_pacientes/view/pagos_independientes.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_pacientes/view/pagos_principl.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_pacientes/view/pagos_principl.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_recibidos/js/pagrealizadprincp.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_recibidos/js/pagrealizadprincp.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_recibidos/view/pago_realprincp.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_recibidos/view/pago_realprincp.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_recibidos/view/pagos_particulares_pacit.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_recibidos/view/pagos_particulares_pacit.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/js/plant.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/js/plant.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/js/plant2.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/js/plant2.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/js/plant3.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/js/plant3.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/view/add_plan_tratam.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/view/add_plan_tratam.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/view/modal_add_prestacion_planform.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/view/modal_add_prestacion_planform.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/view/modal_realizar_prestacion.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/view/modal_realizar_prestacion.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/view/plantram.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/view/plantram.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/view/menu_admin.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/view/menu_admin.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/fichero_entidad/carpeta_entidad_797/ficheros_pacientes-1-797.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fichero_entidad/carpeta_entidad_797/ficheros_pacientes-3-797.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fichero_entidad/carpeta_entidad_797/ficheros_pacientes-4-797.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fichero_entidad/carpeta_entidad_797/ficheros_pacientes-5-797.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/fichero_entidad/carpeta_entidad_797/ficheros_pacientes-6-797.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logos_icon/icon_logos_797/conf_odont_icon_15_797.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logos_icon/icon_logos_797/conf_odont_icon_3_797.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logos_icon/icon_logos_797/conf_odont_icon_4_797.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logos_icon/icon_logos_797/conf_odont_icon_5_797.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logos_icon/icon_logos_797/conf_odont_icon_8_797.jpeg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logos_icon/icon_logos_797/conf_odont_icon_9_797.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logos_icon/icon_logos_797/icon_paciente-datos_personales-1.png" beforeDir="false" afterPath="$PROJECT_DIR$/logos_icon/icon_logos_797/icon_paciente-datos_personales-1.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logos_icon/icon_logos_797/icon_paciente-datos_personales-2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logos_icon/icon_logos_797/icon_paciente-datospersonales-1.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logos_icon/icon_logos_797/icon_paciente-datospersonales-4.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logos_icon/logo_default/doct-icon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/logos_icon/logo_default/pacienteicon.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/CONTRIBUTING.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/public/bower_components/select2/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/bower.json" beforeDir="false" afterPath="$PROJECT_DIR$/public/bower_components/select2/bower.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/component.json" beforeDir="false" afterPath="$PROJECT_DIR$/public/bower_components/select2/component.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/public/bower_components/select2/composer.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/public/bower_components/select2/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/release.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2-bootstrap.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2-spinner.gif" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2.jquery.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2.min.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_ar.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_az.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_bg.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_ca.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_cs.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_da.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_de.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_el.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_en.js.template" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_es.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_et.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_eu.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_fa.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_fi.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_fr.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_gl.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_he.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_hr.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_hu.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_id.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_is.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_it.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_ja.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_ka.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_ko.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_lt.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_lv.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_mk.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_ms.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_nb.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_nl.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_pl.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_pt-BR.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_pt-PT.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_ro.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_rs.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_ru.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_sk.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_sv.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_th.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_tr.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_ug-CN.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_uk.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_vi.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_zh-CN.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_zh-TW.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2x2.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/css/css_global/lib_glob_style.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/css/css_global/lib_glob_style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/information/conneccion/connection_info.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/information/conneccion/connection_info.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/information/controller/informacion_controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/information/controller/informacion_controller.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/information/css/noti.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/information/css/noti.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/information/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/information/index.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/information/view/confirmar_cita.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/information/view/confirmar_cita.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/js/home.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/home.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/js/lib_glob.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/lib_glob.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/js/notificaciones___lib.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/notificaciones___lib.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/view/dropdown.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/view/dropdown.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/view/footer_principal.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/view/footer_principal.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/view/header.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/view/header.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/view/header_principal.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/view/header_principal.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/view/home.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/view/home.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/view/informacion_entidad.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/view/informacion_entidad.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/view/menu.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/view/menu.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/view/modal_glob.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/view/modal_glob.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/view/modulos.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/view/modulos.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/view/notificaciones_lib.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/view/notificaciones_lib.php" afterDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_DATA_SOURCES" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+    <option name="HIDDEN_KINDS">
+      <set />
+    </option>
+    <expand />
+    <select />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="main.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/config/main.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="286">
+              <caret line="22" column="29" lean-forward="true" selection-start-line="22" selection-start-column="29" selection-end-line="22" selection-end-column="29" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="conneccion_entidad.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/application/config/conneccion_entidad.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="195">
+              <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>planform</find>
+      <find>Ficheros_pacientes</find>
+      <find>linkCitaAsociada</find>
+      <find>listtratamientotable</find>
+      <find>list_tratamiento</find>
+      <find>tipoUsuarioPerfil</find>
+      <find>deletePerfilUsers</find>
+      <find>FormValidacion</find>
+      <find>nuevoUpdateUsuarioData</find>
+      <find>notification_</find>
+      <find>list_mail_sent</find>
+      <find>accept_noti_confirm_pacient</find>
+      <find>logoClinica</find>
+      <find>direct_pacient_list</find>
+      <find>fetchMod</find>
+      <find>$Mod</find>
+      <find>$objectMod</find>
+      <find>$Permissions_documentosClinicos</find>
+      <find>DataTable</find>
+      <find>crear_odontologo</find>
+      <find>nuevoPerfil</find>
+      <find>$r</find>
+      <find>subaccion_perfil</find>
+      <find>replaceAll</find>
+      <find>titleperfil</find>
+      <find>modificarPerfilUsers</find>
+      <find>replace</find>
+      <find>validtitulo_perfil</find>
+      <find>list_laboratorios</find>
+      <find>$Server</find>
+    </findStrings>
+    <dirStrings>
+      <dir>C:\wamp64\www\dental\public</dir>
+      <dir>C:\wamp64\www\sistema_dental_2019\application\system\pacientes\pacientes_admin\view</dir>
+      <dir>C:\wamp64\www\sistema_dental_2019\application\system\cajas</dir>
+    </dirStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/application/system/login/controller/controller_login.php" />
+        <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/view/menu_admin.php" />
+        <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/citas_asociadas/view/citasoci.php" />
+        <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/citas_asociadas/export/exportpdf_historialcitas.php" />
+        <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_sent/view/principl_email.php" />
+        <option value="$PROJECT_DIR$/application/system/agenda/js/agentcreate.js" />
+        <option value="$PROJECT_DIR$/application/system/agenda/controller/agenda_controller.php" />
+        <option value="$PROJECT_DIR$/application/controllers/controller.php" />
+        <option value="$PROJECT_DIR$/public/information/index.php" />
+        <option value="$PROJECT_DIR$/public/information/css/noti.css" />
+        <option value="$PROJECT_DIR$/public/information/view/confirmar_cita.php" />
+        <option value="$PROJECT_DIR$/public/information/controller/informacion_controller.php" />
+        <option value="$PROJECT_DIR$/application/config/configuration.php" />
+        <option value="$PROJECT_DIR$/application/system/login/index.php" />
+        <option value="$PROJECT_DIR$/application/system/login/view/viewlogin.php" />
+        <option value="$PROJECT_DIR$/public/view/notificaciones_lib.php" />
+        <option value="$PROJECT_DIR$/application/system/agenda/js/agent.js" />
+        <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/archivos_ficheros/js/ficherosp.js" />
+        <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/archivos_ficheros/view/form_ficheros_pacientes.php" />
+        <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/archivos_ficheros/js/input_file.js" />
+        <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/citas_asociadas/js/citasoci.js" />
+        <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/comment_pacientes/js/commentp.js" />
+        <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/view/plantram.php" />
+        <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php" />
+        <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/js/plant.js" />
+        <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_sent/view/list_emailsent.php" />
+        <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_sent/js/email_prinpsent.js" />
+        <option value="$PROJECT_DIR$/application/controllers/controller_peticiones_globales.php" />
+        <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_sent/controller/controller_emailsent.php" />
+        <option value="$PROJECT_DIR$/public/js/notificaciones___lib.js" />
+        <option value="$PROJECT_DIR$/application/config/main.php" />
+        <option value="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/export/export_pdf_directorio.php" />
+        <option value="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/js/directorioPacientes.js" />
+        <option value="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/controller/directorio_paciente_controller.php" />
+        <option value="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/export/exportFichaPaciente.php" />
+        <option value="$PROJECT_DIR$/application/system/documentos_clinicos/view/doc_clinicos.php" />
+        <option value="$PROJECT_DIR$/application/system/documentos_clinicos/index.php" />
+        <option value="$PROJECT_DIR$/application/system/cajas/view/principal_cajas.php" />
+        <option value="$PROJECT_DIR$/application/system/cajas/index.php" />
+        <option value="$PROJECT_DIR$/application/system/configuraciones/view/form_configuraciones_prestaciones.php" />
+        <option value="$PROJECT_DIR$/application/system/agenda/index.php" />
+        <option value="$PROJECT_DIR$/application/system/configuraciones/view/form_convenios_desc.php" />
+        <option value="$PROJECT_DIR$/application/system/configuraciones/view/view_configuration.php" />
+        <option value="$PROJECT_DIR$/application/system/configuraciones/view/form_gestion_odontologos_especialidades.php" />
+        <option value="$PROJECT_DIR$/application/system/configuraciones/js/NewEditoOdontUsuario.js" />
+        <option value="$PROJECT_DIR$/application/system/configuraciones/js/UsuariosOdonti.js" />
+        <option value="$PROJECT_DIR$/public/view/modulos.php" />
+        <option value="$PROJECT_DIR$/application/system/configuraciones/view/form_laboratorios_conf.php" />
+        <option value="$PROJECT_DIR$/application/system/configuraciones/js/laboratorios_main.js" />
+        <option value="$PROJECT_DIR$/application/system/configuraciones/controller/conf_controller.php" />
+        <option value="$PROJECT_DIR$/application/config/conneccion_entidad.php" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="NodePackageJsonFileManager">
+    <packageJsonPaths>
+      <path value="$PROJECT_DIR$/admin_entidades_dentales/js/ohsnap/package.json" />
+      <path value="$PROJECT_DIR$/public/bower_components/bootstrap-colorpicker/package.json" />
+      <path value="$PROJECT_DIR$/public/bower_components/bootstrap-datepicker/package.json" />
+      <path value="$PROJECT_DIR$/public/bower_components/bootstrap-notify-master/package.json" />
+      <path value="$PROJECT_DIR$/public/bower_components/bootstrap/package.json" />
+      <path value="$PROJECT_DIR$/public/bower_components/mask/package.json" />
+      <path value="$PROJECT_DIR$/public/bower_components/select2/package.json" />
+    </packageJsonPaths>
+  </component>
+  <component name="PhpServers">
+    <servers />
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-6" />
+    <option name="width" value="1616" />
+    <option name="height" value="886" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="sistema_dental_2019" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sistema_dental_2019" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sistema_dental_2019" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sistema_dental_2019" type="462c0819:PsiDirectoryNode" />
+              <item name="application" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="sistema_dental_2019" type="b2602c69:ProjectViewProjectNode" />
+              <item name="sistema_dental_2019" type="462c0819:PsiDirectoryNode" />
+              <item name="application" type="462c0819:PsiDirectoryNode" />
+              <item name="config" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="SearchEverywhereHistoryKey" value="ObtenerInformacionCitasPacientes&#9;null&#9;null&#10;main.php&#9;FILE&#9;file://C:/wamp64/www/sistema_dental_2019/application/config/main.php" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\wamp64\www\sistema_dental_2019\application\system\pacientes\pacientes_admin\document_clinico" />
+      <recent name="C:\wamp64\www\sistema_dental_2019\logos_icon\logo_default" />
+      <recent name="C:\wamp64\www\sistema_dental_2019\admin_entidades_dentales\lib_cpanel" />
+      <recent name="C:\wamp64\www\dental\application\system\pacientes\pacientes_admin\view" />
+      <recent name="C:\wamp64\www\dental\application\system\pacientes\pacientes_admin\datospersonales" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\wamp64\www\dental\application\system\pacientes\pacientes_admin\archivos_ficheros\js" />
+      <recent name="C:\wamp64\www\dental\application\system\pacientes\pacientes_admin\controller" />
+      <recent name="C:\wamp64\www\dental\logos_icon\logo_default" />
+      <recent name="C:\wamp64\www\dental\public\bower_components" />
+      <recent name="C:\wamp64\www\dental\public\bower_components\select2" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="948b3356-947b-4215-9243-67d8ff74bc7d" name="Default" comment="" />
+      <created>1566663253520</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1566663253520</updated>
+      <workItem from="1566663262544" duration="18068000" />
+      <workItem from="1566682877891" duration="30700000" />
+      <workItem from="1566871900500" duration="854000" />
+      <workItem from="1566873842377" duration="6643000" />
+      <workItem from="1566959879171" duration="4174000" />
+      <workItem from="1567043116445" duration="3846000" />
+      <workItem from="1567307479257" duration="3543000" />
+      <workItem from="1567350501830" duration="14591000" />
+      <workItem from="1567390466125" duration="5797000" />
+      <workItem from="1567524125868" duration="32717000" />
+      <workItem from="1567807284200" duration="2218000" />
+      <workItem from="1567898155631" duration="11186000" />
+      <workItem from="1567991226425" duration="19026000" />
+      <workItem from="1568125491454" duration="35207000" />
+      <workItem from="1568390398661" duration="4766000" />
+      <workItem from="1568515205630" duration="22210000" />
+      <workItem from="1568645902421" duration="1198000" />
+      <workItem from="1568737339712" duration="23466000" />
+      <workItem from="1568905798045" duration="2573000" />
+      <workItem from="1569201660233" duration="5467000" />
+      <workItem from="1569376954788" duration="7279000" />
+      <workItem from="1569466629238" duration="8314000" />
+      <workItem from="1569696475610" duration="23197000" />
+      <workItem from="1569797669929" duration="42278000" />
+      <workItem from="1570027142604" duration="14255000" />
+      <workItem from="1570065551616" duration="18575000" />
+      <workItem from="1570197161879" duration="6512000" />
+      <workItem from="1570243275653" duration="5176000" />
+      <workItem from="1570301264772" duration="5800000" />
+      <workItem from="1570380298606" duration="16956000" />
+      <workItem from="1570403761994" duration="1174000" />
+      <workItem from="1570456537459" duration="17271000" />
+      <workItem from="1570542962712" duration="7722000" />
+      <workItem from="1570582629530" duration="11369000" />
+      <workItem from="1570626662269" duration="11224000" />
+      <workItem from="1570716428634" duration="210000" />
+      <workItem from="1570719283159" duration="14160000" />
+      <workItem from="1570810330662" duration="21030000" />
+      <workItem from="1570899572264" duration="12696000" />
+      <workItem from="1570986300932" duration="14790000" />
+      <workItem from="1571063823354" duration="7926000" />
+      <workItem from="1571081453193" duration="11598000" />
+      <workItem from="1571152403505" duration="25240000" />
+      <workItem from="1571238177798" duration="19444000" />
+      <workItem from="1571326299597" duration="22862000" />
+      <workItem from="1571412946319" duration="12022000" />
+      <workItem from="1571453727274" duration="3736000" />
+      <workItem from="1571584374172" duration="2528000" />
+      <workItem from="1571594432033" duration="1911000" />
+      <workItem from="1571602786709" duration="28000" />
+      <workItem from="1571603333185" duration="16468000" />
+      <workItem from="1571669133507" duration="33485000" />
+      <workItem from="1571763059346" duration="18007000" />
+      <workItem from="1571843464960" duration="19247000" />
+      <workItem from="1571883014307" duration="6939000" />
+      <workItem from="1571929206225" duration="19906000" />
+      <workItem from="1572015395690" duration="32015000" />
+      <workItem from="1572155766471" duration="2883000" />
+      <workItem from="1572205083421" duration="750000" />
+      <workItem from="1572219457540" duration="4213000" />
+      <workItem from="1572273146098" duration="19590000" />
+      <workItem from="1572364731945" duration="17508000" />
+      <workItem from="1572446643527" duration="16978000" />
+      <workItem from="1572532109458" duration="27956000" />
+      <workItem from="1572621174255" duration="18362000" />
+      <workItem from="1572657742720" duration="8712000" />
+      <workItem from="1572706622836" duration="13256000" />
+      <workItem from="1572743867397" duration="7330000" />
+      <workItem from="1572802723903" duration="36639000" />
+      <workItem from="1572965426435" duration="24083000" />
+      <workItem from="1573051012489" duration="11630000" />
+      <workItem from="1573139279005" duration="19186000" />
+      <workItem from="1573183465228" duration="4463000" />
+      <workItem from="1573224255331" duration="3211000" />
+      <workItem from="1573228382731" duration="16396000" />
+      <workItem from="1573343019644" duration="1190000" />
+      <workItem from="1573404447034" duration="5348000" />
+      <workItem from="1573436316281" duration="12385000" />
+      <workItem from="1573491709166" duration="10862000" />
+      <workItem from="1573571385371" duration="5667000" />
+      <workItem from="1573590182214" duration="9988000" />
+      <workItem from="1573657179008" duration="24090000" />
+      <workItem from="1573743328568" duration="18254000" />
+      <workItem from="1573831014354" duration="16428000" />
+      <workItem from="1574038640737" duration="6910000" />
+      <workItem from="1574090648764" duration="9052000" />
+      <workItem from="1574167655588" duration="26794000" />
+      <workItem from="1574263211649" duration="20223000" />
+      <workItem from="1574344987952" duration="25954000" />
+      <workItem from="1574436031862" duration="14875000" />
+      <workItem from="1574528345168" duration="949000" />
+      <workItem from="1574555066621" duration="797000" />
+      <workItem from="1574609940287" duration="1112000" />
+      <workItem from="1574613420969" duration="4144000" />
+      <workItem from="1574626605353" duration="7698000" />
+      <workItem from="1574691471212" duration="18652000" />
+      <workItem from="1574787479592" duration="6142000" />
+      <workItem from="1574866248106" duration="21540000" />
+      <workItem from="1574950657340" duration="15141000" />
+      <workItem from="1575041023853" duration="8516000" />
+      <workItem from="1575305970278" duration="10758000" />
+      <workItem from="1575396751603" duration="1905000" />
+      <workItem from="1575556582868" duration="18665000" />
+      <workItem from="1575863241190" duration="1220000" />
+      <workItem from="1576287485199" duration="280000" />
+      <workItem from="1576289330244" duration="645000" />
+      <workItem from="1576352696540" duration="855000" />
+      <workItem from="1576360231233" duration="2606000" />
+      <workItem from="1576427835757" duration="4710000" />
+      <workItem from="1576549554785" duration="30000" />
+      <workItem from="1576639402518" duration="231000" />
+      <workItem from="1576640301755" duration="653000" />
+      <workItem from="1576989759999" duration="2213000" />
+      <workItem from="1577058046740" duration="7850000" />
+      <workItem from="1577411295486" duration="4570000" />
+      <workItem from="1577590111137" duration="7077000" />
+      <workItem from="1577645843444" duration="1783000" />
+      <workItem from="1577659714064" duration="2064000" />
+      <workItem from="1577834434150" duration="4069000" />
+      <workItem from="1577888085226" duration="4697000" />
+      <workItem from="1577970569655" duration="6410000" />
+      <workItem from="1578040383966" duration="4703000" />
+      <workItem from="1578054897183" duration="1935000" />
+      <workItem from="1578057403630" duration="2732000" />
+      <workItem from="1578359909449" duration="5656000" />
+      <workItem from="1578371517157" duration="1733000" />
+      <workItem from="1578450921184" duration="5391000" />
+      <workItem from="1578538566045" duration="5428000" />
+      <workItem from="1578589867990" duration="7856000" />
+      <workItem from="1578604136867" duration="3790000" />
+      <workItem from="1578844314342" duration="9138000" />
+      <workItem from="1578871672145" duration="14620000" />
+      <workItem from="1578968312185" duration="3208000" />
+      <workItem from="1579018261771" duration="18029000" />
+      <workItem from="1579118019339" duration="8543000" />
+      <workItem from="1579139690890" duration="5671000" />
+      <workItem from="1579226795026" duration="1200000" />
+      <workItem from="1579362830588" duration="5051000" />
+      <workItem from="1579398280996" duration="1433000" />
+      <workItem from="1579446457664" duration="17297000" />
+      <workItem from="1579481167243" duration="1828000" />
+      <workItem from="1579572356240" duration="4945000" />
+      <workItem from="1579668271132" duration="1554000" />
+      <workItem from="1579746206311" duration="404000" />
+      <workItem from="1579747533849" duration="4684000" />
+      <workItem from="1580000919538" duration="5024000" />
+      <workItem from="1580090535758" duration="6590000" />
+      <workItem from="1580176988625" duration="4694000" />
+      <workItem from="1580258639832" duration="5102000" />
+      <workItem from="1580349498488" duration="4998000" />
+      <workItem from="1580598203871" duration="8873000" />
+      <workItem from="1580658936561" duration="3216000" />
+      <workItem from="1580666994432" duration="11745000" />
+      <workItem from="1580686766207" duration="11040000" />
+      <workItem from="1580744193539" duration="13363000" />
+      <workItem from="1580798412854" duration="17216000" />
+      <workItem from="1580832492199" duration="11635000" />
+      <workItem from="1580948790824" duration="7873000" />
+      <workItem from="1580996836115" duration="38296000" />
+      <workItem from="1581088739713" duration="22802000" />
+      <workItem from="1581126016821" duration="10750000" />
+      <workItem from="1581188442600" duration="3322000" />
+      <workItem from="1581207136255" duration="16818000" />
+      <workItem from="1581291046725" duration="2407000" />
+      <workItem from="1581336828166" duration="33394000" />
+      <workItem from="1581433066723" duration="28491000" />
+      <workItem from="1581516666156" duration="25457000" />
+      <workItem from="1581557296007" duration="14960000" />
+      <workItem from="1581603442436" duration="34257000" />
+      <workItem from="1581691212047" duration="23108000" />
+      <workItem from="1581799353731" duration="6697000" />
+      <workItem from="1581831526769" duration="3529000" />
+      <workItem from="1581871271113" duration="17525000" />
+      <workItem from="1581898152202" duration="8361000" />
+      <workItem from="1581952280365" duration="21787000" />
+      <workItem from="1582037300571" duration="17465000" />
+      <workItem from="1582125091154" duration="23173000" />
+      <workItem from="1582172706460" duration="2031000" />
+      <workItem from="1582207428480" duration="17441000" />
+      <workItem from="1582251592450" duration="1251000" />
+      <workItem from="1582258892194" duration="2136000" />
+      <workItem from="1582298910348" duration="11297000" />
+      <workItem from="1582389970350" duration="1312000" />
+      <workItem from="1582494263832" duration="11631000" />
+      <workItem from="1582571984665" duration="17116000" />
+      <workItem from="1582645137610" duration="11890000" />
+      <workItem from="1582679883759" duration="7497000" />
+      <workItem from="1582726547847" duration="14987000" />
+      <workItem from="1582816152013" duration="15205000" />
+      <workItem from="1582861484553" duration="2860000" />
+      <workItem from="1582900375959" duration="19137000" />
+      <workItem from="1582937491258" duration="2905000" />
+      <workItem from="1582947586953" duration="7222000" />
+      <workItem from="1583039941328" duration="4459000" />
+      <workItem from="1583101993215" duration="1793000" />
+      <workItem from="1583104784476" duration="4603000" />
+      <workItem from="1583160559311" duration="18456000" />
+      <workItem from="1583246453629" duration="1592000" />
+      <workItem from="1583420707998" duration="13675000" />
+      <workItem from="1583507237017" duration="13401000" />
+      <workItem from="1583679927518" duration="6906000" />
+      <workItem from="1583695150321" duration="16033000" />
+      <workItem from="1583775387858" duration="3417000" />
+      <workItem from="1583808791444" duration="2324000" />
+      <workItem from="1583858967506" duration="654000" />
+      <workItem from="1583942369812" duration="13493000" />
+      <workItem from="1583982835736" duration="4957000" />
+      <workItem from="1584109742861" duration="14095000" />
+      <workItem from="1584411700345" duration="2487000" />
+      <workItem from="1584922815783" duration="4192000" />
+      <workItem from="1585160907806" duration="77000" />
+      <workItem from="1586310543517" duration="3394000" />
+      <workItem from="1586367090337" duration="2743000" />
+      <workItem from="1586463677542" duration="8327000" />
+      <workItem from="1586546168005" duration="343000" />
+      <workItem from="1586717270726" duration="7801000" />
+      <workItem from="1586737445298" duration="2430000" />
+      <workItem from="1586810405672" duration="6201000" />
+      <workItem from="1586882077548" duration="10621000" />
+      <workItem from="1586969621337" duration="7694000" />
+      <workItem from="1587059864517" duration="1680000" />
+      <workItem from="1587087632158" duration="27000" />
+      <workItem from="1587484654750" duration="1684000" />
+      <workItem from="1587579494217" duration="1205000" />
+      <workItem from="1587694331274" duration="7928000" />
+      <workItem from="1587850043107" duration="1534000" />
+      <workItem from="1587924291319" duration="6561000" />
+      <workItem from="1588128939133" duration="767000" />
+      <workItem from="1588349560793" duration="3699000" />
+      <workItem from="1588452094966" duration="11877000" />
+      <workItem from="1588539483002" duration="1292000" />
+      <workItem from="1588603827725" duration="14118000" />
+      <workItem from="1588653182361" duration="1460000" />
+      <workItem from="1588709110848" duration="4219000" />
+      <workItem from="1588739357994" duration="171000" />
+      <workItem from="1588872012485" duration="4674000" />
+      <workItem from="1588951920503" duration="6794000" />
+      <workItem from="1589146285368" duration="11113000" />
+      <workItem from="1589390769345" duration="15894000" />
+      <workItem from="1589472042400" duration="16587000" />
+      <workItem from="1589578008183" duration="631000" />
+      <workItem from="1589750071748" duration="12538000" />
+      <workItem from="1589804867315" duration="31000" />
+      <workItem from="1589812995660" duration="12305000" />
+      <workItem from="1589905121256" duration="14892000" />
+      <workItem from="1589943017557" duration="9525000" />
+      <workItem from="1590159890392" duration="1467000" />
+      <workItem from="1590325133278" duration="7082000" />
+      <workItem from="1590428657922" duration="2194000" />
+      <workItem from="1590432218682" duration="1448000" />
+      <workItem from="1590444280303" duration="5325000" />
+      <workItem from="1590614385439" duration="617000" />
+      <workItem from="1591329900129" duration="76000" />
+      <workItem from="1591642244387" duration="17680000" />
+      <workItem from="1591734847281" duration="2261000" />
+      <workItem from="1591817304889" duration="5268000" />
+      <workItem from="1592097864584" duration="3496000" />
+      <workItem from="1592166891464" duration="11788000" />
+      <workItem from="1592326449292" duration="615000" />
+      <workItem from="1592426120917" duration="124000" />
+      <workItem from="1592598099363" duration="5355000" />
+      <workItem from="1592764879595" duration="8986000" />
+      <workItem from="1592850264139" duration="35036000" />
+      <workItem from="1593021029467" duration="7164000" />
+      <workItem from="1593536491714" duration="15911000" />
+      <workItem from="1593799174528" duration="4582000" />
+      <workItem from="1593887072307" duration="6555000" />
+      <workItem from="1594007313527" duration="1190000" />
+      <workItem from="1594609500124" duration="7507000" />
+      <workItem from="1594667995310" duration="13722000" />
+      <workItem from="1594721641244" duration="7521000" />
+      <workItem from="1594919954196" duration="1710000" />
+      <workItem from="1595174414525" duration="10354000" />
+      <workItem from="1595436953333" duration="2520000" />
+      <workItem from="1595563323535" duration="605000" />
+      <workItem from="1595616343766" duration="4531000" />
+      <workItem from="1595697814758" duration="11071000" />
+      <workItem from="1595819337669" duration="817000" />
+      <workItem from="1595870246293" duration="8173000" />
+      <workItem from="1595950168346" duration="3042000" />
+      <workItem from="1596248127459" duration="1824000" />
+      <workItem from="1596388027907" duration="1041000" />
+      <workItem from="1596830701575" duration="4689000" />
+      <workItem from="1596928725001" duration="10599000" />
+      <workItem from="1596986359193" duration="6501000" />
+      <workItem from="1597105726156" duration="11315000" />
+      <workItem from="1597178029491" duration="1241000" />
+      <workItem from="1597249331423" duration="19128000" />
+      <workItem from="1597467344316" duration="1292000" />
+      <workItem from="1597547552499" duration="9465000" />
+      <workItem from="1597624011369" duration="6851000" />
+      <workItem from="1597770585154" duration="1050000" />
+      <workItem from="1597771661748" duration="4991000" />
+      <workItem from="1597787116762" duration="1710000" />
+      <workItem from="1597874179963" duration="1651000" />
+      <workItem from="1597939515012" duration="1807000" />
+      <workItem from="1598028140559" duration="4099000" />
+      <workItem from="1598034188429" duration="12156000" />
+      <workItem from="1598130003823" duration="8425000" />
+      <workItem from="1598395122187" duration="6049000" />
+      <workItem from="1598637901379" duration="1808000" />
+      <workItem from="1598756929184" duration="1600000" />
+      <workItem from="1598813033703" duration="6199000" />
+      <workItem from="1598894297306" duration="3768000" />
+      <workItem from="1599074803743" duration="2320000" />
+      <workItem from="1599418006421" duration="6172000" />
+      <workItem from="1599450676315" duration="4447000" />
+      <workItem from="1599495634639" duration="12229000" />
+      <workItem from="1599585995107" duration="18300000" />
+      <workItem from="1599707369965" duration="2854000" />
+      <workItem from="1599841420046" duration="25367000" />
+      <workItem from="1599930814313" duration="10352000" />
+      <workItem from="1600018311630" duration="2452000" />
+      <workItem from="1600106590115" duration="24479000" />
+      <workItem from="1600313619969" duration="3965000" />
+      <workItem from="1600458676572" duration="2435000" />
+      <workItem from="1600538276798" duration="2099000" />
+      <workItem from="1600566762426" duration="15027000" />
+      <workItem from="1600642874019" duration="17080000" />
+      <workItem from="1600701459434" duration="12880000" />
+      <workItem from="1600800943548" duration="4185000" />
+      <workItem from="1600888566606" duration="14212000" />
+      <workItem from="1600960299067" duration="7933000" />
+      <workItem from="1600972066790" duration="23217000" />
+      <workItem from="1601053297434" duration="4797000" />
+      <workItem from="1601099928556" duration="237000" />
+      <workItem from="1601145974385" duration="15940000" />
+      <workItem from="1601256688648" duration="637000" />
+      <workItem from="1601321683293" duration="5899000" />
+      <workItem from="1601396355448" duration="16381000" />
+      <workItem from="1601479991399" duration="16380000" />
+      <workItem from="1601568100187" duration="17259000" />
+      <workItem from="1601659376992" duration="16730000" />
+      <workItem from="1601747737161" duration="35028000" />
+      <workItem from="1601838975920" duration="18475000" />
+      <workItem from="1601873459188" duration="671000" />
+      <workItem from="1601935852634" duration="8986000" />
+      <workItem from="1602025446125" duration="8128000" />
+      <workItem from="1602121040901" duration="12047000" />
+      <workItem from="1602191510723" duration="11209000" />
+      <workItem from="1602281944525" duration="2387000" />
+      <workItem from="1602363579683" duration="12431000" />
+      <workItem from="1602441061487" duration="27116000" />
+      <workItem from="1602525772620" duration="16739000" />
+      <workItem from="1602624425672" duration="11659000" />
+      <workItem from="1602708628188" duration="708000" />
+      <workItem from="1602710627526" duration="3324000" />
+      <workItem from="1602773468962" duration="11878000" />
+      <workItem from="1602874457011" duration="17949000" />
+      <workItem from="1602954252803" duration="8225000" />
+      <workItem from="1602995722954" duration="4247000" />
+      <workItem from="1603048099590" duration="13630000" />
+      <workItem from="1603128653789" duration="19641000" />
+      <workItem from="1603215670104" duration="14856000" />
+      <workItem from="1603258949774" duration="2707000" />
+      <workItem from="1603312730201" duration="2298000" />
+      <workItem from="1603391653955" duration="1824000" />
+      <workItem from="1603405852068" duration="4380000" />
+      <workItem from="1603493106524" duration="8467000" />
+      <workItem from="1603568814640" duration="3058000" />
+      <workItem from="1603576218588" duration="10533000" />
+      <workItem from="1603652703309" duration="19516000" />
+      <workItem from="1603771234005" duration="6387000" />
+      <workItem from="1603819395203" duration="22851000" />
+      <workItem from="1603910070365" duration="5629000" />
+      <workItem from="1603997809027" duration="11743000" />
+      <workItem from="1604080108759" duration="6913000" />
+      <workItem from="1604177771658" duration="3783000" />
+      <workItem from="1604341828332" duration="18256000" />
+      <workItem from="1604429906550" duration="12590000" />
+      <workItem from="1604509897555" duration="8158000" />
+      <workItem from="1604604055747" duration="9734000" />
+      <workItem from="1604680418755" duration="18884000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="3565199000" />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1616" height="886" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.5089859" side_tool="true" weight="0.0" />
+      <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="10" weight="0.0" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49101412" weight="0.0" />
+      <window_info active="true" content_ui="combo" id="Project" order="2" visible="true" weight="0.31258023" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="right" id="Database" order="3" weight="0.3292683" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49924356" weight="0.0" />
+      <window_info id="Structure" order="0" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="1" side_tool="true" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="TypeScript" order="13" />
+      <window_info anchor="bottom" id="Thumbnails" order="11" sideWeight="0.49948612" visible="true" weight="0.0" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" x="0" y="0" width="295" height="554" id="Documentation" order="4" side_tool="true" weight="0.32980332" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+    </layout>
+    <layout-to-restore>
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Thumbnails" order="11" sideWeight="0.49948612" visible="true" weight="0.0" />
+      <window_info id="Structure" order="0" side_tool="true" weight="0.25" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="TypeScript" order="13" />
+      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info content_ui="combo" id="Project" order="2" weight="0.31322208" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49924356" weight="0.0" />
+      <window_info anchor="right" x="0" y="0" width="295" height="554" id="Documentation" order="4" side_tool="true" weight="0.32980332" />
+      <window_info anchor="right" id="Database" order="3" weight="0.3292683" />
+      <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49101412" visible="true" weight="0.0" />
+      <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.5089859" side_tool="true" visible="true" weight="0.0" />
+      <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Version Control" order="10" weight="0.0" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info id="Favorites" order="1" side_tool="true" />
+    </layout-to-restore>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <option name="time" value="13" />
+    </breakpoint-manager>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/view/plan_odontograma.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-15827" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/js/plant.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="201">
+          <caret line="89" column="37" selection-start-line="89" selection-start-column="37" selection-end-line="89" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/view/plantram.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="214">
+          <caret line="182" column="74" selection-start-line="182" selection-start-column="74" selection-end-line="182" selection-end-column="74" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="383">
+          <caret line="1017" column="68" lean-forward="true" selection-start-line="1017" selection-start-column="68" selection-end-line="1017" selection-end-column="68" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/archivos_ficheros/view/form_ficheros_pacientes.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="18" column="92" selection-start-line="18" selection-start-column="92" selection-end-line="18" selection-end-column="92" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/archivos_ficheros/js/ficherosp.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="384">
+          <caret line="241" lean-forward="true" selection-start-line="241" selection-end-line="241" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/citas_asociadas/view/citasoci.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="175">
+          <caret line="25" column="76" lean-forward="true" selection-start-line="25" selection-start-column="76" selection-end-line="25" selection-end-column="76" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/citas_asociadas/js/citasoci.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="18" column="14" lean-forward="true" selection-start-line="18" selection-start-column="14" selection-end-line="18" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/logos_icon/icon_logos_797/icon_paciente-datos_personales-11.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/controllers/controller_peticiones_globales.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="275">
+          <caret line="394" column="72" lean-forward="true" selection-start-line="394" selection-start-column="72" selection-end-line="394" selection-end-column="72" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/config/configuration.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-817">
+          <caret line="119" column="21" lean-forward="true" selection-start-line="119" selection-start-column="21" selection-end-line="119" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/notificaciones___lib.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="475">
+          <caret line="51" column="41" lean-forward="true" selection-start-line="51" selection-start-column="41" selection-end-line="51" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/agenda/js/agent.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="312">
+          <caret line="102" column="51" lean-forward="true" selection-start-line="102" selection-start-column="51" selection-end-line="102" selection-end-column="51" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_sent/controller/controller_emailsent.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="279">
+          <caret line="90" column="46" lean-forward="true" selection-start-line="90" selection-start-column="46" selection-end-line="90" selection-end-column="46" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_sent/view/list_emailsent.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="449">
+          <caret line="44" column="37" selection-start-line="44" selection-start-column="37" selection-end-line="44" selection-end-column="37" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_sent/js/email_prinpsent.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="13">
+          <caret line="26" column="35" selection-start-line="26" selection-start-column="35" selection-end-line="26" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/logos_icon/icon_logos_797/entidad_logo_1_797.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/login/controller/controller_login.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="444">
+          <caret line="218" column="51" lean-forward="true" selection-start-line="218" selection-start-column="51" selection-end-line="218" selection-end-column="51" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/pacientes/directorio_paciente/export/export_pdf_directorio.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="709">
+          <caret line="183" column="39" selection-start-line="183" selection-start-column="39" selection-end-line="183" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/pacientes/directorio_paciente/js/directorioPacientes.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="462">
+          <caret line="155" lean-forward="true" selection-start-line="155" selection-end-line="155" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/pacientes/directorio_paciente/controller/directorio_paciente_controller.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="299">
+          <caret line="56" lean-forward="true" selection-start-line="56" selection-end-line="56" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/pacientes/directorio_paciente/export/exportFichaPaciente.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="403">
+          <caret line="88" column="12" lean-forward="true" selection-start-line="88" selection-start-column="12" selection-end-line="88" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/documentos_clinicos/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="124">
+          <caret line="33" column="4" selection-start-line="33" selection-start-column="4" selection-end-line="67" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/index.php">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/cajas/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="423">
+          <caret line="34" column="25" lean-forward="true" selection-start-line="34" selection-start-column="25" selection-end-line="34" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/agenda/view/list_diaria.php">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/agenda/view/principal.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-234" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/agenda/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="351">
+          <caret line="68" column="85" lean-forward="true" selection-start-line="68" selection-start-column="85" selection-end-line="68" selection-end-column="85" />
+          <folding>
+            <element signature="n#style#0;n#h2#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#h2#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/configuraciones/view/form_configuraciones_prestaciones.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="234">
+          <caret line="45" column="14" lean-forward="true" selection-start-line="45" selection-start-column="14" selection-end-line="45" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/configuraciones/view/form_convenios_desc.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="65">
+          <caret line="5" column="10" lean-forward="true" selection-start-line="5" selection-start-column="10" selection-end-line="5" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/configuraciones/view/view_configuration.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="247">
+          <caret line="19" column="140" selection-start-line="19" selection-start-column="140" selection-end-line="19" selection-end-column="140" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/configuraciones/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="254">
+          <caret line="114" column="43" selection-start-line="114" selection-start-column="43" selection-end-line="114" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/configuraciones/view/form_gestion_odontologos_especialidades.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1469">
+          <caret line="113" column="52" lean-forward="true" selection-start-line="113" selection-start-column="52" selection-end-line="113" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/configuraciones/js/prestaciones.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="13">
+          <caret line="435" column="108" selection-start-line="435" selection-start-column="108" selection-end-line="435" selection-end-column="108" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/configuraciones/js/UsuariosOdonti.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="591">
+          <caret line="995" column="67" lean-forward="true" selection-start-line="995" selection-start-column="67" selection-end-line="995" selection-end-column="67" />
+          <folding>
+            <element signature="n#style#0;n#i#0;n#button#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#a#0;n#li#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#a#0;n#li#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#a#0;n#li#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/js/lib_glob.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="262">
+          <caret line="332" column="12" selection-start-line="332" selection-start-column="12" selection-end-line="332" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/view/modulos.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="513">
+          <caret line="130" column="183" selection-start-line="130" selection-start-column="183" selection-end-line="130" selection-end-column="183" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/configuraciones/js/NewEditoOdontUsuario.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1365">
+          <caret line="51" column="32" lean-forward="true" selection-start-line="51" selection-start-column="32" selection-end-line="51" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/documentos_clinicos/js/document_ficha_clinica.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1080" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/documentos_clinicos/js/class_document.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1980">
+          <folding>
+            <element signature="n#style#0;n#table#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#td#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#table#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#h3#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#td#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#td#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#label#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#td#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#td#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/documentos_clinicos/js/indexjavax.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2554">
+          <folding>
+            <element signature="n#style#0;n#button#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/documentos_clinicos/js/javaxsDocumentCreate.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3484">
+          <caret line="72" column="5" selection-start-line="72" selection-start-column="5" selection-end-line="72" selection-end-column="5" />
+          <folding>
+            <element signature="n#style#0;n#form#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#table#0;n#form#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#td#0;n#tr#0;n#table#0;n#form#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#small#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#small#0;n#li#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#input#0;n#label#0;n#li#1;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#input#0;n#label#0;n#li#2;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#input#0;n#label#0;n#li#3;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/documentos_clinicos/form_documentos/viewprint.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-2104">
+          <folding>
+            <element signature="n#style#0;n#h3#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/documentos_clinicos/view/doc_clinicos.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="446">
+          <caret line="233" column="17" lean-forward="true" selection-start-line="233" selection-start-column="17" selection-end-line="233" selection-end-column="17" />
+          <folding>
+            <element signature="n#style#0;n#h3#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#h3#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/configuraciones/controller/conf_controller.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="461">
+          <caret line="1134" column="24" selection-start-line="1134" selection-start-column="24" selection-end-line="1134" selection-end-column="24" />
+          <folding>
+            <element signature="n#style#0;n#a#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#a#0;n#!!top" expanded="true" />
+            <element signature="e#95#101#0" expanded="true" />
+            <element signature="n#style#0;n#small#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#label#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#label#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#a#0;n#!!top" expanded="true" />
+            <element signature="e#69#75#0" expanded="true" />
+            <element signature="e#78#84#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/configuraciones/view/form_laboratorios_conf.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-7">
+          <caret line="84" column="130" selection-start-line="84" selection-start-column="130" selection-end-line="84" selection-end-column="130" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/configuraciones/js/laboratorios_main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="59">
+          <caret line="147" column="24" selection-start-line="147" selection-start-column="24" selection-end-line="147" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/cajas/view/principal_cajas.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="39">
+          <caret line="3" selection-start-line="3" selection-end-line="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/config/privileges.json">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/config/main.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="286">
+          <caret line="22" column="29" lean-forward="true" selection-start-line="22" selection-start-column="29" selection-end-line="22" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/config/conneccion_entidad.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ScopeChooserConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
+  </component>
+</project>

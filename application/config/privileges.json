@@ -1,0 +1,8 @@
+{
+
+  "server"             :   "localhost",
+  "database"           :   "schema_dental_entity_login",
+  "usuario_server"     :   "adminnub_entidad_dental" ,
+  "password_server"    :   "Pablo_1997"
+
+}
