@@ -4,10 +4,10 @@
 
 //$DOL_DOCUMENT = $_SERVER['DOCUMENT_ROOT'] .'/odontic2'; //DIRECTORIO REMOTO
 
-$DOL_DOCUMENT = $_SERVER['DOCUMENT_ROOT'] .'/sistema_dental_2019'; //DIRECTORIO LOCAL
+$DOL_DOCUMENT = $_SERVER['DOCUMENT_ROOT'] .'/betaodontic'; //DIRECTORIO LOCAL
 
 
-$DOL_HTTP_IP = 'http://localhost/sistema_dental_2019'; //DIRECCION HTTP
+$DOL_HTTP_IP = 'http://localhost/betaodontic'; //DIRECCION HTTP
 //$DOL_HTTP_IP = 'http://192.168.0.109/dental'; //DIRECCION HTTP
 
 

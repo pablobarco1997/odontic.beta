@@ -17,7 +17,27 @@ var table = $("#laboratorio_list").DataTable({
         } ,
         dataType:'json',
     },
+    columnDefs:[
+        {
+            targets:0,
+            render: function(data, type, full, meta) {
 
+                var domMenu = "<div class='dropdown pull-left'>";
+                domMenu += "<button class='btn btnhover  dropdown-toggle btn-xs ' type='button' data-toggle='dropdown' style='100%' aria-expanded='true'>" +
+                    "<i class=\"fa fa-ellipsis-v\"></i>" +
+                    "</button>";
+                domMenu += "<ul class='dropdown-menu pull-left'>";
+                    domMenu += "<li> <a href='#' onclick='FormModificarLaboratorio("+full['idlab']+")' > Modificar Laboratorio</a> </li>";
+                    domMenu += "<li> <a href='#'> inhabilitar </a> </li>";
+                domMenu += "</ul>";
+                domMenu += "</div>";
+
+                return domMenu;
+
+            }
+
+        }
+    ],
 
     language: {
         "sProcessing": "Procesando...",
@@ -45,6 +65,44 @@ var table = $("#laboratorio_list").DataTable({
     },
 
 });
+
+var FormModificarLaboratorio = function(idLaboratorio) {
+
+    var idLaborat = idLaboratorio;
+
+    $("#InputLaboratorio").attr("data-idlaboratorio",idLaborat);
+    $("#InputLaboratorio").attr("data-subaccion","modificar");
+
+    $("#addModificarLaboratorio").modal("show");
+
+    var parametros = {
+       'accion': 'fetchModificarLaboratorio',
+       'ajaxSend': 'ajaxSend',
+       'idLab': idLaborat
+    };
+
+    var url = $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php';
+
+    $.get(url , parametros, function(data) {
+
+        var respuesta = $.parseJSON(data);
+
+        if(respuesta['error'] == ''){
+
+            var object = respuesta['information'];
+
+            $("#nombre_laboratorio").val(object['name']);
+            $("#direccion_laboratorio").val(object['direccion']);
+            $("#telefono_laboratorio").val(object['telefono']);
+            $("#infoAdicional_laboratorio").val(object['info_adicional']);
+
+        }else{
+
+        }
+
+    });
+
+};
 
 var FormaValidLaboratorio = function(revalid=false) {
 
@@ -129,6 +187,8 @@ $("#nuevoUpdateLaboratorio").on("click", function() {
 
 function NuevoModificarLaboratorio(idLaboratorio = 0, sub){
 
+    var table = $("#laboratorio_list").DataTable();
+
     if(sub=="")
         return false;
 
@@ -161,7 +221,8 @@ function NuevoModificarLaboratorio(idLaboratorio = 0, sub){
         success: function (resp){
             if(resp['error'] == ''){
                 notificacion('Información Actualizada', 'success');
-                table.ajax().reload();
+                filtroLaboratorio();
+                $("#addModificarLaboratorio").modal('hide');
             }else {
                 notificacion(resp['error'], 'error');
             }
@@ -170,6 +231,19 @@ function NuevoModificarLaboratorio(idLaboratorio = 0, sub){
 
 }
 
+function filtroLaboratorio(){
+
+    var accion = "list_laboratorios";
+    var ajaxSend = "ajaxSend";
+
+    var url = $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php';
+    var newUrl = url + '?' +
+        'accion='+accion+
+        '&ajaxSend='+ajaxSend;
+
+    table.ajax.url(newUrl).load();
+
+}
 
 
 

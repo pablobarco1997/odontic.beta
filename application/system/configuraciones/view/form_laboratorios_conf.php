@@ -63,6 +63,7 @@ if(isset($_GET['v']) && !empty($_GET['v'])){
                     <div class="table-responsive">
                         <table class="table table-striped" id="laboratorio_list" width="100%">
                             <thead>
+                                <th>&nbsp;</th>
                                 <th>Laboratorio</th>
                                 <th>Información Adicional</th>
                                 <th>Prestaciones Realizadas</th>
@@ -129,6 +130,8 @@ if(isset($_GET['v']) && !empty($_GET['v'])){
             <script src="<?= DOL_HTTP ?>/application/system/configuraciones/js/laboratorios_main.js"></script>
 
             <?php } ?>
+
+
 
         </div>
     </div>

@@ -1058,13 +1058,15 @@ function notificarCitaEmail($datos, $token_confirmacion)
 
     global $db, $conf, $user;
 
-//    print_r($token_confirmacion); die();
 //    require_once DOL_DOCUMENT .'/public/lib/PHPMailer2/src/Exception.php';
 //    require_once DOL_DOCUMENT .'/public/lib/PHPMailer2/src/PHPMailer.php';
 //    require_once DOL_DOCUMENT .'/public/lib/PHPMailer2/src/SMTP.php';
 
+
     require_once DOL_DOCUMENT .'/public/lib/PHPMailer/PHPMailerAutoload.php';
-    require_once DOL_DOCUMENT .'/public/lib/PHPMailer/class.smtp.php';
+
+//    require_once DOL_DOCUMENT .'/public/lib/PHPMailer/PHPMailerAutoload.php';
+//    require_once DOL_DOCUMENT .'/public/lib/PHPMailer/class.smtp.php';
 
     $error = '';
 
@@ -1076,190 +1078,178 @@ function notificarCitaEmail($datos, $token_confirmacion)
 
     $labelPaciente = getnombrePaciente($datos->idpaciente)->nombre.' '.getnombrePaciente($datos->idpaciente)->apellido;
 
-//    echo '<pre>';
-//    print_r($conf->EMPRESA->INFORMACION->conf_email);
-//    print_r($conf->EMPRESA->INFORMACION->conf_password);
-//    die();
-
 //    $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
     $mail = new PHPMailer();
 
-    #verifico si el email de acceso esta correcto
-    if($conf->EMPRESA->INFORMACION->conf_email != "")
-    {
-
-        try{
-
-
-            $mail->SMTPDebug = 0;                      // Enable verbose debug output
-            $mail->isSMTP();                                            // Send using SMTP
-            $mail->Host       = 'mail.adminnube.com';                    // Set the SMTP server to send through
-            $mail->SMTPAuth   = true;
-
-            // Enable SMTP authentication
-            #acceso para el envio de correo
-            $mail->Username   = 'clinica_dental2021@adminnube.com';             // SMTP username
-            $mail->Password   = 'clinica2020_2021';                               // SMTP password
-            $mail->SMTPSecure = 'ssl';         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` also accepted
-            $mail->Port       = 465;
+    $messabody = "";
+    if($message!=""){
+        $messabody = "<br><b>Mensaje:</b>&nbsp; ". utf8_decode($message) ." <br>";
+    }
 
 
-            //Recipients
+    $src_logo = !empty($conf->EMPRESA->INFORMACION->logo) ? DOL_HTTP.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$conf->EMPRESA->INFORMACION->logo :  DOL_HTTP .'/logos_icon/logo_default/icon_software_dental.png';
 
-            //envio no span
-            $headers  = "Reply-To: The Sender <sender@sender.com>\r\n";
-            $headers .= "Return-Path: The Sender <sender@sender.com>\r\n";
-            $headers .= "From: The Sender <senter@sender.com>\r\n";
+    $card = "
+    <table style=\"border-collapse: collapse; width: 100%; border: 1px;\" width=\"100%\">
+                <tr style=\"background-color: #2980b9;\">
+                    <td  style=\"width: 10%; \">
+                        <p style=\"margin: 0px; \">
+                            <img src='".$src_logo."' style=\"height: 100px;\" alt=\"\">
+                        </p>
+                    </td>
+                    <td  style=\"width: 100%; text-align: center; font-weight: bolder;\"> <h2 style=\"font-weight: bolder; color: azure; margin: 0px; font-size: 50px; \">Dental Diente Felix</h2> </td>
+                </tr>
+                <tr style=\"box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23); background-color: #7fb3d5;\">
+                    <td style=\"padding: 30px; text-align: center;\" colspan=\"2\">
+                        
+                        <table style=\"width: 100%;\">
+                            <tr>
+                                <td style=\"padding: 10px; font-size: 20px \">
+                                    Le recordamos que tiene una cita agendada para la fecha - <b>". GET_DATE_SPANISH(date('Y-m-d', strtotime($datos->feche_cita))) ." - hora ". $datos->horaInicio . "</b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style=\"padding: 10px; font-size: 15px\">".$messabody."</td>
+                            </tr>
+                            <tr>
+                                <td style=\"width: 100%; \">
+                                    <br>
+                                    ".$token_confirmacion."
+                                </td>
+                            </tr>
+                        </table>
 
-            $mail->addCustomHeader("'Reply-to:".$conf->EMPRESA->INFORMACION->conf_email."'");
-            $mail->setFrom($conf->EMPRESA->INFORMACION->conf_email, $conf->EMPRESA->INFORMACION->nombre);
-            $mail->addAddress($to);     // Add a recipient
+                    </td>
+                </tr>
 
-            $mail->addReplyTo('clinica_dental2021@adminnube.com');
-            $mail->SMTPOptions = array(
-                'ssl' => array(
-                    'verify_peer' => false,
-                    'verify_peer_name' => false,
-                    'allow_self_signed' => true
-                )
-            );
-
-            /*$mail->addAddress('ellen@example.com');               // Name is optional
-            $mail->addReplyTo('info@example.com', 'Information');
-            $mail->addCC('cc@example.com');
-            $mail->addBCC('bcc@example.com');*/
-
-            /*
-            // Attachments Enviar Archivos
-            $mail->addAttachment('/var/tmp/file.tar.gz');         // Add attachments
-            $mail->addAttachment('/tmp/image.jpg', 'new.jpg');    // Optional name */
+                <tr style=\"background-color: #2980b9;\">
+                    <td style=\"padding: 20px; width: 100%;\" colspan=\"2\">
+                        <table>
+                            <tr>
+                                <td style='font-size: 15px'><b>".utf8_decode('Teléfono:')."</b> <b>".$datos->celular."</b></td>
+                            </tr>
+                            <tr>
+                                <td style='font-size: 15px'><b>".utf8_decode('Dirección:')."</b> <b>".$datos->direccion."</b> </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+    ";
 
 
-            # configuración estándar de PHPMailer
-            $mail->SMTPKeepAlive = true;
-            $mail->Mailer = "smtp";
+    $htmlSend = "<br><div style='font-size: 18px'> <b>Estimado/a:</b>&nbsp;$labelPaciente  <br><br> </div>";
 
 
-            $messabody = "";
-            if($message!=""){
-                $messabody = "<br><b>Mensaje:</b>&nbsp; ". utf8_decode($message) ." <br>";
+    /*
+    $headerLine  = "";
+    $headerLine .= $this->HeaderLine("Organization" , SITE);
+    $headerLine .= $this->HeaderLine("Content-Transfer-encoding" , "8bit");
+    $headerLine .= $this->HeaderLine("Message-ID" , "<".md5(uniqid(time()))."@{$_SERVER['SERVER_NAME']}>");
+    $headerLine .= $this->HeaderLine("X-MSmail-Priority" , "Normal");
+    $headerLine .= $this->HeaderLine("X-Mailer" , "Microsoft Office Outlook, Build 11.0.5510");
+    $headerLine .= $this->HeaderLine("X-MimeOLE" , "Produced By Microsoft MimeOLE V6.00.2800.1441");
+    $headerLine .= $this->HeaderLine("X-Sender" , $this->Sender);
+    $headerLine .= $this->HeaderLine("X-AntiAbuse" , "This is a solicited email for - ".SITE." mailing list.");
+    $headerLine .= $this->HeaderLine("X-AntiAbuse" , "Servername - {$_SERVER['SERVER_NAME']}");
+    $headerLine .= $this->HeaderLine("X-AntiAbuse" , $this->Sender); */
+
+
+    $mail->IsSMTP();
+    $mail->Mailer = "smtp";
+    $mail->CharSet = 'UTF-8';
+    $mail->Host = "mail.adminnube.com";
+    $mail->SMTPDebug = 0;
+    $mail->SMTPAuth = true;
+    $mail->Port = 465;
+    $mail->SMTPAutoTLS = TRUE;
+    $mail->SMTPSecure = "ssl";
+    $mail->Username = "odontic@adminnube.com";//correo del servidor
+    $mail->Password = "1e!j5eKlhpXH";//password de servidor de correo
+    $mail->Subject = "Clinica dental ".$conf->EMPRESA->INFORMACION->nombre; //nombre de la clinica
+    $mail->addCustomHeader("'Reply-to:".$conf->EMPRESA->INFORMACION->conf_email."'");
+    $mail->isHTML(TRUE);
+    $mail->msgHTML("Notificación Clinica");
+    $mail->setFrom($conf->EMPRESA->INFORMACION->conf_email, $conf->EMPRESA->INFORMACION->nombre);
+    $mail->addAddress($to);
+    #$mail->msgHTML("");
+    #$mail->headerLine($headerLine);
+
+    $mail->Body = $htmlSend."".$card;
+
+
+    $error_insert_notific_email = "";#Se usa para comprobar el registro
+
+    if($conf->EMPRESA->INFORMACION->conf_email != ""){
+
+        if(!$mail->send()){
+            $error = 0; #Correo no enviado
+            if($error=0){
+                $error = 'Ocurrio un problema con el servidor no pudo enviar el correo, intentelo de nuevo o consulte con soporte  Tecnico' .'<br> <b> '. $mail->ErrorInfo .' </b>';
+            }
+        }else{
+            $error = 1; #Correo enviado
+        }
+
+
+        #SI EL $error = 1 -- EL EMAIL SE ENVIO CORRECTAMENTE
+        if($error == 1 )
+        {
+
+
+            $sql = "INSERT INTO `tab_notificacion_email` (`asunto`, `from`, `to`, `subject`, `message`, `estado`, `fk_paciente`, `fk_cita`, `fecha`) ";
+            $sql .= "VALUES (";
+            $sql .= "'$asunto' ,";
+            $sql .= "'$from' ,";
+            $sql .= "'$to' ,";
+            $sql .= "'$subject' ,";
+            $sql .= "'$message' ,";
+            $sql .= "'A' ,";
+            $sql .= "'$datos->idpaciente' ,";
+            $sql .= "'$datos->idcita' ,";
+            $sql .= " now() ";
+            $sql .= ");";
+            
+            $rs = $db->query($sql);
+
+            if(!$rs){
+                $error_insert_notific_email = 'Ocurrio un error, el sistema no logro registrar el correo enviado';
             }
 
-            // Content
-            $mail->isHTML(true);                                  // Set email format to HTML
-            $mail->Subject = utf8_decode($subject);
-            $mail->Body    = "  
-                               <html>
-                                   <div> <b>Estimado/a:</b>&nbsp;$labelPaciente  <br><br><br>
-                                    Le recordamos que tiene una cita agendada para la fecha - <b>". GET_DATE_SPANISH(date('Y-m-d', strtotime($datos->feche_cita))) ." - hora ". $datos->horaInicio . "</b>   
-                                    
-                                          ". $messabody ."
-                                    
-                                        <br>
-                                        <br>
-                                        <br>
-                                        ". $token_confirmacion ."
-                                        <br>
-                                        <br>
-                                        <br>
-                                        <b>".utf8_decode('Dirección:')."</b>&nbsp; ". $datos->direccion ."
-                                        <br>
-                                        <b>".utf8_decode('Teléfono:')."</b>&nbsp;  ". $datos->celular ."
-                                        <br>
-                                        <br>
-                                        
-                                    </div>
-                                </html>"; #envio un formulariode confirmacion
-            $mail->AltBody = "";
+            if($rs)
+            {
 
-            if(!$mail->send()) {
-                $error = 0; #Correo no enviado
-            }else{
-                $error = 1; #Correo Enviado
+                $fk_notifi_id = $db->lastInsertId('tab_notificacion_email');
 
-                $mail->clearAddresses();
-                $mail->clearAttachments();
+                $queryDel   = " DELETE FROM tab_noti_confirmacion_cita_email where rowid > 0 and fk_cita = $datos->idcita ";
+                $r1 = $db->query($queryDel);
+
+                if($r1)
+                {
+                    $queryNoti  = " INSERT INTO `tab_noti_confirmacion_cita_email` (`fk_paciente`, `fk_cita`, `estado` , `fk_noti_email`) ";
+                    $queryNoti .= " VALUES(";
+                    $queryNoti .= " $datos->idpaciente ,";
+                    $queryNoti .= " $datos->idcita ,";
+                    $queryNoti .= " 1 ,"; #notificar x email
+                    $queryNoti .= " $fk_notifi_id ";
+                    $queryNoti .= " )";
+                    $db->query($queryNoti);
+//                  print_r($queryNoti);
+                    $idnotiConfirmacion = $db->lastInsertId('tab_noti_confirmacion_cita_email'); #id de la notificaion de insert confirmacion
+
+                    if(!empty($idnotiConfirmacion) )
+                    {
+                        $Update = " UPDATE `tab_pacientes_citas_det` SET `fk_cita_email_noti` = $idnotiConfirmacion WHERE `rowid` = '$datos->idcita' ";
+                        $db->query($Update);
+                    }
+                }
             }
 
-//            echo ' error de email =>   <pre>  ==> ';
-//            print_r( $error ); die();
-
-            /*
-            print_r('email_enviado');
-            print_r($error);
-            print_r('<br>');*/
-            //emael no enviado
-            if($error == 0){
-                $error = 'Ocurrio un problema con el servidor no pudo enviar el correo, intentelo de nuevo o consulte con soporte Tecnico' .'<br> <b> '. $mail->ErrorInfo .' </b>';
-            }
-
-        }catch (Exception $e){
-            $error = 'Ocurrio un error con la Operación " Notificar por e-mail " verifique el e-mail o Consulte con soporte Tecnico - ' . $mail->ErrorInfo .' - Error : Acceso de aplicaciones poco seguras - https://myaccount.google.com/u/7/lesssecureapps';
         }
 
     }else{
 
         $error = 'No esta asignado el acceso de e-mail';
-    }
-
-
-//    print_r($error); die();
-
-    $error_insert_notific_email = "";
-    #SI EL $error = 1 -- EL EMAIL SE ENVIO CORRECTAMENTE
-    if($error == 1 )
-    {
-
-        $sql = "INSERT INTO `tab_notificacion_email` (`asunto`, `from`, `to`, `subject`, `message`, `estado`, `fk_paciente`, `fk_cita`, `fecha`) ";
-        $sql .= "VALUES (";
-        $sql .= "'$asunto' ,";
-        $sql .= "'$from' ,";
-        $sql .= "'$to' ,";
-        $sql .= "'$subject' ,";
-        $sql .= "'$message' ,";
-        $sql .= "'A' ,";
-        $sql .= "'$datos->idpaciente' ,";
-        $sql .= "'$datos->idcita' ,";
-        $sql .= " now() ";
-        $sql .= ");";
-
-//        print_r($sql);
-//        die();
-        $rs = $db->query($sql);
-
-        if(!$rs){
-            $error_insert_notific_email = 'Ocurrio un error, el sistema no logro registrar el correo enviado';
-        }
-
-        if($rs)
-        {
-
-            $fk_notifi_id = $db->lastInsertId('tab_notificacion_email');
-
-            $queryDel   = " DELETE FROM tab_noti_confirmacion_cita_email where rowid > 0 and fk_cita = $datos->idcita ";
-            $r1 = $db->query($queryDel);
-
-            if($r1)
-            {
-                $queryNoti  = " INSERT INTO `tab_noti_confirmacion_cita_email` (`fk_paciente`, `fk_cita`, `estado` , `fk_noti_email`) ";
-                $queryNoti .= " VALUES(";
-                $queryNoti .= " $datos->idpaciente ,";
-                $queryNoti .= " $datos->idcita ,";
-                $queryNoti .= " 1 ,"; #notificar x email
-                $queryNoti .= " $fk_notifi_id ";
-                $queryNoti .= " )";
-                $db->query($queryNoti);
-//              print_r($queryNoti);
-                $idnotiConfirmacion = $db->lastInsertId('tab_noti_confirmacion_cita_email'); #id de la notificaion de insert confirmacion
-
-                if(!empty($idnotiConfirmacion) )
-                {
-                    $Update = " UPDATE `tab_pacientes_citas_det` SET `fk_cita_email_noti` = $idnotiConfirmacion WHERE `rowid` = '$datos->idcita' ";
-                    $db->query($Update);
-                }
-            }
-        }
-
     }
 
     $Ouput = [

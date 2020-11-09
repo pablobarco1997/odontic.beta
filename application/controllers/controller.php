@@ -286,7 +286,7 @@ function ConfirmacionEmailHTML($token)
                 border-bottom: 5px solid #2980B9;
                 text-shadow: 0px -2px #2980B9;
                 cursor: pointer;
-            ">CONFIRMAR CITA &nbsp;&nbsp; <i class="fa fa-bell-o"></i> </a>
+            ">CONFIRMAR CITA &nbsp;&nbsp;  </a>
     </div>';
 
     return $buttonToken;

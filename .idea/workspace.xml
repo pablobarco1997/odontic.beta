@@ -12,192 +12,13 @@
   <component name="ChangeListManager">
     <list default="true" id="948b3356-947b-4215-9243-67d8ff74bc7d" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin_entidades_dentales/database/tab_odontograma_paciente_cab.sql" beforeDir="false" afterPath="$PROJECT_DIR$/admin_entidades_dentales/database/tab_odontograma_paciente_cab.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/admin_entidades_dentales/view/nav_barra_navegacion.php" beforeDir="false" afterPath="$PROJECT_DIR$/admin_entidades_dentales/view/nav_barra_navegacion.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/config/configuration.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/config/configuration.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/config/conneccion_entidad.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/config/conneccion_entidad.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/config/lib.global.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/config/lib.global.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/config/main.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/config/main.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/controllers/controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/controller.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/controllers/controller_peticiones_globales.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/controller_peticiones_globales.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/system/agenda/controller/agenda_controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/agenda/controller/agenda_controller.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/agenda/export/export_pdf_agenda_diariaglobal.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/agenda/export/export_pdf_agenda_diariaglobal.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/agenda/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/agenda/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/agenda/js/agent.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/agenda/js/agent.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/agenda/js/agentcreate.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/agenda/js/agentcreate.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/agenda/view/agendadd.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/agenda/view/agendadd.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/agenda/view/list_diaria.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/agenda/view/list_diaria.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/agenda/view/principal.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/agenda/view/principal.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/agenda/view/status_modal.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/agenda/view/status_modal.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/system/configuraciones/controller/conf_controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/controller/conf_controller.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/configuraciones/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/configuraciones/js/NewEditoOdontUsuario.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/js/NewEditoOdontUsuario.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/configuraciones/js/UsuariosOdonti.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/js/UsuariosOdonti.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/configuraciones/js/convenios_config.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/js/convenios_config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/configuraciones/js/odontespecialidades.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/js/odontespecialidades.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/configuraciones/js/prestaciones.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/js/prestaciones.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/configuraciones/view/form_configuraciones_prestaciones.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/view/form_configuraciones_prestaciones.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/configuraciones/view/form_convenios_desc.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/view/form_convenios_desc.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/configuraciones/view/form_gestion_odontologos_especialidades.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/view/form_gestion_odontologos_especialidades.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/configuraciones/js/laboratorios_main.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/js/laboratorios_main.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/system/configuraciones/view/form_laboratorios_conf.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/view/form_laboratorios_conf.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/configuraciones/view/view_configuration.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/view/view_configuration.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/conneccion/conneccion.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/conneccion/conneccion.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/documentos_clinicos/controller_documentos/controller_document.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/documentos_clinicos/controller_documentos/controller_document.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/documentos_clinicos/export/export_ficha_clinica.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/documentos_clinicos/export/export_ficha_clinica.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/documentos_clinicos/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/documentos_clinicos/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/documentos_clinicos/js/indx_documclin.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/documentos_clinicos/view/listdocumment.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/documentos_clinicos/view/listdocumment.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/login/controller/controller_login.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/login/controller/controller_login.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/login/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/login/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/login/view/viewlogin.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/login/view/viewlogin.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/class/class_paciente.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/class/class_paciente.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/controller/directorio_paciente_controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/controller/directorio_paciente_controller.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/export/export_pdf_directorio.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/export/export_pdf_directorio.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/js/direct_pacient.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/view/form_directorio.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/view/form_directorio.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/nuevo_paciente/controller/nuevo_pacit_controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/nuevo_paciente/controller/nuevo_pacit_controller.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/nuevo_paciente/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/nuevo_paciente/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/nuevo_paciente/js/paciente.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/nuevo_paciente/js/paciente.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/nuevo_paciente/view/form_nuevo_paciente.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/nuevo_paciente/view/form_nuevo_paciente.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/archivos_ficheros/js/ficherosp.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/archivos_ficheros/js/ficherosp.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/archivos_ficheros/js/input_file.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/archivos_ficheros/js/input_file.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/archivos_ficheros/view/form_ficheros_pacientes.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/archivos_ficheros/view/form_ficheros_pacientes.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/citas_asociadas/js/citasoci.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/citas_asociadas/js/citasoci.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/citas_asociadas/view/citasoci.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/citas_asociadas/view/citasoci.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/comment_pacientes/js/commentp.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/comment_pacientes/js/commentp.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/comment_pacientes/view/comment_update.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/comment_pacientes/view/comment_update.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/comment_pacientes/view/commentp.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/comment_pacientes/view/commentp.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/datos_personales/js/pacientesdatos.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/datos_personales/js/pacientesdatos.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/datos_personales/view/dop_formulario.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/datos_personales/view/dop_formulario.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_sent/controller/controller_emailsent.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_sent/controller/controller_emailsent.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_sent/js/email_prinpsent.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_sent/js/email_prinpsent.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_sent/view/list_emailsent.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_sent/view/list_emailsent.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_sent/view/principl_email.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_sent/view/principl_email.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/js/fetch_odontograma_paint.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/js/fetch_odontograma_paint.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/js/odont.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/js/odont.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/js/odont2.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/js/odont2.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/view/add_odontograma_modal.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/view/add_odontograma_modal.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/view/odontogram_tram_form.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/view/odontogram_tram_form.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/view/picture_piezas_odontograma.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/view/picture_piezas_odontograma.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/view/principal_odontograma.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/odontograma_paciente/view/principal_odontograma.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_pacientes/controller_pagos/controller_pag.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_pacientes/controller_pagos/controller_pag.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_pacientes/js/pay_independiente.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_pacientes/js/pay_independiente.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_pacientes/view/pagos_independientes.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_pacientes/view/pagos_independientes.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_pacientes/view/pagos_principl.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_pacientes/view/pagos_principl.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_recibidos/js/pagrealizadprincp.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_recibidos/js/pagrealizadprincp.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_recibidos/view/pago_realprincp.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_recibidos/view/pago_realprincp.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_recibidos/view/pagos_particulares_pacit.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_recibidos/view/pagos_particulares_pacit.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/js/plant.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/js/plant.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/js/plant2.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/js/plant2.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/js/plant3.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/js/plant3.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/view/add_plan_tratam.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/view/add_plan_tratam.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/view/modal_add_prestacion_planform.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/view/modal_add_prestacion_planform.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/view/modal_realizar_prestacion.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/view/modal_realizar_prestacion.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/view/plantram.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/view/plantram.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/view/menu_admin.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/view/menu_admin.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/fichero_entidad/carpeta_entidad_797/ficheros_pacientes-1-797.jpeg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/fichero_entidad/carpeta_entidad_797/ficheros_pacientes-3-797.jpeg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/fichero_entidad/carpeta_entidad_797/ficheros_pacientes-4-797.jpeg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/fichero_entidad/carpeta_entidad_797/ficheros_pacientes-5-797.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/fichero_entidad/carpeta_entidad_797/ficheros_pacientes-6-797.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logos_icon/icon_logos_797/conf_odont_icon_15_797.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logos_icon/icon_logos_797/conf_odont_icon_3_797.jpeg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logos_icon/icon_logos_797/conf_odont_icon_4_797.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logos_icon/icon_logos_797/conf_odont_icon_5_797.jpeg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logos_icon/icon_logos_797/conf_odont_icon_8_797.jpeg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logos_icon/icon_logos_797/conf_odont_icon_9_797.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logos_icon/icon_logos_797/icon_paciente-datos_personales-1.png" beforeDir="false" afterPath="$PROJECT_DIR$/logos_icon/icon_logos_797/icon_paciente-datos_personales-1.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logos_icon/icon_logos_797/icon_paciente-datos_personales-2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logos_icon/icon_logos_797/icon_paciente-datospersonales-1.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logos_icon/icon_logos_797/icon_paciente-datospersonales-4.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logos_icon/logo_default/doct-icon.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/logos_icon/logo_default/pacienteicon.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/CONTRIBUTING.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/LICENSE" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/public/bower_components/select2/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/bower.json" beforeDir="false" afterPath="$PROJECT_DIR$/public/bower_components/select2/bower.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/component.json" beforeDir="false" afterPath="$PROJECT_DIR$/public/bower_components/select2/component.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/composer.json" beforeDir="false" afterPath="$PROJECT_DIR$/public/bower_components/select2/composer.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/public/bower_components/select2/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/release.sh" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2-bootstrap.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2-spinner.gif" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2.jquery.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2.min.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_ar.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_az.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_bg.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_ca.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_cs.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_da.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_de.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_el.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_en.js.template" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_es.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_et.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_eu.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_fa.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_fi.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_fr.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_gl.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_he.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_hr.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_hu.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_id.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_is.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_it.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_ja.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_ka.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_ko.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_lt.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_lv.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_mk.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_ms.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_nb.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_nl.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_pl.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_pt-BR.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_pt-PT.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_ro.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_rs.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_ru.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_sk.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_sv.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_th.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_tr.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_ug-CN.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_uk.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_vi.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_zh-CN.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2_locale_zh-TW.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/bower_components/select2/select2x2.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/css/css_global/lib_glob_style.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/css/css_global/lib_glob_style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/information/conneccion/connection_info.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/information/conneccion/connection_info.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/information/controller/informacion_controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/information/controller/informacion_controller.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/information/css/noti.css" beforeDir="false" afterPath="$PROJECT_DIR$/public/information/css/noti.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/information/index.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/information/index.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/information/view/confirmar_cita.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/information/view/confirmar_cita.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/home.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/home.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/lib_glob.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/lib_glob.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/js/notificaciones___lib.js" beforeDir="false" afterPath="$PROJECT_DIR$/public/js/notificaciones___lib.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/view/dropdown.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/view/dropdown.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/view/footer_principal.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/view/footer_principal.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/view/header.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/view/header.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/view/header_principal.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/view/header_principal.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/view/home.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/view/home.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/view/informacion_entidad.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/view/informacion_entidad.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/view/menu.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/view/menu.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/view/modal_glob.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/view/modal_glob.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/view/modulos.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/view/modulos.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/view/notificaciones_lib.php" beforeDir="false" afterPath="$PROJECT_DIR$/public/view/notificaciones_lib.php" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -225,17 +46,59 @@
       <file leaf-file-name="main.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/config/main.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="286">
-              <caret line="22" column="29" lean-forward="true" selection-start-line="22" selection-start-column="29" selection-end-line="22" selection-end-column="29" />
+            <state relative-caret-position="264">
+              <caret line="22" column="29" selection-start-line="22" selection-start-column="29" selection-end-line="22" selection-end-column="29" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="conneccion_entidad.php" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/application/config/conneccion_entidad.php">
+      <file leaf-file-name="laboratorios_main.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/system/configuraciones/js/laboratorios_main.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="195">
-              <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
+            <state relative-caret-position="-300">
+              <caret line="2" column="46" lean-forward="true" selection-start-line="2" selection-start-column="46" selection-end-line="2" selection-end-column="46" />
+              <folding>
+                <element signature="n#style#0;n#button#0;n#!!top" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="form_laboratorios_conf.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/system/configuraciones/view/form_laboratorios_conf.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="560">
+              <caret line="133" selection-start-line="133" selection-end-line="133" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="confirmar_cita.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/public/information/view/confirmar_cita.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="12">
+              <caret line="60" column="26" selection-start-line="60" selection-start-column="26" selection-end-line="60" selection-end-column="26" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="conf_controller.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/application/system/configuraciones/controller/conf_controller.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="348">
+              <caret line="1120" column="12" lean-forward="true" selection-start-line="1120" selection-start-column="12" selection-end-line="1122" selection-end-column="13" />
+              <folding>
+                <element signature="n#style#0;n#a#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#a#0;n#!!top" expanded="true" />
+                <element signature="e#95#101#0" expanded="true" />
+                <element signature="n#style#0;n#small#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#label#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#label#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#a#0;n#!!top" expanded="true" />
+                <element signature="e#69#75#0" expanded="true" />
+                <element signature="e#78#84#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -244,12 +107,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>planform</find>
-      <find>Ficheros_pacientes</find>
-      <find>linkCitaAsociada</find>
-      <find>listtratamientotable</find>
-      <find>list_tratamiento</find>
-      <find>tipoUsuarioPerfil</find>
       <find>deletePerfilUsers</find>
       <find>FormValidacion</find>
       <find>nuevoUpdateUsuarioData</find>
@@ -257,7 +114,6 @@
       <find>list_mail_sent</find>
       <find>accept_noti_confirm_pacient</find>
       <find>logoClinica</find>
-      <find>direct_pacient_list</find>
       <find>fetchMod</find>
       <find>$Mod</find>
       <find>$objectMod</find>
@@ -272,8 +128,15 @@
       <find>modificarPerfilUsers</find>
       <find>replace</find>
       <find>validtitulo_perfil</find>
-      <find>list_laboratorios</find>
       <find>$Server</find>
+      <find>render: function</find>
+      <find>fetchModificarLaboratorio</find>
+      <find>nuevoUpdateLaboratorio</find>
+      <find>table</find>
+      <find>direct_pacient_list</find>
+      <find>list_laboratorios</find>
+      <find>SMTPAutoTLS</find>
+      <find>class=&quot;logo-mini&quot;</find>
     </findStrings>
     <dirStrings>
       <dir>C:\wamp64\www\dental\public</dir>
@@ -287,14 +150,10 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/application/system/login/controller/controller_login.php" />
-        <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/view/menu_admin.php" />
         <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/citas_asociadas/view/citasoci.php" />
         <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/citas_asociadas/export/exportpdf_historialcitas.php" />
         <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_sent/view/principl_email.php" />
         <option value="$PROJECT_DIR$/application/system/agenda/js/agentcreate.js" />
-        <option value="$PROJECT_DIR$/application/system/agenda/controller/agenda_controller.php" />
-        <option value="$PROJECT_DIR$/application/controllers/controller.php" />
         <option value="$PROJECT_DIR$/public/information/index.php" />
         <option value="$PROJECT_DIR$/public/information/css/noti.css" />
         <option value="$PROJECT_DIR$/public/information/view/confirmar_cita.php" />
@@ -320,7 +179,6 @@
         <option value="$PROJECT_DIR$/application/config/main.php" />
         <option value="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/export/export_pdf_directorio.php" />
         <option value="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/js/directorioPacientes.js" />
-        <option value="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/controller/directorio_paciente_controller.php" />
         <option value="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/export/exportFichaPaciente.php" />
         <option value="$PROJECT_DIR$/application/system/documentos_clinicos/view/doc_clinicos.php" />
         <option value="$PROJECT_DIR$/application/system/documentos_clinicos/index.php" />
@@ -334,10 +192,15 @@
         <option value="$PROJECT_DIR$/application/system/configuraciones/js/NewEditoOdontUsuario.js" />
         <option value="$PROJECT_DIR$/application/system/configuraciones/js/UsuariosOdonti.js" />
         <option value="$PROJECT_DIR$/public/view/modulos.php" />
-        <option value="$PROJECT_DIR$/application/system/configuraciones/view/form_laboratorios_conf.php" />
-        <option value="$PROJECT_DIR$/application/system/configuraciones/js/laboratorios_main.js" />
-        <option value="$PROJECT_DIR$/application/system/configuraciones/controller/conf_controller.php" />
         <option value="$PROJECT_DIR$/application/config/conneccion_entidad.php" />
+        <option value="$PROJECT_DIR$/application/config/lib.global.php" />
+        <option value="$PROJECT_DIR$/application/system/configuraciones/js/laboratorios_main.js" />
+        <option value="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/controller/directorio_paciente_controller.php" />
+        <option value="$PROJECT_DIR$/application/controllers/controller.php" />
+        <option value="$PROJECT_DIR$/public/view/header.php" />
+        <option value="$PROJECT_DIR$/application/system/agenda/controller/agenda_controller.php" />
+        <option value="$PROJECT_DIR$/application/system/configuraciones/view/form_laboratorios_conf.php" />
+        <option value="$PROJECT_DIR$/application/system/configuraciones/controller/conf_controller.php" />
       </list>
     </option>
   </component>
@@ -362,9 +225,10 @@
     <servers />
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-6" />
-    <option name="width" value="1616" />
-    <option name="height" value="886" />
+    <option name="x" value="144" />
+    <option name="y" value="102" />
+    <option name="width" value="1332" />
+    <option name="height" value="726" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
@@ -376,19 +240,26 @@
         <subPane>
           <expand>
             <path>
-              <item name="sistema_dental_2019" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sistema_dental_2019" type="462c0819:PsiDirectoryNode" />
+              <item name="betaodontic" type="b2602c69:ProjectViewProjectNode" />
+              <item name="betaodontic" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="sistema_dental_2019" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sistema_dental_2019" type="462c0819:PsiDirectoryNode" />
-              <item name="application" type="462c0819:PsiDirectoryNode" />
+              <item name="betaodontic" type="b2602c69:ProjectViewProjectNode" />
+              <item name="betaodontic" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="sistema_dental_2019" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sistema_dental_2019" type="462c0819:PsiDirectoryNode" />
-              <item name="application" type="462c0819:PsiDirectoryNode" />
-              <item name="config" type="462c0819:PsiDirectoryNode" />
+              <item name="betaodontic" type="b2602c69:ProjectViewProjectNode" />
+              <item name="betaodontic" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="betaodontic" type="b2602c69:ProjectViewProjectNode" />
+              <item name="betaodontic" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="lib" type="462c0819:PsiDirectoryNode" />
+              <item name="PHPMailer" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -818,27 +689,30 @@
       <workItem from="1604509897555" duration="8158000" />
       <workItem from="1604604055747" duration="9734000" />
       <workItem from="1604680418755" duration="18884000" />
+      <workItem from="1604716212294" duration="1155000" />
+      <workItem from="1604858676871" duration="9753000" />
+      <workItem from="1604892163153" duration="5691000" />
+      <workItem from="1604944618771" duration="945000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="3565199000" />
+    <option name="totallyTimeSpent" value="3582743000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1616" height="886" extended-state="6" />
     <editor active="true" />
     <layout>
+      <window_info content_ui="combo" id="Project" order="2" weight="0.3863928" />
       <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.5089859" side_tool="true" weight="0.0" />
+      <window_info anchor="right" id="Database" order="3" weight="0.3292683" />
       <window_info anchor="bottom" id="Database Changes" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="10" weight="0.0" />
       <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49101412" weight="0.0" />
-      <window_info active="true" content_ui="combo" id="Project" order="2" visible="true" weight="0.31258023" />
-      <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
-      <window_info anchor="right" id="Database" order="3" weight="0.3292683" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49924356" weight="0.0" />
       <window_info id="Structure" order="0" side_tool="true" weight="0.25" />
+      <window_info anchor="bottom" id="Terminal" order="9" sideWeight="0.49101412" weight="0.0" />
       <window_info id="Favorites" order="1" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="TypeScript" order="13" />
@@ -850,6 +724,7 @@
       <window_info anchor="right" x="0" y="0" width="295" height="554" id="Documentation" order="4" side_tool="true" weight="0.32980332" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49924356" weight="0.0" />
     </layout>
     <layout-to-restore>
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -888,60 +763,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/view/plan_odontograma.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-15827" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/js/plant.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="201">
-          <caret line="89" column="37" selection-start-line="89" selection-start-column="37" selection-end-line="89" selection-end-column="37" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/view/plantram.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="214">
-          <caret line="182" column="74" selection-start-line="182" selection-start-column="74" selection-end-line="182" selection-end-column="74" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="383">
-          <caret line="1017" column="68" lean-forward="true" selection-start-line="1017" selection-start-column="68" selection-end-line="1017" selection-end-column="68" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/archivos_ficheros/view/form_ficheros_pacientes.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="18" column="92" selection-start-line="18" selection-start-column="92" selection-end-line="18" selection-end-column="92" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/archivos_ficheros/js/ficherosp.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="384">
-          <caret line="241" lean-forward="true" selection-start-line="241" selection-end-line="241" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/citas_asociadas/view/citasoci.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="25" column="76" lean-forward="true" selection-start-line="25" selection-start-column="76" selection-end-line="25" selection-end-column="76" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/citas_asociadas/js/citasoci.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="18" column="14" lean-forward="true" selection-start-line="18" selection-start-column="14" selection-end-line="18" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/logos_icon/icon_logos_797/icon_paciente-datos_personales-11.png">
       <provider selected="true" editor-type-id="images" />
     </entry>
@@ -963,13 +784,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="475">
           <caret line="51" column="41" lean-forward="true" selection-start-line="51" selection-start-column="41" selection-end-line="51" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/system/agenda/js/agent.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="312">
-          <caret line="102" column="51" lean-forward="true" selection-start-line="102" selection-start-column="51" selection-end-line="102" selection-end-column="51" />
         </state>
       </provider>
     </entry>
@@ -1018,13 +832,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/system/pacientes/directorio_paciente/controller/directorio_paciente_controller.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="299">
-          <caret line="56" lean-forward="true" selection-start-line="56" selection-end-line="56" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/system/pacientes/directorio_paciente/export/exportFichaPaciente.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="403">
@@ -1061,10 +868,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="351">
           <caret line="68" column="85" lean-forward="true" selection-start-line="68" selection-start-column="85" selection-end-line="68" selection-end-column="85" />
-          <folding>
-            <element signature="n#style#0;n#h2#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#h2#0;n#!!top" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1114,12 +917,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="591">
           <caret line="995" column="67" lean-forward="true" selection-start-line="995" selection-start-column="67" selection-end-line="995" selection-end-column="67" />
-          <folding>
-            <element signature="n#style#0;n#i#0;n#button#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#li#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#li#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#li#0;n#!!top" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1151,100 +948,30 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/system/documentos_clinicos/js/class_document.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1980">
-          <folding>
-            <element signature="n#style#0;n#table#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#table#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#h3#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#label#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
+        <state relative-caret-position="-1980" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/system/documentos_clinicos/js/indexjavax.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2554">
-          <folding>
-            <element signature="n#style#0;n#button#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
+        <state relative-caret-position="-2554" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/system/documentos_clinicos/js/javaxsDocumentCreate.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-3484">
           <caret line="72" column="5" selection-start-line="72" selection-start-column="5" selection-end-line="72" selection-end-column="5" />
-          <folding>
-            <element signature="n#style#0;n#form#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#table#0;n#form#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#td#0;n#tr#0;n#table#0;n#form#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#small#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#small#0;n#li#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#0;n#label#0;n#li#1;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#0;n#label#0;n#li#2;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#0;n#label#0;n#li#3;n#!!top" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/system/documentos_clinicos/form_documentos/viewprint.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2104">
-          <folding>
-            <element signature="n#style#0;n#h3#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
+        <state relative-caret-position="-2104" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/system/documentos_clinicos/view/doc_clinicos.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="446">
           <caret line="233" column="17" lean-forward="true" selection-start-line="233" selection-start-column="17" selection-end-line="233" selection-end-column="17" />
-          <folding>
-            <element signature="n#style#0;n#h3#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#h3#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/system/configuraciones/controller/conf_controller.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="461">
-          <caret line="1134" column="24" selection-start-line="1134" selection-start-column="24" selection-end-line="1134" selection-end-column="24" />
-          <folding>
-            <element signature="n#style#0;n#a#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#!!top" expanded="true" />
-            <element signature="e#95#101#0" expanded="true" />
-            <element signature="n#style#0;n#small#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#label#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#label#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#!!top" expanded="true" />
-            <element signature="e#69#75#0" expanded="true" />
-            <element signature="e#78#84#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/system/configuraciones/view/form_laboratorios_conf.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-7">
-          <caret line="84" column="130" selection-start-line="84" selection-start-column="130" selection-end-line="84" selection-end-column="130" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/system/configuraciones/js/laboratorios_main.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="59">
-          <caret line="147" column="24" selection-start-line="147" selection-start-column="24" selection-end-line="147" selection-end-column="24" />
         </state>
       </provider>
     </entry>
@@ -1258,17 +985,113 @@
     <entry file="file://$PROJECT_DIR$/application/config/privileges.json">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/config/main.php">
+    <entry file="file://$PROJECT_DIR$/application/config/conneccion_entidad.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="286">
-          <caret line="22" column="29" lean-forward="true" selection-start-line="22" selection-start-column="29" selection-end-line="22" selection-end-column="29" />
+        <state relative-caret-position="-960">
+          <caret line="4" column="44" selection-start-line="4" selection-start-column="44" selection-end-line="4" selection-end-column="44" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/config/conneccion_entidad.php">
+    <entry file="file://$PROJECT_DIR$/application/config/main.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
+        <state relative-caret-position="264">
+          <caret line="22" column="29" selection-start-line="22" selection-start-column="29" selection-end-line="22" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/config/lib.global.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="192">
+          <caret line="16" lean-forward="true" selection-start-line="16" selection-end-line="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/pacientes/directorio_paciente/controller/directorio_paciente_controller.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="192">
+          <caret line="28" column="28" lean-forward="true" selection-start-line="28" selection-start-column="28" selection-end-line="28" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/logos_icon/icon_logos_797/icon_paciente-datos_personales-33.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/information/css/noti.css">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/agenda/js/agent.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-36">
+          <caret line="107" column="1" lean-forward="true" selection-start-line="107" selection-start-column="1" selection-end-line="107" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/lib/PHPMailer/composer.lock">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-40912" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/agenda/controller/agenda_controller.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="252">
+          <caret line="1089" column="79" lean-forward="true" selection-start-line="1089" selection-start-column="79" selection-end-line="1089" selection-end-column="79" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/configuraciones/js/laboratorios_main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-300">
+          <caret line="2" column="46" lean-forward="true" selection-start-line="2" selection-start-column="46" selection-end-line="2" selection-end-column="46" />
+          <folding>
+            <element signature="n#style#0;n#button#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/controllers/controller.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="12">
+          <caret line="266" column="25" selection-start-line="266" selection-start-column="25" selection-end-line="266" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/view/header.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="108">
+          <caret line="9" column="181" selection-start-line="9" selection-start-column="181" selection-end-line="9" selection-end-column="181" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/configuraciones/view/form_laboratorios_conf.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="560">
+          <caret line="133" selection-start-line="133" selection-end-line="133" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/information/view/confirmar_cita.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="12">
+          <caret line="60" column="26" selection-start-line="60" selection-start-column="26" selection-end-line="60" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/configuraciones/controller/conf_controller.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="348">
+          <caret line="1120" column="12" lean-forward="true" selection-start-line="1120" selection-start-column="12" selection-end-line="1122" selection-end-column="13" />
+          <folding>
+            <element signature="n#style#0;n#a#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#a#0;n#!!top" expanded="true" />
+            <element signature="e#95#101#0" expanded="true" />
+            <element signature="n#style#0;n#small#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#label#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#label#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#a#0;n#!!top" expanded="true" />
+            <element signature="e#69#75#0" expanded="true" />
+            <element signature="e#78#84#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

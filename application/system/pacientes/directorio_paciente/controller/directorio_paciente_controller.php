@@ -26,6 +26,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 if($estado == 'A'){ $sql .= " and estado = 'A' "; }
             }
 
+            $sql .= " order by rowid desc";
             $rs = $db->query($sql);
 
             if($rs->rowCount() > 0)

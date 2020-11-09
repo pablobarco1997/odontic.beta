@@ -1104,9 +1104,11 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $Total          = 0;
             $start          = $_POST["start"];
             $length         = $_POST["length"];
+            $search         = $_POST[""];
 
 
             $sql = "select 
+                        l.rowid, 
                         l.name , 
                         l.direccion , 
                         l.telefono , 
@@ -1115,6 +1117,10 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     from tab_conf_laboratorios_clinicos l";
 
             $sqlTotal = $sql;
+
+            if(){
+
+            }
 
             if($start || $length)
                 $sql.=" LIMIT $start,$length;";
@@ -1130,9 +1136,11 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                     $rows = array();
 
-                        $rows[] = $object->name;
-                        $rows[] = $object->info_adicional;
-                        $rows[] = number_format($object->total_prest_realizadas, 2,'.','');
+                        $rows[]         = "";
+                        $rows[]         = $object->name;
+                        $rows[]         = $object->info_adicional;
+                        $rows[]         = number_format($object->total_prest_realizadas, 2,'.','');
+                        $rows['idlab']  = $object->rowid;
 
                     $data[] = $rows;
                 }
@@ -1143,6 +1151,30 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 "data"            => $data,
                 "recordsTotal"    => $Total,
                 "recordsFiltered" => $Total
+            );
+
+            echo json_encode($output);
+            break;
+
+        case "fetchModificarLaboratorio":
+
+            $err = "";
+            $ArrayLaboratorio = [];
+            $idLab = GETPOST("idLab");
+            $sqlLabor = "select * from tab_conf_laboratorios_clinicos where rowid = $idLab limit 1";
+            $result = $db->query($sqlLabor);
+            if($result){
+                if($result->rowCount()>0){
+                    $ArrayLaboratorio = $result->fetchObject();
+                }else{
+                    $err = "Ocurrio un error No se encontro el Laboratorio";
+                }
+            }
+
+            $output = array(
+                "error"        => $err,
+                "information"  => $ArrayLaboratorio,
+
             );
 
             echo json_encode($output);
@@ -1864,22 +1896,58 @@ function crearUpdateLaboratorio($subaccion, $datos = array(), $idLaboratorio){
         return "Ocurrio un error con la Operación <small>ope 0</small>";
 
 
+    if($subaccion!="")
+        if($subaccion=="modificar" && (empty($idLaboratorio) || $idLaboratorio==0) )
+            return "Ocurrio un error con la Operación Modificar  <small>ope 1 <b>El sistema no identifico el parametro enviado</b> consulte con soporte</small>";
+
 
     if($subaccion=="nuevo"){
 
         $LaboraSql  = " INSERT INTO `tab_conf_laboratorios_clinicos` (`name`, `direccion`, `telefono`, `info_adicional`, `estado`) ";
+
         $LaboraSql .= " VALUES(";
+
         $LaboraSql .= "  '".$datos['nombre_laboratorio']."' ";
+
         $LaboraSql .= " ,'".$datos['direccion_laboratorio']."' ";
+
         $LaboraSql .= " ,'".$datos['telefono_laboratorio']."' ";
+
         $LaboraSql .= " ,'".$datos['infoAdicional_laboratorio']."' ";
+
         $LaboraSql .= " ,'A' ";
+
         $LaboraSql .= ")";
 
         $result = $db->query($LaboraSql);
 
         if(!$result){
+
             $error = "Ocurrio un error con la Operación Nuevo Laboratorio";
+        }
+
+    }
+
+    if($subaccion=="modificar" && !empty($idLaboratorio) ){
+
+
+        $LaboraSqlUpdate  = "UPDATE tab_conf_laboratorios_clinicos SET";
+
+        $LaboraSqlUpdate .= "   `name`='".$datos['nombre_laboratorio']."' ";
+
+        $LaboraSqlUpdate .= " , `direccion`='".$datos['direccion_laboratorio']."' ";
+
+        $LaboraSqlUpdate .= " , `info_adicional`= '".$datos['infoAdicional_laboratorio']."' ";
+
+        $LaboraSqlUpdate .= " , `telefono`= '".$datos['telefono_laboratorio']."' ";
+
+        $LaboraSqlUpdate .= " WHERE `rowid`='$idLaboratorio' ";
+
+
+        $result = $db->query($LaboraSqlUpdate);
+
+        if(!$result){
+            $error = "Ocurrio un error con la Operación Modificar Laboratorio";
         }
 
     }
