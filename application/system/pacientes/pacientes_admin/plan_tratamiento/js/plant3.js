@@ -30,12 +30,12 @@ function  realizarPrestacionModal($Dom)
     iddetplantram = padre.find('.statusdet').data('iddet');
     iddiente      = padre.find('.dientePieza').data('iddiente');
 
-    //se ejecuta un attr onclick para crear la evolucion
+    /*se ejecuta un attr onclick para crear la evolucion*/
     $('#RealizarPrestacion').attr('onclick', 'RealizarPrestacionDetallePLantram('+idcabplantram+','+iddetplantram+','+iddiente+')');
 
 }
 
-//REALIZA LA PRESTACION
+/*REALIZA LA PRESTACION*/
 function RealizarPrestacionDetallePLantram(idcabplantram, iddetplantram, iddiente)
 {
     var $msg_err = 0;
@@ -103,14 +103,14 @@ function UpdateDeletePrestacionAsignada(html)
     var iddetplant = status.data('iddet');
 
     //Prestacion realizada
-    if( status.data('estadodet')  == 'R' )
-    {
-        notificacion('Esta prestación se encuentra en estado realizado no se puede Eliminar', 'error');
+    if( status.data('estadodet')  == 'R' ) {
+        $('#modDeletePrestacion').modal('show');
+        $('#AceptarDeletePrestacion').attr('onclick', 'DeletePrestacion('+iddetplant+')');
+        // notificacion('Esta prestación se encuentra en estado realizado no se puede Eliminar', 'error');
     }
 
     //pendiente o activo
-    if( status.data('estadodet') == 'A')
-    {
+    if( status.data('estadodet') == 'A') {
         $('#modDeletePrestacion').modal('show');
         $('#AceptarDeletePrestacion').attr('onclick', 'DeletePrestacion('+iddetplant+')');
     }

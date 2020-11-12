@@ -34,7 +34,7 @@
      <div class="form-group col-md-6 col-xs-12">
          <ul class="list-inline pull-right">
              <li>
-                 <p class="text-center labeltextBono " style="font-size: 1.5em; font-weight: bold"> SALDO </p>
+                 <p class="text-center labeltextBono " style="font-size: 1.5em; font-weight: bold"> Saldo </p>
                  <p class="text-center labeltextBono " style="font-size: 1.5em; font-weight: bold"> <i class="fa fa-dollar"></i> <span id="saldoPagado" class="text-center"> 0.00 </span> </p>
              </li>
          </ul>

@@ -1104,23 +1104,30 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $Total          = 0;
             $start          = $_POST["start"];
             $length         = $_POST["length"];
-            $search         = $_POST[""];
+            $search         = $_POST["search"];
 
 
-            $sql = "select 
+            $sql = "SELECT  
                         l.rowid, 
                         l.name , 
                         l.direccion , 
                         l.telefono , 
                         l.info_adicional ,
-                        ifnull((select sum(total) from tab_plan_tratamiento_det d where d.fk_laboratorio = l.rowid and d.estadodet = 'R' and d.estado_pay = 'PA'), 0) as total_prest_realizadas
-                    from tab_conf_laboratorios_clinicos l";
+                        
+                        ifnull( (select 
+                            round(sum(d.amount), 2) amount
+                        FROM tab_pagos_independ_pacientes_det d where month(d.feche_create) = month(now()) and (select count(*) from tab_conf_prestaciones p where p.fk_laboratorio = l.rowid and p.rowid = d.fk_prestacion) > 0
+                            and (select count(*) from tab_plan_tratamiento_det t where t.fk_prestacion = d.fk_prestacion and t.estadodet = 'R') ) ,0
+                        ) as total_prest_realizadas
+                        
+                    FROM tab_conf_laboratorios_clinicos l where rowid > 0";
+
+
+            if(!empty($search)){
+                $sql .= " and replace((concat(name,direccion,info_adicional)),' ','') like '%".(str_replace(' ','', $search['value']))."%' ";
+            }
 
             $sqlTotal = $sql;
-
-            if(){
-
-            }
 
             if($start || $length)
                 $sql.=" LIMIT $start,$length;";
@@ -1227,6 +1234,70 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             $output = array(
                 'error' => $error
+            );
+            echo json_encode($output);
+            break;
+
+
+        case "nuevoModificarPrestacionLab":
+
+            $error = "";
+
+            $idlab      = GETPOST("idlab");
+            $subaccion  = GETPOST("subaccion");
+            $datos      = GETPOST("datos");
+
+            if($subaccion=="nuevo"){
+
+                $qu  = "INSERT INTO `tab_conf_prestaciones` (`descripcion`, `fk_user`, `fk_categoria`, `fk_laboratorio`, `valor`, `costo_x_clinica`, `precio_paciente`, `date_cc`) ";
+                $qu .= " values(";
+                $qu .= " '".$datos['nameprestacion']."' ";
+                $qu .= " , ".$user->id." ";
+                $qu .= " , ".$datos['catprestacion']." ";
+                $qu .= " , ".$idlab." ";
+                $qu .= " , ".$datos['precio']." ";
+                $qu .= " , ".$datos['costo']." ";
+                $qu .= " , ".$datos['precio']." ";
+                $qu .= " , now() ";
+                $qu .= "";
+                $qu .= ")";
+
+                $result = $db->query($qu);
+                if(!$result){
+                    $error = "Ocurrio un error con la Operación Crear Prestación";
+                }
+
+            }
+            if($subaccion=="modificar"){
+
+            }
+
+            $output = array(
+                'error' => $error
+            );
+            echo json_encode($output);
+            break;
+
+        case "tableDinamicPrestacion":
+
+            $data = [];
+            $Total = 0;
+
+
+            $sqlTotal = "";
+            $table = GETPOST("table");
+            $idlab = GETPOST("idlab");
+
+            if(empty($table)){
+
+                $respuesta = listaPrestacionesLaboratorioDinamic($table, $idlab);
+
+            }
+
+            $output = array(
+                "data"            => $respuesta['data'],
+                "recordsTotal"    => $respuesta['total'],
+                "recordsFiltered" => $respuesta['total']
             );
             echo json_encode($output);
             break;
@@ -1955,6 +2026,52 @@ function crearUpdateLaboratorio($subaccion, $datos = array(), $idLaboratorio){
 
     return $error;
 
+}
+
+
+function listaPrestacionesLaboratorioDinamic($table, $idlab){
+
+    global $db, $conf, $user;
+
+    $start          = $_POST["start"];
+    $length         = $_POST["length"];
+
+    $data = array();
+    $Total = 0;
+
+    if($table==""){
+
+        $sql = "select * from tab_conf_prestaciones where fk_laboratorio = $idlab";
+
+        $sqlTotal = $sql;
+
+        if($start || $length)
+            $sql.=" LIMIT $start,$length;";
+
+        $Total = $db->query($sqlTotal)->rowCount();
+
+        $result = $db->query($sql);
+        if($result&&$result->rowCount()){
+            while ($object = $result->fetchObject()){
+
+                $rows = array();
+
+                $rows[] = "";
+                $rows[] = $object->descripcion;
+                $rows[] =  number_format($object->costo_x_clinica, 2,'.',',');
+                $rows[] =  number_format($object->precio_paciente, 2,'.',',');
+                $rows['prestaciones'] = true;
+
+                $data[] = $rows;
+            }
+        }
+    }
+
+    $datos = [
+        'data' => $data,
+        'total' => $Total
+    ];
+    return $datos;
 }
 
 ?>

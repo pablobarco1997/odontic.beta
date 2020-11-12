@@ -137,6 +137,8 @@ function invalic_prestaciones(){
             }
 
         });
+    }else{
+        boxloading($boxContentConfiguracion,false,1000);
     }
 
     setTimeout(function() {

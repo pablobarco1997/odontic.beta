@@ -836,7 +836,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         pd.estadodet , 
                         pd.fk_usuario , 
                         ifnull((SELECT usuario FROM tab_login_users s where s.fk_doc = pd.fk_usuario limit 1),'') as usuario_creator , 
-                        ifnull((SELECT usuario FROM tab_login_users s where s.fk_doc = pd.realizada_fk_dentista limit 1),'') as usuario_realizado , 
+                        ifnull((SELECT concat(s.nombre_doc ,' ', s.apellido_doc) as doc FROM tab_odontologos s where s.rowid = pd.realizada_fk_dentista limit 1),'') as usuario_realizado , 
                         pd.estado_pay as estado_pago
                     FROM
                         tab_plan_tratamiento_det pd,
@@ -1007,7 +1007,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                     $url_planform = DOL_HTTP .'/application/system/pacientes/pacientes_admin/?view=plantram&key='.KEY_GLOB.'&id='.tokenSecurityId($ob->idpaciente).'&v=planform&idplan='.tokenSecurityId($ob->rowid);
 
-                    $row[] = "<a  href='$url_planform' style='font-weight: bold; font-size: 1.6rem' class='text-center btn btnhover'>  $nombre_tratamiento  </a>"; #descripcion o numero de tratamiento
+                    $row[] = "<a  href='$url_planform' style='font-weight: bold; font-size: 1.6rem;' class='text-center btn btnhover'>  $nombre_tratamiento  </a>"; #descripcion o numero de tratamiento
 //                    $row[] = "<a  href='".DOL_HTTP."/application/system/pacientes/admin_paciente/?view=form_plan_tratamiento&id=".$ob->fk_paciente."&ope=mod&idtratam=".$ob->rowid."' style='font-weight: bold; font-size: 1.6rem' class='text-center btn btnhover'>  $nombre_tratamiento  </a>"; #descripcion o numero de tratamiento
                     $row[] = $ob->nombre_doc;  #nombre Doctor
                     $row[] = $estado;
@@ -1148,7 +1148,9 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 $rsodont  = $db->query($sqlodont);
                 if($rsodont && $rsodont->rowCount() > 0)
                 {
-                    if($estadoDiente!=0){ //solo se actualiza si el estado es diferente de 0
+                    #solo se actualiza si el estado es diferente de 0
+                    if($estadoDiente!=0)
+                    {
 
                         $updateOdont1 = "UPDATE `tab_odontograma_update` SET `fk_estado_pieza`= $estadoDiente , json_caras = '". $datosRealizarPrestacion->json_caras ."' WHERE `rowid`>0 and fk_tratamiento = $idCabPlant and fk_diente = $iddiente;";
                         $rsultUpdate = $db->query($updateOdont1);
@@ -1187,11 +1189,9 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             }
 
 
-            if( $error == '' )
-            {
+            if($error == "") {
                 $rlcr = realizarPrestacionupdate( $datosRealizarPrestacion );
-
-                if( $rlcr == '' ){
+                if( $rlcr == "" ){
                     $error = $rlcr;
                 }
             }
@@ -1232,7 +1232,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         and cb.fk_paciente = $idpaciente
                         limit 1 ";
 
-            // echo '<pre>'; print_r($sql); die();
+//            echo '<pre>'; print_r($sql); die();
             $rsDel = $db->query($sql);
             if($rsDel && $rsDel->rowCount() > 0)
             {
@@ -1240,12 +1240,12 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                 #COMPRUEBO EL ESTADO PAGADO DE LA PRESTACION
                 if( $obj->estado_pay == 'PA'){
-                    $error = 'No puede Eliminar esta prestación <b>' .$obj->prestacion .'</b> se encuentra <i class="fa fa-dollar"></i> pagada';
+                    $error = 'No puede Eliminar esta prestación <br><b>' .$obj->prestacion .'</b><br> se encuentra <i class="fa fa-dollar"></i> pagada';
                 }
 
                 #COMPRUEBO EL ESTADO EN ESTA PRESTACION TIENE SALDO - O  ABONADO
                 if( $obj->estado_pay == 'PS'){
-                    $error = 'No puede Eliminar esta prestación <b>' .$obj->prestacion .'</b> tiene <i class="fa fa-dollar"></i> saldo asociado comprueba en el modulo de pagos de este plan de tratamiento ';
+                    $error = 'No puede Eliminar esta prestación <br><b>' .$obj->prestacion .'</b><br> tiene <i class="fa fa-dollar"></i> saldo asociado comprueba en el modulo de pagos de este plan de tratamiento ';
                 }
 
                 #REALIZADA
@@ -1262,7 +1262,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     #Estado de estadodet
                     # A PRESTACION ACTIVA
                     # R PRESTACION REALIZADA
-                    if( $obj->estadodet == 'A' && $obj->estado_pay  == 'PE'){
+                    if( ($obj->estadodet == 'A' || $obj->estadodet == 'R' ) && $obj->estado_pay  == 'PE'){
                         $sqldelUp = "DELETE FROM tab_plan_tratamiento_det WHERE rowid ='$iddetplant' and fk_plantratam_cab = $idCabplant;";
                          $rsDelUp  = $db->query($sqldelUp);
 
@@ -2206,7 +2206,7 @@ function realizarPrestacionupdate($datos = array())
 
             $sqlUpdattramm =  "UPDATE `tab_plan_tratamiento_det` SET";
             $sqlUpdattramm .= "  `estadodet`       = 'R'  ," ;
-            $sqlUpdattramm .= "  `realizada_fk_dentista`    =  $conf->login_id  ," ;
+            $sqlUpdattramm .= "  `realizada_fk_dentista`    = $datos->fk_doctor  ," ;
             $sqlUpdattramm .= "  `evolucion_escrita`        ='$datos->observacion' , " ;
             $sqlUpdattramm .= "  `fk_estado_odontograma`    = $datos->estadodiente  " ;
             $sqlUpdattramm .= "   WHERE `rowid`= $datos->fk_plantram_det ";

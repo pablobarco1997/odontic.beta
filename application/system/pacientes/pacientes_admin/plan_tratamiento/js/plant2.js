@@ -61,12 +61,13 @@ if($accion == 'addplan')
                         $('#detalle-body').addClass('disabled_link3');
                     }
 
-                    //PINTA LA CABEZERA --------------------
+                    /*view header plan de tratamiento*/
                     print_html_cabezera_viewPrincipal(profecional,convenio, Nomb_tratam);
 
-                    //Hay prestaciones asignadas
+                    /*Se comprueba si hay prestaciones agregadas*/
                     if(respuesta.objetoDet.length > 0)
                     {
+                        /*So hay prestacion se pinta el detalle */
                         var detalle = respuesta.objetoDet;
                         print_html_detalle_viewPrincipal(detalle);
                     }else{
@@ -611,7 +612,7 @@ if($accion == 'addplan')
             .text( TOTAL_SALDO );
 
         $('#saldoPagado')
-            .text( redondear(TOTAL_SALDO, 2, false) );
+            .text( (parseFloat(TOTAL_SALDO)).toFixed(2) );
 
         //se valida si esta pagada o esta abonado
         if( totalPresupuesto == TOTAL_ABONADO) {
