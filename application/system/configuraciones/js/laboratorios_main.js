@@ -2,12 +2,13 @@
 $selecioneLaboratorio = null;
 
 var table = null;
+var table2 = null;
 
 var listLaboratorios = function () {
 
     table =  $("#laboratorio_list").DataTable({
 
-        searching: true,
+        searching: false,
         ordering:false,
         destroy:false,
         serverSide:true,
@@ -368,7 +369,7 @@ function fetchLaboratorioPrestaciones(idLab, Element){
 
         MostrarInformacionPrestaLabo($.parseJSON(objectLab));
 
-        tableDinamicPrestacion();
+        tableDinamicPrestacion('PrestacionesXlaboratorio') //lista de prestaciones
 
     }else{
         $("#selecioneLaboratorio").modal("show");
@@ -398,14 +399,36 @@ function MostrarInformacionPrestaLabo(object){
 
 var tableDinamicPrestacion = function(table=""){
 
+    if(table2!=null){
+        table2.destroy();
+        $("#prestacionLaboratorio").empty();
+    }
+
+
     var thead = "";
-    if(table==""){
+
+    if(table=="PrestacionesXlaboratorio") {
         thead += "<thead>";
             thead += "<tr>";
                 thead += "<th>&nbsp;</th>";
                 thead += "<th>Prestación</th>";
                 thead += "<th>Costo de Clinica</th>";
                 thead += "<th>Precio de Cliente</th>";
+            thead += "</tr>";
+        thead += "</thead>";
+    }
+
+    if(table=="PagosRealizado"){
+        thead += "<thead>";
+            thead += "<tr>";
+                thead += "<th>&nbsp;</th>";
+                thead += "<th>Fecha de Pago</th>";
+                thead += "<th># Pago</th>";
+                thead += "<th>Prestación</th>";
+                thead += "<th>users autor</th>";
+                thead += "<th>Costo de Clinica</th>";
+                thead += "<th>Precio de Cliente</th>";
+                thead += "<th>Total pagado</th>";
             thead += "</tr>";
         thead += "</thead>";
     }
@@ -419,8 +442,9 @@ var tableDinamicPrestacion = function(table=""){
         'idlab': $selecioneLaboratorio
     };
 
-    $("#prestacionLaboratorio").DataTable({
-        searching: true,
+    table2 = $("#prestacionLaboratorio").DataTable({
+        destroy: true,
+        searching: false,
         ordering:false,
         serverSide:true,
         processing:true,

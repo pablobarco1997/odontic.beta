@@ -71,7 +71,7 @@
                             <th>Fecha</th>
                             <th>Plan de Tratamiento</th>
                             <th>Prestación</th>
-                            <th>Diente</th>
+                            <th>Pieza</th>
                             <th>Estado de Diente</th>
                             <th>Doctor Encargado</th>
                             <th>observación</th>

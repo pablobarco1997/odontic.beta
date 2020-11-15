@@ -473,4 +473,59 @@ function NavSearchPacientes(){
     return $navSearch;
 }
 
+function DateSpanish($Date = ""){
+
+    global  $db ;
+
+
+    if($Date==""){
+        $dateFechaNow = $db->query("SELECT CAST(NOW() AS DATE) AS date")->fetchObject()->date;
+        $Date = $dateFechaNow;
+    }
+
+
+    setlocale(LC_TIME, 'es_Es');
+
+    $mes1 =  date('m', strtotime($Date));
+    $dia1 =  date('D', strtotime($Date));
+    $year1 = date('Y', strtotime($Date));
+
+//    print_r($dia1); die();
+    $dialabel = '';
+
+    $dateObjm = DateTime::createFromFormat('m', $mes1 );
+    $NameMes   = strftime('%B', $dateObjm->getTimestamp());
+
+    switch ($dia1)
+    {
+        case 'Mon': #lunes
+            $dialabel = 'lunes';
+            break;
+        case 'Tue': #martes
+            $dialabel = 'martes';
+            break;
+        case 'Wed':#miercoles
+            $dialabel = 'miercoles';
+            break;
+        case 'Thu':#jueves
+            $dialabel = 'jueves';
+            break;
+        case 'Fri':#viernes
+            $dialabel = 'viernes';
+            break;
+        case 'Sat':#sabado
+            $dialabel = 'sabado';
+            break;
+        case 'Sun':#domingo
+            $dialabel = 'domingo';
+            break;
+    }
+
+    $likeDate = $dialabel.' '.date('d', strtotime($Date)).' de '.$NameMes.' '.$year1;
+
+    return $likeDate;
+
+
+}
+
 ?>

@@ -1288,10 +1288,12 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $table = GETPOST("table");
             $idlab = GETPOST("idlab");
 
-            if(empty($table)){
-
+            if($table=='PrestacionesXlaboratorio'){
                 $respuesta = listaPrestacionesLaboratorioDinamic($table, $idlab);
+            }
 
+            if($table=='PagosRealizado'){
+                $respuesta = listaPrestacionesLaboratorioDinamic($table, $idlab);
             }
 
             $output = array(
@@ -1552,7 +1554,7 @@ function list_odontolosGention($estado){
         $sql .= " and s.estado = '$estado' ";
     }
 
-    $sql .= " and s.rowid != ".$conf->PERFIL->id ;
+    $sql .= " and (select count(*) from tab_login_users g where g.rowid = ".$user->id." and  g.fk_doc = s.rowid) = 0 " ;
     $sql .= " order by tms desc ";
 
 //    print_r($conf);
@@ -2035,11 +2037,12 @@ function listaPrestacionesLaboratorioDinamic($table, $idlab){
 
     $start          = $_POST["start"];
     $length         = $_POST["length"];
+    $sqlTotal       = "";
 
     $data = array();
     $Total = 0;
 
-    if($table==""){
+    if($table=="PrestacionesXlaboratorio"){
 
         $sql = "select * from tab_conf_prestaciones where fk_laboratorio = $idlab";
 
@@ -2048,7 +2051,6 @@ function listaPrestacionesLaboratorioDinamic($table, $idlab){
         if($start || $length)
             $sql.=" LIMIT $start,$length;";
 
-        $Total = $db->query($sqlTotal)->rowCount();
 
         $result = $db->query($sql);
         if($result&&$result->rowCount()){
@@ -2056,7 +2058,7 @@ function listaPrestacionesLaboratorioDinamic($table, $idlab){
 
                 $rows = array();
 
-                $rows[] = "";
+                $rows[] = "<input type='checkbox' id='modificarPrestacionLab' name='modificarPrestacionLab' data-idprestalab='".$object->rowid."' value='".$object->rowid."' >";
                 $rows[] = $object->descripcion;
                 $rows[] =  number_format($object->costo_x_clinica, 2,'.',',');
                 $rows[] =  number_format($object->precio_paciente, 2,'.',',');
@@ -2066,6 +2068,50 @@ function listaPrestacionesLaboratorioDinamic($table, $idlab){
             }
         }
     }
+
+    if($table=="PagosRealizado"){
+
+        $sqlp = "select 
+                    p.fk_pago_cab as idpagocab, 
+                    cast(p.feche_create as date) as dateff_pago, 
+                    c.descripcion as prestacion, 
+                    (select s.usuario from tab_login_users s where s.rowid = p.fk_usuario) as users , 
+                    round(p.amount, 2) as  amount , 
+                    round(c.costo_x_clinica, 2) as costo_x_clinica, 
+                    round(c.precio_paciente, 2) as precio_paciente
+             FROM
+                tab_pagos_independ_pacientes_det p , 
+                tab_conf_prestaciones c 
+                where 
+                p.fk_prestacion = c.rowid
+                and c.fk_laboratorio = $idlab ";
+
+        $sqlTotal = $sqlp;
+
+        if($start || $length)
+            $sqlp.=" LIMIT $start,$length;";
+
+        $result = $db->query($sqlp);
+        if($result&&$result->rowCount()>0){
+            while ($object = $result->fetchObject()){
+
+                $rows = array();
+                $rows[] = "";
+                $rows[] = date("Y/m/d", strtotime($object->dateff_pago));
+                $rows[] = 'PAGO_'.str_pad($object->idpagocab, 6, "0", STR_PAD_LEFT);
+                $rows[] = $object->prestacion;
+                $rows[] = $object->users;
+                $rows[] = $object->costo_x_clinica;
+                $rows[] = $object->precio_paciente;
+                $rows[] = $object->amount;
+
+                $data[] = $rows;
+            }
+        }
+
+    }
+
+    $Total = $db->query($sqlTotal)->rowCount();
 
     $datos = [
         'data' => $data,

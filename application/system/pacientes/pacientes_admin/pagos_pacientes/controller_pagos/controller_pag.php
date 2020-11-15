@@ -52,7 +52,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $amount_total    = GETPOST('amount_total');
             $observa         = GETPOST('observ');
             $idpaciente      = GETPOST('idpaciente');
-            $idplancab      = GETPOST('idplancab');
+            $idplancab       = GETPOST('idplancab');
 
             $datosp['datos']        = $datos;
             $datosp['t_pagos']      = $tipo_pago;
@@ -101,11 +101,11 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                     $row[] = "";
                     $row[] = str_replace('-','/',$ob->fecha);
-                    $row[] = $ob->n_pago;
+                    $row[] = 'PAGO_'.str_pad($ob->idpagoCabezera, 6, "0", STR_PAD_LEFT);
                     $row[] = $ob->nombplan;
                     $row[] = $ob->mediopago;
                     $row[] = $ob->n_fact_boleta;
-                    $row[] = $ob->monto;
+                    $row[] = number_format($ob->monto, 2,'.',',');
                     $row[] = "";
 
                     $row[] = $ob->idpagoCabezera; #id del pago cabezara
@@ -457,7 +457,7 @@ function listPrestacionesApagar($idpaciente, $idplantram)
 function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
 {
 
-    global  $db, $conf;
+    global  $db, $conf, $user;
 
     $idpacgos = 0;
     $datosdet   = $datos['datos'];
@@ -476,7 +476,7 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
     $sql1 .= " '$nfact_boleto',  ";
     $sql1 .= " $idplancab , ";
     $sql1 .= " $idpaciente , ";
-    $sql1 .= " $conf->login_id  ";
+    $sql1 .= " $user->id  ";
     $sql1 .= ")";
 //    echo '<pre>';
 //    print_r($sql1); die();
@@ -492,7 +492,7 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
             $sql2 .= " VALUES(";
             $sql2 .= " now(),";
             $sql2 .= " $idpaciente,";
-            $sql2 .= " $conf->login_id,";
+            $sql2 .= " $user->id,";
             $sql2 .= " ". $datosdet[$i]['idcabplantram'] .",";
             $sql2 .= " ". $datosdet[$i]['iddetplantram'] .",";
             $sql2 .= " ". $datosdet[$i]['fk_prestacion'] .",";

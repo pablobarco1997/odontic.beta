@@ -7,10 +7,11 @@ if($accionPagospacientes = "pagos_particular")
     {
         
         $('#pag_particular').DataTable({
-            searching: true,
+            searching: false,
             ordering:false,
             destroy:true,
             paging: false,
+            serverSide:false,
             ajax:{
                 url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/pagos_pacientes/controller_pagos/controller_pag.php',
                 type:'POST',

@@ -12,14 +12,16 @@
   <component name="ChangeListManager">
     <list default="true" id="948b3356-947b-4215-9243-67d8ff74bc7d" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/controllers/controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/controllers/controller.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/system/configuraciones/controller/conf_controller.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/controller/conf_controller.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/system/configuraciones/js/laboratorios_main.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/js/laboratorios_main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/configuraciones/js/prestaciones.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/js/prestaciones.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/configuraciones/view/form_gestion_odontologos_especialidades.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/view/form_gestion_odontologos_especialidades.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/application/system/configuraciones/view/form_laboratorios_conf.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/configuraciones/view/form_laboratorios_conf.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/js/plant2.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/js/plant2.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/js/plant3.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/js/plant3.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/view/add_plan_tratam.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/view/add_plan_tratam.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/evoluciones/view/evulocprinp.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/evoluciones/view/evulocprinp.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_pacientes/controller_pagos/controller_pag.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_pacientes/controller_pagos/controller_pag.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_recibidos/js/pagrealizadprincp.js" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_recibidos/js/pagrealizadprincp.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_recibidos/view/pagos_particulares_pacit.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_recibidos/view/pagos_particulares_pacit.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/logos_icon/icon_logos_797/conf_odont_icon_1_797.png" beforeDir="false" afterPath="$PROJECT_DIR$/logos_icon/icon_logos_797/conf_odont_icon_1_797.png" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -47,17 +49,52 @@
       <file leaf-file-name="main.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/config/main.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="319">
+            <state relative-caret-position="1079">
               <caret line="83" column="6" selection-start-line="83" selection-start-column="6" selection-end-line="83" selection-end-column="6" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="conf_controller.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="form_laboratorios_conf.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/application/system/configuraciones/view/form_laboratorios_conf.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="513">
+              <caret line="77" column="36" selection-start-line="77" selection-start-column="36" selection-end-line="77" selection-end-column="36" />
+              <folding>
+                <element signature="e#18#24#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="controller.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/controllers/controller.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="13">
+              <caret line="160" column="35" selection-start-line="160" selection-start-column="35" selection-end-line="160" selection-end-column="35" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="laboratorios_main.js" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/system/configuraciones/js/laboratorios_main.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="91">
+              <caret line="10" column="25" selection-start-line="10" selection-start-column="25" selection-end-line="10" selection-end-column="25" />
+              <folding>
+                <element signature="n#style#0;n#button#0;n#!!top" expanded="true" />
+                <element signature="e#4#10#1" expanded="true" />
+                <element signature="e#4#10#1" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="conf_controller.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/application/system/configuraciones/controller/conf_controller.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="353">
-              <caret line="1118" column="106" selection-start-line="1118" selection-start-column="106" selection-end-line="1118" selection-end-column="106" />
+            <state relative-caret-position="395">
+              <caret line="2094" column="43" lean-forward="true" selection-start-line="2094" selection-start-column="43" selection-end-line="2094" selection-end-column="43" />
               <folding>
                 <element signature="n#style#0;n#a#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
@@ -74,41 +111,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="form_laboratorios_conf.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/system/configuraciones/view/form_laboratorios_conf.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="403">
-              <caret line="74" column="79" selection-start-line="74" selection-start-column="79" selection-end-line="74" selection-end-column="79" />
-              <folding>
-                <element signature="e#18#24#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="laboratorios_main.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/system/configuraciones/js/laboratorios_main.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="292">
-              <caret line="96" lean-forward="true" selection-start-line="96" selection-end-line="96" />
-              <folding>
-                <element signature="n#style#0;n#button#0;n#!!top" expanded="true" />
-                <element signature="e#4#10#1" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
     </leaf>
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>validtitulo_perfil</find>
-      <find>$Server</find>
-      <find>render: function</find>
-      <find>direct_pacient_list</find>
-      <find>SMTPAutoTLS</find>
-      <find>class=&quot;logo-mini&quot;</find>
       <find>modal.bs.hide</find>
       <find>.bs</find>
       <find>listLaboratorios</find>
@@ -117,10 +123,8 @@
       <find>nuevoUpdateLaboratorio</find>
       <find>nuevoModificarPrestacionLab</find>
       <find>DataTable</find>
-      <find>tableDinamicPrestacion</find>
       <find>crearPresatacionAsoLabo</find>
       <find>laboratorio_list</find>
-      <find>table</find>
       <find>realizarPrestacion</find>
       <find>list_tratamiento</find>
       <find>fetchnewtratamiento</find>
@@ -133,6 +137,14 @@
       <find>RealizarPrestacionDetallePLantram</find>
       <find>list_laboratorios</find>
       <find>fetchModificarLaboratorio</find>
+      <find>pres</find>
+      <find>list_odontologos</find>
+      <find>gention_odontologos_list</find>
+      <find>crear</find>
+      <find>table</find>
+      <find>str_pad</find>
+      <find>list_pagos_particular</find>
+      <find>tableDinamicPrestacion</find>
     </findStrings>
     <dirStrings>
       <dir>C:\wamp64\www\dental\public</dir>
@@ -146,10 +158,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/public/information/index.php" />
-        <option value="$PROJECT_DIR$/public/information/css/noti.css" />
-        <option value="$PROJECT_DIR$/public/information/view/confirmar_cita.php" />
-        <option value="$PROJECT_DIR$/public/information/controller/informacion_controller.php" />
         <option value="$PROJECT_DIR$/application/config/configuration.php" />
         <option value="$PROJECT_DIR$/application/system/login/index.php" />
         <option value="$PROJECT_DIR$/application/system/login/view/viewlogin.php" />
@@ -179,14 +187,12 @@
         <option value="$PROJECT_DIR$/application/system/agenda/index.php" />
         <option value="$PROJECT_DIR$/application/system/configuraciones/view/form_convenios_desc.php" />
         <option value="$PROJECT_DIR$/application/system/configuraciones/view/view_configuration.php" />
-        <option value="$PROJECT_DIR$/application/system/configuraciones/view/form_gestion_odontologos_especialidades.php" />
         <option value="$PROJECT_DIR$/application/system/configuraciones/js/NewEditoOdontUsuario.js" />
         <option value="$PROJECT_DIR$/application/system/configuraciones/js/UsuariosOdonti.js" />
         <option value="$PROJECT_DIR$/public/view/modulos.php" />
         <option value="$PROJECT_DIR$/application/config/conneccion_entidad.php" />
         <option value="$PROJECT_DIR$/application/config/lib.global.php" />
         <option value="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/controller/directorio_paciente_controller.php" />
-        <option value="$PROJECT_DIR$/application/controllers/controller.php" />
         <option value="$PROJECT_DIR$/public/view/header.php" />
         <option value="$PROJECT_DIR$/application/system/agenda/controller/agenda_controller.php" />
         <option value="$PROJECT_DIR$/application/system/configuraciones/js/prestaciones.js" />
@@ -194,9 +200,15 @@
         <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/view/add_plan_tratam.php" />
         <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/plan_tratamiento/js/plant2.js" />
         <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php" />
+        <option value="$PROJECT_DIR$/application/controllers/controller.php" />
+        <option value="$PROJECT_DIR$/application/system/configuraciones/view/form_gestion_odontologos_especialidades.php" />
+        <option value="$PROJECT_DIR$/application/system/configuraciones/controller/conf_controller.php" />
+        <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_pacientes/controller_pagos/controller_pag.php" />
+        <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_recibidos/js/pagrealizadprincp.js" />
+        <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_recibidos/view/pagos_particulares_pacit.php" />
+        <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/evoluciones/view/evulocprinp.php" />
         <option value="$PROJECT_DIR$/application/system/configuraciones/js/laboratorios_main.js" />
         <option value="$PROJECT_DIR$/application/system/configuraciones/view/form_laboratorios_conf.php" />
-        <option value="$PROJECT_DIR$/application/system/configuraciones/controller/conf_controller.php" />
       </list>
     </option>
   </component>
@@ -220,7 +232,7 @@
   <component name="PhpServers">
     <servers />
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="144" />
     <option name="y" value="102" />
     <option name="width" value="1332" />
@@ -264,6 +276,14 @@
               <item name="application" type="462c0819:PsiDirectoryNode" />
               <item name="system" type="462c0819:PsiDirectoryNode" />
               <item name="configuraciones" type="462c0819:PsiDirectoryNode" />
+              <item name="js" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="betaodontic" type="b2602c69:ProjectViewProjectNode" />
+              <item name="betaodontic" type="462c0819:PsiDirectoryNode" />
+              <item name="application" type="462c0819:PsiDirectoryNode" />
+              <item name="system" type="462c0819:PsiDirectoryNode" />
+              <item name="configuraciones" type="462c0819:PsiDirectoryNode" />
               <item name="view" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -276,7 +296,20 @@
             <path>
               <item name="betaodontic" type="b2602c69:ProjectViewProjectNode" />
               <item name="betaodontic" type="462c0819:PsiDirectoryNode" />
-              <item name="logos_icon" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="betaodontic" type="b2602c69:ProjectViewProjectNode" />
+              <item name="betaodontic" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="information" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="betaodontic" type="b2602c69:ProjectViewProjectNode" />
+              <item name="betaodontic" type="462c0819:PsiDirectoryNode" />
+              <item name="public" type="462c0819:PsiDirectoryNode" />
+              <item name="information" type="462c0819:PsiDirectoryNode" />
+              <item name="view" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -292,7 +325,7 @@
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="nodejs_package_manager_path" value="npm" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+    <property name="settings.editor.selected.configurable" value="preferences.editor" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -713,16 +746,19 @@
       <workItem from="1605041580003" duration="1678000" />
       <workItem from="1605115054330" duration="2507000" />
       <workItem from="1605120314205" duration="3312000" />
-      <workItem from="1605143596418" duration="5550000" />
+      <workItem from="1605143596418" duration="6247000" />
+      <workItem from="1605233529842" duration="3808000" />
+      <workItem from="1605287226029" duration="1213000" />
+      <workItem from="1605319873501" duration="2224000" />
+      <workItem from="1605399157875" duration="7373000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="3613749000" />
+    <option name="totallyTimeSpent" value="3629064000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1616" height="886" extended-state="7" />
-    <editor active="true" />
+    <frame x="-8" y="-8" width="1616" height="886" extended-state="6" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="12" sideWeight="0.5089859" side_tool="true" weight="0.0" />
@@ -784,44 +820,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_sent/js/email_prinpsent.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="13">
-          <caret line="26" column="35" selection-start-line="26" selection-start-column="35" selection-end-line="26" selection-end-column="35" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/logos_icon/icon_logos_797/entidad_logo_1_797.png">
-      <provider selected="true" editor-type-id="images" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/system/login/controller/controller_login.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="444">
-          <caret line="218" column="51" lean-forward="true" selection-start-line="218" selection-start-column="51" selection-end-line="218" selection-end-column="51" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/system/pacientes/directorio_paciente/export/export_pdf_directorio.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="709">
-          <caret line="183" column="39" selection-start-line="183" selection-start-column="39" selection-end-line="183" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/system/pacientes/directorio_paciente/js/directorioPacientes.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="462">
-          <caret line="155" lean-forward="true" selection-start-line="155" selection-end-line="155" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/system/pacientes/directorio_paciente/export/exportFichaPaciente.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="403">
-          <caret line="88" column="12" lean-forward="true" selection-start-line="88" selection-start-column="12" selection-end-line="88" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application/system/documentos_clinicos/index.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="124">
@@ -872,13 +870,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="254">
           <caret line="114" column="43" selection-start-line="114" selection-start-column="43" selection-end-line="114" selection-end-column="43" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/system/configuraciones/view/form_gestion_odontologos_especialidades.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1469">
-          <caret line="113" column="52" lean-forward="true" selection-start-line="113" selection-start-column="52" selection-end-line="113" selection-end-column="52" />
         </state>
       </provider>
     </entry>
@@ -986,13 +977,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/controllers/controller.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="12">
-          <caret line="266" column="25" selection-start-line="266" selection-start-column="25" selection-end-line="266" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/public/view/header.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="108">
@@ -1011,13 +995,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="208">
           <caret line="16" column="4" lean-forward="true" selection-start-line="16" selection-start-column="4" selection-end-line="24" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/public/information/view/confirmar_cita.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="13">
-          <caret line="60" column="26" selection-start-line="60" selection-start-column="26" selection-end-line="60" selection-end-column="26" />
         </state>
       </provider>
     </entry>
@@ -1046,25 +1023,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="370">
           <caret line="1256" column="48" lean-forward="true" selection-start-line="1256" selection-start-column="48" selection-end-line="1256" selection-end-column="48" />
-          <folding>
-            <element signature="e#246#252#0" expanded="true" />
-            <element signature="e#304#310#0" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#div#1;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#p#0;n#!!top" expanded="true" />
-            <element signature="e#18#24#0" expanded="true" />
-            <element signature="e#53#59#1" expanded="true" />
-            <element signature="n#style#0;n#p#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#small#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#img#0;n#td#0;n#tr#0;n#table#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#small#0;n#p#1;n#div#0;n#!!top" expanded="true" />
-            <element signature="e#176#182#0" expanded="true" />
-            <element signature="n#style#0;n#label#0;n#!!top" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1079,47 +1037,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="266">
           <caret line="611" column="33" lean-forward="true" selection-start-line="611" selection-start-column="33" selection-end-line="611" selection-end-column="33" />
-          <folding>
-            <element signature="e#29#35#1" expanded="true" />
-            <element signature="e#29#35#1" expanded="true" />
-            <element signature="n#style#0;n#small#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#small#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#td#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#div#0;n#div#0;n#td#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#p#0;n#div#1;n#div#0;n#td#0;n#!!top" expanded="true" />
-            <element signature="e#614#620#0" expanded="true" />
-            <element signature="n#style#0;n#p#0;n#!!top" expanded="true" />
-            <element signature="e#74#80#0" expanded="true" />
-            <element signature="e#80#86#0" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#a#1;n#!!top" expanded="true" />
-            <element signature="e#373#379#1" expanded="true" />
-            <element signature="n#style#0;n#a#2;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#a#3;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#p#0;n#div#0;n#td#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#p#0;n#div#0;n#td#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#p#0;n#div#0;n#td#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#p#0;n#div#0;n#div#0;n#td#0;n#!!top" expanded="true" />
-            <element signature="e#205#211#0" expanded="true" />
-            <element signature="e#212#218#0" expanded="true" />
-            <element signature="e#220#226#0" expanded="true" />
-            <element signature="e#227#233#0" expanded="true" />
-            <element signature="n#style#0;n#p#1;n#div#0;n#div#0;n#td#0;n#!!top" expanded="true" />
-            <element signature="e#6#12#0" expanded="true" />
-            <element signature="e#12#18#0" expanded="true" />
-            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-            <element signature="e#34#40#0" expanded="true" />
-            <element signature="e#40#46#0" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#td#0;n#tr#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#p#0;n#td#1;n#tr#0;n#!!top" expanded="true" />
-            <element signature="e#446#452#0" expanded="true" />
-            <element signature="n#style#0;n#input#0;n#td#4;n#tr#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#0;n#td#5;n#tr#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#td#0;n#tr#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#p#0;n#td#1;n#tr#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#0;n#td#4;n#tr#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#input#0;n#td#5;n#tr#0;n#!!top" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1127,32 +1044,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-16">
           <caret line="26" column="60" selection-start-line="26" selection-start-column="44" selection-end-line="26" selection-end-column="60" />
-          <folding>
-            <element signature="e#0#6#0" expanded="true" />
-            <element signature="e#16#22#0" expanded="true" />
-            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
-            <element signature="e#99#105#1" expanded="true" />
-            <element signature="e#30#36#1" expanded="true" />
-            <element signature="e#30#36#1" expanded="true" />
-            <element signature="e#30#36#1" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="e#188#194#0" expanded="true" />
-            <element signature="e#194#200#0" expanded="true" />
-            <element signature="e#200#206#0" expanded="true" />
-            <element signature="e#206#212#0" expanded="true" />
-            <element signature="n#style#0;n#small#0;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#small#1;n#div#0;n#div#0;n#!!top" expanded="true" />
-            <element signature="e#280#286#0" expanded="true" />
-            <element signature="n#style#0;n#small#0;n#div#1;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#small#1;n#div#1;n#div#0;n#!!top" expanded="true" />
-            <element signature="e#570#576#0" expanded="true" />
-            <element signature="e#610#616#0" expanded="true" />
-            <element signature="n#style#0;n#small#0;n#div#2;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#small#1;n#div#2;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#small#0;n#div#3;n#div#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#a#0;n#div#3;n#div#0;n#!!top" expanded="true" />
-            <element signature="e#1228#1234#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1165,36 +1056,85 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/config/main.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="319">
+        <state relative-caret-position="1079">
           <caret line="83" column="6" selection-start-line="83" selection-start-column="6" selection-end-line="83" selection-end-column="6" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/system/configuraciones/js/laboratorios_main.js">
+    <entry file="file://$PROJECT_DIR$/public/information/controller/informacion_controller.php">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/public/information/view/confirmar_cita.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="292">
-          <caret line="96" lean-forward="true" selection-start-line="96" selection-end-line="96" />
+        <state relative-caret-position="52">
+          <caret line="4" column="21" lean-forward="true" selection-start-line="4" selection-start-column="21" selection-end-line="4" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/logos_icon/icon_logos_797/conf_odont_icon_1_797.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/configuraciones/view/form_gestion_odontologos_especialidades.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="331">
+          <caret line="170" column="17" lean-forward="true" selection-start-line="170" selection-start-column="17" selection-end-line="170" selection-end-column="17" />
           <folding>
-            <element signature="n#style#0;n#button#0;n#!!top" expanded="true" />
-            <element signature="e#4#10#1" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#ul#0;n#div#0;n#div#1;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#ul#0;n#div#0;n#div#2;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#ul#0;n#div#0;n#div#3;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application/system/configuraciones/view/form_laboratorios_conf.php">
+    <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_pacientes/controller_pagos/controller_pag.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="403">
-          <caret line="74" column="79" selection-start-line="74" selection-start-column="79" selection-end-line="74" selection-end-column="79" />
+        <state relative-caret-position="353">
+          <caret line="107" column="60" selection-start-line="107" selection-start-column="60" selection-end-line="107" selection-end-column="60" />
           <folding>
-            <element signature="e#18#24#0" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#a#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#a#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#input#0;n#!!top" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_recibidos/js/pagrealizadprincp.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="338">
+          <caret line="26" column="30" lean-forward="true" selection-start-line="26" selection-start-column="30" selection-end-line="26" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/controllers/controller.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="13">
+          <caret line="160" column="35" selection-start-line="160" selection-start-column="35" selection-end-line="160" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_recibidos/view/pagos_particulares_pacit.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="15" column="50" lean-forward="true" selection-start-line="15" selection-start-column="50" selection-end-line="15" selection-end-column="50" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/evoluciones/view/evulocprinp.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="442">
+          <caret line="73" column="37" selection-start-line="73" selection-start-column="37" selection-end-line="73" selection-end-column="37" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/application/system/configuraciones/controller/conf_controller.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="353">
-          <caret line="1118" column="106" selection-start-line="1118" selection-start-column="106" selection-end-line="1118" selection-end-column="106" />
+        <state relative-caret-position="395">
+          <caret line="2094" column="43" lean-forward="true" selection-start-line="2094" selection-start-column="43" selection-end-line="2094" selection-end-column="43" />
           <folding>
             <element signature="n#style#0;n#a#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
@@ -1206,6 +1146,28 @@
             <element signature="n#style#0;n#a#0;n#!!top" expanded="true" />
             <element signature="e#69#75#0" expanded="true" />
             <element signature="e#78#84#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/configuraciones/js/laboratorios_main.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="91">
+          <caret line="10" column="25" selection-start-line="10" selection-start-column="25" selection-end-line="10" selection-end-column="25" />
+          <folding>
+            <element signature="n#style#0;n#button#0;n#!!top" expanded="true" />
+            <element signature="e#4#10#1" expanded="true" />
+            <element signature="e#4#10#1" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/configuraciones/view/form_laboratorios_conf.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="513">
+          <caret line="77" column="36" selection-start-line="77" selection-start-column="36" selection-end-line="77" selection-end-column="36" />
+          <folding>
+            <element signature="e#18#24#0" expanded="true" />
           </folding>
         </state>
       </provider>

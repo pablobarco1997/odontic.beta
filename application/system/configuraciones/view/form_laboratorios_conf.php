@@ -58,7 +58,7 @@ if(isset($_GET['v']) && !empty($_GET['v'])){
             <div id="cont_laboratorio" class="row">
 
                 <div class="form-group col-md-12 col-lg-12 col-xs-12">
-                    <ul class="list-inline" style="border-bottom: 1px solid #333333; border-top: 1px solid #333333; height: 30px; padding: 3.5px">
+                    <ul class="list-inline" style="border-bottom: 1px solid #333333; border-top: 1px solid #333333; padding: 3.5px">
                         <li><a href="#addModificarLaboratorio" class="btnhover " id="crearLaboratorio" data-toggle="modal"  style="font-weight: bolder; color: #333333; "> &nbsp;&nbsp;<i class="fa fa-list"></i> &nbsp;  crear Laboratorio</a></li>
                         <li> </li>
                     </ul>
@@ -75,6 +75,7 @@ if(isset($_GET['v']) && !empty($_GET['v'])){
                                 <th>Prestaciones Realizadas x Mes <?= date('M')?></th>
                             </thead>
                         </table>
+                        <br><br><br>
                     </div>
                 </div>
             </div>
@@ -150,36 +151,68 @@ if(isset($_GET['v']) && !empty($_GET['v'])){
                 <div id="cont_Prestacionlaboratorio" class="row">
 
                     <div class="form-group col-md-12 col-lg-12 col-xs-12">
-                        <ul class="list-inline" style="border-bottom: 1px solid #333333; border-top: 1px solid #333333; height: 30px; padding: 3.5px">
-                            <li><a href="#ModalPrestacion_LaboratorioClinico" data-toggle="modal" class="btnhover " id=""  style="font-weight: bolder; color: #333333; "> &nbsp;&nbsp;<i class="fa fa-list"></i> &nbsp;  Agregar Prestación </a></li>
-                            <li><a href="#" class="btnhover " id=""  style="font-weight: bolder; color: #333333; "><i class="fa fa-money"></i> Pagos Realizados</a> </li>
-                            <li><a href="#" class="btnhover " id=""  style="font-weight: bolder; color: #333333; "><i class="fa fa-money"></i> Por Pagar</a> </li>
+                        <ul class="list-inline" style="border-bottom: 1px solid #333333; border-top: 1px solid #333333; padding: 3.5px">
+                            <li><a href="#ModalPrestacion_LaboratorioClinico" data-toggle="modal" class="btnhover " id=""  style="font-weight: bolder; color: #333333; "> &nbsp;&nbsp;<i class="fa fa-clipboard"></i> &nbsp;  Agregar o Modificar Prestación </a></li>
+                            <li><a href="#" class="btnhover " id=""  style="font-weight: bolder; color: #333333; " onclick="tableDinamicPrestacion('PrestacionesXlaboratorio')" > &nbsp;<i class="fa fa-files-o"></i> Prestaciones x Laboratorio</a> </li>
+                            <li><a href="#" class="btnhover " id=""  style="font-weight: bolder; color: #333333; " onclick="tableDinamicPrestacion('PagosRealizado')" > &nbsp; <i class="fa fa-bar-chart"></i> (Pagos o Abonos) Realizados</a> </li>
+                            <li><a href="#" class="btnhover hidden" id=""  style="font-weight: bolder; color: #333333; " onclick="tableDinamicPrestacion('PagosRealizado')" > &nbsp; <i class="fa fa-bar-chart"></i> Por Pagar (Tratamientos)</a> </li>
+                            <li><a href="#FiltrarAgenda" class="btnhover " id=""  style="font-weight: bolder; color: #333333; " data-toggle="collapse" > &nbsp;<i class="fa fa-search"></i> Filtrar Información </a> </li>
                         </ul>
                     </div>
 
-                    <div class="form-group col-md-8 col-lg-8 col-xs-12">
+                    <div class="form-group col-md-8 col-lg-8 col-xs-12 margin-bottom">
                         <table id="informacionPrestacion" class="none" style="display: none;" width="100%">
                             <tr style="border-top: 1px solid #e2e2e2">
-                                <td style="width: 20%; font-weight: bolder">Nombre:</td>
+                                <td style="width: 25%; font-weight: bolder">Nombre:</td>
                                 <td id="nameLab" style="padding-left: 10px"></td>
                             </tr>
                             <tr style="border-top: 1px solid #e2e2e2">
-                                <td style="width: 20%; font-weight: bolder">Dirección:</td>
+                                <td style="width: 25%; font-weight: bolder">Dirección:</td>
                                 <td id="DirecLab" style="padding-left: 10px"></td>
                             </tr>
                             <tr style="border-top: 1px solid #e2e2e2">
-                                <td style="width: 20%; font-weight: bolder">Teléfono:</td>
+                                <td style="width: 25%; font-weight: bolder">Teléfono:</td>
                                 <td id="telefLab" style="padding-left: 10px"></td>
                             </tr>
                             <tr style="border-top: 1px solid #e2e2e2">
-                                <td style="width: 20%; font-weight: bolder">Información Adicional:</td>
+                                <td style="width: 25%; font-weight: bolder">Información Adicional:</td>
                                 <td id="infoLab" style="padding-left: 10px"></td>
                             </tr>
                         </table>
+                        <br>
                     </div>
 
-                    <div class="form-group col-md-12 col-lg-12 col-xs-12">
-                        <table id="prestacionLaboratorio" class="table"></table>
+                    <div id="FiltrarAgenda" class="form-group col-xs-12 col-md-12 collapse" aria-expanded="true" style="">
+                        <div class="form-group col-md-12 col-xs-12" style="background-color: #f4f4f4; padding: 25px">
+                            <h3 class="no-margin"><span>Filtrar Prestaciones x Laboratorio</span></h3>
+                            <div class="row">
+                                <div class="form-group col-md-3 col-sm-12 col-xs-12">
+                                    <label for="">Fecha</label>
+                                    <div class="input-group form-group rango" style="margin: 0">
+                                        <input type="text" class="form-control filtroFecha  " readonly="" id="startDate" value="">
+                                        <span class="input-group-addon" style="border-radius: 0"><i class="fa fa-calendar"></i></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-12 no-margin">
+                                    <ul class="list-inline pull-right no-margin">
+                                        <li>  <button class="limpiar btn   btn-block  btn-default" style="float: right; padding: 10px"> &nbsp; &nbsp; Limpiar &nbsp; &nbsp;</button> </li>
+                                        <li>  <button class="aplicar btn   btn-block  btn-success" style="float: right; padding: 10px"> &nbsp;  &nbsp;Aplicar busqueda &nbsp;</button> </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!--table prestaciones de laboratorios-->
+                    <div class="form-group col-md-12 col-lg-12 col-xs-12 margin-bottom">
+                        <div class="table-responsive">
+                            <table id="prestacionLaboratorio" class="table" width="100%"></table>
+                        </div>
+                        <br><br>
                     </div>
 
                 </div>
@@ -200,6 +233,7 @@ if(isset($_GET['v']) && !empty($_GET['v'])){
                                         <div class="form-group">
                                             <label for="">Selecione un Laboratorio</label>
                                             <select id="laboratorioPrestSeleccion" class="form-control" style="width: 100%">
+                                                <option value=""></option>
                                                 <?php
                                                     $sql = "select rowid , name , direccion , telefono , info_adicional, cast(datecc as date) as datecc  from tab_conf_laboratorios_clinicos";
                                                     $result = $db->query($sql);
@@ -228,6 +262,7 @@ if(isset($_GET['v']) && !empty($_GET['v'])){
                         </div>
                     </div>
                 </div>
+
 
 
                 <!-- Laboratorio Clinico Prestaciones-->

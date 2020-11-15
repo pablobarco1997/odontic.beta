@@ -86,7 +86,7 @@ if(isset($_GET['v'])){
 
             <div class="row">
                 <div class="form-group col-md-12 col-lg-12 col-xs-12">
-                    <ul class="list-inline" style="border-bottom: 1px solid #333333; border-top: 1px solid #333333; height: 30px; ">
+                    <ul class="list-inline" style="border-bottom: 1px solid #333333; border-top: 1px solid #333333;">
                         <li><a  style="font-weight: bolder; color: #333333; " class="btnhover "  data-toggle="modal" data-target="#modal_conf_doctor"  onclick="cambiarattr()"> &nbsp;&nbsp;<i class="fa fa-user-md"></i> &nbsp; crear odontólogos</a></li>
 <!--                        <li><a style="cursor: pointer; font-weight: bolder; color: #333333" class="btn btnhover  hide" data-toggle="modal" data-target="#ModalCrearUsuario"  onclick="NuevoEditUsario(0,0,'0')" > &nbsp;&nbsp;<i class="fa fa-user"></i> &nbsp;&nbsp; Crear Usuario</a></li>-->
                         <li>
@@ -101,7 +101,7 @@ if(isset($_GET['v'])){
                 <br>
                 <br>
 
-                <div class="col-md-12">
+                <div class="col-md-12 col-xs-12 col-sm-12">
                     <div class="table-responsive">
                         <table width="100%" class="table table-striped" id="gention_odontologos_list">
                             <thead>
@@ -131,7 +131,7 @@ if(isset($_GET['v'])){
 
                 <div class="row">
                     <div class="form-group col-md-12">
-                        <ul class="list-inline" style="border-bottom: 1px solid #333333; border-top: 1px solid #333333; height: 30px; padding: 3.5px">
+                        <ul class="list-inline" style="border-bottom: 1px solid #333333; border-top: 1px solid #333333;  padding: 3.5px">
                             <li><a  class="btnhover "  data-toggle="modal" data-target="#ModalConfEspecialidades" style="font-weight: bolder; color: #333333; "  > &nbsp;&nbsp;<i class="fa fa-list"></i> &nbsp;  crear especialidad</a></li>
                         </ul>
                     </div>
@@ -173,7 +173,7 @@ if(isset($_GET['v'])){
 
                 <div class="row">
                     <div class="form-group col-md-12">
-                        <ul class="list-inline" style="border-bottom: 1px solid #333333; border-top: 1px solid #333333; height: 30px; padding: 3.5px">
+                        <ul class="list-inline" style="border-bottom: 1px solid #333333; border-top: 1px solid #333333;  padding: 3.5px">
                             <!--                              <li><a class="btnhover btn" data-toggle="modal" data-target="#ModalCrearUsuario"  style="font-weight: bolder; color: #333333"> <i class="fa fa-user-plus"></i> &nbsp; Crear Usuario </a> </li>-->
                             <li><a class="btnhover"  href="<?= DOL_HTTP .'/application/system/configuraciones/index.php?view=form_gestion_odontologos_especialidades&v=users&creat=true'?>"  style="font-weight: bolder; color: #333333; padding: 1px"> <i class="fa fa-user-plus"></i> &nbsp; Crear Usuario </a> </li>
                         </ul>

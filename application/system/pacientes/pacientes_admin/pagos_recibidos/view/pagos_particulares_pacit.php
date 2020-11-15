@@ -24,6 +24,7 @@
         <br>
         <br>
         <br>
+        <br>
     </div>
 
     <div id="detalleprestacionPagos" class="modal fade" role="dialog">
