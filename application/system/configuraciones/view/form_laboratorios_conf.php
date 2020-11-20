@@ -43,11 +43,11 @@ if(isset($_GET['v']) && !empty($_GET['v'])){
 
             <div class="form-group col-md-12 " style="padding: 0px">
                 <ul class="list-inline">
-                    <li><a class="btn " href="<?= DOL_HTTP?>/application/system/configuraciones/index.php?view=form_laboratorios_conf&v=laboratorios" style="border-left: 2px solid #212f3d; color: #333333"> <i class="fa fa-building-o"></i> &nbsp; Laboratorios</a> </li>
+                    <li><a class="btn " href="<?= DOL_HTTP?>/application/system/configuraciones/index.php?view=form_laboratorios_conf&v=laboratorios" style="border-left: 2px solid #212f3d; color: #333333"> <i class="fa fa-flask"></i> &nbsp; Laboratorios</a> </li>
                     <li>&nbsp;&nbsp;</li>
                     <li><a class="btn " href="<?= DOL_HTTP?>/application/system/configuraciones/index.php?view=form_laboratorios_conf&v=prestacionlab" style="border-left: 2px solid #212f3d; color: #333333"> <i class="fa fa-list-ul"></i> &nbsp; Prestaciones de Laboratorio</a></li>
                     <li>&nbsp;&nbsp;</li>
-                    <li><a class="btn " href="#" style="border-left: 2px solid #212f3d; color: #333333"> <i class="fa fa-sticky-note-o"></i> &nbsp; Solicitudes</a></li>
+                    <li><a class="btn disabled_link3" href="#" style="border-left: 2px solid #212f3d; color: #333333"> <i class="fa fa-sticky-note-o"></i> &nbsp; Solicitudes</a></li>
                 </ul>
                 <br>
             </div>
@@ -72,7 +72,8 @@ if(isset($_GET['v']) && !empty($_GET['v'])){
                                 <th>&nbsp;</th>
                                 <th>Laboratorio</th>
                                 <th>Información Adicional</th>
-                                <th>Prestaciones Realizadas x Mes <?= date('M')?></th>
+                                <th>Prestaciones Realizadas x Mes ( <?= DateSpanish("", date('m')); ?> ) </th>
+                                <th>Estado</th>
                             </thead>
                         </table>
                         <br><br><br>
@@ -152,18 +153,18 @@ if(isset($_GET['v']) && !empty($_GET['v'])){
 
                     <div class="form-group col-md-12 col-lg-12 col-xs-12">
                         <ul class="list-inline" style="border-bottom: 1px solid #333333; border-top: 1px solid #333333; padding: 3.5px">
-                            <li><a href="#ModalPrestacion_LaboratorioClinico" data-toggle="modal" class="btnhover " id=""  style="font-weight: bolder; color: #333333; "> &nbsp;&nbsp;<i class="fa fa-clipboard"></i> &nbsp;  Agregar o Modificar Prestación </a></li>
-                            <li><a href="#" class="btnhover " id=""  style="font-weight: bolder; color: #333333; " onclick="tableDinamicPrestacion('PrestacionesXlaboratorio')" > &nbsp;<i class="fa fa-files-o"></i> Prestaciones x Laboratorio</a> </li>
-                            <li><a href="#" class="btnhover " id=""  style="font-weight: bolder; color: #333333; " onclick="tableDinamicPrestacion('PagosRealizado')" > &nbsp; <i class="fa fa-bar-chart"></i> (Pagos o Abonos) Realizados</a> </li>
-                            <li><a href="#" class="btnhover hidden" id=""  style="font-weight: bolder; color: #333333; " onclick="tableDinamicPrestacion('PagosRealizado')" > &nbsp; <i class="fa fa-bar-chart"></i> Por Pagar (Tratamientos)</a> </li>
-                            <li><a href="#FiltrarAgenda" class="btnhover " id=""  style="font-weight: bolder; color: #333333; " data-toggle="collapse" > &nbsp;<i class="fa fa-search"></i> Filtrar Información </a> </li>
+                            <li><a href="#ModalPrestacion_LaboratorioClinico" data-toggle="modal" class="btnhover " id=""  style="font-weight: bolder; color: #333333; "> &nbsp;&nbsp;<i class="fa fa-clipboard"></i> &nbsp;  Agregar o Modificar Prestación &nbsp;</a></li>
+                            <li><a href="#" class="btnhover " id=""  style="font-weight: bolder; color: #333333; " onclick="tableDinamicPrestacion('PrestacionesXlaboratorio')" > &nbsp;<i class="fa fa-files-o"></i> Prestaciones x Laboratorio &nbsp;</a> </li>
+                            <li><a href="#" class="btnhover " id=""  style="font-weight: bolder; color: #333333; " onclick="tableDinamicPrestacion('PagosRealizado')" > &nbsp; <i class="fa fa-bar-chart"></i> (Pagos o Abonos) Realizados &nbsp;</a> </li>
+                            <li><a href="#" class="btnhover " id=""  style="font-weight: bolder; color: #333333; " onclick="tableDinamicPrestacion('tratamientosPrestaciones')" > &nbsp; <i class="fa fa-bar-chart"></i>Pedidos del Laboratorio</a> </li>
+                            <li><a href="#FiltrarAgenda" class="btnhover " id=""  style="font-weight: bolder; color: #333333; " data-toggle="collapse" > &nbsp;<i class="fa fa-search"></i> Filtrar Información &nbsp;</a> </li>
                         </ul>
                     </div>
 
                     <div class="form-group col-md-8 col-lg-8 col-xs-12 margin-bottom">
                         <table id="informacionPrestacion" class="none" style="display: none;" width="100%">
                             <tr style="border-top: 1px solid #e2e2e2">
-                                <td style="width: 25%; font-weight: bolder">Nombre:</td>
+                                <td style="width: 25%; font-weight: bolder">Nombre Laboratorio:</td>
                                 <td id="nameLab" style="padding-left: 10px"></td>
                             </tr>
                             <tr style="border-top: 1px solid #e2e2e2">
@@ -186,12 +187,9 @@ if(isset($_GET['v']) && !empty($_GET['v'])){
                         <div class="form-group col-md-12 col-xs-12" style="background-color: #f4f4f4; padding: 25px">
                             <h3 class="no-margin"><span>Filtrar Prestaciones x Laboratorio</span></h3>
                             <div class="row">
-                                <div class="form-group col-md-3 col-sm-12 col-xs-12">
-                                    <label for="">Fecha</label>
-                                    <div class="input-group form-group rango" style="margin: 0">
-                                        <input type="text" class="form-control filtroFecha  " readonly="" id="startDate" value="">
-                                        <span class="input-group-addon" style="border-radius: 0"><i class="fa fa-calendar"></i></span>
-                                    </div>
+                                <div class="form-group col-md-4 col-sm-12 col-xs-12">
+                                    <label for="">Nombre de Prestación</label>
+                                    <input type="text" class="form-control" name="nam_prestacion" id="nam_prestacion">
                                 </div>
                             </div>
 

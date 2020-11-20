@@ -99,6 +99,7 @@ if($accion == 'addplan')
             var usuarioCreatePrestacion   = tratramientodet[i]['usuario_creator']; //usuario quien creo la prestacion
             var usuarioRealizarPrestacion = tratramientodet[i]['usuario_realizado']; //usuario quien realizo la prestacion
 
+            var LaboratorioPrestacion   =  tratramientodet[i]['laboratorio']; //prestacion creada desde un laboratorio
             var iddiente           = tratramientodet[i]['diente'];
             var prestacion         = tratramientodet[i]['prestacion'];
             var fk_prestacion      = tratramientodet[i]['fk_prestacion'];
@@ -119,6 +120,7 @@ if($accion == 'addplan')
             //comportamiento realizar prestacion
             var ImgRealizadoChecked = $DOCUMENTO_URL_HTTP+"/logos_icon/logo_default/unchecked-checkbox.png"; //No realizado
             var onclickRealizadoModal = " data-toggle='modal' onclick='realizarPrestacionModal($(this))' title='Realizar esta prestación' "; //Click para realizar la prestacion
+
             if(tratramientodet[i]['estadodet'] == 'R'){
                 ImgRealizadoChecked = $DOCUMENTO_URL_HTTP+"/logos_icon/logo_default/checked-checkbox.png";
                 onclickRealizadoModal = " title='Prestación Realizada' ";
@@ -129,8 +131,9 @@ if($accion == 'addplan')
             var total  =  0;
             var valor2 =  0;
 
+            //Descuento de convenio
             if($convenioValor != 0){
-                valor1 =  valor1 - ((subtotal * $convenioValor) / 100);
+                valor1 =  valor1 - ((subtotal * $convenioValor) / 100); //calculo de descuento o convenio
             }
 
             // alert(prestacion + subtotal);
@@ -143,7 +146,7 @@ if($accion == 'addplan')
             }
             var smallUsuarioxRealizado = "";
             if(usuarioRealizarPrestacion!=""){
-                smallUsuarioxRealizado = "<small  style='display: block;font-weight: bolder'>Realizado x Usuario: " + usuarioRealizarPrestacion + " </small>";
+                smallUsuarioxRealizado = "<small  style='display: block;font-weight: bolder'>Realizado x Odontol@: " + usuarioRealizarPrestacion + " </small>";
             }
 
 
@@ -158,7 +161,7 @@ if($accion == 'addplan')
 
             "   <div class='form-group col-md-12 col-xs-12 no-padding' style='padding: 0px !important;'>" +
 
-                "     <div class='form-group col-xs-12 col-sm-1 no-padding' >  " +
+                "     <div class='form-group col-xs-12 col-sm-12 no-padding' >  " +
                     "      <a  href='#modal_prestacion_realizada' style='font-size: 2rem; cursor:pointer;color: #9f191f'  class='terminarEstaPrestacionOpcion1' " + onclickRealizadoModal + " > " +
                     "           <img id='realizadoImg-"+i+"' class='checkedRealizado' src='"+ImgRealizadoChecked+"' width='20px' height='20px'>        " +  //Checkear prestacion
                     "       </a>" +
@@ -166,12 +169,17 @@ if($accion == 'addplan')
                 "     <div class='form-group col-sm-11 col-xs-12 no-padding no-margin' >" +
                 "        <p class='' style='margin: 0px; font-size: 1.5rem' data-id='"+ fk_prestacion +"'> <b> "+ prestacion +" </b> &nbsp; <i class='fa fa-flag statusdet' data-estadodet='"+statusdet+"' data-iddet='"+rowiddetalle+"' ></i> </p>  ";
 
+            //Si en caso la prestacion esta relacionada an laboratorio
+            if(LaboratorioPrestacion != ''){
+                html += "<p class='text-bold' style='margin: 0px' data-diente='"+iddiente+"' title='Laboratorio: "+LaboratorioPrestacion+"'> <i class='fa fa-flask'></i>  &nbsp;&nbsp; "+LaboratorioPrestacion+"  </p>";
+            }
+
             //muetra el diente asociado a esta prestacion
             if(iddiente != 0){
 
-                html += "       <p class='text-bold' style='margin: 0px' data-diente='"+iddiente+"' > Diente: "+iddiente+" &nbsp;&nbsp; " +
-                        "           <img src='"+$DOCUMENTO_URL_HTTP+"/logos_icon/logo_default/diente.png' width='17px' height='17px' alt=''> " +
-                        "       </p>"
+                html += "  <p class='text-bold' style='margin: 0px' data-diente='"+iddiente+"' > Pieza: "+iddiente+" &nbsp;&nbsp; " +
+                        "     <img src='"+$DOCUMENTO_URL_HTTP+"/logos_icon/logo_default/diente.png' width='17px' height='17px' alt=''> " +
+                        "  </p>";
 
             }
 

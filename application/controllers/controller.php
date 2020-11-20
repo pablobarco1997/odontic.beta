@@ -473,7 +473,7 @@ function NavSearchPacientes(){
     return $navSearch;
 }
 
-function DateSpanish($Date = ""){
+function DateSpanish($Date = "", $SoloMes = false){
 
     global  $db ;
 
@@ -495,6 +495,12 @@ function DateSpanish($Date = ""){
 
     $dateObjm = DateTime::createFromFormat('m', $mes1 );
     $NameMes   = strftime('%B', $dateObjm->getTimestamp());
+
+    if($SoloMes!=""){ //me retorna solo el nombre del mes
+        $dateObjm = DateTime::createFromFormat('m', $SoloMes );
+        $NameMes   = strftime('%B', $dateObjm->getTimestamp());
+        return $NameMes;
+    }
 
     switch ($dia1)
     {

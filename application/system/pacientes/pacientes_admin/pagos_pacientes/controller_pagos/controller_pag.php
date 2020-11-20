@@ -101,7 +101,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                     $row[] = "";
                     $row[] = str_replace('-','/',$ob->fecha);
-                    $row[] = 'PAGO_'.str_pad($ob->idpagoCabezera, 6, "0", STR_PAD_LEFT);
+                    $row[] = 'PAG_'.str_pad($ob->idpagoCabezera, 6, "0", STR_PAD_LEFT);
                     $row[] = $ob->nombplan;
                     $row[] = $ob->mediopago;
                     $row[] = $ob->n_fact_boleta;

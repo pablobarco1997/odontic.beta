@@ -1118,7 +1118,15 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                             round(sum(d.amount), 2) amount
                         FROM tab_pagos_independ_pacientes_det d where month(d.feche_create) = month(now()) and (select count(*) from tab_conf_prestaciones p where p.fk_laboratorio = l.rowid and p.rowid = d.fk_prestacion) > 0
                             and (select count(*) from tab_plan_tratamiento_det t where t.fk_prestacion = d.fk_prestacion and t.estadodet = 'R') ) ,0
-                        ) as total_prest_realizadas
+                        ) as total_prest_realizadas , 
+                        
+                        CASE
+                            WHEN l.estado = 'A' THEN 'ACTIVO'
+                            WHEN l.estado = 'E' THEN 'DESACTIVADO'
+                            ELSE ''
+                        END AS estado ,
+                         
+                        l.estado as estadoInd
                         
                     FROM tab_conf_laboratorios_clinicos l where rowid > 0";
 
@@ -1143,10 +1151,17 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                     $rows = array();
 
+                        if($object->estadoInd=='A')
+                            $estado  = "<label class=\"label\" style=\"background-color: #D5F5E3; color: green; font-weight: bolder\">".$object->estado."</label>";
+                        else
+                            $estado  = "<label class=\"label \" style=\"background-color: #FADBD8; color: red; font-weight: bolder\">".$object->estado."</label>";
+
                         $rows[]         = "";
                         $rows[]         = $object->name;
                         $rows[]         = $object->info_adicional;
                         $rows[]         = number_format($object->total_prest_realizadas, 2,'.','');
+                        $rows[]         = $estado;
+                        $rows['estado'] = $object->estadoInd;
                         $rows['idlab']  = $object->rowid;
 
                     $data[] = $rows;
@@ -1283,17 +1298,26 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $data = [];
             $Total = 0;
 
+            $respuesta = [
+                'data' => array(),
+                'total' => 0
+            ];
 
             $sqlTotal = "";
             $table = GETPOST("table");
             $idlab = GETPOST("idlab");
+            $searchLab = GETPOST("searchLab");
 
             if($table=='PrestacionesXlaboratorio'){
-                $respuesta = listaPrestacionesLaboratorioDinamic($table, $idlab);
+                $respuesta = listaPrestacionesLaboratorioDinamic($table, $idlab, $searchLab);
             }
 
             if($table=='PagosRealizado'){
-                $respuesta = listaPrestacionesLaboratorioDinamic($table, $idlab);
+                $respuesta = listaPrestacionesLaboratorioDinamic($table, $idlab, $searchLab);
+            }
+
+            if($table=='tratamientosPrestaciones'){
+                $respuesta = listaPrestacionesLaboratorioDinamic($table, $idlab, $searchLab);
             }
 
             $output = array(
@@ -2031,7 +2055,7 @@ function crearUpdateLaboratorio($subaccion, $datos = array(), $idLaboratorio){
 }
 
 
-function listaPrestacionesLaboratorioDinamic($table, $idlab){
+function listaPrestacionesLaboratorioDinamic($table, $idlab, $searchLab = ''){
 
     global $db, $conf, $user;
 
@@ -2045,6 +2069,9 @@ function listaPrestacionesLaboratorioDinamic($table, $idlab){
     if($table=="PrestacionesXlaboratorio"){
 
         $sql = "select * from tab_conf_prestaciones where fk_laboratorio = $idlab";
+        if(!empty($searchLab)){
+            $sql .= " and descripcion like '%".$searchLab."%' ";
+        }
 
         $sqlTotal = $sql;
 
@@ -2074,7 +2101,14 @@ function listaPrestacionesLaboratorioDinamic($table, $idlab){
         $sqlp = "select 
                     p.fk_pago_cab as idpagocab, 
                     cast(p.feche_create as date) as dateff_pago, 
+                    
+                    (select ifnull(t.edit_name , concat('Plan de Tratamiento: # ',t.numero)) as nom from tab_plan_tratamiento_cab t where t.rowid = p.fk_plantram_cab) as p_tratamiento , 
+                    
                     c.descripcion as prestacion, 
+                    
+                    (select concat(d.nombre,' ',d.apellido) from tab_admin_pacientes d where d.rowid = 
+							(select t.fk_paciente from tab_plan_tratamiento_cab t where t.rowid = p.fk_plantram_cab)) as paciente , 
+							
                     (select s.usuario from tab_login_users s where s.rowid = p.fk_usuario) as users , 
                     round(p.amount, 2) as  amount , 
                     round(c.costo_x_clinica, 2) as costo_x_clinica, 
@@ -2085,6 +2119,9 @@ function listaPrestacionesLaboratorioDinamic($table, $idlab){
                 where 
                 p.fk_prestacion = c.rowid
                 and c.fk_laboratorio = $idlab ";
+        if(!empty($searchLab)){
+            $sqlp .= " and c.descripcion like '%".$searchLab."%' ";
+        }
 
         $sqlTotal = $sqlp;
 
@@ -2098,10 +2135,12 @@ function listaPrestacionesLaboratorioDinamic($table, $idlab){
                 $rows = array();
                 $rows[] = "";
                 $rows[] = date("Y/m/d", strtotime($object->dateff_pago));
-                $rows[] = 'PAGO_'.str_pad($object->idpagocab, 6, "0", STR_PAD_LEFT);
+                $rows[] = 'PAG_'.str_pad($object->idpagocab, 6, "0", STR_PAD_LEFT);
+                $rows[] = $object->p_tratamiento;
+                $rows[] = $object->paciente;
                 $rows[] = $object->prestacion;
                 $rows[] = $object->users;
-                $rows[] = $object->costo_x_clinica;
+                $rows[] = $object->costo_x_clinica; 
                 $rows[] = $object->precio_paciente;
                 $rows[] = $object->amount;
 
@@ -2110,6 +2149,63 @@ function listaPrestacionesLaboratorioDinamic($table, $idlab){
         }
 
     }
+
+    if($table=="tratamientosPrestaciones"){
+
+        $sqltra = "Select
+	                cast(pc.fecha_create as date ) as dateff_tratam , 
+                    lb.name as laboratorio , 
+                    if(pc.edit_name != '' , pc.edit_name  , 
+                            (select concat('Plan de Tratamiento',' #',pc.numero) from tab_plan_tratamiento_cab pc where pc.rowid = pd.fk_plantratam_cab) ) as trata_num ,
+                    cp.descripcion as prestacion, 
+                    (select concat(ap.nombre,' ', ap.apellido) from tab_admin_pacientes ap where ap.rowid = pc.fk_paciente) as paciente , 
+                    if(pd.fk_diente=0,'',pd.fk_diente) as pieza , 
+                    case
+                        when pd.estadodet = 'A' then 'Pendiente o En Proceso' 
+                        when pd.estadodet = 'R' then 'Realizado'
+                        else ''
+                    end as estado , 
+                    round(ifnull((select sum(amount) from tab_pagos_independ_pacientes_det p where (p.fk_plantram_det = pd.rowid and p.fk_plantram_cab = pc.rowid) and p.fk_prestacion = cp.rowid ),0), 2) as amount 
+                From 
+                    tab_conf_prestaciones cp , 
+                    tab_plan_tratamiento_det pd , 
+                    tab_plan_tratamiento_cab pc , 
+                    tab_conf_laboratorios_clinicos lb 
+                where 
+                cp.rowid = pd.fk_prestacion 
+                and cp.fk_laboratorio = lb.rowid
+                and pc.rowid = pd.fk_plantratam_cab
+                and lb.rowid = $idlab ";
+        if(!empty($searchLab)){
+            $sqltra .= " and cp.descripcion like '%".$searchLab."%' ";
+        }
+
+        $sqlTotal = $sqltra;
+
+        if($start || $length)
+            $sqltra .=" LIMIT $start,$length;";
+
+        $result = $db->query($sqltra);
+        if($result&&$result->rowCount()>0){
+            while ($object = $result->fetchObject()){
+
+                $rows = array();
+                $rows[] = "";
+//                $rows[] = $object->laboratorio;
+                $rows[] = $object->trata_num;
+                $rows[] = $object->prestacion;
+                $rows[] = $object->paciente;
+                $rows[] = $object->pieza;
+                $rows[] = $object->estado;
+                $rows[] = $object->amount;
+
+
+                $data[] = $rows;
+            }
+        }
+
+    }
+
 
     $Total = $db->query($sqlTotal)->rowCount();
 

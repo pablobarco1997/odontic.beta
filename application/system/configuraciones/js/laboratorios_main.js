@@ -34,7 +34,14 @@ var listLaboratorios = function () {
                         "</button>";
                     domMenu += "<ul class='dropdown-menu pull-left'>";
                         domMenu += "<li> <a href='#' onclick='FormModificarLaboratorio("+full['idlab']+")' > Modificar Laboratorio</a> </li>";
-                        domMenu += "<li> <a href='#'> inhabilitar </a> </li>";
+
+                        if(full['estado']=='A')
+                            domMenu += "<li> <a href='#' onclick=''> inhabilitar </a> </li>";
+
+                        if(full['estado']=='E')
+                            domMenu += "<li> <a href='#' onclick=''> habilitar </a> </li>";
+
+
                         domMenu += "<li> <a href='"+$DOCUMENTO_URL_HTTP+"/application/system/configuraciones/index.php?view=form_laboratorios_conf&v=prestacionlab&idlabora="+full['idlab']+"'> Prestación Laboratorio </a> </li>";
                     domMenu += "</ul>";
                     domMenu += "</div>";
@@ -215,8 +222,10 @@ var FormValidarPrestacion = function(){
         return false;
     else
         return true;
+
 };
 
+//
 
 //nuevo Laboratorio
 $("#crearLaboratorio").on("click", function() {
@@ -397,6 +406,8 @@ function MostrarInformacionPrestaLabo(object){
 
 }
 
+$FormTable = "";
+
 var tableDinamicPrestacion = function(table=""){
 
     if(table2!=null){
@@ -424,6 +435,8 @@ var tableDinamicPrestacion = function(table=""){
                 thead += "<th>&nbsp;</th>";
                 thead += "<th>Fecha de Pago</th>";
                 thead += "<th># Pago</th>";
+                thead += "<th># P.Tratamiento</th>";
+                thead += "<th>Paciente</th>";
                 thead += "<th>Prestación</th>";
                 thead += "<th>users autor</th>";
                 thead += "<th>Costo de Clinica</th>";
@@ -432,6 +445,23 @@ var tableDinamicPrestacion = function(table=""){
             thead += "</tr>";
         thead += "</thead>";
     }
+
+    if(table=="tratamientosPrestaciones"){
+        thead += "<thead>";
+            thead += "<tr>";
+                thead += "<th>&nbsp;</th>";
+                // thead += "<th>Laboratorio</th>";
+                thead += "<th>Tratamiento</th>";
+                thead += "<th>Prestación</th>";
+                thead += "<th>Paciente</th>";
+                thead += "<th>Pieza</th>";
+                thead += "<th>Estado</th>";
+                thead += "<th>Monto</th>";
+            thead += "</tr>";
+        thead += "</thead>";
+    }
+
+    $FormTable = table;
 
     $("#prestacionLaboratorio").html(thead);
 
@@ -482,6 +512,39 @@ var tableDinamicPrestacion = function(table=""){
         },
     });
 };
+
+//Activar y Desactivar Laboratorio
+
+
+
+//Filtros Aplicar limpiar
+$(".aplicar").click(function() {
+    FiltroLabPrestacion();
+});
+
+$(".limpiar").click(function() {
+    $("#nam_prestacion").val(null);
+    FiltroLabPrestacion();
+});
+
+function FiltroLabPrestacion(){
+
+    var  table      = $("#prestacionLaboratorio").DataTable();
+    var  accion     = "tableDinamicPrestacion";
+    var  ajaxSend   = "ajaxSend";
+    var  idlab      = $selecioneLaboratorio;
+
+    var url = $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php';
+    var newUrl = url + '?' +
+        'accion='+accion+
+        '&ajaxSend='+ajaxSend+
+        '&table='+$FormTable+
+        '&idlab='+idlab+
+        '&searchLab='+$("#nam_prestacion").val();
+
+    table.ajax.url(newUrl).load();
+
+}
 
 $(document).ready(function() {
 

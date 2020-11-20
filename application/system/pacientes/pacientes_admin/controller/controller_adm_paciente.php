@@ -837,7 +837,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         pd.fk_usuario , 
                         ifnull((SELECT usuario FROM tab_login_users s where s.fk_doc = pd.fk_usuario limit 1),'') as usuario_creator , 
                         ifnull((SELECT concat(s.nombre_doc ,' ', s.apellido_doc) as doc FROM tab_odontologos s where s.rowid = pd.realizada_fk_dentista limit 1),'') as usuario_realizado , 
-                        pd.estado_pay as estado_pago
+                        pd.estado_pay as estado_pago, 
+                        ifnull((select l.name from tab_conf_laboratorios_clinicos l where l.rowid = cp.fk_laboratorio),'') as laboratorio
                     FROM
                         tab_plan_tratamiento_det pd,
                         tab_conf_prestaciones cp
