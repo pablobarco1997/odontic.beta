@@ -2,19 +2,19 @@
 
 <?php
 
-    #SELECT DE PRESTACIONES  -------------------------------------------------------------------------------------------
+    $prestacion = '<option></option>';
+    $objectServicios =   fetchPrestacionGroupLab();
 
-    $prestacion    = "<option></option>";
-    $sqlprestacion = " SELECT * FROM tab_conf_prestaciones ";
-    $rsprestacion  =  $db->query($sqlprestacion);
-    if($rsprestacion->rowCount() > 0)
-    {
-        while ($pr = $rsprestacion->fetchObject())
-        {
-            $prestacion .= "<option value='".$pr->rowid."'>".$pr->descripcion."</option>";
+
+    foreach ($objectServicios as $key => $value){
+        $prestacion .= '<optgroup label="Laboratorio: '.$key.'">';
+        foreach ($value as $key2 => $val){
+            $prestacion .= '<option value="'.$val['id'].'">'.$val['text'].'</option>';
         }
+        $prestacion .= '</optgroup>';
     }
 
+//    echo '<pre>'; print_r($objectServicios);die();
 
 ?>
 
@@ -54,14 +54,14 @@
                                     </label>
                                 </div>
                             </li>
-                            <!--                            id del detalle de plan de tratamiento-->
+<!--                            id del detalle de plan de tratamiento-->
                             <li>
                                 <p id="detallemod" data-iddet="0"></p>
                             </li>
                         </ul>
                     </div>
                 </div>
-                <hr>
+                <hr style="margin: 5px; background-color: #e2e2e2">
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
                         <div class="table-responsive">
@@ -73,10 +73,11 @@
                     </div>
                 </div>
 
-<!--                PRESTACIOANES CATEGORIZADA  -->
-                <hr>
+                <!--PRESTACIOANES CATEGORIZADA  -->
+                <hr style="margin: 5px; background-color: #e2e2e2">
                 <div class="row">
-                    <div class="col-md-4 col-xs-12">
+
+                    <div class="form-group col-md-4 col-xs-12">
                         <div class="box_prestaciones">
                             <label for="prestacion_planform">Todas las prestaciones</label>
                             <select id="prestacion_planform" class="form-control " style="width: 100%">
@@ -84,32 +85,39 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-md-3 col-xs-12">
+                    <div class="form-group col-md-3 col-xs-12">
                         <label style="display: block">&nbsp;</label>
-                        <a href="#" class="btnhover btn" id="addprestacionPlantram"> <small> <i class="fa fa-plus"></i> &nbsp; AGREGAR PRESTACIÓN</small> </a>
+                        <a href="#" class="btnhover btn" id="addprestacionPlantram" style="background-color: #efefef; color: #333333">Agregar Prestación</a>
                     </div>
-                    <div class="col-md-5 col-xs-12">
+                    <div class="form-group col-md-5 col-xs-12">
                         <label style="display: block">&nbsp;</label>
                         <small style="color: red" id="errores_msg_addplantram"></small>
                     </div>
                 </div>
+
+                <style>
+                    tr#prestacionesDetalles th{
+                        box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+                    }
+                </style>
+
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
 
                         <div class="table-responsive">
-                            <table class="table">
+                            <table class="table" >
                                 <thead>
-                                    <tr>
+                                    <tr id="prestacionesDetalles">
                                         <th width="5%"></th>
-                                        <th title="DESCRIPCION DE LA PRESTACIÓN">PRESTACIÓN</th>
-                                        <th title="SUB-TOTAL">SUBTOTAL</th>
-                                        <th title="DESCUENTO DE CONVENIO">DESC. CONVENIO</th>
-                                        <th title="CANTIDAD DE LA PRESTACIÓN">CANTIDA</th>
-                                        <th title="DESCUENTO DE ADICIONAL">DESC. ADICIONAL</th>
-                                        <th title="TOTAL">TOTAL</th>
+                                        <th title="DESCRIPCION DE LA PRESTACIÓN">Prestación</th>
+                                        <th title="SUB-TOTAL">Subtotal</th>
+                                        <th title="DESCUENTO DE CONVENIO">Desc. Conv</th>
+                                        <th title="CANTIDAD DE LA PRESTACIÓN">Cantidad</th>
+                                        <th title="DESCUENTO DE ADICIONAL">Desc. Adicional</th>
+                                        <th title="TOTAL">Total</th>
                                     </tr>
                                 </thead>
-                                <tbody id="detalle-prestacionesPlantram">
+                                <tbody id="detalle-prestacionesPlantram" style="height: 1232px; overflow-y: auto">
                                     <tr rowspan="5">
                                         <td class="text-center" colspan="6">NO HAY DETALLE</td>
                                     </tr>
@@ -122,7 +130,7 @@
             </div>
             <div class="modal-footer">
                 <a href="#" class="btn btnhover" style="font-weight: bolder; color: green" id="guardarPrestacionPLantram">Guardar</a>
-                <a href="#" class="btn btnhover" data-dismiss="modal" style="font-weight: bolder">Close</a>
+                <a href="#" class="btn btnhover" data-dismiss="modal" style="font-weight: bolder">Cerrar</a>
 <!--                <button type="button" class="btn btn" data-dismiss="modal">Close</button>-->
             </div>
         </div>

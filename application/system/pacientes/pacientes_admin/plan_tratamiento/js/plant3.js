@@ -96,23 +96,45 @@ $('#evolucionDoct').change(function() {
 
 //ELIMINAR PRESTACION
 //ELIMINAR ESTADO DE LA PRESTACION
-function UpdateDeletePrestacionAsignada(html)
+//TAMBIEN CAMBIA EL ESTADO DE LA PRESTACION
+function UpdateDeletePrestacionAsignada(html, AuxSatus = '')
 {
     var padre      = html.parents('.detalleListaInsert');
     var status     = padre.find('.statusdet');
     var iddetplant = status.data('iddet');
 
-    //Prestacion realizada
-    if( status.data('estadodet')  == 'R' ) {
-        $('#modDeletePrestacion').modal('show');
-        $('#AceptarDeletePrestacion').attr('onclick', 'DeletePrestacion('+iddetplant+')');
-        // notificacion('Esta prestación se encuentra en estado realizado no se puede Eliminar', 'error');
+    if(AuxSatus==''){
+        //Prestacion realizada
+        if( status.data('estadodet')  == 'R' ) {
+            $('#modDeletePrestacion').modal('show');
+            $('#AceptarDeletePrestacion').attr('onclick', 'DeletePrestacion('+iddetplant+')');
+            // notificacion('Esta prestación se encuentra en estado realizado no se puede Eliminar', 'error');
+        }
+
+        //pendiente o activo
+        if( status.data('estadodet') == 'A') {
+            $('#modDeletePrestacion').modal('show');
+            $('#AceptarDeletePrestacion').attr('onclick', 'DeletePrestacion('+iddetplant+')');
+        }
     }
 
-    //pendiente o activo
-    if( status.data('estadodet') == 'A') {
-        $('#modDeletePrestacion').modal('show');
-        $('#AceptarDeletePrestacion').attr('onclick', 'DeletePrestacion('+iddetplant+')');
+    if(AuxSatus!=''){ //cambiar de estados
+        if(AuxSatus=='P'){ //cambiar el estado a EN PROCESO
+            var url = $DOCUMENTO_URL_HTTP +'/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php';
+            $.get(url, {
+                'ajaxSend':'ajaxSend',
+                'accion':'UpdateStatusPrestacion',
+                'iddetTratm':iddetplant
+            }, function(data) {
+                var respuesta = $.parseJSON(data);
+                if(respuesta['error'] == ''){
+                    fetch_plantratamiento('consultar');//REFRES LIST DETALLE
+                    notificacion('Información Actualizada', 'success');
+                }else{
+                    notificacion(respuesta['error'], 'error');
+                }
+            });
+        }
     }
 
 }

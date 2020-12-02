@@ -1911,13 +1911,50 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $datos['idpaciente'] = $idpaciente;
             $datos['idplan']     = $idplantram;
 
-            $respuesta = evoluc_listprincpl( $datos );
+            $respuesta = evoluc_listprincpl($datos);
 
-//            print_r($respuesta); die();
+            $output = array(
+                "data"            => $respuesta['datos'],
+                "recordsTotal"    => $respuesta['total'],
+                "recordsFiltered" => $respuesta['total']
+            );
+
+            echo json_encode($output);
+            break;
+
+
+        #Actualiza la prestaciones  del plan de tratamiento ----------------------
+        case 'UpdateStatusPrestacion':
+
+            $error = '';
+            $iddetTratamiento =  GETPOST("iddetTratm");
+
+            $resul = $db->query("SELECT  rowid , fk_plantratam_cab , estadodet FROM tab_plan_tratamiento_det WHERE rowid = ".$iddetTratamiento);
+            if($resul && $resul->rowCount()>0){
+
+                $objtratmdet = $resul->fetchObject();
+
+                if($objtratmdet->estadodet=='R'){
+                    $error = 'Ya se encuentra en estado <b>REALIZADO</b>';
+                }
+                if($objtratmdet->estadodet=='P'){
+                    $error = 'Ya se encuentra en estado <b>EN PROCESO</b>';
+                }
+
+                if($objtratmdet->estadodet=='A'){
+                    $result = $db->query("UPDATE `tab_plan_tratamiento_det` SET `estadodet`='P' WHERE `rowid`=".$iddetTratamiento."; ");
+                    if(!$result){
+                        $error = 'Ocurrio un error con la Operación Actualizar Estado';
+                    }
+                }
+
+            }else{
+                $error = 'No se encontro esta Prestacion <small>compruebe la Información</small>  ';
+            }
+
             $output = [
-                'data' => $respuesta ,
+               'error' => $error
             ];
-
             echo json_encode($output);
             break;
 
@@ -2225,11 +2262,16 @@ function realizarPrestacionupdate($datos = array())
 }
 
 #LIST EVOLUCIONES PRINCIPAL
-function evoluc_listprincpl( $datos )
+function evoluc_listprincpl($datos)
 {
     global  $db;
 
     $data = array();
+
+    $Total          = 0;
+    $start          = $_POST["start"];
+    $length         = $_POST["length"];
+
 
     $sqlevolucprip = "SELECT 
                         ifnull(c.edit_name, concat('Plan de Tratamiento ', 'N. ', c.numero)) plantram ,
@@ -2254,17 +2296,21 @@ function evoluc_listprincpl( $datos )
     $sqlevolucprip .= " ev.fk_paciente =  " . $datos['idpaciente'] . "  ";
 
     if( !empty( $datos['idplan'] ) ){
-
         $sqlevolucprip .= " and ev.fk_plantram_cab =  " . $datos['idplan'] . "  ";
     }
 
+    $sqlTotal = $sqlevolucprip;
+
+    if($start || $length)
+        $sqlevolucprip.=" LIMIT $start,$length;";
+
+
+    $resultTotal = $db->query($sqlTotal);
+    $Total = $resultTotal->rowCount();
+
     $rsevol = $db->query($sqlevolucprip);
-
     if( $rsevol && $rsevol->rowCount() > 0){
-
-        while ( $objevol =   $rsevol->fetchObject() )
-        {
-
+        while ( $objevol =   $rsevol->fetchObject() ) {
             $cadena_caras = array();
             $caras = json_decode($objevol->json_caras);
 
@@ -2274,14 +2320,11 @@ function evoluc_listprincpl( $datos )
             $cadena_caras[] = ($caras->oclusal=="true") ? "oclusal" : "";
             $cadena_caras[] = ($caras->lingual=="true") ? "lingual" : "";
 
-//            print_r( implode(',', array_filter( $cadena_caras )) );
-//            die();
-
             $row   = array();
             $row[] = date('Y/d/m', strtotime( $objevol->fechaevul ) );
             $row[] = $objevol->plantram;
             $row[] = $objevol->presstacion;
-            $row[] = $objevol->diente;
+            $row[] = ($objevol->diente!=0)?$objevol->diente:'No asignado';
             $row[] = $objevol->estadodiente;
             $row[] = $objevol->doct;
             $row[] = $objevol->observacion;
@@ -2292,10 +2335,77 @@ function evoluc_listprincpl( $datos )
         }
     }
 
-//    print_r($data); die();
+    $resultFinal = [
+        'datos' => $data,
+        'total' => $Total
+    ];
+
+
+    return $resultFinal;
+
+}
+
+
+function fetchPrestacionGroupLab($id = "", $name = ""){
+
+    global $db;
+
+
+    $data = [];
+
+    if($id==true)
+        return '';
+
+
+    if($name==true)
+        return '';
+
+
+
+    $Arr_prestacion  = array();
+    $Arr_laboratorio = array();
+
+    $Arr_laboratorio['0'] = array('id' => 0, 'name' => 'General');
+    $quelab   = $db->query("select rowid , name  from tab_conf_laboratorios_clinicos where estado = 'A' ");
+    $fetchlab = $quelab->fetchAll();
+    foreach ($fetchlab as $key => $value){
+        $Arr_laboratorio[$value['rowid']] = array('id' => $value['rowid'], 'name' => $value['name']);
+    }
+
+    #echo '<pre>';  print_r($Arr_laboratorio); die();
+    $sqlprestacion = "SELECT 
+                        p.rowid as id, 
+                        p.descripcion as prestacion,
+                        IFNULL((SELECT l.name FROM tab_conf_laboratorios_clinicos l WHERE l.rowid = p.fk_laboratorio),'') AS lab,
+                        p.fk_laboratorio,
+                        p.estado
+                    FROM
+                        tab_conf_prestaciones p
+                    WHERE
+                        p.estado = 'A' ";
+    $result  =  $db->query($sqlprestacion);
+
+    if($result->rowCount() > 0) {
+        while ($obj = $result->fetchObject()) {
+            $lab = "LAB(". (($obj->lab!='')?$obj->lab:'') .")";
+            if($obj->lab=='')
+                $lab='';
+            $label = $obj->prestacion." "."$lab";
+            $Arr_prestacion[$obj->fk_laboratorio][] = array('text' => $label, 'id' => $obj->id);
+        }
+    }
+
+    foreach ($Arr_laboratorio as $key => $value){
+        $data[$value['name']] =  $Arr_prestacion[$key];
+    }
+
+//    echo '<pre>'; print_r($data); die();
+
     return $data;
 
 }
+
+
 
 
 ?>

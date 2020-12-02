@@ -3,11 +3,11 @@
 function evoluciones_principal()
 {
     $('#list_evoluprinpl').DataTable({
-
-        searching: true,
+        searching: false,
+        processing:true,
         ordering:false,
-        destroy:true,
-
+        destroy:false,
+        serverSide:true,
         ajax:{
             url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
             type:'POST',
@@ -49,22 +49,61 @@ function evoluciones_principal()
 }
 
 
+function FiltrarEvolucion(){
+
+    var  table      = $("#list_evoluprinpl").DataTable();
+    var  accion     = "evolucion_listprincpl";
+    var  ajaxSend   = "ajaxSend";
+    var url = $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php';
+    var newUrl = url + '?' +
+        'accion='+accion+
+        '&ajaxSend='+ajaxSend+
+        '&idpaciente='+$id_paciente+
+        '&idplant='+$('#filt_plantram').find(':selected').val();
+
+    table.ajax.url(newUrl).load();
+
+}
+
+function AppExporPrint(){
+
+    var exporturl = $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/evoluciones/export/export_pdf_evoluciones.php?idpaciente='+$id_paciente;
+    exporturl += '&idplant='+$('#filt_plantram').find(':selected').val();
+
+    window.open(exporturl, '_blank');
+}
 
 
-//PRINCIPAL
-if($accion_evol == 'evol_listprincipal')
-{
-    $('#filt_plantram').select2({
-        placeholder: 'Seleccione una opción',
-        allowClear: true,
-        language:'es'
+$(document).ready(function() {
 
-    });
-
-    evoluciones_principal();
-
-    $('#filtrar_evoluc').click(function() {
+    if($accion_evol == 'evol_listprincipal') {
+        $('#filt_plantram').select2({
+            placeholder: 'Seleccione una opción',
+            allowClear: true,
+            language:'es'
+        });
 
         evoluciones_principal();
-    });
-}
+
+        $('#filtrar_evoluc').click(function() {
+            FiltrarEvolucion();
+        });
+
+        $('#limpiar').click(function() {
+            $('#filt_plantram').val(null).trigger('change');
+            FiltrarEvolucion();
+        });
+    }
+
+});
+
+
+//window onload
+window.onload = boxloading($boxContentViewAdminPaciente ,true);
+
+
+//window load
+$(window).on('load', function() {
+    boxloading($boxContentViewAdminPaciente ,false, 1000);
+
+});

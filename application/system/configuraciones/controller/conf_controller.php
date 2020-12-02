@@ -1113,21 +1113,17 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         l.direccion , 
                         l.telefono , 
                         l.info_adicional ,
-                        
                         ifnull( (select 
                             round(sum(d.amount), 2) amount
                         FROM tab_pagos_independ_pacientes_det d where month(d.feche_create) = month(now()) and (select count(*) from tab_conf_prestaciones p where p.fk_laboratorio = l.rowid and p.rowid = d.fk_prestacion) > 0
                             and (select count(*) from tab_plan_tratamiento_det t where t.fk_prestacion = d.fk_prestacion and t.estadodet = 'R') ) ,0
                         ) as total_prest_realizadas , 
-                        
                         CASE
                             WHEN l.estado = 'A' THEN 'ACTIVO'
                             WHEN l.estado = 'E' THEN 'DESACTIVADO'
                             ELSE ''
                         END AS estado ,
-                         
-                        l.estado as estadoInd
-                        
+                        l.estado as estadoInd     
                     FROM tab_conf_laboratorios_clinicos l where rowid > 0";
 
 
@@ -1228,8 +1224,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             $error = "";
 
-            $idlaboratorio = GETPOST("idLaboratorio");
-            $subaccion     = GETPOST("subaccion");
+            $idlaboratorio  = GETPOST("idLaboratorio");
+            $subaccion      = GETPOST("subaccion");
             $object         = (empty(GETPOST("datos")))?array():json_decode(GETPOST("datos"));
 
 
@@ -1279,11 +1275,21 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                 $result = $db->query($qu);
                 if(!$result){
-                    $error = "Ocurrio un error con la Operación Crear Prestación";
+                    $error = "Ocurrio un error con l a Operación Crear Prestación";
                 }
 
             }
-            if($subaccion=="modificar"){
+
+            if($subaccion=="modificar") {
+
+                $idp = GETPOST('idp');
+
+                $que = " UPDATE `tab_conf_prestaciones` SET `descripcion`='".$datos['nameprestacion']."', `fk_categoria`=".$datos['catprestacion'].", `valor`=".$datos['precio'].", `costo_x_clinica`=".$datos['costo'].", `precio_paciente`=".$datos['precio']." ";
+                $que .= " WHERE `rowid`=".$idp. " and fk_laboratorio = ".$idlab;
+                $result = $db->query($que);
+                if(!$result){
+                    $error = "Ocurrio un error con la Operación Modificar Prestación";
+                }
 
             }
 
@@ -1306,18 +1312,30 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $sqlTotal = "";
             $table = GETPOST("table");
             $idlab = GETPOST("idlab");
+
+            $idtratamiento = GETPOST("idtratamiento");
+            $idpacit       = GETPOST("idpacit");
+            $statusTramiento  = GETPOST("statusTratam");
+
+            $objecFiltro = (object)array(
+                "idtratamiento"     => $idtratamiento ,
+                "idpacient"         => $idpacit ,
+                "statusTratamint"   => $statusTramiento,
+                "fecha"             => GETPOST('fecha'),
+            );
+
             $searchLab = GETPOST("searchLab");
 
             if($table=='PrestacionesXlaboratorio'){
-                $respuesta = listaPrestacionesLaboratorioDinamic($table, $idlab, $searchLab);
+                $respuesta = listaPrestacionesLaboratorioDinamic($table, $idlab, $searchLab, $objecFiltro);
             }
 
             if($table=='PagosRealizado'){
-                $respuesta = listaPrestacionesLaboratorioDinamic($table, $idlab, $searchLab);
+                $respuesta = listaPrestacionesLaboratorioDinamic($table, $idlab, $searchLab, $objecFiltro);
             }
 
             if($table=='tratamientosPrestaciones'){
-                $respuesta = listaPrestacionesLaboratorioDinamic($table, $idlab, $searchLab);
+                $respuesta = listaPrestacionesLaboratorioDinamic($table, $idlab, $searchLab, $objecFiltro);
             }
 
             $output = array(
@@ -1327,6 +1345,59 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             );
             echo json_encode($output);
             break;
+
+
+        case "estadosLaboratorio":
+
+            $error = '';
+            $idlab = GETPOST('idlab');
+            $type  = GETPOST('type');
+
+            if($idlab){
+
+                if($type=='desactivar')
+                    $result = $db->query("UPDATE `tab_conf_laboratorios_clinicos` SET `estado`='E' WHERE `rowid`=".$idlab);
+                if($type=='activar')
+                    $result = $db->query("UPDATE `tab_conf_laboratorios_clinicos` SET `estado`='A' WHERE `rowid`=".$idlab);
+
+                if(!$result){
+                    $error = 'Ocurrio un error con la Operación';
+                }
+                
+            }else{
+                $error = 'Ocurrio un error con la Operación';
+            }
+
+            $output = [
+                'error' => $error
+            ];
+            echo json_encode($output);
+            break;
+
+        case "fetchPrestacionxLaboratorio":
+
+            $error = '';
+            $idprest  = GETPOST('idprestLab');
+            $idLab    = GETPOST('idlab');
+            $dataPrestacionxLaboratorio = [];
+
+            $que = "SELECT fk_categoria , descripcion , costo_x_clinica , precio_paciente FROM tab_conf_prestaciones c where c.rowid = ".$idprest." and c.fk_laboratorio = ".$idLab;
+            $result = $db->query($que);
+            if($result&&$result->rowCount()>0){
+                $dataPrestacionxLaboratorio = $result->fetchAll();
+            }else{
+                $error = 'Ocurrio un error';
+            }
+
+            #print_r($dataPrestacionxLaboratorio); die();
+
+            $output = [
+                'error' => $error ,
+                'data'  => $dataPrestacionxLaboratorio
+            ];
+            echo json_encode($output);
+            break;
+
     }
 
 
@@ -2055,7 +2126,7 @@ function crearUpdateLaboratorio($subaccion, $datos = array(), $idLaboratorio){
 }
 
 
-function listaPrestacionesLaboratorioDinamic($table, $idlab, $searchLab = ''){
+function listaPrestacionesLaboratorioDinamic($table, $idlab, $searchLab = '', $objecFiltro){
 
     global $db, $conf, $user;
 
@@ -2122,7 +2193,18 @@ function listaPrestacionesLaboratorioDinamic($table, $idlab, $searchLab = ''){
         if(!empty($searchLab)){
             $sqlp .= " and c.descripcion like '%".$searchLab."%' ";
         }
+        if(!empty($objecFiltro->idtratamiento)){
+            $sqlp .= " and p.fk_plantram_cab = ".$objecFiltro->idtratamiento;
+        }
+        if(!empty($objecFiltro->idpacient)){
+            $sqlp .= " and (select d.rowid from tab_admin_pacientes d where d.rowid = 
+							(select t.fk_paciente from tab_plan_tratamiento_cab t where t.rowid = p.fk_plantram_cab)) = ".$objecFiltro->idpacient;
+        }
+        if(!empty($objecFiltro->fecha)){
+            $sqlp .= " and cast(p.feche_create as date) = '".$objecFiltro->fecha."'";
+        }
 
+        #print_r($sqlp); die();
         $sqlTotal = $sqlp;
 
         if($start || $length)
@@ -2161,11 +2243,14 @@ function listaPrestacionesLaboratorioDinamic($table, $idlab, $searchLab = ''){
                     (select concat(ap.nombre,' ', ap.apellido) from tab_admin_pacientes ap where ap.rowid = pc.fk_paciente) as paciente , 
                     if(pd.fk_diente=0,'',pd.fk_diente) as pieza , 
                     case
-                        when pd.estadodet = 'A' then 'Pendiente o En Proceso' 
+                        when pd.estadodet = 'A' then 'Pendiente'
+						when pd.estadodet = 'P' then 'Proceso'
                         when pd.estadodet = 'R' then 'Realizado'
                         else ''
                     end as estado , 
-                    round(ifnull((select sum(amount) from tab_pagos_independ_pacientes_det p where (p.fk_plantram_det = pd.rowid and p.fk_plantram_cab = pc.rowid) and p.fk_prestacion = cp.rowid ),0), 2) as amount 
+                    pd.total as totalTratamientoPrestacion, 
+                    round(ifnull((select sum(amount) from tab_pagos_independ_pacientes_det p where (p.fk_plantram_det = pd.rowid and p.fk_plantram_cab = pc.rowid) and p.fk_prestacion = cp.rowid ),0), 2) as amount,
+                    pd.estadodet 
                 From 
                     tab_conf_prestaciones cp , 
                     tab_plan_tratamiento_det pd , 
@@ -2176,10 +2261,20 @@ function listaPrestacionesLaboratorioDinamic($table, $idlab, $searchLab = ''){
                 and cp.fk_laboratorio = lb.rowid
                 and pc.rowid = pd.fk_plantratam_cab
                 and lb.rowid = $idlab ";
+
         if(!empty($searchLab)){
             $sqltra .= " and cp.descripcion like '%".$searchLab."%' ";
         }
-
+        if(!empty($objecFiltro->idtratamiento)){
+            $sqltra .= " and pd.fk_plantratam_cab = ".$objecFiltro->idtratamiento;
+        }
+        if(!empty($objecFiltro->idpacient)){
+            $sqltra .= " and pc.fk_paciente = ".$objecFiltro->idpacient;
+        }
+        if(!empty($objecFiltro->statusTratamint)){
+            $sqltra .= " and pd.estadodet = '".$objecFiltro->statusTratamint."' ";
+        }
+        #print_r($sqltra); die();
         $sqlTotal = $sqltra;
 
         if($start || $length)
@@ -2189,6 +2284,13 @@ function listaPrestacionesLaboratorioDinamic($table, $idlab, $searchLab = ''){
         if($result&&$result->rowCount()>0){
             while ($object = $result->fetchObject()){
 
+                if($object->estadodet == 'A')
+                    $label = '<label class="label" style="background-color: #F6E944; color: #B88B1C; font-weight: bolder">PENDIENTE</label>';
+                if($object->estadodet == 'P')
+                    $label = '<label class="label" style="background-color: #7BA5E1; color: #114DA4; font-weight: bolder">EN PROCESO</label>';
+                if($object->estadodet == 'R')
+                    $label = '<label class="label" style="background-color: #D5F5E3; color: green; font-weight: bolder">REALIZADO</label>';
+
                 $rows = array();
                 $rows[] = "";
 //                $rows[] = $object->laboratorio;
@@ -2196,7 +2298,8 @@ function listaPrestacionesLaboratorioDinamic($table, $idlab, $searchLab = ''){
                 $rows[] = $object->prestacion;
                 $rows[] = $object->paciente;
                 $rows[] = $object->pieza;
-                $rows[] = $object->estado;
+                $rows[] = $label;
+                $rows[] = $object->totalTratamientoPrestacion; // valor del paciente 
                 $rows[] = $object->amount;
 
 

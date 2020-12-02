@@ -6,6 +6,10 @@
         /*padding: px;*/
     }
 
+    #headplantram th{
+        box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+    }
+
 </style>
 
 
@@ -33,10 +37,8 @@
 
      <div class="form-group col-md-6 col-xs-12">
          <ul class="list-inline pull-right">
-             <li>
-                 <p class="text-center labeltextBono " style="font-size: 1.5em; font-weight: bold"> Saldo </p>
-                 <p class="text-center labeltextBono " style="font-size: 1.5em; font-weight: bold"> <i class="fa fa-dollar"></i> <span id="saldoPagado" class="text-center"> 0.00 </span> </p>
-             </li>
+             <li><p class="text-center labeltextBono " style="font-size: 1.5em; font-weight: bold; text-shadow: 1px 1px 0.2rem #00a157;"> Saldo Deudor </p></li>
+             <li><p class="text-center labeltextBono " style="font-size: 1.5em; font-weight: bold; text-shadow: 1px 1px 0.2rem #00a157;"> <i class="fa fa-dollar"></i> <span id="saldoPagado" class="text-center"> 0.00 </span> </p></li>
          </ul>
      </div>
 
@@ -45,25 +47,25 @@
 
         <div class="table-responsive">
             <table class="table table-striped" width="100%" id="detalles_plantram">
-                <thead>
-                <tr>
-                    <th width="40%">
-                        <label style="float: left">Prestación</label>
-                        <label data-toggle="modal" id="asociarPrestacion" data-target="#detdienteplantram" style="color: #00a157; font-size: 1.4rem; cursor: pointer; float: right; padding-top: 2.5px" onclick="clearModalDetalle('todo')"> <i class="fa fa-plus-circle"></i> Cargar Prestaciones</label>
-                    </th>
-                    <th width="10%">
-                        <label for="">Realización</label>
-                    </th>
-                    <th width="15%">
-                        <label for="">Dcto Adicional</label>
-                    </th>
-                    <th width="15%">
-                        <label for="">Total</label>
-                    </th>
-                    <th width="20%">
-                        <label for="">Estado Pago</label>
-                    </th>
-                </tr>
+                <thead id="headplantram">
+                    <tr>
+                        <th width="40%">
+                            <label  style="float: left">Prestación</label>
+
+                            <a href="#detdienteplantram" id="asociarPrestacion" data-toggle="modal" onclick="clearModalDetalle('todo')" class="btnhover" style="color: #00a157; font-size: 1.4rem; cursor: pointer; float: right; padding-top: 2.5px">
+                                    <i class="fa fa-plus-circle"></i> Cargar Prestaciones</a>
+
+                        </th>
+                        <th width="10%">
+                            <label for="">Realización</label>
+                        </th>
+                        <th width="15%">
+                            <label for="">Dcto Adicional</label>
+                        </th>
+                        <th width="15%">
+                            <label for="">Total</label>
+                        </th>
+                    </tr>
                 <tr>
                     <th colspan="5" style="font-size: 1.4rem; cursor: pointer">Acciones Clinicas</th>
                 </tr>
@@ -110,22 +112,11 @@
 
 <!--    MODALES DE PLAN DE TRATAMIENTO ADD-->
     <div class="form-group col-md-12 col-xs-12">
-
-        <?php
-
-            include_once DOL_DOCUMENT.'/application/system/pacientes/pacientes_admin/plan_tratamiento/view/modal_add_prestacion_planform.php';
-
-        ?>
-
+        <?php include_once DOL_DOCUMENT.'/application/system/pacientes/pacientes_admin/plan_tratamiento/view/modal_add_prestacion_planform.php'; ?>
     </div>
+
     <div class="form-group col-md-12 col-xs-12">
-
-        <?php
-
-        include_once DOL_DOCUMENT.'/application/system/pacientes/pacientes_admin/plan_tratamiento/view/modal_realizar_prestacion.php';
-
-        ?>
-
+        <?php include_once DOL_DOCUMENT.'/application/system/pacientes/pacientes_admin/plan_tratamiento/view/modal_realizar_prestacion.php'; ?>
     </div>
 
 </div>

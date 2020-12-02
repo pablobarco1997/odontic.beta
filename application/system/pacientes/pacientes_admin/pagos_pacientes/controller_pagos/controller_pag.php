@@ -72,9 +72,17 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
         case 'list_pagos_particular':
 
-            $idpaciente   = GETPOST('idpaciente');
+            $idpaciente     = GETPOST('idpaciente');
+            $formap         = GETPOST('formapago');
+            $npago          = GETPOST('npago');
+            $plan_tratam    = GETPOST('plan_tratam');
+            $n_x_documento  = GETPOST('n_x_documento');
 
             $data = [];
+
+            $Total          = 0;
+            $start          = $_POST["start"];
+            $length         = $_POST["length"];
 
             $query = " SELECT 
                         p.rowid as idpagoCabezera, 
@@ -84,12 +92,32 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         p.rowid  n_pago, 
                         p.n_fact_boleta, 
                         p.monto, 
+                        p.observacion, 
                         p.fk_plantram as fk_plantramCab , 
                         (select pt.descripcion from tab_tipos_pagos pt where pt.rowid = p.fk_tipopago) as mediopago
                     FROM tab_pagos_independ_pacientes_cab p where p.rowid > 0 ";
+
+            if(!empty($formap))
+                $query .= " and p.fk_tipopago = $formap ";
+            if(!empty($plan_tratam))
+                $query .= " and p.fk_plantram = $plan_tratam ";
+            if(!empty($npago))
+                $query .= " and p.rowid like '%$npago%' ";
+            if(!empty($n_x_documento))
+                $query .= " and p.n_fact_boleta like '%$n_x_documento%' ";
+
+
             if($idpaciente>0){
                 $query .= " and p.fk_paciente = $idpaciente";
             }
+
+            $sqlTotal = $query;
+
+            if($start || $length)
+                $query.=" LIMIT $start,$length;";
+
+
+            $Total = $db->query($sqlTotal)->rowCount();
 
             $resul = $db->query($query);
             if($resul && $resul->rowCount()>0)
@@ -104,6 +132,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     $row[] = 'PAG_'.str_pad($ob->idpagoCabezera, 6, "0", STR_PAD_LEFT);
                     $row[] = $ob->nombplan;
                     $row[] = $ob->mediopago;
+                    $row[] = $ob->observacion;
                     $row[] = $ob->n_fact_boleta;
                     $row[] = number_format($ob->monto, 2,'.',',');
                     $row[] = "";
@@ -112,13 +141,17 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     $row['url_imprimir'] = "<a href='".DOL_HTTP."/application/system/pacientes/pacientes_admin/pagos_recibidos/export/export_pagoparticular.php?npag=$ob->n_pago&idpac=$idpaciente' target='_blank'> <i class='fa fa-print'></i> Imprimir  </a>";
                     $row['name_tratamiento'] = $name_plantratamiento;
                     $row['idPlantratamCab']  = $ob->fk_plantramCab;
+                    $row['id_pagocab']  = $ob->idpagoCabezera;
 
                     $data[] = $row;
                 }
             }
 
             $Output = [
-                'data' => $data
+                "data" => $data,
+                "recordsTotal"    => $Total,
+                "recordsFiltered" => $Total
+
             ];
 
             echo json_encode($Output);

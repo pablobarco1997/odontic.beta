@@ -36,6 +36,11 @@ if(isset($_GET['id']))
 
 }
 
+
+#controller administrador de paciente
+require_once DOL_DOCUMENT.'/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php';
+
+
 //print_r($idPaciente);
 
 ?>

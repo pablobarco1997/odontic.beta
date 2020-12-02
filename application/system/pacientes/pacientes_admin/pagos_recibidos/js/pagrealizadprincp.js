@@ -8,10 +8,11 @@ if($accionPagospacientes = "pagos_particular")
         
         $('#pag_particular').DataTable({
             searching: false,
+            processing: true,
             ordering:false,
             destroy:true,
-            paging: false,
-            serverSide:false,
+            paging: true,
+            serverSide:true,
             ajax:{
                 url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/pagos_pacientes/controller_pagos/controller_pag.php',
                 type:'POST',
@@ -31,7 +32,7 @@ if($accionPagospacientes = "pagos_particular")
                     }
                 },
                 {
-                    targets:7, 
+                    targets:8,
                     render: function (data, type, row) {
 
                         var dropdown_menu = "<div class='dropdown col-centered col-xs-1 '>";
@@ -40,7 +41,7 @@ if($accionPagospacientes = "pagos_particular")
                                 dropdown_menu += "<li>"+row['url_imprimir']+"</li>";
                                 dropdown_menu += "<li><a href='#'>Enviar Email</a></li>";
                                 dropdown_menu += "<li><a href='#detalleprestacionPagos' data-toggle='modal'  onclick='detalle_prestaciones_pagosParticulares("+row[8]+", \""+row['name_tratamiento']+"\" )'  >Mostrar detalle</a></li>";
-                                dropdown_menu += "<li><a href='#' onclick='deletePagoPrestacion("+row[8]+","+row['idPlantratamCab']+")' >Eliminar Pago</a></li>";
+                                dropdown_menu += "<li><a href='#' onclick='deletePagoPrestacion("+row['id_pagocab']+","+row['idPlantratamCab']+")' >Eliminar Pago</a></li>";
                             dropdown_menu += "</ul>";
                         dropdown_menu += "</div>";
 
@@ -158,7 +159,68 @@ if($accionPagospacientes = "pagos_particular")
         });
     }
 
-    list_pagos_particulares();
+
+    var FiltrosPagosxPacientes = function() {
+
+        var  table = $("#pag_particular").DataTable();
+        var  accion     = "list_pagos_particular";
+        var  ajaxSend   = "ajaxSend";
+
+        var n_pago         = $("#pagPrestacion").val();
+        var n_x_documento  = $("#n_x_documento").val();
+        var formaPago      = $("#formaPago").find(':selected').val();
+        var id_tratamiento = $("#busquedaxTratamiento").find(':selected').val();
+
+        var url = $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/pagos_pacientes/controller_pagos/controller_pag.php';
+        var newUrl = url + '?' +
+            'accion='+accion+
+            '&ajaxSend='+ajaxSend+
+            '&npago='+n_pago+
+            '&formapago='+formaPago+
+            '&plan_tratam='+id_tratamiento+
+            '&n_x_documento='+n_x_documento;
+
+        table.ajax.url(newUrl).load();
+
+    };
+
+    $(".aplicar").click(function() {
+        FiltrosPagosxPacientes();
+    });
+    $(".limpiar").click(function() {
+
+        $("#pagPrestacion").val(null);
+        $("#n_x_documento").val(null);
+        $("#formaPago").val(null).trigger('change');
+        $("#busquedaxTratamiento").val(null).trigger('change');
+
+        FiltrosPagosxPacientes();
+
+    });
+
+    $('#busquedaxTratamiento').select2({
+        placeholder:'buscar x Tratamiento',
+        allowClear:true ,
+        language: 'es'
+    });
+    $('#formaPago').select2({
+        placeholder:'buscar x Forma de Pago',
+        allowClear:true ,
+        language: 'es'
+    });
 
 }
+
+$(document).ready(function() {
+
+    list_pagos_particulares();
+});
+
+
+//window onload
+window.onload = boxloading($boxContentViewAdminPaciente ,true);
+//window load
+$(window).on("load", function() {
+    boxloading($boxContentViewAdminPaciente ,false, 1000);
+});
 

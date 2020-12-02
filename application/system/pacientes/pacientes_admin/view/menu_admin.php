@@ -187,12 +187,12 @@
 
                                 <li class="lipaddi <?= $array_Pagos_pacientes->active ?>">
                                     <a class="lista" href="<?= $array_Pagos_pacientes->url ; ?>">&nbsp;&nbsp;
-                                        <i class="fa fa-shopping-cart"></i>&nbsp;&nbsp; <b>Recaudación (<small>PAGOS</small>)</b>  </a>
+                                        <i class="fa fa-shopping-cart"></i>&nbsp;&nbsp; <b>Recaudaciones</b>  </a>
                                 </li>
 
                                 <li class="lipaddi <?= $array_PagosRealizados->active ?>">
                                     <a class="lista" href="<?= $array_PagosRealizados->url ; ?>">&nbsp;&nbsp;
-                                        <i class="fa fa-briefcase"></i>&nbsp;&nbsp; <b>Pagos Realizados</b>  </a>
+                                        <i class="fa fa-briefcase"></i>&nbsp;&nbsp; <b>Recaudaciones Realizados</b>  </a>
                                 </li>
 
                             </ul>

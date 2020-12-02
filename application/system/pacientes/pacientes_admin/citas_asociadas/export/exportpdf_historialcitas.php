@@ -108,6 +108,10 @@ $pdf .= '
                 padding: 3px;
             }
             
+            td{
+                vertical-align: top
+            }
+            
             </style>';
 
 $pdf .= "
@@ -242,14 +246,14 @@ $mpdf->bleedMargin = 4;
 $mpdf->SetDirectionality('ltr');
 $mpdf->showImageErrors = 'true';
 $mpdf->SetDisplayMode('fullpage');
-$mpdf->SetTitle('directorio de pacientes' );
+$mpdf->SetTitle('Historial de Citas' );
 
 $mpdf->AddPage('L');
 
 $mpdf->WriteHTML($body.$pdf);
 
 
-$mpdf->Output('ejemplo.pdf', 'I');
+$mpdf->Output('Historial de Citas.pdf', 'I');
 //print_r($mpdf); die();
 
 

@@ -34,13 +34,13 @@ var listLaboratorios = function () {
                         "</button>";
                     domMenu += "<ul class='dropdown-menu pull-left'>";
                         domMenu += "<li> <a href='#' onclick='FormModificarLaboratorio("+full['idlab']+")' > Modificar Laboratorio</a> </li>";
-
-                        if(full['estado']=='A')
-                            domMenu += "<li> <a href='#' onclick=''> inhabilitar </a> </li>";
-
-                        if(full['estado']=='E')
-                            domMenu += "<li> <a href='#' onclick=''> habilitar </a> </li>";
-
+                        if(full['estado']=='A'){
+                            domMenu += "<li> <a href='#' onclick='DesactivarActivarPrestacion(1,"+full['idlab']+")'> inhabilitar </a> </li>";   
+                        }
+                        if(full['estado']=='E'){
+                            domMenu += "<li> <a href='#' onclick='DesactivarActivarPrestacion(0,"+full['idlab']+")'> habilitar </a> </li>";
+                        }
+                        domMenu += "<li> <a href='"+$DOCUMENTO_URL_HTTP+"/application/system/configuraciones/index.php?view=form_laboratorios_conf&v=solicitudes_lab&idlabora="+full['idlab']+"'> Solicitudes </a> </li>"; 
 
                         domMenu += "<li> <a href='"+$DOCUMENTO_URL_HTTP+"/application/system/configuraciones/index.php?view=form_laboratorios_conf&v=prestacionlab&idlabora="+full['idlab']+"'> Prestación Laboratorio </a> </li>";
                     domMenu += "</ul>";
@@ -249,7 +249,6 @@ $("#nuevoUpdateLaboratorio").on("click", function() {
     if( FormaValidLaboratorio() == false)
         return false;
 
-
     var idLaboratorio = $("#InputLaboratorio").prop("dataset").idlaboratorio;
     var subaccion     = $("#InputLaboratorio").prop("dataset").subaccion;
 
@@ -285,7 +284,8 @@ $("#crearPresatacionAsoLabo").on("click", function() {
         'ajaxSend': 'ajaxSend',
         'idlab': $selecioneLaboratorio,
         'subaccion': subaccion,
-        'datos': datos
+        'datos': datos,
+        'idp': $("[name='modificarPrestacionLab']:checked").val()
     };
 
     $.ajax({
@@ -353,6 +353,70 @@ function NuevoModificarLaboratorio(idLaboratorio = 0, sub){
     });
 
 }
+
+//obtengo la data de la prestacion x Laboratorio
+var fetchPrestacionMod = function() {
+
+    var id = "";
+
+    //si en caso tengo selecionado un checked
+    if($("[name='modificarPrestacionLab']:checked").length>0)
+    {
+        if($("[name='modificarPrestacionLab']:checked").length==1){
+
+                id = $("[name='modificarPrestacionLab']:checked").val();
+                if(id=="" || id==0){
+                    notificacion('Ocurrio un error de parametros consulte con soporte', 'error');
+                    return false;
+                }else{
+
+                    var data_serviciosLab = [];
+                    $.ajax({
+                        url:$DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php',
+                        type:'POST',
+                        data:{
+                          'accion':'fetchPrestacionxLaboratorio',
+                          'ajaxSend':'ajaxSend',
+                          'idprestLab': id,
+                          'idlab': $("#laboratorioPrestSeleccion").find(':selected').val()
+                        },
+                        dataType:'json',
+                        cache:false,
+                        async:false,
+                        success:function(resp) {
+                            if(resp['error']==''){
+                                data_serviciosLab = resp['data'];
+                            }else{
+                                notificacion('Ocurrio un error con la Operación', 'error');
+                            }
+                        }
+                    });
+                    console.log(data_serviciosLab);
+
+                    if(data_serviciosLab.length>0){
+
+                        $("#Labprestacion")
+                            .attr("data-subaccion", "modificar");
+
+                        var rp = data_serviciosLab[0];
+                        $("#catprestacion").val(rp["fk_categoria"]).trigger("change");
+                        $("#name_prestacion").val(rp["descripcion"]).trigger("keyup");
+                        $("#costo_prestacion").val(rp["costo_x_clinica"]).trigger("keyup");
+                        $("#precio_prestacion").val(rp["precio_paciente"]).trigger("keyup");
+
+                        return 'Mod';
+                    }
+
+                }
+        }else{
+            notificacion('Solo puede selecionar una opción', 'error');
+            // $("#ModalPrestacion_LaboratorioClinico").modal("hide");
+        }
+
+    }
+
+
+};
 
 function filtroLaboratorio(){
 
@@ -427,6 +491,9 @@ var tableDinamicPrestacion = function(table=""){
                 thead += "<th>Precio de Cliente</th>";
             thead += "</tr>";
         thead += "</thead>";
+
+        $("#busqx_tratamiento,#busqx_paciente,#busqx_estadoTratamiento,#busqx_xFecha").css("display","none");
+
     }
 
     if(table=="PagosRealizado"){
@@ -435,7 +502,7 @@ var tableDinamicPrestacion = function(table=""){
                 thead += "<th>&nbsp;</th>";
                 thead += "<th>Fecha de Pago</th>";
                 thead += "<th># Pago</th>";
-                thead += "<th># P.Tratamiento</th>";
+                thead += "<th># P. Tratamiento</th>";
                 thead += "<th>Paciente</th>";
                 thead += "<th>Prestación</th>";
                 thead += "<th>users autor</th>";
@@ -444,6 +511,9 @@ var tableDinamicPrestacion = function(table=""){
                 thead += "<th>Total pagado</th>";
             thead += "</tr>";
         thead += "</thead>";
+
+        $("#busqx_tratamiento,#busqx_paciente,#busqx_xFecha").css("display","block");
+        $("#busqx_estadoTratamiento").css("display","none");
     }
 
     if(table=="tratamientosPrestaciones"){
@@ -455,10 +525,13 @@ var tableDinamicPrestacion = function(table=""){
                 thead += "<th>Prestación</th>";
                 thead += "<th>Paciente</th>";
                 thead += "<th>Pieza</th>";
-                thead += "<th>Estado</th>";
-                thead += "<th>Monto</th>";
+                thead += "<th>Estado de Tratamiento</th>";
+                thead += "<th>Saldo Prestación</th>"; // valor de la prestacion x Tratamiento
+                thead += "<th>Pagado o cancelado x Paciente</th>";
             thead += "</tr>";
         thead += "</thead>";
+
+        $("#busqx_tratamiento,#busqx_paciente,#busqx_estadoTratamiento,#busqx_xFecha").css("display","block");
     }
 
     $FormTable = table;
@@ -514,7 +587,26 @@ var tableDinamicPrestacion = function(table=""){
 };
 
 //Activar y Desactivar Laboratorio
+var DesactivarActivarPrestacion = function(type,idlab){
 
+    var url = $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php';
+    var parametros = {
+        'accion': 'estadosLaboratorio',
+        'ajaxSend':'ajaxSend',
+        'idlab':idlab,
+        'type':(type==1)?'desactivar':'activar'
+    };
+    $.get(url, parametros, function(data) {
+        var respuesta = $.parseJSON(data);
+        if(respuesta['error'] == ''){
+            filtroLaboratorio();
+            notificacion('Información Actualizada', 'success');
+        }else{
+            filtroLaboratorio();
+            notificacion('Ocurrio un error con la Operación', 'error');
+        }
+    });
+};
 
 
 //Filtros Aplicar limpiar
@@ -524,15 +616,23 @@ $(".aplicar").click(function() {
 
 $(".limpiar").click(function() {
     $("#nam_prestacion").val(null);
-    FiltroLabPrestacion();
+    $("#busxPacientes").val(null).trigger('change');
+    $("#busxTratamiento").val(null).trigger('change');
+    $("#busqx_xFecha").val(null);
+    $(".aplicar").click();
 });
 
 function FiltroLabPrestacion(){
 
-    var  table      = $("#prestacionLaboratorio").DataTable();
-    var  accion     = "tableDinamicPrestacion";
-    var  ajaxSend   = "ajaxSend";
-    var  idlab      = $selecioneLaboratorio;
+    var  table        = $("#prestacionLaboratorio").DataTable();
+    var  accion       = "tableDinamicPrestacion";
+    var  ajaxSend     = "ajaxSend";
+    var  idlab        = $selecioneLaboratorio;
+    var  idTratam     = $("#busxTratamiento").find(":selected").val();
+    var  idPaciente   = $("#busxPacientes").find(":selected").val();
+    var  estadTratam  = $("#busxEstadoTratamiento").find(":selected").val();
+    var  fecha        = $("#busqx_xFechaInput").val();
+    // alert(fecha);
 
     var url = $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php';
     var newUrl = url + '?' +
@@ -540,13 +640,42 @@ function FiltroLabPrestacion(){
         '&ajaxSend='+ajaxSend+
         '&table='+$FormTable+
         '&idlab='+idlab+
-        '&searchLab='+$("#nam_prestacion").val();
+        '&searchLab='+$("#nam_prestacion").val()+
+        '&idtratamiento='+idTratam+
+        '&idpacit='+idPaciente+
+        '&statusTratam='+estadTratam+
+        '&fecha='+fecha;
 
     table.ajax.url(newUrl).load();
 
 }
 
+$("#ModalPrestacion_LaboratorioClinico").on("show.bs.modal", function() {
+
+    if(fetchPrestacionMod()=='Mod'){
+
+    }else{
+        $("#Labprestacion")
+            .attr("data-subaccion", "nuevo");
+
+        $("#catprestacion").val(null).trigger("change");
+        $("#name_prestacion").val(null).trigger("keyup");
+        $("#costo_prestacion").val(null).trigger("keyup");
+        $("#precio_prestacion").val(null).trigger("keyup");
+    }
+
+});
+
 $(document).ready(function() {
+
+    $("#costo_prestacion").maskMoney({precision:2,thousands:'', decimal:'.',allowZero:true,allowNegative:true, defaultZero:true,allowEmpty: true});
+    $("#precio_prestacion").maskMoney({precision:2,thousands:'', decimal:'.',allowZero:true,allowNegative:true, defaultZero:true,allowEmpty: true});
+
+    $("#catprestacion").select2({
+        placeholder:'Selecione una opción',
+        allowClear:false ,
+        language:'es'
+    });
 
 });
 

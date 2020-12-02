@@ -19,9 +19,11 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $data  = [];
 
             $Fecha       = !empty(GETPOST('fecha'))?explode('-',GETPOST('fecha')):"";
-            $idPaciente = GETPOST('idpaciente');
+            $idPaciente  = GETPOST('idpaciente');
+            $status      = GETPOST('status');
+            $n_citas     = GETPOST('n_citas');
 
-            $resultado = obtenerCitasSendNoti( $idPaciente, $Fecha );
+            $resultado = obtenerCitasSendNoti( $idPaciente, $Fecha, $status, $n_citas );
 
             $output = array(
                 "data"            => $resultado['datos'],
@@ -36,7 +38,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 }
 
 
-function obtenerCitasSendNoti( $idPaciente, $Fecha ){
+function obtenerCitasSendNoti( $idPaciente, $Fecha, $Status, $n_citas ){
 
     global  $db;
 
@@ -69,8 +71,22 @@ function obtenerCitasSendNoti( $idPaciente, $Fecha ){
     if(!empty($Fecha))
         $sql .= " and cast(n.fecha as date) between '$fechaInicio' and '$fechafin' ";
 
+    if($Status=='ConfirmadoAsistir')
+        $sql .= " and (select nc.action from tab_noti_confirmacion_cita_email nc where nc.fk_noti_email = n.rowid  limit 1) = 'ASISTIR' ";
 
+    if($Status=='ConfirmadoNoAsistir')
+        $sql .= " and (select nc.action from tab_noti_confirmacion_cita_email nc where nc.fk_noti_email = n.rowid  limit 1) = 'NO_ASISTIR' ";
+
+    if($Status=='NoConfirmado')
+        $sql .= " and ifnull((select nc.action from tab_noti_confirmacion_cita_email nc where nc.fk_noti_email = n.rowid  limit 1),'') = '' ";
+
+    if($n_citas!="")
+        $sql .= " and n.fk_cita like '%$n_citas%' ";
+
+
+    $sql .= " order by n.fecha desc ";
     $sqlTotal = $sql;
+
     if($start || $length)
         $sql.=" LIMIT $start,$length;";
 

@@ -19,18 +19,56 @@ if(isset($_GET['v']) && !empty($_GET['v'])){
     die();
 }
 
+
+
+$optionPaciente = "<option></option>";
+$sql = "select * from tab_admin_pacientes where estado = 'A'";
+$rs = $db->query($sql);
+if($rs&&$rs->rowCount()>0){
+    while ($rows = $rs->fetchObject()){
+        $optionPaciente .= '<option value="'.$rows->rowid.'">'.$rows->nombre.''.$rows->apellido.'</option>';
+    }
+}
+
+
+$optionTratamiento  = "<option></option>";
+$sqlOptionPlantCab = "SELECT 
+                            c.rowid , 
+                            ifnull(c.edit_name, concat('Plan de Tratamiento ', 'N. ', c.numero)) plantram ,
+                            concat('Doc(a) ', ' ', ifnull( (select concat( od.nombre_doc , ' ', od.apellido_doc ) as nomb from tab_odontologos od where od.rowid = c.fk_doc), 'No asignado')) as encargado,
+                            (select concat(p.nombre,' ',p.apellido) from tab_admin_pacientes p where c.fk_paciente = p.rowid) as paciente
+                          FROM tab_plan_tratamiento_cab c where c.estados_tratamiento != 'E' ";
+
+$rsOption = $db->query($sqlOptionPlantCab);
+if($rsOption && $rsOption->rowCount()>0){
+    while ($obOption = $rsOption->fetchObject()){
+        $optionTratamiento .= "<option value='$obOption->rowid'> $obOption->plantram  &nbsp;&nbsp; $obOption->encargado &nbsp;&nbsp; Paciente: $obOption->paciente </option>";
+    }
+}
+
+
 ?>
 
 <div class="box box-solid">
     <div class="box-header with-border">
         <div class="form-group col-xs-12 col-sm-12 col-md-12 no-margin">
             <h4 class="no-margin"><span><b>
+        
                         <?php
                             if($v=="laboratorios")
                                 echo "Laboratorios Clinicos";
 
                             if($v=="prestacionlab")
                                 echo "Prestaciones de Laboratorios Clinicos";
+
+                            if($v=="solicitudes_lab"){
+                                if(isset($_GET['idlabora'])){
+                                    if(!empty($_GET['idlabora'])){
+                                        $objectLab = $db->query("select * from tab_conf_laboratorios_clinicos c where c.rowid = ".($_GET['idlabora'])." limit 1 ")->fetchObject();
+                                    }
+                                }
+                                echo "Solicitudes de (LAB) ".$objectLab->name;
+                            } 
                         ?>
                     </b></span></h4>
         </div>
@@ -47,13 +85,12 @@ if(isset($_GET['v']) && !empty($_GET['v'])){
                     <li>&nbsp;&nbsp;</li>
                     <li><a class="btn " href="<?= DOL_HTTP?>/application/system/configuraciones/index.php?view=form_laboratorios_conf&v=prestacionlab" style="border-left: 2px solid #212f3d; color: #333333"> <i class="fa fa-list-ul"></i> &nbsp; Prestaciones de Laboratorio</a></li>
                     <li>&nbsp;&nbsp;</li>
-                    <li><a class="btn disabled_link3" href="#" style="border-left: 2px solid #212f3d; color: #333333"> <i class="fa fa-sticky-note-o"></i> &nbsp; Solicitudes</a></li>
                 </ul>
                 <br>
             </div>
 
 
-            <?php if($v=='laboratorios') { ?>
+            <?php if( $v=='laboratorios') { ?>
 
             <div id="cont_laboratorio" class="row">
 
@@ -88,7 +125,7 @@ if(isset($_GET['v']) && !empty($_GET['v'])){
 
                     <!-- Modal content-->
                     <div class="modal-content" >
-                        <div class="modal-header modal-diseng"">
+                        <div class="modal-header modal-diseng">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                             <h4 class="modal-title"><span>Laboratorio</span></h4>
                             <input type="text" class="hidden" id="InputLaboratorio" data-idlaboratorio="0" data-subaccion="nuevo">
@@ -146,7 +183,8 @@ if(isset($_GET['v']) && !empty($_GET['v'])){
             <?php } ?>
 
 
-            <?php if($v=='prestacionlab') { ?>
+            <?php if($v=='prestacionlab') 
+            { ?>
 
 
                 <div id="cont_Prestacionlaboratorio" class="row">
@@ -187,9 +225,41 @@ if(isset($_GET['v']) && !empty($_GET['v'])){
                         <div class="form-group col-md-12 col-xs-12" style="background-color: #f4f4f4; padding: 25px">
                             <h3 class="no-margin"><span>Filtrar Prestaciones x Laboratorio</span></h3>
                             <div class="row">
+
                                 <div class="form-group col-md-4 col-sm-12 col-xs-12">
                                     <label for="">Nombre de Prestación</label>
                                     <input type="text" class="form-control" name="nam_prestacion" id="nam_prestacion">
+                                </div>
+
+                                <div class="form-group col-md-8 col-sm-12 col-xs-12" id="busqx_tratamiento">
+                                    <label for="">busqueda x Tratamiento</label>
+                                    <select name="busxTratamiento" id="busxTratamiento" class="form-control" style="width: 100%">
+                                        <?= $optionTratamiento; ?>
+                                    </select>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-4 col-sm-12 col-xs-12" id="busqx_paciente">
+                                    <label for="">busqueda x Paciente</label>
+                                    <select name="busxPacientes" id="busxPacientes" class="form-control" style="width: 100%">
+                                        <?= $optionPaciente;  ?>
+                                    </select>
+                                </div>
+
+                                <div class="form-group col-md-4 col-sm-12 col-xs-12" id="busqx_estadoTratamiento">
+                                    <label for="">busqueda x Estado de Tratmiento</label>
+                                    <select name="busxEstadoTratamiento" id="busxEstadoTratamiento" class="form-control" style="width: 100%">
+                                        <option value=""></option>
+                                        <option value="A">Pendiente</option>
+                                        <option value="P">En Proceso</option>
+                                        <option value="R">Realizado</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-4 col-sm-12 col-xs-12" id="busqx_xFecha">
+                                    <label for="">busqueda x Fecha</label>
+                                    <input type="date" class="form-control" id="busqx_xFechaInput">
                                 </div>
                             </div>
 
@@ -268,7 +338,7 @@ if(isset($_GET['v']) && !empty($_GET['v'])){
                     <div class="modal-dialog">
 
                         <div class="modal-content" >
-                            <div class="modal-header modal-diseng"">
+                            <div class="modal-header modal-diseng">
                             <button type="button" class="close" data-dismiss="modal">&times;</button>
                             <h4 class="modal-title"><span>Prestación</span></h4>
                             <input type="text" id="Labprestacion" data-subaccion="nuevo" class="hidden">
@@ -361,10 +431,10 @@ if(isset($_GET['v']) && !empty($_GET['v'])){
 
                     $(window).on("load", function() {
 
-                        $("#laboratorioPrestSeleccion").select2({
+                        $("#laboratorioPrestSeleccion, #busxTratamiento, #busxPacientes, #busxEstadoTratamiento").select2({
                             placeholder:"Selecione una opción",
-                            language:"es",
-                            allowClear:true
+                            allowClear:true,
+                            language:'es'
                         });
 
                         if($selecioneLaboratorio!=null){
@@ -383,6 +453,94 @@ if(isset($_GET['v']) && !empty($_GET['v'])){
 
             <?php } ?>
 
+
+<!--        Mod Solicitudes de lavoratorios-->
+            <?php if($v=='solicitudes_lab')
+            { ?>
+
+
+                <div id="cont_SolicitudLaboratorio" class="row">
+
+                    <div class="form-group col-md-12 col-lg-12 col-xs-12">
+                        <ul class="list-inline" style="border-bottom: 1px solid #333333; border-top: 1px solid #333333; padding: 3.5px">
+                            <li><a href="#FiltrarAgenda" class="btnhover " id=""  style="font-weight: bolder; color: #333333; " data-toggle="collapse" > &nbsp;<i class="fa fa-search"></i> Filtrar Información &nbsp;</a> </li>
+                        </ul>
+                    </div>
+
+                    <div class="form-group col-md-8 col-lg-8 col-xs-12 margin-bottom">
+                        <table id="informacionPrestacion" class="none" style="display: none;" width="100%">
+                            <tr style="border-top: 1px solid #e2e2e2">
+                                <td style="width: 25%; font-weight: bolder">Nombre Laboratorio:</td>
+                                <td id="nameLab" style="padding-left: 10px"></td>
+                            </tr>
+                            <tr style="border-top: 1px solid #e2e2e2">
+                                <td style="width: 25%; font-weight: bolder">Dirección:</td>
+                                <td id="DirecLab" style="padding-left: 10px"></td>
+                            </tr>
+                            <tr style="border-top: 1px solid #e2e2e2">
+                                <td style="width: 25%; font-weight: bolder">Teléfono:</td>
+                                <td id="telefLab" style="padding-left: 10px"></td>
+                            </tr>
+                            <tr style="border-top: 1px solid #e2e2e2">
+                                <td style="width: 25%; font-weight: bolder">Información Adicional:</td>
+                                <td id="infoLab" style="padding-left: 10px"></td>
+                            </tr>
+                        </table>
+                        <br>
+                    </div>
+
+                    <div id="FiltrarAgenda" class="form-group col-xs-12 col-md-12 collapse" aria-expanded="true" style="">
+                        <div class="form-group col-md-12 col-xs-12" style="background-color: #f4f4f4; padding: 25px">
+                            <h3 class="no-margin"><span>Filtrar Prestaciones x Laboratorio</span></h3>
+                            <div class="row">
+                                <div class="form-group col-md-4 col-sm-12 col-xs-12">
+                                    <label for="">Nombre de Prestación</label>
+                                    <input type="text" class="form-control" name="nam_prestacion" id="nam_prestacion">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group col-md-12 no-margin">
+                                    <ul class="list-inline pull-right no-margin">
+                                        <li>  <button class="limpiar btn   btn-block  btn-default" style="float: right; padding: 10px"> &nbsp; &nbsp; Limpiar &nbsp; &nbsp;</button> </li>
+                                        <li>  <button class="aplicar btn   btn-block  btn-success" style="float: right; padding: 10px"> &nbsp;  &nbsp;Aplicar busqueda &nbsp;</button> </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-sm-12 col-lg-12 col-xs-12">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <script src="<?= DOL_HTTP ?>/application/system/configuraciones/js/laboratorios_main.js"></script>
+
+                <script>
+                    var ElementLab = <?php echo  json_encode($objectLab); ?>;
+                    var tableloadLaboratorio = function(){
+
+                    };
+                    $(window).on('load', function() {
+
+                        MostrarInformacionPrestaLabo(ElementLab);
+
+                    });
+
+                </script>
+
+    
+            <?php }?>
+        
         </div>
     </div>
 </div>

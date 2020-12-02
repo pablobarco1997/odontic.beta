@@ -2,7 +2,7 @@
 var interval_notification;
 
 var timeOut  = 1000;
-var timeReal = 4000;
+var timeReal = 8000;
 
 var url    = $DOCUMENTO_URL_HTTP + "/application/controllers/controller_peticiones_globales.php";
 var paramt = { 'ajaxSend':'ajaxSend', 'accion':'notification_'};
@@ -133,10 +133,23 @@ function Htmlnotificacion( $data , $N ) {
 
 //drop Static
 $('.messages-menu').on({
-    "shown.bs.dropdown": function() { alert("as"); this.closable = false; },
+    "shown.bs.dropdown": function() { this.closable = false; },
     "click":             function() { this.closable = true; },
     "hide.bs.dropdown":  function() { return this.closable; }
 });
+
+
+//click Agendar Citas
+if( $('#nuevoGuardarCitas').length > 0){
+    $('#nuevoGuardarCitas').click(function(){
+        $.get(url, paramt , function(data) {
+            var HTML = $.parseJSON(data);
+            if(HTML['error'] == ""){
+                Htmlnotificacion( HTML.data, HTML.N_noti );
+            }
+        });
+    }); 
+}
 
 
 //Filtrar x Fecha

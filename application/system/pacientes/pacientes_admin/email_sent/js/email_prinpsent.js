@@ -62,6 +62,8 @@ function AplicarBusqueda(){
 
     var table        = $("#mailSentTable").DataTable();
     var fecha        = $("#startDate").val();
+    var status       = $("#estadoEmailConfPaci").find(':selected').val();
+    var n_citas      = $("#busqN_Cita").val();
     var accion       = 'list_mail_sent';
     var ajaxSend     = 'ajaxSend';
 
@@ -70,7 +72,9 @@ function AplicarBusqueda(){
     var newUrl = url+'?'+
         'accion='+accion+
         '&ajaxSend='+ajaxSend+
-        '&fecha='+fecha;
+        '&fecha='+fecha+
+        '&status='+status+
+        '&n_citas='+n_citas;
 
     table.ajax.url(newUrl).load();
 
@@ -81,6 +85,8 @@ $(".aplicar").click(function() {
 });
 $(".limpiar").click(function() {
     $("#startDate").val(null);
+    $("#busqN_Cita").val(null);
+    $("#estadoEmailConfPaci").val(null).trigger('change');
     AplicarBusqueda();
 });
 
@@ -133,6 +139,12 @@ $(document).ready(function() {
 
     $('.rango span').click(function() {
         $(this).parent().find('input').click();
+    });
+
+    $('#estadoEmailConfPaci').select2({
+        placeholder:'Selecione una opción',
+        allowClear:true,
+        language:'es'
     });
 
 });

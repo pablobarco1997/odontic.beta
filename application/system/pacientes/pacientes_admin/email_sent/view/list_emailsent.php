@@ -24,6 +24,19 @@
                     <span class="input-group-addon" style="border-radius: 0"><i class="fa fa-calendar"></i></span>
                 </div>
             </div>
+            <div class="form-group col-md-5 col-xs-12">
+                <label for="">Estado</label>
+                <select name="estadoEmailConfPaci" id="estadoEmailConfPaci" class="form-control" style="width: 100%;">
+                    <option value=""></option>
+                    <option value="ConfirmadoAsistir">Confirmado (Asistir)</option>
+                    <option value="ConfirmadoNoAsistir">Confirmado (No Asiste)</option>
+                    <option value="NoConfirmado">No Confirmado</option>
+                </select>
+            </div>
+            <div class="form-group col-md-3 col-xs-12">
+                <label for="">buscar N. Cita</label>
+                <input type="text" class="form-control" id="busqN_Cita" name="busqN_Cita">
+            </div>
             <div class="form-group col-md-12 col-xs-12">
                 <ul class="list-inline pull-right">
                     <li>  <button class="limpiar btn   btn-block  btn-default" id="limpiarFiltro" name="limpiarFiltro" style="float: right; padding: 10px"> &nbsp; &nbsp; Limpiar &nbsp; &nbsp;</button> </li>

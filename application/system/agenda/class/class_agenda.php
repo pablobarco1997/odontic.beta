@@ -158,14 +158,14 @@ class admin_agenda{
     }
 
     #crear plan de tratamiento detalle
-    public function create_plantratamientodet()
+    public function create_plantratamientodet($idLaboratorio = 0)
     {
 
         $error = '';
 
         $descAdicional = !empty($this->tramdet_descadicional) ? $this->tramdet_descadicional : 0.00;
 
-        $sql  = "INSERT INTO tab_plan_tratamiento_det  (`fk_plantratam_cab`, `fk_prestacion`, `fk_diente`, `json_caras`, `sub_total`, `desc_convenio`, `desc_adicional`, `total`, `cantidad`, detencion, fk_usuario) ";
+        $sql  = "INSERT INTO tab_plan_tratamiento_det  (`fk_plantratam_cab`, `fk_prestacion`, `fk_diente`, `json_caras`, `sub_total`, `desc_convenio`, `desc_adicional`, `total`, `cantidad`, detencion, fk_usuario, fk_laboratorio) ";
         $sql .= "VALUES(";
         $sql .= " ".$this->tramdet_fk_tramcab." , ";
         $sql .= " ".$this->tramdet_fk_prestacion." , ";
@@ -177,11 +177,12 @@ class admin_agenda{
         $sql .= " ".$this->tramdet_total." , ";
         $sql .= " ".$this->tramdet_cantidad." , ";
         $sql .= " '".$this->tramdet_detencion."' ,  "; #detencion permanente - permanente
-        $sql .= " ".$this->tramdet_fk_usuario."  ";
+        $sql .= " ".$this->tramdet_fk_usuario." ,  ";
+        $sql .= " ".$idLaboratorio."  ";
+//        $sql .= " '".(($idLaboratorio>0)?'P':'')."' ";
         $sql .= ");";
 
-//        print_r($sql);
-//        die();
+//        print_r($sql); die();
         $rs = $this->db->query($sql);
         if(!$rs){
             $error = 'Ocurrió un error con la Operacion guardar detalle, Consulte con soporte Técnico';

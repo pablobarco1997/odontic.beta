@@ -85,21 +85,9 @@
     <?php
 
     if(isset($_GET['v']) && $_GET['v'] == 'planform')
-    {
-        ?>
-
-        <?php
-
-            include_once DOL_DOCUMENT.'/application/system/pacientes/pacientes_admin/plan_tratamiento/view/add_plan_tratam.php';
-
-        ?>
-
-
-    <?php
-
-    }else{
-
-        ?>
+    { ?>
+       <?php include_once DOL_DOCUMENT.'/application/system/pacientes/pacientes_admin/plan_tratamiento/view/add_plan_tratam.php'; ?>
+    <?php }else{ ?>
 
 
         <!-- breadcrumbs -->
@@ -167,8 +155,8 @@
 
                 <div class="form-group col-md-12 col-xs-12">
                     <ul class="list-inline pull-right">
-                        <li>  <button class="limpiar btn   btn-block  btn-default" id="filtrar_evoluc" style="float: right; padding: 10px"> &nbsp; &nbsp; Limpiar &nbsp; &nbsp;</button> </li>
-                        <li>  <button class="aplicar btn   btn-block  btn-success" id="limpiarFiltro" style="float: right; padding: 10px"> &nbsp;  &nbsp;Aplicar busqueda &nbsp;</button> </li>
+                        <li>  <button class="limpiar btn   btn-block  btn-default" id="limpiarFiltro" style="float: right; padding: 10px"> &nbsp; &nbsp; Limpiar &nbsp; &nbsp;</button> </li>
+                        <li>  <button class="aplicar btn   btn-block  btn-success" id="filtrar_evoluc" style="float: right; padding: 10px"> &nbsp;  &nbsp;Aplicar busqueda &nbsp;</button> </li>
                     </ul>
                 </div>
 

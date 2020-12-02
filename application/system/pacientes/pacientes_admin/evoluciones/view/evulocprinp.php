@@ -2,8 +2,7 @@
 
     $accion = "";
 
-    if(isset($_GET['v']) && $_GET['v'] == 'list_evul')
-    {
+    if(isset($_GET['v']) && $_GET['v'] == 'list_evul'){
         $accion = 'evol_listprincipal';
     }
 
@@ -18,25 +17,25 @@
 <div class="form-group col-xs-12 col-md-12 col-lg-12">
 
 
-    <?php  if(isset($_GET['v']) && $_GET['v'] == 'list_evul'){ ?>
+    <?php
+        #Evoluciones Principal
+        if(isset($_GET['v']) && $_GET['v'] == 'list_evul'){ ?>
 
         <div class="form-group col-md-12 col-xs-12">
             <label for="">LISTA DE COMPORTAMIENTOS</label>
             <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px">
-                <li>
-                    <a data-toggle="collapse" data-target="#contentFilter" style="color: #333333" class="btnhover btn btn-sm " id="fitrar_document"> <b>  ▼ &nbsp;Filtrar <i></i> </b> </a>
-                </li>
-
+                <li> <a data-toggle="collapse" data-target="#contentFilter" style="color: #333333" class="btnhover btn btn-sm " id="fitrar_document"> <b>  ▼ &nbsp;Filtrar <i></i> </b> </a> </li>
+                <li> <a href="#" style="color: #333333" class="btnhover btn btn-sm " id="imprimirEvolucion" onclick="AppExporPrint()"> <i class="fa fa-print"></i> <b> Imprimir <i></i> </b> </a> </li>
             </ul>
 
-            <div class="contentFilter collapse row" id="contentFilter" >
-                <br>
-                <div class="col-md-12 col-xs-12">
+            <div class="form-group col-xs-12 col-md-12 col-lg-12 contentFilter collapse " id="contentFilter" style="background-color: #f4f4f4; padding-top: 15px">
 
-                    <div class="form-group col-md-4 col-xs-12">
-                        <label for="#">Planes de Tratamiento</label>
-                        <select class="form-group  select2_max_ancho" id="filt_plantram">
-                            <option value=""></option>
+                <div class="form-group col-md-12 col-xs-12 col-lg-12"> <h3 class="no-margin"><span>Filtrar Evoluciones</span></h3> </div>
+
+                <div class="form-group col-md-8 col-xs-12 col-sm-12">
+                    <label>Planes de Tratamiento</label>
+                    <select class="form-control" id="filt_plantram" style="width: 100%">
+                        <option value=""></option>
                             <?php
                               $sqldoctPlantram = "SELECT 
                                                 c.rowid , 
@@ -52,12 +51,15 @@
                               }
                             ?>
                         </select>
-                    </div>
-
-                    <div class="form-group col-md-12 col-xs-12">
-                        <a href="#" class="btn btnhover btn-block" id="filtrar_evoluc" style="font-weight:  bolder; color: green">Buscar</a>
-                    </div>
                 </div>
+
+                <div class="form-group col-md-12 col-xs-12">
+                    <ul class="list-inline pull-right">
+                        <li>  <button class="limpiar btn   btn-block  btn-default" id="limpiar" style="float: right; padding: 10px"> &nbsp; &nbsp; Limpiar &nbsp; &nbsp;</button> </li>
+                        <li>  <button class="aplicar btn   btn-block  btn-success" id="filtrar_evoluc" style="float: right; padding: 10px"> &nbsp;  &nbsp;Aplicar busqueda &nbsp;</button> </li>
+                    </ul>
+                </div>
+
             </div>
         </div>
 
@@ -72,8 +74,8 @@
                             <th>Plan de Tratamiento</th>
                             <th>Prestación</th>
                             <th>Pieza</th>
-                            <th>Estado de Diente</th>
-                            <th>Doctor Encargado</th>
+                            <th>Estado de Pieza</th>
+                            <th>Odontolog@ Encargado</th>
                             <th>observación</th>
                             <th>Caras</th>
                         </tr>
@@ -83,4 +85,6 @@
         </div>
 
     <?php }?>
+
+
 </div>

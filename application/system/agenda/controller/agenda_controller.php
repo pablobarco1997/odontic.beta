@@ -348,10 +348,16 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         $agenda->tramdet_detencion  = $detencion; #DETENCION TEMPORAL O PERMANENTE
                         $agenda->tramdet_fk_usuario = $conf->login_id; #EL USUARIO QUE LA CREO
 
-//                        print_r($agenda);
-//                        die();
+                        #Obtengo el id del laboratorio
+                        $idLab                      = 0;
+                        $queLab   = "select * from tab_conf_laboratorios_clinicos l , tab_conf_prestaciones p where p.fk_laboratorio = l.rowid and p.rowid = ".$item['prestacion']." limit 1";
+                        $resulLab = $db->query($queLab);
+                        if($resulLab && $resulLab->rowCount()>0){
+                            $objectLab = $resulLab->fetchObject();
+                            $idLab = $objectLab->rowid;
+                        }
 
-                        $error = $agenda->create_plantratamientodet();
+                        $error = $agenda->create_plantratamientodet($idLab);
 
                     }
 
@@ -361,7 +367,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
 //                die();
                 #modificar detalle
-                if( $iddetalleplan > 0){
+                if( $iddetalleplan > -1 && 1 == 0)
+                {
 
                     foreach ($datos as $key => $item){
 
@@ -375,8 +382,9 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         $agenda->tramdet_total          = $item['total'];
                         $agenda->tramdet_cantidad  = $item['cantidad'];
 
+//                        $iddetalleplan = $db->query("select ifnull(l.rowid,'0') as idlab from tab_conf_laboratorios_clinicos l , tab_conf_prestaciones p where p.fk_laboratorio = l.rowid and p.rowid = ".$item['prestacion']." limit 1")->fetchObject()->idlab;
 
-                        $error = $agenda->Updateplantratmdetalle($iddetalleplan);
+                        $error = $agenda->Updateplantratmdetalle();
                     }
 
                 }

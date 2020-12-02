@@ -105,9 +105,10 @@ if($accion == 'addplan')
             var fk_prestacion      = tratramientodet[i]['fk_prestacion'];
             var subtotal           = tratramientodet[i]['subtotal'];
             var descAdicional      = tratramientodet[i]['descadicional'];
-            var realizacion        = (tratramientodet[i]['estadodet'] == 'R') ? 'Realizado' : 'Pendiente';
             var statusdet          = tratramientodet[i]['estadodet']; //estado de la prestacion
             var total1             = tratramientodet[i]['total'];
+
+            var realizacion        = "";  //estado realizado , procesos o pendiente
 
             var estado_pago        = tratramientodet[i]['estado_pago'];
 
@@ -116,6 +117,14 @@ if($accion == 'addplan')
             { estadoPago = '<i class="fa fa-dollar"></i> &nbsp;Pagado'; }
             if(estado_pago == 'PS')
             { estadoPago = '<i class="fa fa-dollar"></i> &nbsp;Saldo'; }
+
+            //Estado detalle
+            if(statusdet=='A') //Pendiente
+            { realizacion = '<label class="label" style="background-color: #F6E944; color: #B88B1C; font-weight: bolder;font-size: 0.8em">PENDIENTE</label>' }
+            if(statusdet=='P') //En Proceso
+            { realizacion = '<label class="label" style="background-color: #7BA5E1; color: #114DA4; font-weight: bolder;font-size: 0.8em">EN PROCESO</label>' }
+            if(statusdet=='R') //En Proceso
+            { realizacion = '<label class="label" style="background-color: #D5F5E3; color: green; font-weight: bolder;font-size: 0.8em">REALIZADO</label>' }
 
             //comportamiento realizar prestacion
             var ImgRealizadoChecked = $DOCUMENTO_URL_HTTP+"/logos_icon/logo_default/unchecked-checkbox.png"; //No realizado
@@ -151,9 +160,10 @@ if($accion == 'addplan')
 
 
             //ESTADO DE LAS PRESTACION
-            // A = ACTIVO
+            // A = PENDIENTE O ACTIVA
             // E = ELIMINADO
             // R = PRESTACION REALIZADA
+            // P = EN PROCESO
             html += "<tr class='detalleListaInsert'>";
             html += "" +
 
@@ -185,9 +195,10 @@ if($accion == 'addplan')
 
 
             html +=  "          <a class='btn btn-xs text-bold btnhover'  style='cursor:pointer;color: #9f191f' onclick='UpdateDeletePrestacionAsignada($(this))' > <i class='fa fa-trash'></i> Eliminar  </a>" +
-                "               <a style='cursor: pointer' data-toggle='collapse' data-target='#masInformacion-"+i+"' class='btn btn-xs text-bold btnhover'> <i class='fa fa-info-circle'></i> Mas información</a> &nbsp;" +
+                "               <a style='cursor: pointer' data-toggle='collapse' data-target='#masInformacion-"+i+"' class='btn btn-xs text-bold btnhover'> <i class='fa fa-info-circle'></i> Mas información</a>" +
                 "               <a href='#detdienteplantram' data-toggle='modal' class='btn btn-xs text-bold btnhover hide'  style='cursor: pointer'  > <i class='fa fa-edit'></i> Modificar</a>" +
-                "               <a class='btn btn-xs text-bold btnhover'  style='cursor: pointer'  > "+ estadoPago +" </a>" +
+                "               <a class='btn btn-xs text-bold btnhover "+((estadoPago=='')?'hidden':'')+"'  style='cursor: pointer'> "+ estadoPago +" </a>" +
+                "               <a class='btn btn-xs text-bold btnhover'  style='cursor: pointer' onclick='UpdateDeletePrestacionAsignada($(this), \"P\")' > "+ ((statusdet=='A')?"En Proceso":"") +" </a>" +
 
                 "       <div class='masInformacion col-xs-12 col-md-12 collapse' id='masInformacion-"+i+"'>" +
                 "           <p class='text-justify no-margin'> " +
@@ -221,6 +232,7 @@ if($accion == 'addplan')
                " </td>";
 
         //estado pagado
+        /*
         html += "<td>  " +
                     "   <div class='form-group col-md-12 col-xs-12'>" +
                     "       <div class='text-center'>" +
@@ -228,7 +240,7 @@ if($accion == 'addplan')
                     "           <p style='display: inline-block; color: #d10d10'> <i class='fa fa-circle'> </i> </p>" +
                     "       </div>" +
                     "   </div>  " +
-             " </td>";
+             " </td>"; */
 
             html += "</tr>";
 
@@ -727,6 +739,9 @@ if($accion == 'addplan')
         }else{
             notificacion('Debe seleccionar una prestación', 'error');
         }
+
+        $("#prestacion_planform").val(null).trigger('change');
+
     });
 
     //eliminar row del modal detalles de prestaciones

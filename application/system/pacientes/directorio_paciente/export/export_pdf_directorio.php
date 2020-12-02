@@ -77,13 +77,14 @@ $pdf .= '<style>
                 padding: 3px; 
             }
             
+            
             </style>';
 
 $pdf .= "
     <br>
     <table  width='100%' class='tables' style='margin-top: 25px'>
         <tr  style='width: 100%; '>
-            <td style='text-align: center'> <h2> Directorio de Pacientes</h2> </td>
+            <td style='text-align: center; background-color: #f0f0f0' > <h2> Directorio de Pacientes</h2> </td>
         </tr>
     </table>    
         ";
@@ -96,12 +97,12 @@ $pdf .= "
 
 $pdf .= "<table width='100%' class=\"tables\">";
     $pdf .= "<thead>
-                <tr class='tables'>
-                    <th>Paciente</th>
-                    <th>Cedula</th>
-                    <th>E-mail</th>
-                    <th>Telefono</th>
-                    <th>Género</th>
+                <tr class='tables' style=\"background-color: #f0f0f0\">
+                    <th class='tables' style='font-size: 1.2rem'>Paciente</th>
+                    <th class='tables' style='font-size: 1.2rem'>Cedula</th>
+                    <th class='tables' style='font-size: 1.2rem'>E-mail</th>
+                    <th class='tables' style='font-size: 1.2rem'>Telefono</th>
+                    <th class='tables' style='font-size: 1.2rem'>Género</th>
                 </tr>
             </thead>
             <tbody>";
