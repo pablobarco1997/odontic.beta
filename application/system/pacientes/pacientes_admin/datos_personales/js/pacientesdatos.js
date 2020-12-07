@@ -50,6 +50,7 @@ function obtenerDatosP($id)
                     //$HTTP_DIRECTORIO_ENTITY esta variable global de js contiene el directorio si alguna vez fue creado
                     img.setAttribute('src', $DOCUMENTO_URL_HTTP + '/logos_icon/' + $HTTP_DIRECTORIO_ENTITY + '/' + data['icon']);
                     $('#imgpaciente').append(img);
+                    $('#imgClasica').remove(); //remuevo la img anterior
 
                     $TieneImagenAsociada = true;
                 }else{
@@ -132,12 +133,13 @@ $('#file_icon').change(function(e){
 
         var iconpaciente =  $padre.find('.iconpaciente');
 
-        if(iconpaciente.length > 0){
+        if(iconpaciente.length > 0)
             iconpaciente.remove();
-        }
 
-        fontIcon.css('display', 'block');
-        Icon.val('');
+        var im = '<img src="'+$DOCUMENTO_URL_HTTP+'/logos_icon/logo_default/avatar_none.ico" alt="" width="140px"  height="140px" class="iconpaciente img-circle" id="imgClasica">';
+        $("#imgClasica").remove();
+        $("#imgpaciente").append($(im));
+        Icon.val(null);
 
     }
 

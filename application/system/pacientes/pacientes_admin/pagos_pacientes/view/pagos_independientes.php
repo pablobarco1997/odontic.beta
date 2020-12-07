@@ -136,12 +136,12 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
 								<label for="checkeAllCitas"></label>
 							</span>
                          </th>
-                         <th width="35%">PRESTACIÓN</th>
-                         <th width="10%">TOTAL</th>
-                         <th width="10%">ABONADO</th>
-                         <th width="10%">PENDIENTE</th>
-                         <th width="10%">ESTADO</th>
-                         <th width="10%">ABONAR</th>
+                         <th width="35%">Prestación</th>
+                         <th width="10%">Total</th>
+                         <th width="10%">Abonado</th>
+                         <th width="10%">Pendiente</th>
+                         <th width="10%">Estado</th>
+                         <th width="10%">Abonar</th>
                      </tr>
                  </thead>
 
@@ -154,8 +154,8 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
                         </td>
                     </tr>
                  </tfoot>
-
              </table>
+             <br>
          </div>
      </div>
 

@@ -1,4 +1,7 @@
 
+$boxHomeInicio = $("#ContentboxHomeInicio");
+
+
 function Npresupuestos() {
     var url = $DOCUMENTO_URL_HTTP + '/application/controllers/controller_peticiones_globales.php';
     var Data = {
@@ -59,6 +62,9 @@ $("#startDate").on("change", function() {
     Npresupuestos();
 });
 
+
+window.onload = boxloading($boxHomeInicio ,true);
+
 $(window).on("load", function() {
 
     $('#startDate').daterangepicker({
@@ -108,8 +114,17 @@ $(window).on("load", function() {
         $(this).parent().find('input').click();
     });
 
-    obtenerPacientesxDate();
-    CitasAnuladaxDateAtendidos();
-    Npresupuestos();
+
+    setTimeout(()=>{
+        $('#startDate').data('daterangepicker').setStartDate(YearDinamic+'/01/01');
+        $('#startDate').data('daterangepicker').setEndDate(YearDinamic+'/12/31');}
+    ,1500);
+
+    // obtenerPacientesxDate();
+    // CitasAnuladaxDateAtendidos();
+    // Npresupuestos();
+
+
+    boxloading($boxHomeInicio ,true, 1500);
 
 });

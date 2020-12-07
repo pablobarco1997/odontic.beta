@@ -188,7 +188,9 @@
                 </tr>
             </thead>
         </table>
+        <br><br><br><br><br>
     </div>
+
 </div>
 
 <script src="<?= DOL_HTTP ?>/application/system/agenda/js/agent.js"></script>

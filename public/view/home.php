@@ -29,7 +29,7 @@
 <div class="row">
 
         <div class="col-md-12 col-xs-12">
-           <div class="box box-solid">
+           <div class="box box-solid" id="ContentboxHomeInicio">
                <div class="box-header with-border">
                    <i class="fa fa-dashcube"></i>
                </div>

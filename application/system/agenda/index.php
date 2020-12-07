@@ -26,6 +26,8 @@ if(isset($_GET['view']))
 
 }
 
+global $db, $user;
+
 ?>
 
 
@@ -33,6 +35,7 @@ if(isset($_GET['view']))
 
     $DOCUMENTO_URL_HTTP        = "<?= DOL_HTTP ?>";
     $keyGlobal                 = "<?= KEY_GLOB ?>"; //KEY GLOBAL
+    $ID_PERFIL                 = "<?= $user->idPerfil ?>"; //Varible global para controlar los permisos
 
 </script>
 

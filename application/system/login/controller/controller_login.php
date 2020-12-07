@@ -54,6 +54,8 @@ if(isset($_POST['ajaxSend']) || isset($_GET['ajaxSend']))
                             $_SESSION['usuario']                = $usuario;
                             $_SESSION['entidad']                = $respuesta['entity'];
                             $_SESSION['id_users_2']             = $row->id_login_2; #rowid de la data de la clinica id usuario 2
+                            $_SESSION['fk_perfil']              = $respuesta['fk_perfiles']; #El id fk_perfil  para comprobar que tipos de permisos tienen
+                            $_SESSION['admin']                  = $respuesta['admin'];
 
 
                             $_SESSION['id_Entidad']             = $respuesta['id_Entidad'];
@@ -145,14 +147,16 @@ function concretar_validacion_usuario_coneccion_entidad($user, $pass)
     $celularClinica     = "";
     $emailClinica       = "";
     $logoClinica        = "";
+    $admin              = 0;
 
-    $login_entidad        = "";
+    $login_entidad      = "";
+    $idPerfil           = "";
 
     $con1 = new CONECCION_ENTIDAD(); //ME CONECTO CON LA ENTIDAD
 
 
 
-    $sql = "SELECT rowid , nombre_user , password_user, email , nombre , apellido, id_usuario , estado, idcedula, fk_perfiles, entity, fk_entidad,  session as session_user_u  FROM tab_login_entity WHERE  to_base64(nombre_user) = to_base64(replace('$user',' ','')) and password_user = md5('$pass') and estado = 'A' ";
+    $sql = "SELECT rowid , nombre_user , password_user, email , nombre , apellido, id_usuario , estado, idcedula, fk_perfiles, entity, fk_entidad,  session as session_user_u, fk_perfiles, admin  FROM tab_login_entity WHERE  to_base64(nombre_user) = to_base64(replace('$user',' ','')) and password_user = md5('$pass') and estado = 'A' ";
     $resp = $con1::CONNECT_ENTITY()->query($sql);
 
 //    print_r($sql); die();
@@ -182,8 +186,11 @@ function concretar_validacion_usuario_coneccion_entidad($user, $pass)
                         $celularClinica             = $fil->celular;
                         $emailClinica               = $fil->email;
                         $logoClinica                = $fil->logo;
+                        $admin                      = $row->admin;
+
 
                         $login_entidad              = $row->rowid;  #ID LOGIN ENTIDAD
+                        $idPerfil                   = $row->fk_perfiles;  #id Perfil del Usuario
 
                         #Session iniciada
 //                        $squpdate = "UPDATE `tab_login_entity` SET `session`= 1 WHERE `rowid`=".$row->rowid." and  entity = '".$row->entity."' and fk_entidad = ".$row->fk_entidad." ;";
@@ -220,6 +227,8 @@ function concretar_validacion_usuario_coneccion_entidad($user, $pass)
         'emailClinica'          => $emailClinica,
         'logoClinica'           => $logoClinica,
         'login_entidad'         => $login_entidad,
+        'fk_perfiles'           => $idPerfil,
+        'admin'                 => $admin,
     ];
 
     return [

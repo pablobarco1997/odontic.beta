@@ -96,7 +96,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             case 'pacientesxDate':
 
                 $date       = GETPOST("date");
-                $arr_date   = explode("-", $date);
+                $arr_date   = explode('-', $date);
                 $dateInicio = str_replace('/','-',$arr_date[0]);
                 $dateFin    = str_replace('/','-',$arr_date[1]);
 
@@ -146,6 +146,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 $sql    = "select count(*) as presupuestos from tab_plan_tratamiento_cab where estados_tratamiento in('A','S') and fecha_create between '$dateInicio' and '$dateFin' ";
                 $resul  = $db->query($sql)->fetchObject();
 
+//                print_r($sql); die();
                 $output = [
                     'presupuestos' => $resul->presupuestos,
                 ];
@@ -177,14 +178,18 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             $error = "";
 
-            if(isset($_SESSION['is_open'])){
+            if( isset($_SESSION['is_open']) ){
+
                 $notification = $conf->ObtnerNoficaciones($db, false);
                 $info = info_noti( $notification );
+
             }else{
+
                 $info           = [];
                 $notification   = [];
                 $error          = "Ocurrio un error";
             }
+
 //            echo '<pre>';print_r($info);die();
             $output = [
               'data'   => ($info!="")?$info:array(),
@@ -332,6 +337,22 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 'data' => $valid ,
                 'object' => $data
             ];
+            echo json_encode($output);
+            break;
+
+        case 'ConsultarTypePermisos':
+
+
+            $error     = '';
+            $idaction  = GETPOST('actionPermiso');
+            $IdModule  = GETPOST('idModule');
+
+            $valid = PermitsModule($IdModule, $idaction);
+
+            $output = [
+                'valid' => $valid
+            ];
+
             echo json_encode($output);
             break;
 

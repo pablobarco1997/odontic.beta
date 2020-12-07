@@ -531,7 +531,53 @@ function DateSpanish($Date = "", $SoloMes = false){
 
     return $likeDate;
 
+}
 
+function PermitsModule($idModule = "", $action = ""){
+
+    global $user;
+
+    #CONECCIONA ENTIDADES
+    $cn = new CONECCION_ENTIDAD();
+
+    /*
+     * action Permisos
+     *
+     * 1 => consultar
+     * 2 => agregar
+     * 3 => modificar
+     * 4 => eliminar
+     * */
+
+    $valid = "";
+
+    if(!$user->admin){
+
+        #Consulto el perfil nuevamente
+        $GetPerfil = $cn::CONNECT_ENTITY()->query("select fk_perfiles as idPerfil from tab_login_entity where rowid = ".$user->id_entidad_login." limit 1")->fetchObject()->idPerfil;
+
+        if($user->idPerfil!=0 && !empty($idModule) && !empty($action) && $GetPerfil!=0 ){
+
+            $query = "SELECT count(*) count FROM tab_permisos_user where fk_perfil_module = ".$GetPerfil." and fk_modulo = ".$idModule." and fk_action_permisos = ".$action;
+            $result = $cn::CONNECT_ENTITY()->query($query);
+            if($result){
+                if($result->rowCount()>0){
+                    if($result->fetchObject()->count == 1){
+                        $valid = true;
+                    }
+                }
+            }else{
+                $valid = false;
+            }
+        }else{
+            $valid = false;
+        }
+
+    }else{
+        $valid = true;
+    }
+
+    return $valid;
 }
 
 ?>

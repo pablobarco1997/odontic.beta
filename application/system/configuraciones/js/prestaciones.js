@@ -6,6 +6,8 @@ function load_table_prestaciones() {
         searching: true,
         ordering:false,
         destroy:true,
+        serverSide: true,
+        processing:true,
         ajax:{
             url: $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php',
             type:'POST',
@@ -35,8 +37,9 @@ function load_table_prestaciones() {
             "oAria": {
                 "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
                 "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-            }
-
+            },
+            "search": "_INPUT_",
+            "searchPlaceholder": "busqueda por Prestación"
         },
 
     });
@@ -89,7 +92,8 @@ function invalic_prestaciones(){
             'subaccion'        : $accion_prestacion,
             'label_prestacion' : prestacion.val(),
             'cat_prestacion'   : categoria.find(':selected').val(),
-            'costo_prestacion' : valorPrestacion.val(), 'convenio': $('#convenioConf').find('option:selected').val()
+            'costo_prestacion' : valorPrestacion.val(), 'convenio': $('#convenioConf').find('option:selected').val(),
+            'explicacion'      : $('#explicacionInfo').val()
         };
 
         $.ajax({
@@ -167,6 +171,7 @@ function fecth_updatePrestacion( $idprestacion ){
                 $('#prestacion_descr').val( vl.descripcion );
                 $('#valorPrestacion').val( vl.valor );
                 $('#convenioConf').val((vl.fk_convenio == 0)?null : vl.fk_convenio).trigger('change');
+                $('#explicacionInfo').val(vl.explicacion);
 
             }else{
                 notificacion(resp.error, 'error');
@@ -176,12 +181,14 @@ function fecth_updatePrestacion( $idprestacion ){
     });
 }
 
-function eliminar_prestacion($id){
+function ActivarDesactivarServicios($id, Element){
+
+    var statusService = Element.prop('dataset').status;
 
     $.ajax({
         url: $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php',
         type:'POST',
-        data: {'accion':'eleminar_prestacion', 'ajaxSend':'ajaxSend', 'id': $id} ,
+        data: {'accion':'eleminar_prestacion', 'ajaxSend':'ajaxSend', 'id': $id, 'statusPrestacion': statusService} ,
         dataType:'json',
         async:false,
         success: function(resp){
@@ -190,9 +197,14 @@ function eliminar_prestacion($id){
                 notificacion( resp.error , 'error');
 
             }else{
-
                 notificacion('Información Actualizada', 'success');
-                location.href = $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/index.php?view=form_prestaciones';
+                // location.href = $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/index.php?view=form_prestaciones';
+                //   load_table_prestaciones(); //resfresco la table list servicios
+
+                var table = $("#listprestacionestable").DataTable();
+                table.page.info();
+                var url = $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php'+'?accion=list_prestaciones'+'&ajaxSend=ajaxSend';
+                table.ajax.url(url).load();
             }
         }
     });

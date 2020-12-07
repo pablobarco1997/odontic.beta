@@ -637,6 +637,11 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
     global $db, $permisos;
 
 
+    if(!PermitsModule(2,1 ))
+        $PermisoConsultar = " 1<>1 ";
+    else
+        $PermisoConsultar = "";
+
     $Total          = 0;
     $start          = $_POST["start"];
     $length         = $_POST["length"];
@@ -704,6 +709,7 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
         $sql .= " and d.rowid like '%$n_citas%' ";
     }
 
+    $sql .= $PermisoConsultar;
     /*
     if ($colum_ord == 3) {
         $sql .= " order by 2 $direcc_ord";

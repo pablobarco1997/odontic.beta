@@ -1,10 +1,16 @@
-<style>
 
-</style>
 
 <?php
+
+    $Year = date("Y");
+
     require_once DOL_DOCUMENT.'/application/system/reportes/view/modal_views_reporte.php';
+
 ?>
+
+<script>
+    var YearDinamic = <?= $Year ?>;
+</script>
 
 <div class="form-group col-xs-12 col-md-12">
     <br>

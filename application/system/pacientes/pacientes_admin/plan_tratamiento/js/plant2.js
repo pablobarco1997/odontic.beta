@@ -599,7 +599,7 @@ if($accion == 'addplan')
             var totales   = padre.find('.total').text();
 
             //Si el Plan de Tratamiento se encuentra en estado a A activo
-            if(getEstado == 'A' || getEstado == 'R'){
+            if(getEstado == 'A' || getEstado == 'P' || getEstado == 'R'){
                 Total += parseFloat(totales);
             }
             if(getEstado == 'R'){

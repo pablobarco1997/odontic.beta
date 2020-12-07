@@ -62,7 +62,7 @@
                     <div class="form-horizontal">
 
                         <div class="form-group">
-                            <label class="control-label col-sm-2" for="conf_cat_prestaciones">Categoría:</label>
+                            <label class="control-label col-sm-3" for="conf_cat_prestaciones">Categoría:</label>
                             <div class="col-sm-8 col-xs-12">
                                 <div class="input-group">
                                     <select name="conf_cat_prestaciones" id="conf_cat_prestaciones" class=" invalic_prestaciones" style="width: 100%">
@@ -77,7 +77,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label col-sm-2" for="prestacion_descr">Prestación o Servicio:</label>
+                            <label class="control-label col-sm-3 " for="prestacion_descr">nombre de Prestación:</label>
                             <div class="col-sm-8">
                                 <input type="email" class="form-control invalic_prestaciones" id="prestacion_descr" name="prestacion_descr">
                                 <small style="color: red;" id="msg_prestaciones"></small>
@@ -85,10 +85,18 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label col-sm-2" for="valorPrestacion">Costo &nbsp; <i class="fa fa-dollar"></i>:</label>
+                            <label class="control-label col-sm-3" for="valorPrestacion">Costo $:</label>
                             <div class="col-sm-8">
                                 <input type="text" class="form-control invalic_prestaciones" id="valorPrestacion" autocomplete="off" name="valorPrestacion">
                                 <small style="color: red;" id="msg_valor"></small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-sm-3" for="explicacionInfo">Explicación (<small>opcional</small>):</label>
+                            <div class="col-sm-8">
+                                <textarea name="explicacionInfo" id="explicacionInfo" class="form-control" cols="30" rows="4"></textarea>
+<!--                                <small style="color: red;" id="msg_valor"></small>-->
                             </div>
                         </div>
 
@@ -213,7 +221,7 @@
 
                 <div style="padding: 10px">
                     <div class="form-group">
-                        <small style="color:#eb9627; font-weight: bolder "> <i class="fa fa-info-circle"></i> Crear Categoria - la pagina se refrescara al momento de crear la categoria </small>
+                        <small style="color:#eb9627; font-weight: bolder "> <i class="fa fa-info-circle"></i> Crear Categoria </small>
                     </div>
                     <div class="form-group">
                         <label for="">Nombre</label>
@@ -245,7 +253,7 @@
         <div class="modal-content">
             <div class="modal-header modal-diseng">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">LISTA DE PRESTACIONES</h4>
+                <h4 class="modal-title"><b>Lista de Prestaciones</b></h4>
             </div>
             <div class="modal-body">
                    <div class="form-group">
@@ -255,21 +263,17 @@
                                     <tr>
                                         <th WIDTH="5%">Fecha creación</th>
                                         <th WIDTH="35%">Descripción</th>
-                                        <th WIDTH="35%">Categoría</th>
-                                        <th WIDTH="10%">Costo<i class="fa fa-dollar"></i></th>
-                                        <th width="5%">&nbsp;</th>
+                                        <th WIDTH="15%">Categoría</th>
+                                        <th WIDTH="10%">Costo de Paciente $</th>
+                                        <th width="5%">Acciones</th>
                                     </tr>
                                </thead>
                            </table>
                        </div>
                    </div>
-
                 </div>
-
             </div>
-
         </div>
-
     </div>
 </div>
 

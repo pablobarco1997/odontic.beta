@@ -26,12 +26,12 @@ $sql = "select * from tab_admin_pacientes where estado = 'A'";
 $rs = $db->query($sql);
 if($rs&&$rs->rowCount()>0){
     while ($rows = $rs->fetchObject()){
-        $optionPaciente .= '<option value="'.$rows->rowid.'">'.$rows->nombre.''.$rows->apellido.'</option>';
+        $optionPaciente .= '<option value="'.$rows->rowid.'">'.$rows->nombre.' '.$rows->apellido.'</option>';
     }
 }
 
 
-$optionTratamiento  = "<option></option>";
+$optionTratamiento = "<option></option>";
 $sqlOptionPlantCab = "SELECT 
                             c.rowid , 
                             ifnull(c.edit_name, concat('Plan de Tratamiento ', 'N. ', c.numero)) plantram ,
@@ -46,6 +46,14 @@ if($rsOption && $rsOption->rowCount()>0){
     }
 }
 
+$optionODontolog = "<option></option>";
+$sqlOdont = "select rowid, concat(nombre_doc, ' ', apellido_doc) as odont from tab_odontologos where estado = 'A'";
+$result = $db->query($sqlOdont);
+if($result && $result->rowCount()>0){
+    while ($obOdon = $result->fetchObject()){
+        $optionODontolog .= "<option value='$obOdon->rowid'>$obOdon->odont</option>";
+    }
+}
 
 ?>
 
@@ -259,7 +267,7 @@ if($rsOption && $rsOption->rowCount()>0){
                                 </div>
                                 <div class="form-group col-md-4 col-sm-12 col-xs-12" id="busqx_xFecha">
                                     <label for="">busqueda x Fecha</label>
-                                    <input type="date" class="form-control" id="busqx_xFechaInput">
+                                    <input type="text" class="form-control" id="busqx_xFechaInput" readonly>
                                 </div>
                             </div>
 
@@ -464,6 +472,7 @@ if($rsOption && $rsOption->rowCount()>0){
                     <div class="form-group col-md-12 col-lg-12 col-xs-12">
                         <ul class="list-inline" style="border-bottom: 1px solid #333333; border-top: 1px solid #333333; padding: 3.5px">
                             <li><a href="#FiltrarAgenda" class="btnhover " id=""  style="font-weight: bolder; color: #333333; " data-toggle="collapse" > &nbsp;<i class="fa fa-search"></i> Filtrar Información &nbsp;</a> </li>
+                            <li><a href="#ModalMarcarSolicitud" data-toggle="modal" class="btnhover " id="MarcarSolicitudShow"  style="font-weight: bolder; color: #333333; " > <i class="fa fa-ticket"></i> Marcar una Solicitud</a></li>
                         </ul>
                     </div>
 
@@ -497,25 +506,44 @@ if($rsOption && $rsOption->rowCount()>0){
                                     <label for="">Nombre de Prestación</label>
                                     <input type="text" class="form-control" name="nam_prestacion" id="nam_prestacion">
                                 </div>
+                                <div class="form-group col-md-4 col-sm-12 col-xs-12">
+                                    <label for="">Paciente</label>
+                                    <select name="selectPacientes" id="selectPacientes" class="form-control" style="width: 100%">
+                                        <?= $optionPaciente; ?>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-4 col-sm-12 col-xs-12">
+                                    <label for="">Odontolog@ a cargo</label>
+                                    <select name="odontolCargad" id="odontolCargad" class="form-control" style="width: 100%" >
+                                        <?= $optionODontolog; ?>
+                                    </select>
+                                </div>
                             </div>
 
                             <div class="row">
                                 <div class="form-group col-md-12 no-margin">
                                     <ul class="list-inline pull-right no-margin">
-                                        <li>  <button class="limpiar btn   btn-block  btn-default" style="float: right; padding: 10px"> &nbsp; &nbsp; Limpiar &nbsp; &nbsp;</button> </li>
-                                        <li>  <button class="aplicar btn   btn-block  btn-success" style="float: right; padding: 10px"> &nbsp;  &nbsp;Aplicar busqueda &nbsp;</button> </li>
+                                        <li>  <button class="limpiar btn   btn-block  btn-default" style="float: right; padding: 10px" id="LimpiarFiltroSoli"> &nbsp; &nbsp; Limpiar &nbsp; &nbsp;</button> </li>
+                                        <li>  <button class="aplicar btn   btn-block  btn-success" style="float: right; padding: 10px" id="aplicarFiltroSoli"> &nbsp;  &nbsp;Aplicar busqueda &nbsp;</button> </li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="form-group col-sm-12 col-lg-12 col-xs-12">
+                    <div class="form-group col-sm-12 col-lg-12 col-xs-12 col-lg-12">
                         <div class="table-responsive">
-                            <table class="table">
+                            <table class="table" id="Solicitudes_info" width="100%">
                                 <thead>
                                     <tr>
-                                        <th></th>
+                                        <th>&nbsp;</th>
+                                        <th width="20%">Fecha de P. Tratamiento</th>
+                                        <th width="20%">Tratamiento</th>
+                                        <th width="20%">Paciente</th>
+                                        <th width="20%">Prestación</th>
+                                        <th width="20%">Odontolog@ Encargado</th>
+                                        <th width="20%">Recepción</th>
+                                        <th width="20%">Estado</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -526,18 +554,221 @@ if($rsOption && $rsOption->rowCount()>0){
                 <script src="<?= DOL_HTTP ?>/application/system/configuraciones/js/laboratorios_main.js"></script>
 
                 <script>
+
+                    var idLab      = <?php echo ( (isset($_GET['idlabora']) && $_GET['idlabora'] > 0 ) ? $_GET['idlabora'] : 0 ) ?>;
                     var ElementLab = <?php echo  json_encode($objectLab); ?>;
+
+
                     var tableloadLaboratorio = function(){
 
+                        $("#Solicitudes_info").DataTable({
+
+                            searching: false,
+                            ordering:false,
+                            destroy:true,
+                            serverSide:true,
+                            processing:true,
+
+                            ajax:{
+                                url: $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php',
+                                type:'POST',
+                                data:{
+                                    'ajaxSend':'ajaxSend',
+                                    'accion': 'listaSolicitudesinfo',
+                                    'idLab' : idLab
+                                } ,
+                                dataType:'json',
+                            },
+                            language: {
+                                "sProcessing": "Procesando...",
+                                "sLengthMenu": "Mostrar _MENU_ registros",
+                                "sZeroRecords": "No se encontraron resultados",
+                                "sEmptyTable": "Ningún dato disponible en esta tabla",
+                                "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                                "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                                "sInfoPostFix": "",
+                                "sSearch": "Buscar:",
+                                "sUrl": "",
+                                "sInfoThousands": ",",
+                                "sLoadingRecords": "Cargando...",
+                                "oPaginate": {
+                                    "sFirst": "Primero",
+                                    "sLast": "Último",
+                                    "sNext": "Siguiente",
+                                    "sPrevious": "Anterior"
+                                },
+                                "oAria": {
+                                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                                }
+                            },
+                        });
                     };
+
+                    var validarMarcarSolicitud = function(){
+
+                        if($("[name='SolicitudChecked']:checked").length > 1){
+                            notificacion('Solo puede selecionar una opción', 'question');
+                        }
+
+                        if( $("[name='SolicitudChecked']:checked").length == 1 ){
+                            $("#MarcarSolicitudShow").removeClass('disabled_link3');
+                        }else{
+                            $("#MarcarSolicitudShow").addClass('disabled_link3');
+                        }
+                    };
+
                     $(window).on('load', function() {
 
+                        $("#MarcarSolicitudShow").addClass('disabled_link3');
+
                         MostrarInformacionPrestaLabo(ElementLab);
+                        tableloadLaboratorio();
+
+                        $('#ModalMarcarSolicitud').on("show.bs.modal", function() {
+
+                            if( $("[name='SolicitudChecked']:checked").length == 0){
+                                notificacion('Tiene que selecionar una opción','question');
+                                setTimeout(()=>{$('#ModalMarcarSolicitud').modal('hide');},1000);
+                            }
+
+                            $("#SelectStatusSolicitud").select2({
+                                placeholder:'Selecione una Opción',
+                                allowClear:true
+                            });
+
+                        });
+
+
+                        //change Status
+                        $("#statusSolicitudPrestacion").click(function() {
+
+                            if( $("[name='SolicitudChecked']:checked").length == 1 ){
+
+                                if($("#SelectStatusSolicitud").find(":selected").val()==""){
+                                    notificacion("Debe selecionar una opción", "question");
+                                    return false;
+                                }
+
+                                $("#MarcarSolicitudShow").removeClass('disabled_link3');
+
+                                var url = $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php';
+                                var Parametros = {'ajaxSend':'ajaxSend','accion':'statusUpdateSolicitudes','iddettratamient': $("[name='SolicitudChecked']:checked").val()
+                                                       ,'statusActual' : $('#SelectStatusSolicitud').find('option:selected').val()     };
+
+                                $.get(url, Parametros, function(data) {
+                                    var resp = $.parseJSON(data);
+                                    if(resp['error'] == ''){
+                                         if(resp['question'] != ''){
+                                             $('#SelectStatusSolicitud').val(null).trigger('change');
+                                             notificacion(resp['question'] , 'question');
+                                         }else{
+                                             $('#SelectStatusSolicitud').val(null).trigger('change');
+                                             notificacion('Información Actualizado', 'success');
+                                             setTimeout(()=>{$('#ModalMarcarSolicitud').modal('hide');},1000);
+                                         }
+                                    }else{
+
+                                    }
+                                });
+
+                            }else{
+                                notificacion('Tiene que selecionar una opción','question');
+                                setTimeout(()=>{$('#ModalMarcarSolicitud').modal('hide');},1000);
+                            }
+
+                        });
+
+
+                        //busqueda x solicitud prestaciones
+                        $("#aplicarFiltroSoli").on("click", function() {
+                            FiltroSolicitud();
+                        });
+
+                        $("#LimpiarFiltroSoli").on("click", function() {
+
+                            $("#nam_prestacion").val(null);
+                            $("#selectPacientes").val(null).trigger('change');
+                            $("#odontolCargad").val(null).trigger('change');
+
+                            FiltroSolicitud();
+                        });
+
+
+                        var FiltroSolicitud = function() {
+
+                            var table = $("#Solicitudes_info").DataTable();
+
+                            var nomPrestacion  = $("#nam_prestacion").val();
+                            var Pacientes      = $("#selectPacientes").find(':selected').val();
+                            var odontoCarg     = $("#odontolCargad").find(':selected').val();
+
+                            var accion       = "listaSolicitudesinfo";
+                            var ajaxSend     = "ajaxSend";
+                            var urlparametos = "&nomprest="+nomPrestacion+"&paciente="+Pacientes+"&odontocargo="+odontoCarg;
+
+                            var url = $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php';
+                            var newUrl = url + '?' +
+                                'accion='+accion+
+                                '&ajaxSend='+ajaxSend+
+                                urlparametos;
+
+                            table.ajax.url(newUrl).load();
+
+                        };
+
+                        $('#selectPacientes, #odontolCargad').select2({
+                           placeholder:'Selecione una opción' ,
+                           allowClear:true
+                        });
 
                     });
 
                 </script>
 
+
+                <div class="modal fade" id="ModalMarcarSolicitud" data-backdrop="static">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header modal-diseng">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">×</span></button>
+                                <h4 class="modal-title"><span>Marcar Solicitud</span></h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="form-group col-md-12 col-xs-12">
+                                        <span style=" color: #eb9627">
+                                            <i class="fa fa-info-circle"></i>
+                                                Si desea Solicitar un trabajo debe ser desde el plan de tratamiento del Paciente
+                                        </span>
+                                        <span style=" color: #eb9627; display: block">
+                                            <i class="fa fa-info-circle"></i>
+                                                Puede cambiar el estado de la Prestacion del Plan de Tratamiento desde las solicitudes. Esto depende en que estado se encuentre la prestación
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12 col-md-12">
+                                        <label for=""></label>
+                                        <select name="SelectStatusSolicitud" id="SelectStatusSolicitud" class="form-control" style="width: 100%">
+                                            <option value=""></option>
+<!--                                            <option value="A">Pendiente</option>-->
+                                            <option value="P">En Proceso</option>
+                                            <option value="R">Realizado</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <a  id="statusSolicitudPrestacion" name="statusSolicitudPrestacion" class="btn btnhover pull-right" style="color: green; font-weight: bolder" > Aceptar </a>
+                            </div>
+                        </div>
+                        <!-- /.modal-content -->
+                    </div>
+                    <!-- /.modal-dialog -->
+                </div>
     
             <?php }?>
         

@@ -41,7 +41,7 @@ if(isset($_GET['id']))
 require_once DOL_DOCUMENT.'/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php';
 
 
-//print_r($idPaciente);
+//echo '<pre>'; print_r($conf); die();
 
 ?>
 
@@ -72,8 +72,15 @@ require_once DOL_DOCUMENT.'/application/system/pacientes/pacientes_admin/control
             <div class="box box-solid">
                 <div class="box-header with-border">
                     <div id="tituloInfo" style="display: block" class="no-margin">
-                        <div class="form-group col-xs-3 col-sm-3 no-padding no-margin"> <span style="font-weight: bolder"> <?= $NAME_MODULO ?> </span> </div>
-                        <div class="form-group col-xs-3 col-sm-3 no-padding no-margin " style="float: right">  <p style="text-align: right" class="no-margin"> <i class="fa fa-user"></i> <?= getnombrePaciente($idPaciente)->nombre .' ' .getnombrePaciente($idPaciente)->apellido ?></p> </div>
+                        <div class="form-group col-xs-3 col-sm-3  no-margin" style="padding: 5px 0px 0px 0px"> <p  class="no-margin"><b><?= $NAME_MODULO ?></b></p> </div>
+                        <div class="form-group col-xs-3 col-sm-3 no-padding no-margin " style="float: right">
+                            <p style="text-align: right" class="no-margin">
+                                <?php if(file_exists(DOL_DOCUMENT."/logos_icon/icon_logos_".$conf->EMPRESA->ENTIDAD."/".getnombrePaciente($idPaciente)->icon)){
+                                    print "<img src='".DOL_HTTP."/logos_icon/icon_logos_".$conf->EMPRESA->ENTIDAD."/".getnombrePaciente($idPaciente)->icon."'  alt='".getnombrePaciente($idPaciente)->nombre." ".getnombrePaciente($idPaciente)->apellido."' style='vertical-align: middle;width: 30px;height: 30px;border-radius: 50%;border:1px solid black;box-shadow: 0px 4px 3px #ccc;' >";
+                                }else{
+                                    print "<img src='".DOL_HTTP."/logos_icon/logo_default/avatar_none.ico'  alt='".getnombrePaciente($idPaciente)->nombre." ".getnombrePaciente($idPaciente)->apellido."' style='vertical-align: middle;width: 30px;height: 30px;border-radius: 50%;border:1px solid black;box-shadow: 0px 4px 3px  #ccc;'  >";
+                                } ?>
+                                &nbsp;&nbsp;&nbsp;<b><?= getnombrePaciente($idPaciente)->nombre .' ' .getnombrePaciente($idPaciente)->apellido ?></b></p> </div>
                     </div>
                 </div>
                 <div class="box-body">
@@ -121,4 +128,5 @@ require_once DOL_DOCUMENT.'/application/system/pacientes/pacientes_admin/control
 
 <!--import los script js  modulos independientes -->
 <?php include_once  'view/script_javascrip_mod.php'; ?>
+
 

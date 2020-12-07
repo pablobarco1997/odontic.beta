@@ -9,7 +9,7 @@
                 <div class="form-group col-xs-12 col-md-4 col-lg-4">
                     <div style="width: 140px; height: 140px;" class="col-centered">
                         <label for="file_icon" id="imgpaciente" >
-                            <i id="fileIcon" style="font-size: 15rem" class="fa fa-2x  fa-user "></i>
+                            <img src="<?=DOL_HTTP?>/logos_icon/logo_default/avatar_none.ico" alt="" width="140px"  height="140px" class="iconpaciente img-circle" id="imgClasica">
                             <input type="file" id="file_icon" name="file_icon" style="display: none">
                         </label>
                     </div>

@@ -386,6 +386,7 @@ function listPrestacionesApagar($idpaciente, $idplantram)
                 dt.fk_diente as diente,           
                 
                 dt.estado_pay , 
+                
                 -- PRESTACION
                 cp.descripcion prestacion ,  
                 
@@ -404,6 +405,8 @@ function listPrestacionesApagar($idpaciente, $idplantram)
                     pd.fk_plantram_cab = ct.rowid and 
                     pd.fk_plantram_det = dt.rowid
                  ) as abonado 
+                 
+                ,ifnull((select lb.name from tab_conf_laboratorios_clinicos lb where lb.rowid = cp.fk_laboratorio),'') as nom_laboratorio
                 
             FROM
             
@@ -419,11 +422,15 @@ function listPrestacionesApagar($idpaciente, $idplantram)
                     AND ct.fk_paciente = $idpaciente
                     
                     AND ct.rowid = $idplantram 
-                    -- muestra las pagasdas PE   and   las que tienen saldo PS
-                    AND dt.estado_pay IN('PE', 'PS') 
+                    
+                    -- Muestro 
+                    -- PA RECAUDADO COMPLETO (SE REALIZO EL PAGO COMPLETO )
+                    -- PE RECAUDADO PENDIENTE (NO HAY PAGOS)
+                    -- PS ABONADO (SOLO HAY ABONADO)
+                    AND dt.estado_pay IN('PE', 'PS', 'PA') 
                     order by dt.rowid desc";
 
-    #echo '<pre>'; print_r($sql); die();
+//    echo '<pre>'; print_r($sql); die();
     $resul = $db->query($sql);
 
     if($resul && $resul->rowCount() > 0)
@@ -435,38 +442,43 @@ function listPrestacionesApagar($idpaciente, $idplantram)
             $row = array();
 
             $estadoDetPresta = "";
+            $StatusPagado    = ""; #COMPRUEBO LA RECAUDAION COMPLETA
 
+            #PA RECAUDACION COMPLETA
+            if($objPrest->estado_pay == 'PA'){
+                $StatusPagado = 'disabled_link3 hidden';
+            }
             #R => REALIZADO
             if($objPrest->estadodet == 'R'){
-                $estadoDetPresta = '
-                    <span class="" style="padding: 5px; border-radius: 5px; font-weight: bolder; background-color: #33C4FF">    
-                             '. $objPrest->estadoprestacion .'    </a> 
-                    </span>';
+                $estadoDetPresta = '<label class="label" style="background-color: #D5F5E3; color: green; font-weight: bolder;font-size: 0.8em">REALIZADO</label>';
+            }
+
+            #P => EN PROCESO
+            if($objPrest->estadodet == 'P'){
+                $estadoDetPresta = '<label class="label" style="background-color: #7BA5E1; color: #114DA4; font-weight: bolder;font-size: 0.8em">EN PROCESO</label>';
             }
 
             #A => PENDIENTE
             if($objPrest->estadodet == 'A'){
-                $estadoDetPresta = '
-                    <span class="" style="padding: 5px; border-radius: 5px; font-weight: bolder; background-color: #DCF36D">    
-                             '. $objPrest->estadoprestacion .'    </a> 
-                    </span>';
+                $estadoDetPresta = '<label class="label" style="background-color: #F6E944; color: #B88B1C; font-weight: bolder;font-size: 0.8em">PENDIENTE</label>';
             }
 
-            $apagar = '<span class="" style="padding: 5px; border-radius: 5px; font-weight: bolder; background-color: #66CA86">    
-                            <i class="fa fa-dollar"></i> 
-                            <a style="color: #333333 !important;" class="total_apagar"> '. $objPrest->totalprestacion .' </a> 
+            $apagar = '<span class="" style="padding: 1px; border-radius: 5px; font-weight: bolder; background-color: #66CA86">    
+                            $ <a style="color: #333333 !important;" class="total_apagar">'. $objPrest->totalprestacion .' </a> 
                        </span>
                             ';
 
-            $row[] = '<span class="custom-checkbox-myStyle">
-                            <input type="checkbox" onchange="IngresarValorApagar($(this), \'checkebox\');" class="check_prestacion" id="checkeAllCitas-'.$i.'">
+            $row[] = '<span class="custom-checkbox-myStyle '.$StatusPagado.' ">
+                            <input type="checkbox" onchange="IngresarValorApagar($(this), \'checkebox\');" class="check_prestacion" id="checkeAllCitas-'.$i.'" data-status="'.$objPrest->estado_pay.'">
                             <label for="checkeAllCitas-'.$i.'"></label>
                       </span> ';
 
 
-            $row[] = "<p class='prestaciones_det' data-idprest='$objPrest->fk_prestacion' data-iddetplantram='$objPrest->iddetplantram' data-idcabplantram='$objPrest->idcabplantram'> $objPrest->prestacion 
-                            &nbsp;&nbsp;&nbsp; ".(($objPrest->diente==0)?"":"<img src='".DOL_HTTP."/logos_icon/logo_default/diente.png' width='17px' height='17px'> $objPrest->diente")."            
-                      </p>";
+            $row[] = "<p class='prestaciones_det' data-idprest='$objPrest->fk_prestacion' data-iddetplantram='$objPrest->iddetplantram' data-idcabplantram='$objPrest->idcabplantram' data-status='$objPrest->estado_pay' > $objPrest->prestacion 
+                            &nbsp;&nbsp;&nbsp; ".(($objPrest->diente==0)?"":"<img src='".DOL_HTTP."/logos_icon/logo_default/diente.png' width='17px' height='17px'> $objPrest->diente")." 
+                            <small style='display: block; color: #2c4ea4' title='$objPrest->nom_laboratorio'> ".((!empty($objPrest->nom_laboratorio))?"<i class='fa fa-flask'></i> $objPrest->nom_laboratorio":"")."</small>".
+                        ((!empty($StatusPagado))?"<small style='display: block; color: green'> <b>Recaudación Completa</b> <i class='fa fa-money'></i></small>":"").
+                      "</p>";
 
             $val_pendiente = number_format(( $objPrest->totalprestacion - $objPrest->abonado ), 2, '.', '');
 
@@ -474,7 +486,7 @@ function listPrestacionesApagar($idpaciente, $idplantram)
             $row[] = '<a style="color: #333333 !important;" class="Abonado"> '. $objPrest->abonado .' </a>'; //ABONADO
             $row[] = '<a style="color: #333333 !important;" class="Pendiente"> '. $val_pendiente .' </a>'; //PENDIENTE
             $row[] = $estadoDetPresta; #Estado prestacion
-            $row[] = "<input type='text' value='0.00' class='form-control input-sm Abonar' onkeyup='moneyPagosInput($(this))'  onfocus='moneyPagosInput($(this))'  style='background-color: #f0f0f0; border-radius: 5px; font-weight: bolder; font-size: 1.3rem; color: black'>
+            $row[] = "<input type='text' value='".(!empty($StatusPagado)?"":"0.00")."' ".((!empty($StatusPagado))?"disabled":"")." class='form-control input-sm Abonar ".$StatusPagado." ' onkeyup='moneyPagosInput($(this))'  onfocus='moneyPagosInput($(this))'  style='background-color: #f0f0f0; border-radius: 5px; font-weight: bolder; font-size: 1.3rem; color: black;'>
                       <small style='color: red; display: block' class='error_pag'></small> ";
 
             $data[] = $row;
@@ -499,6 +511,32 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
     $observacion      = !empty($datos['observ']) ? $datos['observ'] : "";
     $amoun_t          = $datos['amoun_t'];
     $nfact_boleto     = !empty($datos['nfact_boleto']) ? $datos['nfact_boleto'] : 0;
+
+    $iddetplantram = [];
+    foreach ($datosdet as $key => $idValue){
+        $iddetplantram[] = $idValue['iddetplantram'];
+    }
+
+
+    if(count($iddetplantram)==0)
+        return "Ocurrio un error con la Operación Recaudar: Verifique la información antes de Recaudar";
+
+
+    $labelServicio = []; //nom _ servicio
+    $countValid = 0; #Valido que ninguna prestacion no se encuentre en estado PA => Pagado
+    $result = $db->query("SELECT d.estado_pay , cp.descripcion FROM tab_plan_tratamiento_det d, tab_conf_prestaciones cp  where cp.rowid = d.fk_prestacion and  d.rowid in(".(implode(',', $iddetplantram)).") ")->fetchAll();
+    foreach ($result as $key => $valueVaid){
+        if($valueVaid['estado_pay'] == 'PA'){ //PRESTACION RECAUDADA
+            $labelServicio[] = $valueVaid['descripcion'];
+            $countValid++;
+        }
+    }
+
+    if($countValid>0){
+        return "Estas Prestaciones ya se encuentran ya se encuentran recaudadas: <br>"."<b>".(implode("<br>", $labelServicio))."</b>";
+    }
+
+//    print_r($countValid); die();
 
     $sql1  = " INSERT INTO `tab_pagos_independ_pacientes_cab` ( `fecha`, `fk_tipopago`, `observacion`, `monto`, n_fact_boleta, fk_plantram, fk_paciente, id_login)";
     $sql1 .= " VALUES( ";

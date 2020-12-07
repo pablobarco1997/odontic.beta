@@ -664,6 +664,40 @@ function boxloading(box = false, load = false , Timer = 0 ){
 
 }
 
+var PermmisonModule = function(idModule = 0, actionPermiso = 0){
+
+    var Permiso = false;
+
+    var FormDataFetch = new FormData();
+
+    FormDataFetch.append("accion", "ConsultarTypePermisos");
+    FormDataFetch.append("ajaxSend", "ajaxSend");
+    FormDataFetch.append("idModule", idModule);
+    FormDataFetch.append("actionPermiso", actionPermiso);
+
+    $.ajax({
+        url: $DOCUMENTO_URL_HTTP + '/application/controllers/controller_peticiones_globales',
+        type:'POST',
+        data: FormDataFetch ,
+        dataType:'json',
+        processData:false,
+        contentType:false ,
+        async:false,
+        success:function(resp) {
+            Permiso = resp['valid'];
+            if(resp['valid']=='')
+                Permiso = false;
+            if(resp['valid']==false)
+                Permiso = false;
+            if(resp['valid']==true)
+                Permiso = true;
+        }
+    });
+    alert(Permiso);
+    return Permiso;
+};
+
+
 $('#perf_cedula').mask("000000000-0",{placeholder:"_________-_"});
 
 $('#especialidadPerfil').select2({

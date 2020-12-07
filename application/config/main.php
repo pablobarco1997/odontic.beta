@@ -37,7 +37,9 @@
     $user     = (object)array
     (   "id"                => $_SESSION['id_users_2'],
         "name"              => $_SESSION['usuario'],
-        "id_entidad_login"  => $_SESSION["login_entidad"]
+        "id_entidad_login"  => $_SESSION["login_entidad"],
+        "idPerfil"          => $_SESSION["fk_perfil"],
+        "admin"             => $_SESSION["admin"],
     );
 
     /** conf **/
@@ -99,7 +101,7 @@
     ); */
 
 
-    #echo '<pre>'; print_r($_SESSION); die();
+    #echo '<pre>'; print_r($user); die();
 
 
 ?>

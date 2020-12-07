@@ -10,7 +10,7 @@ var listLaboratorios = function () {
 
         searching: false,
         ordering:false,
-        destroy:false,
+        destroy:true,
         serverSide:true,
         processing:true,
 
@@ -35,10 +35,10 @@ var listLaboratorios = function () {
                     domMenu += "<ul class='dropdown-menu pull-left'>";
                         domMenu += "<li> <a href='#' onclick='FormModificarLaboratorio("+full['idlab']+")' > Modificar Laboratorio</a> </li>";
                         if(full['estado']=='A'){
-                            domMenu += "<li> <a href='#' onclick='DesactivarActivarPrestacion(1,"+full['idlab']+")'> inhabilitar </a> </li>";   
+                            domMenu += "<li> <a href='#' onclick='DesactivarActivarPrestacion(1,"+full['idlab']+")'> Desactivar </a> </li>";
                         }
                         if(full['estado']=='E'){
-                            domMenu += "<li> <a href='#' onclick='DesactivarActivarPrestacion(0,"+full['idlab']+")'> habilitar </a> </li>";
+                            domMenu += "<li> <a href='#' onclick='DesactivarActivarPrestacion(0,"+full['idlab']+")'> Activar </a> </li>";
                         }
                         domMenu += "<li> <a href='"+$DOCUMENTO_URL_HTTP+"/application/system/configuraciones/index.php?view=form_laboratorios_conf&v=solicitudes_lab&idlabora="+full['idlab']+"'> Solicitudes </a> </li>"; 
 
@@ -225,7 +225,6 @@ var FormValidarPrestacion = function(){
 
 };
 
-//
 
 //nuevo Laboratorio
 $("#crearLaboratorio").on("click", function() {
@@ -520,7 +519,7 @@ var tableDinamicPrestacion = function(table=""){
         thead += "<thead>";
             thead += "<tr>";
                 thead += "<th>&nbsp;</th>";
-                // thead += "<th>Laboratorio</th>";
+                thead += "<th>Fecha de P. Tratamiento</th>";
                 thead += "<th>Tratamiento</th>";
                 thead += "<th>Prestación</th>";
                 thead += "<th>Paciente</th>";
@@ -618,7 +617,7 @@ $(".limpiar").click(function() {
     $("#nam_prestacion").val(null);
     $("#busxPacientes").val(null).trigger('change');
     $("#busxTratamiento").val(null).trigger('change');
-    $("#busqx_xFecha").val(null);
+    $("#busqx_xFechaInput").val("");
     $(".aplicar").click();
 });
 
@@ -676,6 +675,42 @@ $(document).ready(function() {
         allowClear:false ,
         language:'es'
     });
+
+    $("#busqx_xFechaInput").daterangepicker({
+        drops: 'up',
+        locale: {
+            format: 'YYYY/MM/DD' ,
+            daysOfWeek: [
+                "Dom",
+                "Lun",
+                "Mar",
+                "Mie",
+                "Jue",
+                "Vie",
+                "Sáb"
+            ],
+            monthNames: [
+                "Enero",
+                "Febrero",
+                "Marzo",
+                "Abril",
+                "Mayo",
+                "Junio",
+                "Julio",
+                "Agosto",
+                "Septiembre",
+                "Octubre",
+                "Noviembre",
+                "Diciembre"
+            ],
+        },
+        singleDatePicker: true,
+        showDropdowns: true,
+        autoclose: true,
+        pickerPosition: "bottom-left"
+    });
+
+    $("#busqx_xFechaInput").val("");
 
 });
 

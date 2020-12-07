@@ -13,6 +13,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
     require_once DOL_DOCUMENT .'/application/system/pacientes/class/class_paciente.php';
 
 
+    global $db, $conf, $user;
+
     $paciente = new Pacientes($db); //se declara la clase de pacientes
 
     $accion = GETPOST('accion');
@@ -1942,7 +1944,9 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 }
 
                 if($objtratmdet->estadodet=='A'){
-                    $result = $db->query("UPDATE `tab_plan_tratamiento_det` SET `estadodet`='P' WHERE `rowid`=".$iddetTratamiento."; ");
+
+                    $comment_status = 'Cambio de estado (EN PROCESO) de la Prestación por el Usuario: '.$user->name ;
+                    $result = $db->query("UPDATE `tab_plan_tratamiento_det` SET `estadodet`='P' , `comment_laboratorio_auto` = '".$comment_status."', `date_recepcion_status_tramient`= now()   WHERE `rowid`=".$iddetTratamiento."; ");
                     if(!$result){
                         $error = 'Ocurrio un error con la Operación Actualizar Estado';
                     }
@@ -2217,7 +2221,7 @@ function info_type_document_pacient($idpaciente="")
 
 function realizarPrestacionupdate($datos = array())
 {
-    global  $db , $conf;
+    global  $db , $conf, $user;
 
     if( count($datos) != 0)
     {
@@ -2242,11 +2246,15 @@ function realizarPrestacionupdate($datos = array())
 
         }else{
 
+            $comment_status_auto = "Cambio de estado (REALIZADO) de la Prestación por el Usuario: $user->name" ;
+
             $sqlUpdattramm =  "UPDATE `tab_plan_tratamiento_det` SET";
             $sqlUpdattramm .= "  `estadodet`       = 'R'  ," ;
             $sqlUpdattramm .= "  `realizada_fk_dentista`    = $datos->fk_doctor  ," ;
             $sqlUpdattramm .= "  `evolucion_escrita`        ='$datos->observacion' , " ;
-            $sqlUpdattramm .= "  `fk_estado_odontograma`    = $datos->estadodiente  " ;
+            $sqlUpdattramm .= "  `fk_estado_odontograma`    = $datos->estadodiente  ," ;
+            $sqlUpdattramm .= "  `comment_laboratorio_auto` = '$comment_status_auto' , " ;
+            $sqlUpdattramm .= "  `date_recepcion_status_tramient` = now()  " ;
             $sqlUpdattramm .= "   WHERE `rowid`= $datos->fk_plantram_det ";
 
             $rsUp = $db->query($sqlUpdattramm);

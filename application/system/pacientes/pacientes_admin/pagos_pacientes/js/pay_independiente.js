@@ -392,7 +392,9 @@ function acumuladorTotal()
         var Abonado    =  padre.find('.Abonado').text();
         var Abonar     =  padre.find('.Abonar');
 
-        totalPrestacion += parseFloat(Abonar.val());
+        if(Abonar.val()!=""){
+            totalPrestacion += parseFloat(Abonar.val());
+        }
 
     });
 
@@ -413,14 +415,15 @@ function fetch_apagar()
         var Abonado    =  padre.find('.Abonado').text();
         var Abonar     =  padre.find('.Abonar'); //input abonar
 
-        var fk_prestacion = padre.find('.prestaciones_det').data('idprest');
-        var iddetplantram = padre.find('.prestaciones_det').data('iddetplantram');
-        var idcabplantram = padre.find('.prestaciones_det').data('idcabplantram');
+        var fk_prestacion = padre.find('.prestaciones_det').prop('dataset').idprest;
+        var iddetplantram = padre.find('.prestaciones_det').prop('dataset').iddetplantram;
+        var idcabplantram = padre.find('.prestaciones_det').prop('dataset').idcabplantram;
+
+        var statusPrestacion = padre.find('.prestaciones_det').prop('dataset').status;
 
         var valorAbonar = Abonar.val();
 
-        if(Abonar.val() != 0)
-        {
+        if(Abonar.val() != 0 && statusPrestacion != 'PA') {
             data_pagos.push({
                 fk_prestacion, iddetplantram,  idcabplantram, valorAbonar ,
                 'totalprestacion':TotalPrest

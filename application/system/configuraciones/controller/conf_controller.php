@@ -619,11 +619,12 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $cantprestacion      = GETPOST('cat_prestacion');
             $costo_prestacion    = GETPOST('costo_prestacion');
             $convenio            = !empty(GETPOST('convenio')) ? GETPOST('convenio') : 0;
+            $explicaion          = GETPOST('explicacion');
             $subaccion           = GETPOST('subaccion');
 
             if($subaccion == 'nuevo'){
 
-                $sql = "INSERT INTO `tab_conf_prestaciones` (`descripcion`, `tms` ,`fk_user`, `fk_convenio`, `fk_categoria`, `fk_laboratorio`, `valor`)";
+                $sql = "INSERT INTO `tab_conf_prestaciones` (`descripcion`, `tms` ,`fk_user`, `fk_convenio`, `fk_categoria`, `fk_laboratorio`, `valor`, `explicacion`)";
                 $sql .= "VALUES(";
                 $sql .= "'$prestacion',";
                 $sql .= "now(),";
@@ -631,7 +632,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 $sql .= "'".$convenio."',";
                 $sql .= "'$cat_prestacion',";
                 $sql .= "0,"; #laboratorio
-                $sql .= "$costo_prestacion";
+                $sql .= "$costo_prestacion , ";
+                $sql .= " '".$explicaion."'  ";
                 $sql .= ")";
                 $rs = $db->query($sql);
 
@@ -653,7 +655,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 $Update .= 'fk_user = '.$user->id.', ';
                 $Update .= 'valor = '.$costo_prestacion.', ';
                 $Update .= 'fk_categoria = '.$cat_prestacion .' , ';
-                $Update .= 'fk_convenio = '.$con.' WHERE `rowid`='.$id;
+                $Update .= 'fk_convenio = '.$con.' , explicacion = '."'$explicaion'".' WHERE `rowid`= '.$id;
 
                 $rs1 = $db->query($Update);
 
@@ -672,10 +674,15 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             $data = array();
 
+            $Total          = 0;
+            $start          = $_POST["start"];
+            $length         = $_POST["length"];
+
+
             $sql = "SELECT 
                     d.rowid,
                     d.descripcion,
-                    d.tms AS fecha,
+                    cast(d.tms as date) AS fecha,
                     IFNULL((SELECT 
                                     c.nombre_conv
                                 FROM
@@ -690,27 +697,56 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                                 WHERE
                                     ct.rowid = d.fk_categoria),
                             'no asignado') AS cat,
-                            d.valor
+                            d.valor , 
+                    d.estado
                 FROM
-                    tab_conf_prestaciones d";
+                    tab_conf_prestaciones d 
+                
+                where d.rowid != 0 ";
+
+            if(isset($_POST['search'])){
+                if(!empty($_POST['search']['value'])){
+                    $sql .= " and replace(descripcion,' ','') like '%".str_replace(' ','', $_POST['search']['value'])."%' ";
+                }
+            }
+
+            $sql .= " order by d.tms desc";
+
+            $sqlTotal = $sql;
+
+            if($start || $length)
+                $sql.=" LIMIT $start,$length;";
+
+            $Total = $db->query($sqlTotal)->rowCount();
+
             $rs = $db->query($sql);
             if( $rs ){
                 while ($ob = $rs->fetchObject()){
 
                     $row = array();
 
-                    $row[] = date('Y/m/d', strtotime($ob->fecha));
-                    $row[] = $ob->descripcion;
+                    if($ob->estado == 'A'){
+                        $labSatus = ' <small style="color: green">(habilitado)</small>';
+                        $statusServicio = "<a class=\"label btn btn-xs\" style=\"background-color: #FADBD8; color: red; font-weight: bolder\" onclick='ActivarDesactivarServicios($ob->rowid, $(this))' title='Desactivar Prestación' data-status='E'>DESACTIVAR</a>";
+                    }
+                    else{
+                        $labSatus = ' <small style="color: red">(Deshabilitado) </small>';
+                        $statusServicio = "<a class=\"label btn btn-xs\" style=\"background-color: #D5F5E3; color: green; font-weight: bolder\" onclick='ActivarDesactivarServicios($ob->rowid, $(this))' title='Activar Prestación' data-status='A'>ACTIVO</a>";
+                    }
+
+                    $row[] = str_replace('-','/', $ob->fecha);
+                    $row[] = $ob->descripcion.' '.$labSatus.' ';
                     $row[] = $ob->cat;
 //                    $row[] = $ob->convenio;
 
+
 //                    $costo = "<span class=\"\" style=\"padding: 3px; border-radius: 5px; font-weight: bolder; background-color: #66CA86\"> <i class=\"fa fa-dollar\"></i> ".$ob->valor." </span>";
-                    $row[] = "<span class=\"\" style=\"padding: 3px; border-radius: 5px; font-weight: bolder; background-color: #66CA86\"> <i class=\"fa fa-dollar\"></i> ". number_format($ob->valor,2,".", ",") ." </span>";
+                    $row[] = "<span class=\"\" style=\"padding: 1px; border-radius: 3px; font-weight: bolder; background-color: #66CA86\"> $&nbsp;". number_format($ob->valor,2,".", ",") ." </span>";
 
                     $row[] = " 
                     <table>
                         <td><a href='".DOL_HTTP."/application/system/configuraciones/index.php?view=form_prestaciones&act=mod&id=$ob->rowid'  style='cursor: pointer; color: green; font-size: 1.8rem'  class='btn btnhover btn-xs pull-right' ><i class='fa fa-edit'></i></a></td>
-                        <td><a onclick='eliminar_prestacion($ob->rowid)' class='btn btnhover btn-xs pull-right'  style='cursor: pointer; color: #9f191f; font-size: 1.8rem'><i class='fa fa-trash'></i></a></td>
+                        <td>&nbsp; $statusServicio</td>
                     </table>  
                        ";
 
@@ -720,7 +756,10 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             }
 
             $output = [
-                'data' => $data
+                'data' => $data,
+                'draw' => $_POST['draw'],
+                'recordsTotal' => $Total,
+                'recordsFiltered' => $Total,
             ];
 
             echo json_encode($output);
@@ -755,25 +794,24 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             $error = '';
             $idprestacion = GETPOST("id");
+            $Status = GETPOST("statusPrestacion");
+
+            if($Status=='A')
+                $StaLabel = "Activar";
+            else
+                $StaLabel = "Desactivar";
+
             $tieneAsociado = 0;
 
-            $sqlConsult = "SELECT * FROM tab_plan_tratamiento_det WHERE fk_prestacion = '$idprestacion' ";
+            $sqlConsult = "SELECT * FROM tab_conf_prestaciones WHERE rowid = '$idprestacion' ";
             $rsConsult = $db->query($sqlConsult);
-
-            if($rsConsult->rowCount() > 0){
-                $tieneAsociado++;
-            }
-
-            if( $tieneAsociado == 0){
-                $sql = "DELETE FROM `tab_conf_prestaciones` WHERE `rowid`='$idprestacion';";
-                $rs = $db->query($sql);
-                if(!$rs){
-                    $error = 'Ocurrió un error, con la Operación Eliminar';
+            if($rsConsult && $rsConsult->rowCount()>0){
+                $result = $db->query("UPDATE `tab_conf_prestaciones` SET `estado`='".$Status."' WHERE `rowid`=$idprestacion;");
+                if(!$result){
+                    $error = 'Ocurrion un error con la Operación: '.$StaLabel.' Prestación';
                 }
             }else{
-                if( $tieneAsociado > 0 ){
-                    $error = 'Esta prestación ya esta Asociada a un plan de Tratamiento';
-                }
+                $error = 'Ocurrio un error con la Operación: No se encontro la prestación Asignada';
             }
 
             $output = [
@@ -1398,6 +1436,167 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             echo json_encode($output);
             break;
 
+        case "listaSolicitudesinfo":
+
+            $data = [];
+
+            $Total          = 0;
+            $start          = $_POST["start"];
+            $length         = $_POST["length"];
+
+            $nomPrestacion = GETPOST('nomprest');
+            $paciente      = GETPOST('paciente');
+            $odontocargo   = GETPOST('odontocargo');
+
+            $idLab         = GETPOST("idLab");
+
+            $sql = "SELECT
+	                cast(pc.fecha_create as date ) as dateff_tratam , 
+                    lb.name as laboratorio , 
+                    
+                    if(pc.edit_name != '' , pc.edit_name  , 
+                            (select concat('Plan de Tratamiento',' #',pc.numero) from tab_plan_tratamiento_cab pc where pc.rowid = pd.fk_plantratam_cab) ) as trata_num ,
+                            
+                    cp.descripcion as prestacion, 
+                    (select concat(ap.nombre,' ', ap.apellido) from tab_admin_pacientes ap where ap.rowid = pc.fk_paciente) as paciente , 
+                    if(pc.fk_doc != 0 , 
+								(select concat(o.nombre_doc, ' ', o.apellido_doc) from tab_odontologos o where o.rowid = pc.fk_doc) , 'No asignado') as odontolog_acargo , 
+                    if(pd.fk_diente=0,'',pd.fk_diente) as pieza , 
+                    case
+                        when pd.estadodet = 'A' then 'Pendiente'
+						when pd.estadodet = 'P' then 'Proceso'
+                        when pd.estadodet = 'R' then 'Realizado'
+                        else ''
+                    end as estado , 
+                    pd.total as totalTratamientoPrestacion, 
+                    round(ifnull((select sum(amount) from tab_pagos_independ_pacientes_det p where (p.fk_plantram_det = pd.rowid and p.fk_plantram_cab = pc.rowid) and p.fk_prestacion = cp.rowid ),0), 2) as amount,
+                    pd.date_recepcion_status_tramient as fecha_recepcion ,
+                    pd.estadodet , 
+                    pd.rowid as iddet_tratam
+                From 
+                    tab_conf_prestaciones cp , 
+                    tab_plan_tratamiento_det pd , 
+                    tab_plan_tratamiento_cab pc , 
+                    tab_conf_laboratorios_clinicos lb 
+                where 
+                cp.rowid = pd.fk_prestacion 
+                and cp.fk_laboratorio = lb.rowid
+                and pc.rowid = pd.fk_plantratam_cab
+                and lb.rowid = ".$idLab;
+
+            if($nomPrestacion!=""){
+                $sql .= " and  replace(cp.descripcion,' ','') like '%".str_replace(' ','', $nomPrestacion)."%' ";
+            }
+            if($paciente!=""){
+                $sql .= " and  pc.fk_paciente =  ".$paciente;
+            }
+            if($odontocargo!=""){
+                $sql .= " and  pc.fk_doc = ".$odontocargo;
+            }
+
+            $sqlTotal = $sql;
+
+            if($start || $length)
+                $sql.=" LIMIT $start,$length;";
+
+//            print_r($sql); die();
+            $resultTotal = $db->query($sqlTotal);
+            $Total = $resultTotal->rowCount();
+
+            $result = $db->query($sql);
+            if($result && $result->rowCount()>0){
+                while ($object = $result->fetchObject()){
+
+                    if($object->estadodet == 'A')
+                        $label = '<label class="label" style="background-color: #F6E944; color: #B88B1C; font-weight: bolder">PENDIENTE</label>';
+                    if($object->estadodet == 'P')
+                        $label = '<label class="label" style="background-color: #7BA5E1; color: #114DA4; font-weight: bolder">EN PROCESO</label>';
+                    if($object->estadodet == 'R')
+                        $label = '<label class="label" style="background-color: #D5F5E3; color: green; font-weight: bolder">REALIZADO</label>';
+
+                    $row = [];
+                    $row[] = "<input type='checkbox' class='SolicitudChecked' name='SolicitudChecked' onchange='validarMarcarSolicitud()' data-iddettramient='$object->iddet_tratam' value='$object->iddet_tratam' >"; #id plan de tratamiento detalle
+                    $row[] = str_replace('-','/', $object->dateff_tratam);
+                    $row[] = $object->trata_num;
+                    $row[] = $object->paciente;
+                    $row[] = $object->prestacion;
+                    $row[] = $object->odontolog_acargo;
+                    $row[] = str_replace('-','/', $object->fecha_recepcion);
+                    $row[] = $label;
+                    $row["id_tratam_det"] = $object->fecha_recepcion;
+
+                    $data[] = $row;
+                }
+            }
+
+            $output = array(
+                "data"            => $data,
+                "recordsTotal"    => $Total,
+                "recordsFiltered" => $Total
+            );
+            echo json_encode($output);
+
+            break;
+
+
+
+
+        ////////////////////////////**************
+        case 'statusUpdateSolicitudes':
+
+            $error = "";
+            $question = "";
+            $iddettratamiento = GETPOST("iddettratamient");
+            $statusActual = GETPOST("statusActual");
+
+
+            if(!empty($iddettratamiento) && $iddettratamiento != 0)
+            {
+
+                $resul = $db->query("select estadodet from tab_plan_tratamiento_det where rowid = ".$iddettratamiento)->fetchObject();
+                if(!empty($resul->estadodet))
+                {
+                    $status = $resul->estadodet;
+
+                    if($statusActual=='R'){ //realizado
+                        if($status=='A' || $status=='P'){
+                            $comment = "Cambio de estado desde Solicitud (REALIZADO) de la Prestación por el Usuario: ".$user->name;
+                            $r = $db->query("UPDATE `tab_plan_tratamiento_det` SET `estadodet`='R', comment_laboratorio_auto = '$comment', date_recepcion_status_tramient = now() WHERE `rowid`=$iddettratamiento;");
+                            if(!$r)
+                                $error = 'Ocurrio un error con la Operación Estado: REALIZADO';
+                        }else{
+                            if($status == $statusActual){
+                                $question = 'Ya se encuentra en estado <b>REALIZADO</b>';
+                            }
+                        }
+                    }
+                    if($statusActual=='P'){ //realizado
+
+                        if($status=='A'){
+                            $comment = "Cambio de estado desde Solicitud (EN PROCESO) de la Prestación por el Usuario: ".$user->name;
+                            $r = $db->query("UPDATE `tab_plan_tratamiento_det` SET `estadodet`='P', comment_laboratorio_auto = '$comment', date_recepcion_status_tramient = now() WHERE `rowid`=$iddettratamiento;");
+                            if(!$r)
+                                $error = 'Ocurrio un error con la Operación Estado: EN PROCESO';
+                        }else{
+                            if($status == $statusActual){
+                                $question = 'Ya se encuentra en estado <b>EN PROCESO</b>';
+                            }else{
+                                $question = 'No puede cambiar de estado de REALIZADO A EN PROCESO';
+                            }
+                        }
+                    }
+                }
+
+            }else{
+                $error = 'Ocurrion un error con la Operación <b>Estado de Solicitud</b>';
+            }
+
+            $output = array(
+                "error"       => $error,
+                "question"    => $question,
+            );
+            echo json_encode($output);
+            break;
     }
 
 
@@ -2274,6 +2473,10 @@ function listaPrestacionesLaboratorioDinamic($table, $idlab, $searchLab = '', $o
         if(!empty($objecFiltro->statusTratamint)){
             $sqltra .= " and pd.estadodet = '".$objecFiltro->statusTratamint."' ";
         }
+        if(!empty($objecFiltro->fecha)){
+            $sqltra .= " and cast(pc.fecha_create as date ) = '".$objecFiltro->fecha."'";
+        }
+
         #print_r($sqltra); die();
         $sqlTotal = $sqltra;
 
@@ -2293,7 +2496,7 @@ function listaPrestacionesLaboratorioDinamic($table, $idlab, $searchLab = '', $o
 
                 $rows = array();
                 $rows[] = "";
-//                $rows[] = $object->laboratorio;
+                $rows[] = str_replace('-','/', $object->dateff_tratam);
                 $rows[] = $object->trata_num;
                 $rows[] = $object->prestacion;
                 $rows[] = $object->paciente;
