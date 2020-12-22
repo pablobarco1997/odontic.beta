@@ -533,9 +533,30 @@ function DateSpanish($Date = "", $SoloMes = false){
 
 }
 
+function validSuperAdmin($idEntityLogin = ""){
+
+    global $conf;
+    $cn = new CONECCION_ENTIDAD();
+
+    $valid = false;
+    if($idEntityLogin!=""){
+        $que = "select admin from tab_login_entity where entity = '".$conf->EMPRESA->ENTIDAD."' and login_idusers_entity = '".$idEntityLogin."' limit 1";
+        $result = $cn::CONNECT_ENTITY()->query($que);
+        if($result&&$result->rowCount()>0){
+            $object = $result->fetchObject();
+            if($object->admin == 1){
+                $valid = true; // si es uno no puedo modificar el
+            }
+        }
+    }
+
+    return $valid;
+
+}
+
 function PermitsModule($idModule = "", $action = ""){
 
-    global $user;
+    global $user, $conf;
 
     #CONECCIONA ENTIDADES
     $cn = new CONECCION_ENTIDAD();
@@ -558,7 +579,7 @@ function PermitsModule($idModule = "", $action = ""){
 
         if($user->idPerfil!=0 && !empty($idModule) && !empty($action) && $GetPerfil!=0 ){
 
-            $query = "SELECT count(*) count FROM tab_permisos_user where fk_perfil_module = ".$GetPerfil." and fk_modulo = ".$idModule." and fk_action_permisos = ".$action;
+            $query = "SELECT count(*) count FROM tab_permisos_user where fk_perfil_module = ".$GetPerfil." and fk_modulo = ".$idModule." and fk_action_permisos = ".$action." and numero_entity = ".$conf->EMPRESA->ENTIDAD;
             $result = $cn::CONNECT_ENTITY()->query($query);
             if($result){
                 if($result->rowCount()>0){

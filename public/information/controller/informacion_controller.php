@@ -108,7 +108,7 @@ if(isset($_POST['dbname']))
 
                         }else{
 
-                            $error = 'Ya no puede confirmar esta cita la fecha ya se encuentra <b>Atrazada</b>';
+                            $error = 'Ya no puede confirmar esta cita la fecha ya se encuentra <b>Atrasada</b>';
                         }
 
                     }else{

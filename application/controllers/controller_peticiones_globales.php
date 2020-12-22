@@ -330,6 +330,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                     $valid = false;
                 }
+                
 
             }
 
