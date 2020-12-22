@@ -19,12 +19,15 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $estado  = GETPOST('estado');
             $data    = array();
 
+            $PermisoConsultar = (!PermitsModule(6,1))?" and 1<>1":"";
+
             $sql = "SELECT * FROM tab_admin_pacientes WHERE rowid > 0 ";
-            if(!empty($estado))
-            {
+            if(!empty($estado)) {
                 if($estado == 'E'){ $sql .= " and estado = 'E' "; }
                 if($estado == 'A'){ $sql .= " and estado = 'A' "; }
             }
+
+            $sql .= $PermisoConsultar;
 
             $sql .= " order by rowid desc";
             $rs = $db->query($sql);

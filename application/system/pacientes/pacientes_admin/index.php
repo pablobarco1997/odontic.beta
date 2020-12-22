@@ -75,7 +75,7 @@ require_once DOL_DOCUMENT.'/application/system/pacientes/pacientes_admin/control
                         <div class="form-group col-xs-3 col-sm-3  no-margin" style="padding: 5px 0px 0px 0px"> <p  class="no-margin"><b><?= $NAME_MODULO ?></b></p> </div>
                         <div class="form-group col-xs-3 col-sm-3 no-padding no-margin " style="float: right">
                             <p style="text-align: right" class="no-margin">
-                                <?php if(file_exists(DOL_DOCUMENT."/logos_icon/icon_logos_".$conf->EMPRESA->ENTIDAD."/".getnombrePaciente($idPaciente)->icon)){
+                                <?php if(is_file(DOL_DOCUMENT."/logos_icon/icon_logos_".$conf->EMPRESA->ENTIDAD."/".getnombrePaciente($idPaciente)->icon)){
                                     print "<img src='".DOL_HTTP."/logos_icon/icon_logos_".$conf->EMPRESA->ENTIDAD."/".getnombrePaciente($idPaciente)->icon."'  alt='".getnombrePaciente($idPaciente)->nombre." ".getnombrePaciente($idPaciente)->apellido."' style='vertical-align: middle;width: 30px;height: 30px;border-radius: 50%;border:1px solid black;box-shadow: 0px 4px 3px #ccc;' >";
                                 }else{
                                     print "<img src='".DOL_HTTP."/logos_icon/logo_default/avatar_none.ico'  alt='".getnombrePaciente($idPaciente)->nombre." ".getnombrePaciente($idPaciente)->apellido."' style='vertical-align: middle;width: 30px;height: 30px;border-radius: 50%;border:1px solid black;box-shadow: 0px 4px 3px  #ccc;'  >";

@@ -5,6 +5,12 @@ $boxContentNewPaciente = $("#boxprincipalNewPaciente");
 
 function GuardarDatosPacientes()
 {
+
+    if(!ModulePermission(7,2)){
+        notificacion('Ud. Notiene permisos para crear', 'error');
+        return false;
+    }
+
     boxloading($boxContentNewPaciente,true);
 
     var puedoPasar = invalic_paciente();
@@ -90,6 +96,7 @@ function GuardarDatosPacientes()
                 {
                     boxloading($boxContentNewPaciente,false,1000);
                     notificacion("Información Actualizada", "success");
+                    window.location = $DOCUMENTO_URL_HTTP + '/application/system/pacientes/directorio_paciente/index.php?view=directorio';
                     // location.reload(true);
 
                 }else{

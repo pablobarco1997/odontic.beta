@@ -148,6 +148,12 @@ $('#file_icon').change(function(e){
 //UPDATE PACIENTES FORM_DATOPS_PACIENTE
 $('#form_update_paciente').submit(function(e) {
 
+
+    if(!ModulePermission(7,3)){
+        notificacion('Ud. No tiene permiso para Actualizar la Información del Paciente', 'error');
+        return false;
+    }
+
     boxloading($boxContentViewAdminPaciente, true);
 
     e.preventDefault();

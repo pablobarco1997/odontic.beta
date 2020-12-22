@@ -53,7 +53,7 @@ $sql = "SELECT
             (select IFNULL(tc.edit_name, concat('Plan de tratamiento #',tc.numero)) from tab_plan_tratamiento_cab tc where tc.fk_cita = c.rowid limit 1) as plantratamiento ,
             (select p.telefono_movil from tab_admin_pacientes p where p.rowid = c.fk_paciente) as telefono_movil ,
             -- citas atrazada con estado no confirmado
-            if( cast(d.fecha_cita as date) < '".$fecha_hoy."' && d.fk_estado_paciente_cita = 2 , concat('cita agendada atrazada <br> NO CONFIRMADO - ', date_format(d.fecha_cita, '%Y/%m/%d') , ' <br> hora ' , d.hora_inicio ) , '') as cita_atrazada
+            if( cast(d.fecha_cita as date) < '".$fecha_hoy."' && d.fk_estado_paciente_cita = 2 , concat('cita agendada atrasada <br> NO CONFIRMADO - ', date_format(d.fecha_cita, '%Y/%m/%d') , ' <br> hora ' , d.hora_inicio ) , '') as cita_atrazada
          FROM 
          tab_pacientes_citas_cab c , 
          tab_pacientes_citas_det d
@@ -65,8 +65,10 @@ if(!empty($idPaciente))
 if(!empty($fechaInicio) && !empty($fechafin))
     $sql .= "  and cast(d.fecha_cita as date) between cast('$fechaInicio' as date) and cast('$fechafin' as date)";
 
-if(!empty($n_citas))
-    $sql .= " and d.rowid like '%$n_citas%' ";
+if($n_cita!="")
+    $sql .= " and d.rowid like '%$n_cita%' ";
+
+$sql .= " order by d.fecha_cita desc ";
 
 $rscitas = $db->query($sql);
 
@@ -76,7 +78,7 @@ if($rscitas&&$rscitas->rowCount()>0){
     }
 }
 
-//print_r($sql); die();
+#echo '<pre>';print_r($sql); die();
 
 $InformacionEntity = (object)array(
     'nombre'            => $_SESSION['nombreClinica'],

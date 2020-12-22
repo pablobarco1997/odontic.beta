@@ -1089,6 +1089,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $observacion     = GETPOST('observacion');
             $estadoDiente    = GETPOST('fk_estadodiente');
 
+            $queEstado       = 0;//comprubeo que sea diferente de estado realizado
+
             $tieneOdontograma = ''; #esta variable comprueba si el plan de tratamiento tiene odontogrma
             $datosRealizarPrestacion = [];
 
@@ -1101,6 +1103,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                 $labellist = []; #aux caras
                 $listcaras = []; #cadena de caras
+
 
                 if($objtratm->json_caras != "")
                 {
@@ -1130,7 +1133,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     'estadodiente'       =>  $estadoDiente,
                     'fk_doctor'          =>  $iddoct,
                     'idlogin'            =>  $conf->login_id,
-                    'iddiente'           =>  $iddiente,
+                    'iddiente'           =>  $objtratm->fk_diente,
 
                     'AxulisttaCaras'     =>  implode(',', $listcaras),
                 ];
@@ -1194,7 +1197,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             if($error == "") {
                 $rlcr = realizarPrestacionupdate( $datosRealizarPrestacion );
-                if( $rlcr == "" ){
+                if( $rlcr != "" ){
                     $error = $rlcr;
                 }
             }
@@ -2049,7 +2052,7 @@ function listcitas_admin($idPaciente, $fechaInicio, $fechafin, $n_citas, $Estado
                 (select p.telefono_movil from tab_admin_pacientes p where p.rowid = c.fk_paciente) as telefono_movil ,
                 
                 -- citas atrazada con estado no confirmado
-                if( cast(d.fecha_cita as date) < '".$fecha_hoy."' && d.fk_estado_paciente_cita = 2 , concat('cita agendada atrazada <br> NO CONFIRMADO - ', date_format(d.fecha_cita, '%Y/%m/%d') , ' <br> hora ' , d.hora_inicio ) , '') as cita_atrazada
+                if( cast(d.fecha_cita as date) < '".$fecha_hoy."' && d.fk_estado_paciente_cita = 2 , concat('cita agendada atrasada <br> NO CONFIRMADO - ', date_format(d.fecha_cita, '%Y/%m/%d') , ' <br> hora ' , d.hora_inicio ) , '') as cita_atrazada
          
              from 
          
@@ -2068,13 +2071,12 @@ function listcitas_admin($idPaciente, $fechaInicio, $fechafin, $n_citas, $Estado
     if(!empty($n_citas))
         $sql .= " and d.rowid like '%$n_citas%' ";
 
-
+    $sql .= " order by d.fecha_cita desc ";
     $sqlTotal = $sql;
 
     if($start || $length)
         $sql.=" LIMIT $start,$length;";
 
-    $sql .= " order by d.rowid desc";
 
     $resultTotal = $db->query($sqlTotal);
     $res = $db->query($sql);
@@ -2138,6 +2140,9 @@ function info_type_document_pacient($idpaciente="")
 
     global  $db;
 
+    $permisoConsultar = (!PermitsModule(4,1))?" and 1<>1 ":"";
+
+
     $data = array();
 
     $sql = "
@@ -2171,6 +2176,7 @@ function info_type_document_pacient($idpaciente="")
             cl.rowid > 0 ";
 
     $sql .= " and cl.fk_paciente =".$idpaciente;
+    $sql .= $permisoConsultar;
 
     $resul = $db->query($sql);
 
@@ -2234,7 +2240,7 @@ function realizarPrestacionupdate($datos = array())
         $sqlrealizar .= " '$datos->observacion' , ";
         $sqlrealizar .= " $datos->iddiente , ";
         $sqlrealizar .= " '$datos->json_caras ', ";
-        $sqlrealizar .= " $datos->estadodiente , ";
+        $sqlrealizar .= " ".(empty($datos->estadodiente)?0:$datos->estadodiente)." , ";
         $sqlrealizar .= " $datos->fk_doctor , ";
         $sqlrealizar .= " $datos->idlogin  ";
         $sqlrealizar .= " ) ";
@@ -2252,14 +2258,14 @@ function realizarPrestacionupdate($datos = array())
             $sqlUpdattramm .= "  `estadodet`       = 'R'  ," ;
             $sqlUpdattramm .= "  `realizada_fk_dentista`    = $datos->fk_doctor  ," ;
             $sqlUpdattramm .= "  `evolucion_escrita`        ='$datos->observacion' , " ;
-            $sqlUpdattramm .= "  `fk_estado_odontograma`    = $datos->estadodiente  ," ;
+            $sqlUpdattramm .= "  `fk_estado_odontograma`    = ".(empty($datos->estadodiente)?0:$datos->estadodiente)."  ," ;
             $sqlUpdattramm .= "  `comment_laboratorio_auto` = '$comment_status_auto' , " ;
             $sqlUpdattramm .= "  `date_recepcion_status_tramient` = now()  " ;
             $sqlUpdattramm .= "   WHERE `rowid`= $datos->fk_plantram_det ";
 
             $rsUp = $db->query($sqlUpdattramm);
             if(!$rsUp){
-                return 'Ocurrio un error no se pudo realizar la evulución de manera correcta';
+                return 'Ocurrion un error con la Operación Evolución';
             }
         }
 
@@ -2306,6 +2312,8 @@ function evoluc_listprincpl($datos)
     if( !empty( $datos['idplan'] ) ){
         $sqlevolucprip .= " and ev.fk_plantram_cab =  " . $datos['idplan'] . "  ";
     }
+
+    $sqlevolucprip .= " order by ev.rowid desc";
 
     $sqlTotal = $sqlevolucprip;
 

@@ -131,6 +131,12 @@ $('#checkPacienteDesact').on('change', function() {
 // imprimir lista de pacientes mostrando en la tabla
 $('#imprimir_listPacientes').click(function(){
 
+    if(!ModulePermission(6,1)){
+
+        notificacion('Ud. No tiene permiso para consultar','error');
+        return false;
+    }
+
     var ids = [];
     $('.link_pacientes_id').each(function(i, item) {
 
@@ -149,6 +155,12 @@ $('#imprimir_listPacientes').click(function(){
 
 //Imprimir Ficha Del Paciente
 var ImprimirFicha = function(idpaciente){
+
+    if(!ModulePermission(6,1)){
+
+        notificacion('Ud. No tiene permiso para consultar','error');
+        return false;
+    }
 
     var url = $DOCUMENTO_URL_HTTP + '/application/system/pacientes/directorio_paciente/export/exportFichaPaciente.php?idpac=' + idpaciente;
     window.open(url, '_blank');

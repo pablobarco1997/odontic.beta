@@ -28,7 +28,7 @@
                                 </li>
                                 <li>
                                     <label>
-                                        <a id="imprimir_listPacientes" class="btnhover" style="padding: 5px; color: #333333" target="_blank" href="<?= DOL_HTTP .'/application/system/pacientes/directorio_paciente/export/export_pdf_directorio.php' ?>"><i class="fa fa-print"></i>   &nbsp;Imprimir Lista</a>
+                                        <a id="imprimir_listPacientes" class="btnhover <?= (!PermitsModule(6,1)?"disabled_link3":"") ?>" style="padding: 5px; color: #333333" target="_blank" href="<?= DOL_HTTP .'/application/system/pacientes/directorio_paciente/export/export_pdf_directorio.php' ?>"><i class="fa fa-print"></i>   &nbsp;Imprimir Lista</a>
                                     </label>
                                 </li>
                                 <li>
