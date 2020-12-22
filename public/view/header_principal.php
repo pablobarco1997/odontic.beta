@@ -73,11 +73,21 @@
 
     <style>
 
+
         *{
             /*font-family: 'Varela Round', sans-serif ;*/
             /*font-size: 0.8rem !important;*/
             font-family: 'Baloo Da 2', cursive;
         }
+
+        /*@font-face {*/
+            /*font-family: 'Baloo Da 2', cursive;*/
+            /*src: url("../font/Baloo2-Regular.ttf");*/
+            /*src: url("../font/Baloo2-ExtraBold.ttf");*/
+            /*src: url("../font/Baloo2-Medium.ttf");*/
+            /*src: url("../font/Baloo2-Regular.ttf");*/
+            /*src: url("../font/Baloo2-SemiBold.ttf");*/
+        /*}*/
 
         h3{
             /*font-family: 'Varela Round', sans-serif ;*/

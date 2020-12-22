@@ -31,6 +31,7 @@
                 'prestaciones'    => array('url' => DOL_HTTP .'/application/system/configuraciones/index.php?view=form_prestaciones' , 'Active_subMod' => (isset($_GET['view']) && $_GET['view'] == 'form_prestaciones') ? 'Active_link_subM' : ''),
                 'descuento'       => array('url' => DOL_HTTP .'/application/system/configuraciones/index.php?view=form_convenios_desc' , 'Active_subMod' => (isset($_GET['view']) && $_GET['view'] == 'form_convenios_desc') ? 'Active_link_subM' : ''),
                 'odontolog'       => array('url' => DOL_HTTP .'/application/system/configuraciones/index.php?view=form_gestion_odontologos_especialidades&v=dentist' , 'Active_subMod' => (isset($_GET['v']) && $_GET['v'] == 'dentist') ? 'Active_link_subM' : ''),
+                'especialidades'  => array('url' => DOL_HTTP .'/application/system/configuraciones/index.php?view=form_gestion_odontologos_especialidades&v=specialties' , 'Active_subMod' => (isset($_GET['v']) && $_GET['v'] == 'specialties') ? 'Active_link_subM' : ''),
                 'users'           => array('url' => DOL_HTTP .'/application/system/configuraciones/index.php?view=form_gestion_odontologos_especialidades&v=users&list=true' , 'Active_subMod' => (isset($_GET['v']) && $_GET['v'] == 'users') ? 'Active_link_subM' : ''),
                 'laboratorios'    => array('url' => DOL_HTTP .'/application/system/configuraciones/index.php?view=form_laboratorios_conf&v=laboratorios' , 'Active_subMod' => (isset($_GET['view']) && $_GET['view'] == 'form_laboratorios_conf') ? 'Active_link_subM' : ''),
         ),
@@ -112,21 +113,23 @@
 </li>
 
 <!--MODULO DE DOCUMENTOS CLINICOS DE UN PACIENTE-->
-<li class="<?= $Permissions_documentosClinicos['Active'] ?>"><a href="<?= $Permissions_documentosClinicos['url'] ?>"><i class="fa fa-file-text-o"></i><span>Documentos clinicos</span></a></li>
+<li class="<?= $Permissions_documentosClinicos['Active'] ?>"><a href="<?= $Permissions_documentosClinicos['url'] ?>"><i class="fa fa-file"></i><span>Documentos clinicos</span></a></li>
 
 <!--MODULO CONFIGURACIONES-->
-<li class="treeview <?= $Permissions_configuration['Active'] ?>" style="cursor: pointer">
+<li class="treeview <?= $Permissions_configuration['Active'] ?> <?= (!empty($Permissions_configuration['Active'])?"menu-open":"")?> " style="cursor: pointer">
     <a><i class="fa fa-wrench"></i> <span>Configuraciones</span>
         <span class="pull-right-container">
                 <i class="fa fa-angle-left pull-right"></i>
         </span>
     </a>
 
-    <ul class="treeview-menu">
+    <!--SUB MENUS-->
+    <ul class="treeview-menu" <?= (!empty($Permissions_configuration['Active'])?"style=\"display: block\"":"") ?> >
         <li><a href="<?= $Permissions_configuration['url']['principal']['url'] ?>"  class="<?= $Permissions_configuration['url']['principal']['Active_subMod'] ?>" >Principal</a></li>
         <li><a href="<?= $Permissions_configuration['url']['prestaciones']['url'] ?>"  class="<?= $Permissions_configuration['url']['prestaciones']['Active_subMod'] ?>" >Prestaciones</a></li>
-        <li><a href="<?= $Permissions_configuration['url']['descuento']['url'] ?>"  class="<?= $Permissions_configuration['url']['descuento']['Active_subMod'] ?>" >Descuento</a></li>
+        <li><a href="<?= $Permissions_configuration['url']['descuento']['url'] ?>"  class="<?= $Permissions_configuration['url']['descuento']['Active_subMod'] ?> disabled_link3" >Descuento</a></li>
         <li><a href="<?= $Permissions_configuration['url']['odontolog']['url'] ?>"  class="<?= $Permissions_configuration['url']['odontolog']['Active_subMod'] ?>" >Odontolog@</a></li>
+        <li><a href="<?= $Permissions_configuration['url']['especialidades']['url'] ?>"  class="<?= $Permissions_configuration['url']['especialidades']['Active_subMod'] ?>" >Especialidades</a></li>
         <li><a href="<?= $Permissions_configuration['url']['users']['url'] ?>"  class="<?= $Permissions_configuration['url']['users']['Active_subMod'] ?>" >Users</a></li>
         <li><a href="<?= $Permissions_configuration['url']['laboratorios']['url'] ?>"  class="<?= $Permissions_configuration['url']['laboratorios']['Active_subMod'] ?>" >Laboratorios Clinicos</a></li>
     </ul>

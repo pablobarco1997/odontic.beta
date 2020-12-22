@@ -664,7 +664,7 @@ function boxloading(box = false, load = false , Timer = 0 ){
 
 }
 
-var PermmisonModule = function(idModule = 0, actionPermiso = 0){
+var ModulePermission = function(idModule = 0, actionPermiso = 0){
 
     var Permiso = false;
 
