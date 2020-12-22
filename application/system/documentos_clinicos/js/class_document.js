@@ -105,6 +105,9 @@ class DocumentoFormulario{
         }if($("#cajaTextoFecha").is(":checked")){
             FormatoIndex++;
             input = "<input class='"+count+" InputCajasTexto form-control' type='date' name='"+name+"_"+ FormatoIndex +"' >";
+        }if($("#cajaTextoPanelTexT").is(":checked")){
+            FormatoIndex++;
+            input = "<div style='width: 100%'> <textarea rows='5' class='"+count+" InputCajasTexto form-control'  name='"+name+"_"+ FormatoIndex +"' style='width: 100%; box-sizing: padding-box; display: block; resize: vertical' ></textarea> </div>";
         }
         Table.parent().removeClass("tdbox").css("padding", "2px");
         var td = "";

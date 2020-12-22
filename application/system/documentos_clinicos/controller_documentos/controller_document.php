@@ -23,10 +23,29 @@ if( (isset($_POST['ajaxSend']) && isset($_POST['accion'])) || (isset($_GET['ajax
 
             case "list_informacion_doc":
 
-                $data = array();
-                $idpaciente = GETPOST('idpaciente');
+                $data           = array();
+                $idpaciente     = GETPOST('idpaciente');
+                $bsq_documento  = GETPOST('bsq_documento');
+                $fecha_create   = GETPOST('fecha_create');
 
-                $sql = "SELECT rowid , nombre_documento , Descripcion, id_table_form_document, datecreate FROM tab_documentos_clinicos";
+                if(!empty($fecha_create)){
+                    $dateff_ini = str_replace('/','-', explode('-',$fecha_create)[0]);
+                    $dateff_fin = str_replace('/','-', explode('-',$fecha_create)[1]);
+                }
+
+                $permisoConsultar = (!PermitsModule(4,1))?" and 1<>1 ":"";
+
+                $sql  = "SELECT rowid , nombre_documento , Descripcion, id_table_form_document, datecreate FROM tab_documentos_clinicos where id_table_form_document != '' ";
+                $sql .= $permisoConsultar;
+
+                if(!empty($fecha_create)){
+                    $sql .= " and cast(datecreate as date) between '$dateff_ini' and '$dateff_fin' ";
+                }
+                if(!empty($bsq_documento)){
+                    $sql .= " and rowid = ".$bsq_documento;
+                }
+
+                $sql .= " ";
                 $result = $db->query($sql);
                 if($result){
                     if($result->rowCount()>0){
@@ -176,6 +195,7 @@ if( (isset($_POST['ajaxSend']) && isset($_POST['accion'])) || (isset($_GET['ajax
 
             case "crear_form_documento":
 
+//                die();
                 $error = "";
                 $NameDocumentTable      = GETPOST("NameDocumentTable");
                 $nameDocument           = GETPOST("nameDocument");
@@ -224,7 +244,7 @@ if( (isset($_POST['ajaxSend']) && isset($_POST['accion'])) || (isset($_GET['ajax
                     $error = 'Ocurrio un error con la Operación';
                 }
 
-                die();
+//                die();
 
                 $outuput = [
                     'error' => $error,
@@ -240,15 +260,18 @@ if( (isset($_POST['ajaxSend']) && isset($_POST['accion'])) || (isset($_GET['ajax
                 $idtableDocument = GETPOST("idtableDocument");
                 $iddoc           = GETPOST("iddoc");
 
-                if(!empty($idtableDocument)){
+                if(!empty($idtableDocument))
+                {
                     $sql = "SELECT 
                             id_registro_form , name_documn , id_documn_clinico, date_create
                         FROM
                             tab_documentos_clinicos_data";
                     $sql .= " where  id_documn_clinico = ".$iddoc;
                     $result = $db->query($sql);
-                    if($result){
-                        if($result->rowCount()>0){
+                    if($result)
+                    {
+                        if($result->rowCount()>0)
+                        {
                             while ($object = $result->fetchObject())
                             {
                                 $rows = array();

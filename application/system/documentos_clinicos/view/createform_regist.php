@@ -114,6 +114,12 @@ $modulo = false;
             <div class="modal-body">
                 <div class="row">
                     <div class="form-group col-xs-12 col-md-6">
+                        <div class="form-group">
+                            <span style=" color: #eb9627">
+                            <i class="fa fa-info-circle"></i>
+                                El sistema no tomara en cuenta el <b>control</b> si la caja de texto del Identificador se encuentra vacia
+                            </span>
+                        </div>
                         <!--content-->
                         <div class="form-group">
                             <small style="border-bottom: 1px solid #e9edf2; display: block; margin-bottom: 10px; font-size: 1.3rem"><b>Texto</b></small>
@@ -131,7 +137,7 @@ $modulo = false;
                             <div class="radio">
                                 <label><input type="radio" name="texto_conf" id="text_label" value="" >label</label>
                             </div>
-                            <textarea  id="value_texto" cols="30" class="form-control" placeholder="Ingrese un texto"></textarea>
+                            <textarea  id="value_texto" cols="30" class="form-control" placeholder="Ingrese un texto (Identificador)"></textarea>
                         </div>
 
                         <div class="form-group">
@@ -145,8 +151,12 @@ $modulo = false;
                             <div class="radio">
                                 <label><input type="radio" name="cajaTexto" id="cajaTextoFecha" value="" >Fecha</label>
                             </div>
+                            <div class="radio">
+                                <label><input type="radio" name="cajaTexto" id="cajaTextoPanelTexT" value="" >Panel de Texto</label>
+                            </div>
                             <input type="text" class="form-control" id="caja_texto_conf" placeholder="Ingresar un texto para identificar el campo (nombre del Campo)">
                         </div>
+
                     </div>
                     <div class="form-group col-xs-12 col-md-6">
                         <!--content-->

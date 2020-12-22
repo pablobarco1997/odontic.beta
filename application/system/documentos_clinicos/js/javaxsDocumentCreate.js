@@ -320,14 +320,15 @@ $("#crearte_form_dom").click(function() {
     var DataForm        = [];
 
     var PrimerForm = $("#Form_"+$nameDocumentClinico);
-    console.log(PrimerForm);
+    // console.log(PrimerForm);
+
     //Recorro todos los name que se encuentran solo en el formulario asignado
-    $("input", PrimerForm).each(function() {
+    $("input, select, textarea", PrimerForm).each(function() {
         console.log($(this));
         DataForm.push($(this).attr("name"));
     });
 
-    console.log(DataForm.toString());
+    console.log(DataForm);
 
     FormInformation.append("accion","crear_form_documento");
     FormInformation.append("ajaxSend","ajaxSend");
@@ -405,6 +406,7 @@ $("#EliminarElementoTable").on("change", function() {
         $("#idnameListDesplegable").val(null).attr("disabled", true);
         EmpityListDesplegable();
         $(".optionListaDesp").attr("disabled",true);
+        $("#addPanelTexto").attr("disabled",true).val(null);
 
     }else{
         $('input[name="texto_conf"]').prop("checked", false).attr("disabled", false);
@@ -416,6 +418,7 @@ $("#EliminarElementoTable").on("change", function() {
         $("#idnameListDesplegable").val(null).attr("disabled", false);
         EmpityListDesplegable();
         $(".optionListaDesp").attr("disabled",false);
+        $("#addPanelTexto").attr("disabled",false).val(null);
     }
 });
 
@@ -431,6 +434,8 @@ function EmpityListDesplegable(){
     $("#addListaDesplegable").html($(li));
 
 }
+
+
 $(document).ready(function() {
 
     if($nameDocumentClinico == ""){

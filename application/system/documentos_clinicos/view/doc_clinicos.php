@@ -56,7 +56,7 @@
     $titulo = $object->nombre_documento;
     $modulo = false;
 
-    #echo '<pre>';print_r($objectMod); die();
+    #echo '<pre>';print_r($camposName); die();
 /*
     date_default_timezone_set('America/Guayaquil');
     print_r(date("Y-m-d  H:m:s"));  die();
@@ -129,9 +129,15 @@
                 var parametros = [name, select.val()];
                 ObjectData.push(parametros);
             }
+            if(ElementName[0].nodeName=="TEXTAREA"){
+                var value    = "";
+                value   = $("[name='"+name+"']").val();
+                var parametros = [name, value];
+                ObjectData.push(parametros);
+            }
         });
 
-        console.log(ObjectData);
+        console.log(Data);
 
         return ObjectData;
 
@@ -142,11 +148,14 @@
         var DataMod = <?= json_encode(((count($objectMod)>0)?$objectMod->data_documn:array())) ?>;
         DataMod = $.parseJSON(DataMod);
 
+        console.log(DataMod);
+
         $.each(DataMod, function (i, item) {
             var name         = item[0]; //name
             var value        = item[1];
             var ElementName  = $("[name='"+name+"']");
-            console.log(ElementName);
+
+            console.log(ElementName[0].nodeName);
 
             if(ElementName[0].nodeName=="INPUT"){
                 var type    = $("[name='"+name+"']").attr("type");
@@ -165,10 +174,13 @@
                 var select   = $("[name='"+name+"']");
                 select.val(value).trigger('change');
             }
+            if(ElementName[0].nodeName=="TEXTAREA"){
+                var input   = $("[name='"+name+"']");
+                input.val(value);
+            }
 
         });
 
-        console.log(DataMod);
     }
 
     function NuevoModificarDocumento(Elementos){

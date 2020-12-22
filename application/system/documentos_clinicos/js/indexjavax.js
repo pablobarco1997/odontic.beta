@@ -4,7 +4,7 @@ function  cargarlistdocummclini()
 
     $('#list_docum_clini').DataTable({
 
-        searching: true,
+        searching: false,
         ordering:false,
         destroy:true,
 
@@ -14,7 +14,9 @@ function  cargarlistdocummclini()
             data:{
                 'ajaxSend':'ajaxSend',
                 'accion':'list_informacion_doc',
-                'idpaciente': $('#pacientes').find(':selected').val()
+                'idpaciente': $('#pacientes').find(':selected').val(),
+                'fecha_create': $('#fecha_creacion_doc').val(),
+                'bsq_documento': $('#bsq_documento').val(),
             },
             dataType:'json',
         },
@@ -133,10 +135,16 @@ $("#crearDocumentClinico").click(function() {
     }
 });
 
-$(document).ready(function() {
+$(".aplicar").click(function() {
+    cargarlistdocummclini();
+});
+$(".limpiar ").click(function() {
+    $("#fecha_creacion_doc").val(null);
+    $("#bsq_documento").val(null).trigger('change');
+    cargarlistdocummclini();
+});
 
-    //cargas los documentos clinicos
-    cargarlistdocummclini();  //esta funcion es ta la lista de los documentos - debe ejecutarse primero
+$(document).ready(function() {
 
     $('#documento_ , #doctpacientes').select2({
         placeholder:'Seleccione una opción',
@@ -144,6 +152,62 @@ $(document).ready(function() {
         language:'es'
     });
 
+
+    $('#fecha_creacion_doc').daterangepicker({
+
+        locale: {
+            format: 'YYYY/MM/DD' ,
+            daysOfWeek: [
+                "Dom",
+                "Lun",
+                "Mar",
+                "Mie",
+                "Jue",
+                "Vie",
+                "Sáb"
+            ],
+            monthNames: [
+                "Enero",
+                "Febrero",
+                "Marzo",
+                "Abril",
+                "Mayo",
+                "Junio",
+                "Julio",
+                "Agosto",
+                "Septiembre",
+                "Octubre",
+                "Noviembre",
+                "Diciembre"
+            ],
+        },
+
+        startDate: moment().startOf('month'),
+        endDate: moment(),
+        ranges: {
+            'Hoy': [moment(), moment()],
+            'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+            'Últimos 7 Dias': [moment().subtract(6, 'days'), moment()],
+            'Últimos 30 Dias': [moment().subtract(29, 'days'), moment()],
+            'Mes Actual': [moment().startOf('month'), moment().endOf('month')],
+            'Mes Pasado': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+            'Año Actual': [moment().startOf('year'), moment().endOf('year')],
+            'Año Pasado': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
+        }
+    });
+
+    $('.rango span').click(function() {
+        $(this).parent().find('input').click();
+    });
+
+    $('#fecha_creacion_doc').val(null);
+
+    //cargas los documentos clinicos
+    cargarlistdocummclini();  //esta funcion es ta la lista de los documentos - debe ejecutarse primero
+
+    $("#bsq_documento").select2({
+        placeholder:'Seleccione una opción'
+    });
 
 });
 
@@ -207,3 +271,12 @@ function Get_jquery_URL(Getparam)
 
     return idGetUrl;
 }
+
+
+window.onload =  boxloading($boxContentDocumento,true);
+
+$(window).on("load", function() {
+
+    boxloading($boxContentDocumento,false,1500);
+
+});

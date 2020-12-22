@@ -121,6 +121,7 @@
 
     window.addEventListener("load", function() {
 
+        console.log(ObjectDatos);
         $.each(ObjectDatos, function(i, item){
 
             var name  = item[0];
@@ -174,6 +175,17 @@
                     .css("padding-top", "10px")
                     .html($(soloTexto));
 
+                $("[name='"+name+"']").remove();
+            }
+
+            if(ElementName[0].nodeName=="TEXTAREA"){
+                var soloTexto = "";
+                soloTexto = " <span style='color: dodgerblue; font-weight: bold;'> "+value+"</span>";
+                ElementName
+                    .parent("div")
+                    .css("padding-top", "10px")
+                    .css("padding-bottom", "10px")
+                    .html($(soloTexto));
                 $("[name='"+name+"']").remove();
             }
 

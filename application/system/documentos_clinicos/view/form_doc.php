@@ -112,8 +112,11 @@
                         domMenu += "<button class='btn btnhover  dropdown-toggle btn-xs ' type='button' data-toggle='dropdown' style='100%' aria-expanded='true'>" +
                             "<i class=\"fa fa-ellipsis-v\"></i>" +
                             "</button>";
+
+                        var url = "<?= DOL_HTTP ?>"+"/application/system/documentos_clinicos/index.php?view=doc_clinicos&iddclin=<?= $idDocRegistro ?>&mod=true&idr="+full['idInfoDoc'];
+
                         domMenu += "<ul class='dropdown-menu pull-right'>";
-                            domMenu += "<li><a href='<?= DOL_HTTP ?>/application/system/documentos_clinicos/index.php?view=doc_clinicos&iddclin=<?= $idDocRegistro ?>&mod=true&idr="+full['idInfoDoc']+"' >Modificar</a></li>";
+                            domMenu += "<li><a href='#' data-url='"+url+"' onclick='PermisoModificar($(this))'>Modificar</a></li>";
                             domMenu += "<li><a href='#eliminar_documento_clinico_Modal' onclick='ElemenAttr("+full['idInfoDoc']+")' data-toggle='modal'>Eliminar</a></li>";
                         domMenu += "</ul>";
                         domMenu += "</div>";
@@ -216,6 +219,16 @@
         console.log($("input[name='checkedHijos']:checked").length);
 
     });
+
+    var PermisoModificar = function(Element){
+        if(!ModulePermission(4,3)){
+
+            notificacion('Ud. no tiene permiso para Modificar', 'error');
+            return false;
+        }
+
+        window.open(Element.prop('dataset').url);
+    };
 
     $(document).ready(function() {
         DocumentosForm();
