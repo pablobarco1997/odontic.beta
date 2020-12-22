@@ -54,7 +54,7 @@
                         <?php if($accion == 'modificar'){ ?>
                             <li><a href="<?= DOL_HTTP ?>/application/system/configuraciones/index.php?view=form_prestaciones"  class="btn btnhover" >Nueva Prestación</a></li>
                         <?php }?>
-                        <li>  <a href="#modal_list_prestacion" id="masInformacion" data-toggle="modal" class="btn btnhover" onclick="load_table_prestaciones()"> <i class="fa fa-info"></i> Información</a></li>
+                        <li>  <a href="#modal_list_prestacion" id="masInformacion" data-toggle="modal" style="text-decoration-line: underline" class="btn btnhover <?= (!PermitsModule(8,1)?"disabled_link3":"") ?>" onclick="load_table_prestaciones()" > <i class="fa fa-info"></i> Información</a></li>
                     </ul>
                 </div>
 
@@ -65,7 +65,7 @@
                             <label class="control-label col-sm-3" for="conf_cat_prestaciones">Categoría:</label>
                             <div class="col-sm-8 col-xs-12">
                                 <div class="input-group">
-                                    <select name="conf_cat_prestaciones" id="conf_cat_prestaciones" class=" invalic_prestaciones" style="width: 100%">
+                                    <select name="conf_cat_prestaciones" id="conf_cat_prestaciones" class=" invalic_prestaciones" style="width: 100%" onchange="validNuevUpdate()">
                                         <option value=""></option>
                                         <?= $optionPrestacion ?>
                                     </select>
@@ -79,7 +79,7 @@
                         <div class="form-group">
                             <label class="control-label col-sm-3 " for="prestacion_descr">nombre de Prestación:</label>
                             <div class="col-sm-8">
-                                <input type="email" class="form-control invalic_prestaciones" id="prestacion_descr" name="prestacion_descr">
+                                <input type="email" class="form-control invalic_prestaciones" id="prestacion_descr" name="prestacion_descr" onkeyup="validNuevUpdate()">
                                 <small style="color: red;" id="msg_prestaciones"></small>
                             </div>
                         </div>
@@ -87,7 +87,7 @@
                         <div class="form-group">
                             <label class="control-label col-sm-3" for="valorPrestacion">Costo $:</label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control invalic_prestaciones" id="valorPrestacion" autocomplete="off" name="valorPrestacion">
+                                <input type="text" class="form-control invalic_prestaciones" id="valorPrestacion" autocomplete="off" name="valorPrestacion" onkeyup="validNuevUpdate()">
                                 <small style="color: red;" id="msg_valor"></small>
                             </div>
                         </div>
@@ -215,7 +215,7 @@
         <div class="modal-content">
             <div class="modal-header modal-diseng">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title" >AGREGAR CATEGORIA PRESTACIÓN</h4>
+                <h4 class="modal-title" ><span>CATEGORIA DE PRESTACIÓN</span></h4>
             </div>
             <div class="modal-body">
 
@@ -225,7 +225,7 @@
                     </div>
                     <div class="form-group">
                         <label for="">Nombre</label>
-                        <input type="text" id="nomb_cat" class="form-control input-sm">
+                        <input type="text" id="nomb_cat" class="form-control input-sm" onclick="validCategoria()">
                     </div>
                     <div class="form-group">
                         <label for="">Descripción</label>
@@ -237,7 +237,7 @@
             </div>
             <div class="modal-footer">
                 <a href="#" class="btn btnhover" style="font-weight: bolder; color: green" id="guardar_categoria_conf">Aceptar</a>
-                <a href="#" class="btn btnhover" style="font-weight: bolder;"  data-dismiss="modal">Close</a>
+                <a href="#" class="btn btnhover" style="font-weight: bolder;"  data-dismiss="modal">Cerrar</a>
             </div>
         </div>
 
@@ -247,13 +247,13 @@
 
 <!-- LISTA INFORMATIVA DE LAS PRESTACIONES -->
 <div id="modal_list_prestacion" class="modal fade" role="dialog">
-    <div class="modal-dialog modal-lg" >
+    <div class="modal-dialog modal-lg" style="margin: 2% auto; width: 70%" >
 
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header modal-diseng">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title"><b>Lista de Prestaciones</b></h4>
+                <h4 class="modal-title"><span>Lista de Prestaciones</span></h4>
             </div>
             <div class="modal-body">
                    <div class="form-group">

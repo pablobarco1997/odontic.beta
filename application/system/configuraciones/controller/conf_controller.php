@@ -169,36 +169,38 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $estado = GETPOST('estado');
             $id     = GETPOST('id'); #id odontologos
 
-            $sql = 'UPDATE `tab_odontologos` SET `estado` = TRIM(\''.$estado.'\') WHERE (`rowid` = '.$id.');';
-            $rs = $db->query($sql);
+            if(!validSuperAdmin("USUID_".$conf->EMPRESA->ENTIDAD."_".$id)){
+                $sql = 'UPDATE `tab_odontologos` SET `estado` = TRIM(\''.$estado.'\') WHERE (`rowid` = '.$id.');';
+                $rs = $db->query($sql);
 
-            if($rs){
+                if($rs){
+                    $sqllogi2 = "UPDATE `tab_login_users` SET `estado`='$estado' WHERE `rowid` != 0 and fk_doc =".$id." ;";
+                    $rs12 = $db->query($sqllogi2);
+                    if($rs12){
+                        #verifica si doctor(a) tiene login asociado
+                        $sqllogin = "SELECT login_idusers_entity FROM tab_login_users WHERE fk_doc =".$id."  ";
+                        $rs1  = $db->query($sqllogin);
+                        if($rs1->rowCount() == 1){
 
-                $sqllogi2 = "UPDATE `tab_login_users` SET `estado`='$estado' WHERE `rowid` != 0 and fk_doc =".$id." ;";
-                $rs12 = $db->query($sqllogi2);
+                            #se actualiza el login glob
+                            $idUsuarioEnitityLogin = $rs1->fetchObject()->login_idusers_entity;
+                            $Entidad_Login = new CONECCION_ENTIDAD();
+                            $Entidad_Login->login_status($estado, $idUsuarioEnitityLogin, $conf->EMPRESA->ID_ENTIDAD);
+                        }
 
-                if($rs12){
-
-                    #verifica si doctor(a) tiene login asociado
-                    $sqllogin = "SELECT login_idusers_entity FROM tab_login_users WHERE fk_doc =".$id."  ";
-                    $rs1  = $db->query($sqllogin);
-                    if($rs1->rowCount() == 1){
-
-                        #se actualiza el login glob
-                        $idUsuarioEnitityLogin = $rs1->fetchObject()->login_idusers_entity;
-                        $Entidad_Login = new CONECCION_ENTIDAD();
-                        $Entidad_Login->login_status($estado, $idUsuarioEnitityLogin, $conf->EMPRESA->ID_ENTIDAD);
+                    }else{
+                        $error = 'Ocurrió un error con la Operación, consulte con soporte Técnico';
                     }
+                }
 
-                }else{
+                if(!$rs){
                     $error = 'Ocurrió un error con la Operación, consulte con soporte Técnico';
                 }
 
+            }else{
+                $error = 'Ud. No tiene permiso para Desactivar este Odontolog@';
             }
 
-            if(!$rs){
-                $error = 'Ocurrió un error con la Operación, consulte con soporte Técnico';
-            }
 
             $output = [
                 'error' => $error
@@ -497,10 +499,13 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
         case 'list_especialidades':
 
+            $permisoConsultar = (!PermitsModule(13,1))?" limit 0 ":"";
+
             $data = array();
             $sql = "SELECT * FROM tab_especialidades_doc";
-            $rs = $db->query($sql);
 
+            $sql .= $permisoConsultar;
+            $rs = $db->query($sql);
             if($rs->rowCount()>0)
             {
                 while ($ob = $rs->fetchObject()){
@@ -509,9 +514,10 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     $row[] = date('Y/m/d', strtotime($ob->tms));
                     $row[] = $ob->nombre_especialidad;
                     $row[] = $ob->descripcion;
-                    $row[] = "<a  class='btn' style='font-size: 1.7rem; color: #9f191f;' title='eliminar' onclick='eliminar_especialidad($ob->rowid)'>  <i class='fa  fa-trash'></i> </a> ";
+                    $row[] = "<a  class='btn' style='font-size: 1.7rem; color: #9f191f;' title='eliminar' onclick='eliminar_especialidad($ob->rowid)'>  <i class='fa  fa-trash-o'></i> </a> ";
 
                     $data[] = $row;
+
                 }
             }
 
@@ -678,6 +684,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $start          = $_POST["start"];
             $length         = $_POST["length"];
 
+            $permisoConsultar = (!PermitsModule(8,1)) ? " and 1<>1 ":"";
 
             $sql = "SELECT 
                     d.rowid,
@@ -710,6 +717,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 }
             }
 
+            $sql .= $permisoConsultar;
             $sql .= " order by d.tms desc";
 
             $sqlTotal = $sql;
@@ -1051,18 +1059,20 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
         case 'infoUsuarioOdontic':
 
             #OBTENGO EL USUARIO PARA MODIFICARLO
+            $data = [];
             $obtenerUsuario = array();
             $idusuMod = GETPOST('idmodusu');
 
             $cual  = GETPOST('cual');
-
             $error ="";
 
             if($cual == 'list'){
+                $permisoConsultar = (!PermitsModule(14,1))?0:1;
 
-                $data = infolistUsuarios($cual,$idusuMod);
+                if($permisoConsultar){
+                    $data = infolistUsuarios($cual,$idusuMod);
+                }
             }
-
             if( $cual == 'objecto'){
                 $data = infolistUsuarios($cual,$idusuMod);
             }
@@ -1144,6 +1154,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $length         = $_POST["length"];
             $search         = $_POST["search"];
 
+            $permisoConsultar = (!PermitsModule(15,1)?" limit 0 ":"");
 
             $sql = "SELECT  
                         l.rowid, 
@@ -1162,13 +1173,13 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                             ELSE ''
                         END AS estado ,
                         l.estado as estadoInd     
-                    FROM tab_conf_laboratorios_clinicos l where rowid > 0";
+                    FROM tab_conf_laboratorios_clinicos l where rowid > 0 ";
 
 
             if(!empty($search)){
                 $sql .= " and replace((concat(name,direccion,info_adicional)),' ','') like '%".(str_replace(' ','', $search['value']))."%' ";
             }
-
+            $sql .= $permisoConsultar;
             $sqlTotal = $sql;
 
             if($start || $length)
@@ -1472,7 +1483,10 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     round(ifnull((select sum(amount) from tab_pagos_independ_pacientes_det p where (p.fk_plantram_det = pd.rowid and p.fk_plantram_cab = pc.rowid) and p.fk_prestacion = cp.rowid ),0), 2) as amount,
                     pd.date_recepcion_status_tramient as fecha_recepcion ,
                     pd.estadodet , 
-                    pd.rowid as iddet_tratam
+                    pd.rowid as iddet_tratam ,
+                    pc.rowid as idcab_tratam ,
+                    pc.fk_paciente as idpacientetram,
+                    pd.fk_diente as idpieza
                 From 
                     tab_conf_prestaciones cp , 
                     tab_plan_tratamiento_det pd , 
@@ -1494,6 +1508,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 $sql .= " and  pc.fk_doc = ".$odontocargo;
             }
 
+            $sql .= " order by pd.rowid desc";
             $sqlTotal = $sql;
 
             if($start || $length)
@@ -1514,8 +1529,15 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     if($object->estadodet == 'R')
                         $label = '<label class="label" style="background-color: #D5F5E3; color: green; font-weight: bolder">REALIZADO</label>';
 
+                    $datasetSolicitud = [
+                        'tramdet'     => $object->iddet_tratam,
+                        'tramcab'     => $object->idcab_tratam,
+                        'idpaciente'  => $object->idpacientetram,
+                        'idpieza'     => $object->idpieza
+                    ];
+
                     $row = [];
-                    $row[] = "<input type='checkbox' class='SolicitudChecked' name='SolicitudChecked' onchange='validarMarcarSolicitud()' data-iddettramient='$object->iddet_tratam' value='$object->iddet_tratam' >"; #id plan de tratamiento detalle
+                    $row[] = "<input type='checkbox' class='SolicitudChecked' name='SolicitudChecked' onchange='validarMarcarSolicitud()' data-datasolicitud='".(json_encode($datasetSolicitud))."' data-iddettramient='$object->iddet_tratam' value='$object->iddet_tratam' >"; #id plan de tratamiento detalle
                     $row[] = str_replace('-','/', $object->dateff_tratam);
                     $row[] = $object->trata_num;
                     $row[] = $object->paciente;
@@ -1549,6 +1571,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $iddettratamiento = GETPOST("iddettratamient");
             $statusActual = GETPOST("statusActual");
 
+//            die();
 
             if(!empty($iddettratamiento) && $iddettratamiento != 0)
             {
@@ -1819,6 +1842,9 @@ function list_odontolosGention($estado){
 
     global $db, $conf, $user;
 
+
+    $PermisoConsultar = (!PermitsModule(12,1))?" and 1<>1 ":"";
+
     $data = array();
 
     $sql = "SELECT 
@@ -1848,6 +1874,8 @@ function list_odontolosGention($estado){
         $sql .= " and s.estado = '$estado' ";
     }
 
+    $sql .= $PermisoConsultar;
+
     $sql .= " and (select count(*) from tab_login_users g where g.rowid = ".$user->id." and  g.fk_doc = s.rowid) = 0 " ;
     $sql .= " order by tms desc ";
 
@@ -1875,7 +1903,7 @@ function list_odontolosGention($estado){
 
 
             #Link de Odontologos
-            $NomOdontologos = '  <a href="#modal_conf_doctor" class="btnhover" style="color:#333333" data-toggle="modal" data-idodont="'.$obj->rowid.'" onclick="modificarOdontologo('.$obj->rowid.')"> '. $obj->nombre_doc .' '. $obj->apellido_doc.' </a>';
+            $NomOdontologos = '  <a href="#" class="btnhover" style="color:#333333"  data-idodont="'.$obj->rowid.'" onclick="modificarOdontologo('.$obj->rowid.')"> '. $obj->nombre_doc .' '. $obj->apellido_doc.' </a>';
 
             #Link de Usuarios
             $LinkUsuario    = (!empty($nomUsuario))?'<small style="display: block;">'. $nomUsuario .'</small>':'';
@@ -1909,12 +1937,16 @@ function list_convenios($id = "", $uno)
 
     global $db;
 
+    $permisoConsultar = (!PermitsModule(11,1))?" and 1<>1 ":"";
+
     $data = array();
 
     $sql = "SELECT rowid , nombre_conv , descrip , round(valor, 2) valor FROM tab_conf_convenio_desc WHERE rowid > 0";
+
     if($id != ""){
         $sql .= " and rowid = $id";
     }
+    $sql .= $permisoConsultar;
 
     $sql .= " order by rowid desc";
     $rs  = $db->query($sql);
@@ -2521,5 +2553,6 @@ function listaPrestacionesLaboratorioDinamic($table, $idlab, $searchLab = '', $o
     ];
     return $datos;
 }
+
 
 ?>

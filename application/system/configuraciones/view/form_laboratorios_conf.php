@@ -633,9 +633,21 @@ if($result && $result->rowCount()>0){
                                 setTimeout(()=>{$('#ModalMarcarSolicitud').modal('hide');},1000);
                             }
 
+                            $("#evolucionDoct").select2({
+                                placeholder:'Selecione una Opción',
+                                allowClear:true
+                            });
+
                             $("#SelectStatusSolicitud").select2({
                                 placeholder:'Selecione una Opción',
                                 allowClear:true
+                            }).on('change', function() {
+
+                                if($(this).find(':selected').val() == 'R'){
+                                    $('#concent_StatusRealizados').css('display','block');
+                                }else{
+                                    $('#concent_StatusRealizados').css('display','none');
+                                }
                             });
 
                         });
@@ -644,8 +656,18 @@ if($result && $result->rowCount()>0){
                         //change Status
                         $("#statusSolicitudPrestacion").click(function() {
 
+                            var dataset = $.parseJSON($("[name='SolicitudChecked']:checked").prop('dataset').datasolicitud);
+
+                            console.log(dataset);
+
                             if( $("[name='SolicitudChecked']:checked").length == 1 ){
 
+                                if($("#SelectStatusSolicitud").find(":selected").val() == 'R'){
+                                    if($("#evolucionDoct").find(":selected").val() == ""){
+                                        notificacion("Debe selecionar un profecional a cargo", "question");
+                                        return false;
+                                    }
+                                }
                                 if($("#SelectStatusSolicitud").find(":selected").val()==""){
                                     notificacion("Debe selecionar una opción", "question");
                                     return false;
@@ -654,19 +676,32 @@ if($result && $result->rowCount()>0){
                                 $("#MarcarSolicitudShow").removeClass('disabled_link3');
 
                                 var url = $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php';
-                                var Parametros = {'ajaxSend':'ajaxSend','accion':'statusUpdateSolicitudes','iddettratamient': $("[name='SolicitudChecked']:checked").val()
-                                                       ,'statusActual' : $('#SelectStatusSolicitud').find('option:selected').val()     };
+                                var Parametros = {
+                                    'ajaxSend':'ajaxSend',
+                                    'accion':'statusUpdateSolicitudes',
+                                    'iddettratamient': $("[name='SolicitudChecked']:checked").val(),
+                                    'statusActual' : $('#SelectStatusSolicitud').find('option:selected').val()
+                                };
 
                                 $.get(url, Parametros, function(data) {
                                     var resp = $.parseJSON(data);
                                     if(resp['error'] == ''){
+
                                          if(resp['question'] != ''){
+
                                              $('#SelectStatusSolicitud').val(null).trigger('change');
                                              notificacion(resp['question'] , 'question');
                                          }else{
-                                             $('#SelectStatusSolicitud').val(null).trigger('change');
                                              notificacion('Información Actualizado', 'success');
-                                             setTimeout(()=>{$('#ModalMarcarSolicitud').modal('hide');},1000);
+                                             FiltroSolicitud();
+                                             setTimeout(()=>{
+                                                 $('#ModalMarcarSolicitud').modal('hide');
+
+                                                 if($("#SelectStatusSolicitud").find('option:selected').val() == 'R'){
+                                                     Realizado();
+                                                 }
+                                                 $('#SelectStatusSolicitud').val(null).trigger('change');
+                                             },1000);
                                          }
                                     }else{
 
@@ -677,6 +712,31 @@ if($result && $result->rowCount()>0){
                                 notificacion('Tiene que selecionar una opción','question');
                                 setTimeout(()=>{$('#ModalMarcarSolicitud').modal('hide');},1000);
                             }
+
+                            var Realizado = function() {
+
+                                alert(1);
+                                var parametrs = {
+                                    'accion'        : 'realizarPrestacion',
+                                    'ajaxSend'      : 'ajaxSend',
+                                    'idcabplantram' : dataset['tramcab'],
+                                    'iddetplantram' : dataset['tramdet'],
+                                    'idpaciente'    : dataset['idpaciente'],
+                                    'iddiente'      : dataset['idpieza'],
+                                    'fk_doct'       : $('#evolucionDoct').find(':selected').val() ,
+                                };
+
+                                console.log(parametrs);
+                                var urlupdate = $DOCUMENTO_URL_HTTP +'/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php';
+                                $.get(urlupdate, parametrs, function (data) {
+                                    var resp = $.parseJSON(data);
+                                    if(resp['error'] != ''){
+                                        notificacion(resp['error'], 'error');
+                                    }else{
+                                        $('#evolucionDoct').val(null).trigger('change');
+                                    }
+                                });
+                            };
 
                         });
 
@@ -751,12 +811,24 @@ if($result && $result->rowCount()>0){
                                 </div>
                                 <div class="row">
                                     <div class="form-group col-xs-12 col-md-12">
-                                        <label for=""></label>
+                                        <label for="">Seleccione un estado</label>
                                         <select name="SelectStatusSolicitud" id="SelectStatusSolicitud" class="form-control" style="width: 100%">
                                             <option value=""></option>
 <!--                                            <option value="A">Pendiente</option>-->
                                             <option value="P">En Proceso</option>
                                             <option value="R">Realizado</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-xs-12 col-md-12" id="concent_StatusRealizados" style="display: none">
+                                        <label for="">Seleccione el profecional que realizó esta prestación </label>
+                                        <select name="evolucionDoct" id="evolucionDoct" style="width: 100%" class="form-control">
+                                            <option value=""></option>
+                                            <?php
+                                                $resultodont = $db->query("SELECT concat(nombre_doc, ' ', apellido_doc) as nomb , rowid, estado FROM tab_odontologos WHERE estado = 'A'")->fetchAll();
+                                                foreach ($resultodont as $key => $value){
+                                                    print "<option value='".$value['rowid']."'>".$value['nomb']."</option>";
+                                                }
+                                            ?>
                                         </select>
                                     </div>
                                 </div>

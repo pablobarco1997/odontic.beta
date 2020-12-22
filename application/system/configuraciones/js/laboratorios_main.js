@@ -245,6 +245,12 @@ $("#crearLaboratorio").on("click", function() {
 //nuevo modificar  Laboratorio
 $("#nuevoUpdateLaboratorio").on("click", function() {
 
+    if(!ModulePermission(15,2)){
+
+        notificacion('Ud. No tiene permiso para crear Laboratorios','question');
+        return false;
+    }
+
     if( FormaValidLaboratorio() == false)
         return false;
 

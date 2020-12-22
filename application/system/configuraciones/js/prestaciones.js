@@ -1,3 +1,90 @@
+
+var validCategoria = function() {
+
+    var Errores = [];
+    var nomCat = $('#nomb_cat');
+    if(nomCat.val() == "" || (!/^\s/.test(nomCat.val())) == false){
+        Errores.push({
+            "documento" :   nomCat,
+            "mesg" :  "Campo Obligatorio",
+        });
+    }
+
+    var valid = true;
+    $(".error_perfil").remove();
+    if(Errores.length>0){
+        for (var i=0; i<=Errores.length-1;i++ ){
+
+            var menssage =  document.createElement("small");
+            menssage.setAttribute("style","display: block; color:blue;");
+            menssage.setAttribute("class","error_perfil");
+            menssage.appendChild(document.createTextNode(Errores[i]['mesg']));
+            var documentoDol        = Errores[i]['documento'];
+
+            if(documentoDol.attr("id")=="perf_passd"){
+                $(menssage).insertAfter(documentoDol.parent('.input-group'))
+            }else{
+                $(menssage).insertAfter(documentoDol);
+            }
+        }
+        valid = false;
+    }else{
+        valid = true;
+    }
+    return valid;
+
+};
+
+var validNuevUpdate = function() {
+
+    var Errores     = [];
+    var nomCat      = $('#conf_cat_prestaciones');
+    var prest_name  = $('#prestacion_descr');
+    var val_prest   = $('#valorPrestacion');
+
+    if(nomCat.find('option:selected').val() == "" || (!/^\s/.test(nomCat.val())) == false){
+        Errores.push({
+            "documento" :   nomCat,
+            "mesg" :  "Campo Obligatorio",
+        });
+    }if(prest_name.val() == ""){
+        Errores.push({
+            "documento" :   prest_name,
+            "mesg" :  "Campo Obligatorio",
+        });
+    }if(val_prest.val() == ""){
+        Errores.push({
+            "documento" :   val_prest,
+            "mesg" :  "Campo Obligatorio",
+        });
+    }
+
+    var valid = true;
+    $(".error_perfil").remove();
+    if(Errores.length>0){
+        for (var i=0; i<=Errores.length-1;i++ ){
+
+            var menssage =  document.createElement("small");
+            menssage.setAttribute("style","display: block; color:blue;");
+            menssage.setAttribute("class","error_perfil");
+            menssage.appendChild(document.createTextNode(Errores[i]['mesg']));
+            var documentoDol        = Errores[i]['documento'];
+
+            if(documentoDol.attr("id")=="conf_cat_prestaciones"){
+                $(menssage).insertAfter(documentoDol.parent('.input-group'))
+            }else{
+                $(menssage).insertAfter(documentoDol);
+            }
+        }
+        valid = false;
+    }else{
+        valid = true;
+    }
+    return valid;
+
+
+};
+
 //funciones =========================
 function load_table_prestaciones() {
 
@@ -45,113 +132,6 @@ function load_table_prestaciones() {
     });
 }
 
-/*Validar y guardar Modificar prestacion*/
-function invalic_prestaciones(){
-
-    boxloading($boxContentConfiguracion, true);
-
-    var $puedoPasar = 0;
-
-    var categoria = $('#conf_cat_prestaciones');
-    var prestacion = $('#prestacion_descr');
-    var valorPrestacion = $('#valorPrestacion');
-
-    if(categoria.find(':selected').val() == ''){
-        $puedoPasar++;
-        categoria.addClass('INVALIC_ERROR');
-        $('#msg_categoria').text('Debe Seleccioar una categoria');
-    }else{
-        categoria.removeClass('INVALIC_ERROR');
-        $('#msg_categoria').text(null);
-    }
-
-    if(prestacion.val() == ''){
-        $puedoPasar++;
-        prestacion.addClass('INVALIC_ERROR');
-        $('#msg_prestaciones').text('Debe ingresar el nombre de la prestación');
-    }else{
-        prestacion.removeClass('INVALIC_ERROR');
-        $('#msg_prestaciones').text(null);
-    }
-
-    if(valorPrestacion.val() == ''){
-        $puedoPasar++;
-        valorPrestacion.addClass('INVALIC_ERROR');
-        $('#msg_valor').text('Debe ingresar el valor del costo de esta prestación');
-    }else{
-        valorPrestacion.removeClass('INVALIC_ERROR');
-        $('#msg_valor').text(null);
-    }
-
-    if( $puedoPasar == 0){
-
-        var parametros = {
-            'ajaxSend'         : 'ajaxSend',
-            'accion'           : 'nuevoUpdatePrestacion',
-            'id'               : $idprestacion_prestacion,
-            'subaccion'        : $accion_prestacion,
-            'label_prestacion' : prestacion.val(),
-            'cat_prestacion'   : categoria.find(':selected').val(),
-            'costo_prestacion' : valorPrestacion.val(), 'convenio': $('#convenioConf').find('option:selected').val(),
-            'explicacion'      : $('#explicacionInfo').val()
-        };
-
-        $.ajax({
-            url: $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php',
-            type:'POST',
-            data: parametros ,
-            dataType:'json',
-            async:false,
-            error:function(xhr, status){
-                if(xhr['status']=='200'){
-                    boxloading($boxContentConfiguracion,false,1000);
-                }else{
-                    if(xhr['status']=='404'){
-                        notificacion("Ocurrió un error con la <b>Configuracion Prestaciones</b> <br> <b>xhr: "+xhr['status']+" <br> Consulte con Soporte </b>");
-                    }
-                    boxloading($boxContentConfiguracion,false,1000);
-                }
-            },
-            complete:function(xhr, status) {
-
-                if(xhr['status']=='200'){
-                    boxloading($boxContentConfiguracion,false,1000);
-                }else{
-                    if(xhr['status']=='404'){
-                        notificacion("Ocurrió un error con la <b>Configuracion Prestaciones</b> <br> <b>xhr: "+xhr['status']+" <br> Consulte con Soporte </b>");
-                    }
-                    boxloading($boxContentConfiguracion,false,1000);
-                }
-            },
-            success: function(resp){
-
-                if( resp.error == ''){
-
-                    boxloading($boxContentConfiguracion,true,1100);
-                    notificacion('información Actualizada', 'success');
-                    setTimeout(function () {location.reload(true);}, 1500);
-
-                }else{
-                    boxloading($boxContentConfiguracion,false,1000);
-                    notificacion(resp.error, 'error');
-                }
-
-                boxloading($boxContentConfiguracion,false,1000);
-
-            }
-
-        });
-    }else{
-        boxloading($boxContentConfiguracion,false,1000);
-    }
-
-    setTimeout(function() {
-        $('#msg_categoria').text(null);
-        $('#msg_valor').text(null);
-        $('#msg_prestaciones').text(null);
-    },1500);
-
-}
 
 function fecth_updatePrestacion( $idprestacion ){
 
@@ -182,6 +162,11 @@ function fecth_updatePrestacion( $idprestacion ){
 }
 
 function ActivarDesactivarServicios($id, Element){
+
+    if(!ModulePermission(8,4)){
+        notificacion('Ud. No tiene permiso para Desactivar');
+        return false;
+    }
 
     var statusService = Element.prop('dataset').status;
 
@@ -235,23 +220,24 @@ function eliminar_categoria_desc_prestacion(subaccion){
 
 $('#eliminarConfCategoriaDescuento').click(function() {
 
-    $.ajax({
-        url: $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php',
-        type:'POST',
-        data: {'accion':'eliminar_conf_categoria_desc', 'ajaxSend':'ajaxSend', 'id': $('#conf_cat_prestaciones').find(':selected').val(), 'subaccion': 'categoria'} ,
-        dataType:'json',
-        async:false,
-        success: function(resp){
+    if($('#conf_cat_prestaciones').find(':selected').val()!=""){
+        $.ajax({
+            url: $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php',
+            type:'POST',
+            data: {'accion':'eliminar_conf_categoria_desc', 'ajaxSend':'ajaxSend', 'id': $('#conf_cat_prestaciones').find(':selected').val(), 'subaccion': 'categoria'} ,
+            dataType:'json',
+            async:false,
+            success: function(resp){
 
-            if(resp.error != ''){
-                notificacion( resp.error , 'error');
-            }else{
-                notificacion('Información Actualizada', 'success');
-                reloadPagina();
+                if(resp.error != ''){
+                    notificacion( resp.error , 'error');
+                }else{
+                    notificacion('Información Actualizada', 'success');
+                    reloadPagina();
+                }
             }
-        }
-    });
-
+        });
+    }
 });
 
 //convenio
@@ -436,12 +422,8 @@ $('#guardar_categoria_conf').click(function() {
         subaccion = 'modificar';
     }
 
-
-    if($('#nomb_cat').val() == ''){
-        puedo++;
-        $('#nomb_cat').addClass('INVALIC_ERROR');
-    }else{
-        $('#nomb_cat').removeClass('INVALIC_ERROR');
+    if(!validCategoria()){
+        return false;
     }
 
     if(puedo == 0){
@@ -469,7 +451,83 @@ $('#guardar_categoria_conf').click(function() {
 
 //eventos
 $('#guardar_prestacion').click(function() {
-    invalic_prestaciones();
+
+    if($idprestacion_prestacion==0){//crear
+        if(!ModulePermission(8,2)){
+            notificacion('Ud. No tiene permiso para crear','question');
+            return false;
+        }
+    }else{ //modificar
+        if(!ModulePermission(8,3)){
+            notificacion('Ud. No tiene permiso para Modificar','question');
+            return false;
+        }
+    }
+
+    if(!validNuevUpdate()){
+        return false;
+    }else{
+        boxloading($boxContentConfiguracion, true);
+    }
+
+    var parametros = {
+        'ajaxSend'         : 'ajaxSend',
+        'accion'           : 'nuevoUpdatePrestacion',
+        'id'               : $idprestacion_prestacion,
+        'subaccion'        : $accion_prestacion,
+        'label_prestacion' : $('#prestacion_descr').val(),
+        'cat_prestacion'   : $('#conf_cat_prestaciones').find(':selected').val(),
+        'costo_prestacion' : $("#valorPrestacion").val(),
+        'convenio'         : $('#convenioConf').find('option:selected').val(),
+        'explicacion'      : $('#explicacionInfo').val()
+    };
+
+    $.ajax({
+        url: $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php',
+        type:'POST',
+        data: parametros ,
+        dataType:'json',
+        async:false,
+        error:function(xhr, status){
+            if(xhr['status']=='200'){
+                boxloading($boxContentConfiguracion,false,1000);
+            }else{
+                if(xhr['status']=='404'){
+                    notificacion("Ocurrió un error con la <b>Configuracion Prestaciones</b> <br> <b>xhr: "+xhr['status']+" <br> Consulte con Soporte </b>");
+                }
+                boxloading($boxContentConfiguracion,false,1000);
+            }
+        },
+        complete:function(xhr, status) {
+
+            if(xhr['status']=='200'){
+                boxloading($boxContentConfiguracion,false,1000);
+            }else{
+                if(xhr['status']=='404'){
+                    notificacion("Ocurrió un error con la <b>Configuracion Prestaciones</b> <br> <b>xhr: "+xhr['status']+" <br> Consulte con Soporte </b>");
+                }
+                boxloading($boxContentConfiguracion,false,1000);
+            }
+        },
+        success: function(resp){
+
+            if( resp.error == ''){
+
+                boxloading($boxContentConfiguracion,true,1100);
+                notificacion('información Actualizada', 'success');
+                setTimeout(function () {location.reload(true);}, 1500);
+
+            }else{
+                boxloading($boxContentConfiguracion,false,1000);
+                notificacion(resp.error, 'error');
+            }
+
+            boxloading($boxContentConfiguracion,false,1000);
+
+        }
+
+    });
+
 });
 
 
@@ -500,6 +558,8 @@ $(window).on("load", function() {
     $('#valorPrestacion').maskMoney({precision:2,thousands:'', decimal:'.',allowZero:true,allowNegative:true, defaultZero:true,allowEmpty: true});
 
     boxloading($boxContentConfiguracion, true, 1500);
+
+    validNuevUpdate();
 
 });
 

@@ -10,7 +10,7 @@
             Configurar Prestaciones
         </a>
     </li>
-    <li class="">
+    <li class="disabled_link3">
         <a href="<?= DOL_HTTP .'/application/system/configuraciones/index.php?view=form_convenios_desc'; ?>" style="color: #1e282c">
             <i class="fa fa-wrench"></i> &nbsp;&nbsp;
             Configurar Descuento

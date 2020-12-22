@@ -281,12 +281,13 @@ function CargarUsuarioInfo()
 
                     var menu        = "";
                     var idusers     = full[6];
+                    var url_mod     = $DOCUMENTO_URL_HTTP+"/application/system/configuraciones/index.php?view=form_gestion_odontologos_especialidades&v=users&mod=true&id="+full[6];
 
                     menu += "<div class='dropdown'>";
                         menu += "<button class='btn btnhover btn-xs dropdown-toggle' type='button' data-toggle='dropdown' > <i style='padding-top: 3px; padding-bottom: 3px' class=\"fa fa-ellipsis-v\"></i> </button> ";
 
                         menu += "<ul class=\"dropdown-menu\"> ";
-                            menu += "<li> <a style='cursor: pointer;' href='"+$DOCUMENTO_URL_HTTP+"/application/system/configuraciones/index.php?view=form_gestion_odontologos_especialidades&v=users&mod=true&id="+full[6] +"'> Modificar  </a> </li>";
+                            menu += "<li> <a style='cursor: pointer;' href='#' data-url='"+url_mod+"' onclick='ModUsers($(this))'> Modificar  </a> </li>";
 
                             // INACTIVAR
                             if(full[4] == 'A'){
@@ -338,6 +339,29 @@ function CargarUsuarioInfo()
     }
 }
 
+var ModUsers = function(Element) {
+
+    if(!ModulePermission(14,3)){
+        notificacion('Ud. No tiene permiso para Modificar','question');
+        return false;
+    }
+    var url = Element.prop('dataset').url;
+    if(url != ""){
+        window.location = url;
+    }
+};
+
+var AddUsers = function(Element) {
+
+    if(!ModulePermission(14,2)){
+        notificacion('Ud. No tiene permiso para Crear Usuario','question');
+        return false;
+    }
+    var url = Element.prop('dataset').url;
+    if(url != ""){
+        window.location = url;
+    }
+};
 
 function statusUserslogin( idusers = 0, status ) {
 
@@ -419,6 +443,10 @@ $('#tipoUsuarioPerfil').change(function() {
 
 $('#nuevoUpdateUsuario').on('click', function(){
 
+    if(!ModulePermission(14,2)){
+        notificacion('Ud. No tiene permiso para Crear Usuario','question');
+        return false;
+    }
 
     var $puedoPasar = 0;
 
@@ -776,6 +804,8 @@ function Odontolusuario() {
 
 function fetchPerfiles( $id = 0){
 
+    var idAnteriorPerfil = $('#tipoUsuarioPerfil').find('option:selected').val();
+
     clearSelect($('#tipoUsuarioPerfil'));
     $dataPerfiles = [];
     
@@ -820,7 +850,11 @@ function fetchPerfiles( $id = 0){
         dropdownParent: $('.box-body')
     });
 
-    $('#tipoUsuarioPerfil').val($idPerfilAsociadoEntity).trigger('change');
+
+    if(idAnteriorPerfil!=undefined)
+        $('#tipoUsuarioPerfil').val(idAnteriorPerfil).trigger('change');
+    else
+        $('#tipoUsuarioPerfil').val($idPerfilAsociadoEntity).trigger('change');
 
 }
 

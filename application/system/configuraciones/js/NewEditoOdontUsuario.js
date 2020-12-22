@@ -295,6 +295,13 @@ if($accion == 'dentist')
     //MODIFICAR ODONTOLOGO
     function modificarOdontologo(id)
     {
+        if(!ModulePermission(12,3)){
+            notificacion('Ud. No tiene permiso para Modificar odontolog@', 'question');
+            $("#modal_conf_doctor").modal("hide");
+            return false;
+        }else{
+            $("#modal_conf_doctor").modal("show");
+        }
 
         //Modificar
         $('#accion').attr('data-id', id).attr('data-subaccodontol','modificar');
@@ -353,6 +360,12 @@ if($accion == 'dentist')
     //ACTUALIZAR ESTADO DEL ODONTOLOGO
     function UpdateEstadoOdontologos(id, estado)
     {
+        if(estado=='E'){
+            if(!ModulePermission(12,4)){
+                notificacion('Ud. No tiene permiso para Desactivar Odontolog@','question');
+                return false;
+            }
+        }
         $.ajax({
             url: $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php',
             type:'POST',
@@ -396,6 +409,14 @@ if($accion == 'dentist')
         $('#icon_usuario_doct').attr('src',  $DOCUMENTO_URL_HTTP + '/logos_icon/logo_default/doct-icon.ico' );
         $('#valid_ico').val("NoTieneImagen");
         FormValidationOdontolotoMod();
+
+        if(!ModulePermission(12,2)){
+            $("#modal_conf_doctor").modal("hide");
+            notificacion('Ud. No tiene permiso para crear Odontolog@', 'question');
+            return false;
+        }else{
+            $("#modal_conf_doctor").modal("show");
+        }
 
     }
 

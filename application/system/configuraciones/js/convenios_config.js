@@ -286,8 +286,20 @@ function modalCleanInputs(){
 /*nuevo Update convenios*/
 $('#guardar_convenio_conf').click(function() {
 
-    var accion = $('#comportamiento').data('subaccion');
-    var id = $('#comportamiento').data('id');
+    var accion = $('#comportamiento').prop('dataset').subaccion;
+    var id = $('#comportamiento').prop('dataset').id;
+
+    if(id!=0){//modificar
+        if(!ModulePermission(11,3)){
+            notificacion('Ud. No tiene permiso para Modificar','question');
+            return false;
+        }
+    }else{ //crear
+        if(!ModulePermission(11,2)){
+            notificacion('Ud. No tiene permiso para Crear','question');
+            return false;
+        }
+    }
 
     var boxModalDescuento = $("#modal_conf_convenio").find(".modal-dialog");
     boxloading(boxModalDescuento, true);

@@ -12,7 +12,7 @@
 
             <div class="form-group col-sm-12 col-md-12 col-xs-12">
                 <ul class="list-inline pull-right">
-                    <li> <b> <a  href="#modal_conf_convenio" data-toggle="modal" class="btn btnhover "  onclick="InputsClean()" style=" background-color: #f0f0f0"> <i class="fa fa-plus-square-o"></i> Agregar Descuento </a> </b> </li>
+                    <li> <b> <a  href="#modal_conf_convenio" data-toggle="modal" class="btn btnhover "  onclick="InputsClean()" style="text-decoration-line: underline" > <i class="fa fa-plus"></i> &nbsp;&nbsp; Agregar Descuento </a> </b> </li>
                 </ul>
             </div>
 

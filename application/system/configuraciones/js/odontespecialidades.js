@@ -52,6 +52,11 @@ if($accion == 'specialties')
     //ESPECIALIDADES LIST
     $('#guardar_conf_especialidad').click(function() {
 
+        if(!ModulePermission(13,2)){
+            notificacion('Ud. No tiene permiso para crear Especialidades', 'question');
+            return false;
+        }
+
         var boxConfEspecialidad = $("#ModalConfEspecialidades").find(".modal-dialog");
 
         boxloading(boxConfEspecialidad,true);
@@ -138,6 +143,15 @@ if($accion == 'specialties')
     //eliminar especialidad
     function eliminar_especialidad(id){
 
+        var boxConfEspecialidad = $("#ModalConfEspecialidades").find(".modal-dialog");
+
+        if(!ModulePermission(13,4)){
+            notificacion('Ud. No tiene permiso para Eliminar Especialidades', 'question');
+            return false;
+        }
+
+        boxloading(boxConfEspecialidad,true);
+
         if(id != ""){
 
             $.ajax({
@@ -146,12 +160,25 @@ if($accion == 'specialties')
                 data: { 'ajaxSend': 'ajaxSend', 'accion': 'delete_especialidad', 'id': id},
                 dataType:'json',
                 async:false,
+                complete:function(xhr, status) {
+
+                    if(xhr['status']=='200'){
+                        boxloading(boxConfEspecialidad,false,1000);
+                    }else{
+                        if(xhr['status']=='404'){
+                            notificacion("Ocurrió un error con la <b>Eliminar Especialidad</b> <br> <b>xhr: "+xhr['status']+" <br> Consulte con Soporte </b>");
+                        }
+                        boxloading(boxConfEspecialidad,false,1000);
+                    }
+                },
                 success: function(resp) {
 
                     if(resp.error == ''){
+                        boxloading(boxConfEspecialidad,false,1000);
                         notificacion('Información Actualizada', 'success');
                         list_especialidades();
                     }else{
+                        boxloading(boxConfEspecialidad,false,1000);
                         notificacion(resp.error, 'error');
                     }
 
