@@ -3,18 +3,19 @@ function loadtableAgenda()
 {
      var table = $('#tableAgenda').DataTable({
         searching: false,
-        ordering:false,
-        serverSide:true,
+        "ordering":true,
+        "serverSide": true,
         // responsive: true,
         // destroy:true,
         // scrollX: true,
         // scrollY: 700,
+        paging:true,
         processing: true,
         lengthMenu:[ 5, 10, 25, 50, 100 ],
-        ajax:{
-            url: $DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php",
-            type:'POST',
-            data: {
+        "ajax":{
+            "url": $DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php",
+            "type":'POST',
+            "data": {
                 'ajaxSend'             : 'ajaxSend',
                 'accion'               : 'listCitas',
                 'doctor'               : ($("#filtro_doctor").val()!="")?$("#filtro_doctor").val().toString():"",
@@ -24,7 +25,7 @@ function loadtableAgenda()
                 'buscar_xpaciente'     : ($('#buscarxPaciente').val()!="")?$('#buscarxPaciente').val().toString():"",
                 'search_ncita'         : $('#n_citasPacientes').val(),
             },
-            dataType:'json',
+            "dataType":'json',
         },
         'createdRow':function(row, data, index){
 
@@ -52,32 +53,37 @@ function loadtableAgenda()
          //         }
          //     }
          // ],
-        language:{
-            "sProcessing":     "Procesando...",
-            "sLengthMenu":     "Mostrar _MENU_ registros",
-            "sZeroRecords":    "No se encontraron resultados",
-            "sEmptyTable":     "Ningún dato disponible en esta tabla",
-            "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-            "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
-            "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
-            "sInfoPostFix":    "",
-            "sSearch":         "Buscar:",
-            "sUrl":            "",
-            "sInfoThousands":  ",",
-            "sLoadingRecords": "Cargando...",
-            "oPaginate": {
-                "sFirst":    "Primero",
-                "sLast":     "Último",
-                "sNext":     "Siguiente",
-                "sPrevious": "Anterior"
-            },
-
-            "oAria": {
-                "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
-                "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-            }
-
+        select: {
+             style:    'os',
+             selector: 'td:first-child'
         },
+         "language": {
+             "sProcessing":     "Procesando...",
+             "sLengthMenu":     "Mostrar _MENU_ registros",
+             "sZeroRecords":    "No se encontraron resultados",
+             "sEmptyTable":     "Ningún dato disponible en esta tabla",
+             "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+             "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+             "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+             "sInfoPostFix":    "",
+             "sSearch":         "Buscar:",
+             "sUrl":            "",
+             "sInfoThousands":  ",",
+             "oPaginate": {
+                 "sFirst":    "Primero",
+                 "sLast":     "Último",
+                 "sNext":     "Siguiente",
+                 "sPrevious": "Anterior"
+             },
+             "oAria": {
+                 "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                 "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+             }
+         },
+        "infoCallback": function (settings, start, end, max, total, pre){
+
+            return "Mostrando registros del "+ start +" al "+ end +"<br>de un total de "+total+ " registros.";
+        }
         // ajax:{
         //
         // },
@@ -85,12 +91,16 @@ function loadtableAgenda()
     // new $.fn.dataTable.FixedHeader( table );
 }
 
-function filtrarAgenda() {
+function filtrarAgenda(validStatus="") {
 
 
     var  table      = $("#tableAgenda").DataTable();
     var  accion     = "listCitas";
     var  ajaxSend   = "ajaxSend";
+
+    var info = table.page.info();
+
+    console.log(info);
 
     var url = $DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php";
     var newUrl = url + '?' +
@@ -102,6 +112,10 @@ function filtrarAgenda() {
         '&eliminada_canceladas='+(( $('#listcitasCanceladasEliminadas').is(':checked')==true) ? "checked" : "") +
         '&buscar_xpaciente='+(($('#buscarxPaciente').val()!="")?$('#buscarxPaciente').val().toString():"") +
         '&search_ncita='+$('#n_citasPacientes').val();
+
+    // if(validStatus!=""||validStatus=="reload"){
+    //     newUrl += '&start2='+info['start']+'&validSatus=1';
+    // }
 
     table.ajax.url(newUrl).load();
 
@@ -140,9 +154,12 @@ function NOTIFICACION_CITAS_NUMEROS()
 function EstadosCitas(idestado, idcita, html, idpaciente) //Comprotamientos de los estados de las citas
 {
 
-    var textEstado = html.data('text');
+    if(!ModulePermission(2,1)){
+        notificacion('ud. No tiene permiso para consultar <br>Se le han deshabilitado las opciones','error');
+        return false
+    }
 
-    // alert(idestado);
+    var textEstado = html.data('text');
 
     switch (idestado)
     {
@@ -151,9 +168,7 @@ function EstadosCitas(idestado, idcita, html, idpaciente) //Comprotamientos de l
             $('#notificar_email-modal').modal('show');
             notificacion('El sistema no se responsabiliza por correo electrónico mal ingresado', 'question');
             $('#para_email').val( $.trim( html.data('email') ) ); //email destinario
-
             $("#enviarEmail").attr('onclick', 'notificaionEmail('+idpaciente+','+idcita+','+idestado+','+idcita+')');
-
             $("#para_email").keyup();
 
             break;
@@ -185,7 +200,7 @@ function EstadosCitas(idestado, idcita, html, idpaciente) //Comprotamientos de l
                 var dato = $.parseJSON(data);
 
                 if(dato.result == 'atrazada'){
-                    notificacion('Esta cita se encuentra atrazada no puede cambiar a estado <b>Atendido</b>', 'question');
+                    notificacion('Esta cita se encuentra atrasada no puede cambiar a estado <b>Atendido</b>', 'question');
                 }else{
                     UpdateEstadoCita(idestado, idcita, html, textEstado );
                 }
@@ -222,7 +237,6 @@ function EstadosCitas(idestado, idcita, html, idpaciente) //Comprotamientos de l
 
             break;
 
-
     }
 
 
@@ -243,7 +257,7 @@ function UpdateEstadoCita(idestado, idcita, html = "", textEstado) //Actualizar 
 
                 var table =  $('#tableAgenda').DataTable();
                 notificacion( 'Información Actualizada', 'success');
-                table.ajax.reload();// recargo el ajax del table
+                table.ajax.reload( null, false );
             }
         }
     });
@@ -407,7 +421,7 @@ function create_plandetratamiento($idpaciente, $idcitadet, $iddoct, $html)
 
     });
 
-    filtrarAgenda(); //reload table agenda
+    filtrarAgenda("reload"); //reload table agenda
 }
 
 function keyemail_invalic()

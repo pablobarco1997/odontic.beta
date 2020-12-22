@@ -54,6 +54,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $pacientes                          = GETPOST('buscar_xpaciente');
             $n_citas                            = GETPOST('search_ncita');
 
+            $star2                              = GETPOST('start2');
             $fechaInicio                        ="";
             $fechaFin                           ="";
 
@@ -63,10 +64,10 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 $fechaFin    = date("Y-m-d", strtotime( str_replace("/", "-", trim($fecha[1]))));
             }
 
-            $resultado = list_citas( $doctor, $estados, $fechaInicio, $fechaFin, $MostrarCitasCanceladasEliminadas, $pacientes, $n_citas );
+            $resultado = list_citas( $doctor, $estados, $fechaInicio, $fechaFin, $MostrarCitasCanceladasEliminadas, $pacientes, $n_citas, $star2 );
 
             $output = array(
-//                "draw"            => $_POST['draw'],
+                "draw"            => $_POST['draw'],
                 "data"            => $resultado['datos'],
                 "recordsTotal"    => $resultado['total'],
                 "recordsFiltered" => $resultado['total']
@@ -173,7 +174,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $sqlCount .= "  AND d.fk_estado_paciente_cita not in(9,6,7,9) ";
             $sqlCount .= "  LIMIT 1 ";
 
-//            print_r($sqlCount); die();
+            #print_r($sqlCount); die();
             $rs1 = $db->query($sqlCount);
             if($rs1->rowCount() > 0)
             {
@@ -533,7 +534,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                      d.rowid,
                      
                      IF(NOW() > CAST(d.fecha_cita AS DATETIME),
-                         CONCAT('Atrazada ',
+                         CONCAT('Atrasada ',
                                       (SELECT 
                                            CONCAT(s.text)
                                         FROM
@@ -631,7 +632,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
 }
 
-function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $MostrarCitasCanceladasEliminadas, $paciente , $n_citas)
+function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $MostrarCitasCanceladasEliminadas, $paciente , $n_citas, $start2)
 {
 
     global $db, $permisos;
@@ -643,12 +644,17 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
         $PermisoConsultar = "";
 
     $Total          = 0;
-    $start          = $_POST["start"];
+    if(GETPOST('validSatus')==1)
+        $start  = $start2;
+    else
+        $start  = $_POST["start"];
+
     $length         = $_POST["length"];
 //    $colum_ord      = $_POST["order"][0]['column'];
 //    $direcc_ord     = $_POST["order"][0]['dir'];
 
 
+//    print_r($start); die();
     $data = array();
 
     $fecha_hoy = date("Y-m-d");
@@ -676,7 +682,7 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
              -- citas atrazados con estado no confirmado
              IF( now() > CAST(d.fecha_cita AS DATETIME)  
                         && d.fk_estado_paciente_cita in(2,1,3,4,7,8,9,10,5)  , 
-                            concat('Atrazada ', (select concat(s.text) from tab_pacientes_estado_citas s where s.rowid = d.fk_estado_paciente_cita) , 
+                            concat('Atrasada ', (select concat(s.text) from tab_pacientes_estado_citas s where s.rowid = d.fk_estado_paciente_cita) , 
                                     '<br> Fecha : ' , date_format(d.fecha_cita, '%Y/%m/%d') , '<br>Hora: ' , d.hora_inicio ,' a ' , d.hora_fin) , ''
                                     ) as cita_atrazada
 									            
@@ -1178,12 +1184,12 @@ function notificarCitaEmail($datos, $token_confirmacion)
     $mail->Port = 465;
     $mail->SMTPAutoTLS = TRUE;
     $mail->SMTPSecure = "ssl";
-    $mail->Username = "odontic@adminnube.com";//correo del servidor
-    $mail->Password = "1e!j5eKlhpXH";//password de servidor de correo
+    $mail->Username = 'odontic@adminnube.com';//correo del servidor
+    $mail->Password = 'XHjb8$rso715';//password de servidor de correo
     $mail->Subject = "Clinica dental ".$conf->EMPRESA->INFORMACION->nombre; //nombre de la clinica
     $mail->addCustomHeader("'Reply-to:".$conf->EMPRESA->INFORMACION->conf_email."'");
     $mail->isHTML(TRUE);
-    $mail->msgHTML("Notificación Clinica");
+    $mail->msgHTML("Notificación Clinica ".$conf->EMPRESA->INFORMACION->nombre);
     $mail->setFrom($conf->EMPRESA->INFORMACION->conf_email, $conf->EMPRESA->INFORMACION->nombre);
     $mail->addAddress($to);
     #$mail->msgHTML("");
@@ -1197,10 +1203,8 @@ function notificarCitaEmail($datos, $token_confirmacion)
     if($conf->EMPRESA->INFORMACION->conf_email != ""){
 
         if(!$mail->send()){
-            $error = 0; #Correo no enviado
-            if($error=0){
-                $error = 'Ocurrio un problema con el servidor no pudo enviar el correo, intentelo de nuevo o consulte con soporte  Tecnico' .'<br> <b> '. $mail->ErrorInfo .' </b>';
-            }
+            #Correo no enviado
+            $error = 'Ocurrio un problema con el servidor no pudo enviar el correo, intentelo de nuevo o consulte con soporte  Tecnico' .'<br> <b> '. $mail->ErrorInfo .' </b>';
         }else{
             $error = 1; #Correo enviado
         }
@@ -1230,14 +1234,12 @@ function notificarCitaEmail($datos, $token_confirmacion)
                 $error_insert_notific_email = 'Ocurrio un error, el sistema no logro registrar el correo enviado';
             }
 
-            if($rs)
-            {
+            if($rs) {
 
                 $fk_notifi_id = $db->lastInsertId('tab_notificacion_email');
 
                 $queryDel   = " DELETE FROM tab_noti_confirmacion_cita_email where rowid > 0 and fk_cita = $datos->idcita ";
                 $r1 = $db->query($queryDel);
-
                 if($r1)
                 {
                     $queryNoti  = " INSERT INTO `tab_noti_confirmacion_cita_email` (`fk_paciente`, `fk_cita`, `estado` , `fk_noti_email`) ";
@@ -1248,7 +1250,6 @@ function notificarCitaEmail($datos, $token_confirmacion)
                     $queryNoti .= " $fk_notifi_id ";
                     $queryNoti .= " )";
                     $db->query($queryNoti);
-//                  print_r($queryNoti);
                     $idnotiConfirmacion = $db->lastInsertId('tab_noti_confirmacion_cita_email'); #id de la notificaion de insert confirmacion
 
                     if(!empty($idnotiConfirmacion) )
@@ -1262,7 +1263,6 @@ function notificarCitaEmail($datos, $token_confirmacion)
         }
 
     }else{
-
         $error = 'No esta asignado el acceso de e-mail';
     }
 

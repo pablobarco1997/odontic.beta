@@ -6,7 +6,7 @@
             <i class="fa fa-calendar" style="margin-top: 20px"></i>
         </div>
         <div class="info-box-content">
-            <span class=""><span class="trunc"> <b>Citas para Hoy &nbsp; Estado no Confirmado  </b></span></span>
+            <span class=""><span class="trunc"> <b>Citas para Hoy </b></span></span>
             <span class="info-box-number" style="font-size: 2em" id="numCitas">0</span>
             <span> <b><?= date("Y/m/d")?></b> </span>
         </div>
@@ -42,7 +42,7 @@
         <li>
             <div class="callbox">
                 <div class="form-group">
-                    <div class="checkbox ">
+                    <div class="checkbox <?= (!PermitsModule(2,2))?"disabled_link3":"" ?>">
                         <a href="<?= DOL_HTTP .'/application/system/agenda/index.php?view=agendadd'?>"  style="color: #333333" class="btn btnhover addCitas  ">
                             <b>Agendar una Cita </b>&nbsp;&nbsp;<i class="fa fa-calendar-check-o"></i>
                         </a>

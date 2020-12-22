@@ -418,6 +418,10 @@ function Consultar_CitasHorus_(fecha, hora, duracion, fk_doc)
 //GUARDAR CITAS
 $('#nuevoGuardarCitas').click(function(){
 
+    if(!ModulePermission(2,2)){
+        notificacion('ud. no tiene permiso para Agendar', 'error');
+        return false;
+    }
 
     $("#nuevoGuardarCitas").addClass("disabled_link3");
 
