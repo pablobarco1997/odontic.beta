@@ -628,6 +628,74 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             ];
             echo json_encode($output);
             break;
+
+
+        case 'addnewSatusCitas':
+
+            $error = '';
+
+            $textSatus    = GETPOST('statusCitas');
+            $colorSatus   = GETPOST('colorSatus');
+
+            $qu = "INSERT INTO `tab_pacientes_estado_citas` (`text`, `color`) VALUES ('".$textSatus."', '".$colorSatus."');";
+            $result = $db->query($qu);
+            if($result){
+                $error = "";
+            }else{
+                $error = "Ocurrion un error con la Operación, Consulte con Soporte";
+            }
+            $output =[
+                'error' => $error
+            ];
+            echo json_encode($output);
+            break;
+
+        case 'statusList2':
+            $error = '';
+            $data = [];
+            $que = "select rowid , text, color , system, comment from tab_pacientes_estado_citas where system = 0";
+            $result = $db->query($que);
+            if($result && $result->rowCount()>0){
+                $result_arr = $result->fetchAll();
+                foreach ($result_arr as $key => $arr){
+                    $row = array();
+                    $row[] = $arr['text'];
+                    $row[] = $arr['comment'];
+                    $row[] = "<div  style='background-color: ".$arr['color']."; border-radius: 50%; width: 10px; height: 10px'></div>";
+                    $row[] = "<a href='#' onclick='EliminarStatus(".$arr['rowid'].")' title='Eliminar Estado'> <i class='fa fa-trash-o' style='color: darkred'></i> </a>";
+                    $row['idstatus'] = $arr['rowid'];
+                    $data[] = $row;
+                }
+            }
+            $output =[
+                'data' => $data
+            ];
+            echo json_encode($output);
+            break;
+
+        case 'EliminaStatus':
+
+            $error = "";
+
+            $idStatus = GETPOST("id");
+            if($idStatus!=""||$idStatus!=0){
+                $citasAsocidas = $db->query("select fecha_cita, fk_estado_paciente_cita, fk_especialidad from tab_pacientes_citas_det where fk_estado_paciente_cita = $idStatus");
+                if($citasAsocidas && $citasAsocidas->rowCount()>0){
+                    $error = "Se detecto registro Asociado";
+                }else{
+                    $result = $db->query("DELETE FROM `tab_pacientes_estado_citas` WHERE `rowid`= $idStatus;");
+                    if(!$result){
+                        $error = "Ocurrió un error con la Operación Eliminar";
+                    }
+                }
+            }else{
+                $error = "Ocurrió un error con la Operación No se detectaron Parámetros Asignados, Consulte con soporte";
+            }
+            $output =[
+                'error' => $error
+            ];
+            echo json_encode($output);
+            break;
     }
 
 }
@@ -756,7 +824,7 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
             $row = array();
             #checked box
             $row[] = "<span class='custom-checkbox-myStyle'>
-								<input type='checkbox' id='checked-detalleCitas-$iu' class='checked_detalleCitas'>
+								<input type='checkbox' id='checked-detalleCitas-$iu' class='checked_detalleCitas' name='checkedCitas' data-idcitadet='$acced->id_cita_det'>
 								<label for='checked-detalleCitas-$iu' ></label>
                       </span>";
 
@@ -883,7 +951,7 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
                 $html3 .= "    <button class='btn btnhover  dropdown-toggle btn-xs ' id='estadoDropw' type='button' data-toggle='dropdown' style='height: 100%'> <i class='fa fa-ellipsis-v'></i> </button>";
                         $html3 .= " <ul class='dropdown-menu pull-right'>";
 
-                        $sqlMenuDrowpdown = "SELECT * FROM tab_pacientes_estado_citas";
+                        $sqlMenuDrowpdown = "SELECT rowid,text,comment,system,color FROM tab_pacientes_estado_citas";
                         $rsdrown = $db->query($sqlMenuDrowpdown);
 
                         if($rs->rowCount() > 0)
@@ -894,40 +962,41 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
                                 $dataTelefono = "";
                                 $dataEmailPaciente = "";
                                 $addclases = "";
+                                $statusAdd = "";
 
-                                if($rowxs->rowid == 8) //whatsapp
-                                {
+                                //whatsapp
+                                if($rowxs->rowid == 8){
                                     $telefono = substr($acced->telefono_movil, 1, 9);
                                     $dataTelefono = "data-telefono='593$telefono'";
                                 }
-
-                                if($rowxs->rowid == 1) //notificar por email
-                                {
+                                //notificar por email
+                                if($rowxs->rowid == 1){
                                     $dataEmailPaciente = "data-email='$acced->email'";
                                 }
-                                if($rowxs->rowid == 10) //no debe verse el estado confirmado e-mail x paciente - este estado solo lo confirma el paciente
-                                {
+                                //no debe verse el estado confirmado e-mail x paciente - este estado solo lo confirma el paciente
+                                if($rowxs->rowid == 10){
                                     $addclases .= " hide "; //oculto este estado
+                                }
+                                //system 0 Creados x el usuario
+                                if($rowxs->system == 0){
+                                    $statusAdd = "color: blue;";
                                 }
 
                                     $todosdata .= " ".
                                     $dataTelefono." ".
                                     $dataEmailPaciente." ";
 
-                                if($acced->fk_estado_paciente_cita == $rowxs->rowid )//muestra la cita con el estado seleccionado
-                                {
+                                //muestra la cita con el estado seleccionado
+                                if($acced->fk_estado_paciente_cita == $rowxs->rowid ) {
                                     $html3 .= "<li> <a class='activeEstadoCita' $todosdata   style='cursor: pointer; ' >$rowxs->text</a> </li>";
                                 }
                                 else{
-
-                                    $html3 .= "<li> <a class=' $addclases '  data-text='$rowxs->text' $todosdata  onclick='EstadosCitas($rowxs->rowid, $acced->id_cita_det, $(this), $acced->idpaciente)' style='cursor: pointer; ' >$rowxs->text</a> </li>";
-
+                                    $html3 .= "<li> <a class=' $addclases '  data-text='$rowxs->text' $todosdata  onclick='EstadosCitas($rowxs->rowid, $acced->id_cita_det, $(this), $acced->idpaciente)' style='cursor: pointer;$statusAdd' >$rowxs->text</a> </li>";
                                 }
                             }
                         }
-
-                         $html3 .= " </ul>"; #dropdown end
-
+                            $html3 .= "<li> <a href='#addStatusCitas' data-toggle='modal'  style='cursor: pointer;color: blue;background-color: #dddddd' title='Agregar nuevo Estado al Sistema'><b>Add Nuevo Estado</b></a> </li>";
+                        $html3 .= " </ul>"; #dropdown end
                 $html3 .= "</div>";
             $html3 .= "</div> 
             </div>";
@@ -1184,8 +1253,8 @@ function notificarCitaEmail($datos, $token_confirmacion)
     $mail->Port = 465;
     $mail->SMTPAutoTLS = TRUE;
     $mail->SMTPSecure = "ssl";
-    $mail->Username = 'odontic@adminnube.com';//correo del servidor
-    $mail->Password = 'XHjb8$rso715';//password de servidor de correo
+    $mail->Username = "odontic@adminnube.com";//correo del servidor
+    $mail->Password = "#OWF-o(C-tQDU";//password de servidor de correo
     $mail->Subject = "Clinica dental ".$conf->EMPRESA->INFORMACION->nombre; //nombre de la clinica
     $mail->addCustomHeader("'Reply-to:".$conf->EMPRESA->INFORMACION->conf_email."'");
     $mail->isHTML(TRUE);

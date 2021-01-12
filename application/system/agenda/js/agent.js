@@ -3,7 +3,7 @@ function loadtableAgenda()
 {
      var table = $('#tableAgenda').DataTable({
         searching: false,
-        "ordering":true,
+        "ordering":false,
         "serverSide": true,
         // responsive: true,
         // destroy:true,
@@ -235,6 +235,7 @@ function EstadosCitas(idestado, idcita, html, idpaciente) //Comprotamientos de l
 
         default:
 
+            UpdateEstadoCita(idestado, idcita, html, textEstado );
             break;
 
     }
@@ -252,9 +253,7 @@ function UpdateEstadoCita(idestado, idcita, html = "", textEstado) //Actualizar 
         async: false,
         success: function(resp)
         {
-            if(resp.error != "")
-            {
-
+            if(resp.error != "") {
                 var table =  $('#tableAgenda').DataTable();
                 notificacion( 'Información Actualizada', 'success');
                 table.ajax.reload( null, false );
@@ -384,36 +383,25 @@ function create_plandetratamiento($idpaciente, $idcitadet, $iddoct, $html)
         dataType:'json',
         async:false,
         success:function(resp) {
-
             var idpacienteToken = resp.idpacientetoken;
-
             if(resp.error == ''){
-
                 notificacion('Plan de Tratamiento Creado - cargando...', 'success');
-
             }else {
-
                 notificacion('Ocurrio un error con la Operación' , 'error');
             }
-
             if(resp.error == ''){
-
                 var $tener = 0;
                 var $idtratamiento = 0;
-
                 if( resp.idtratamiento > 0){
                     $idtratamiento = resp.idtratamiento;
                     $tener++;
                 }
-
                 if($tener > 0){
-
                     if($idtratamiento > 0){
 
                         setTimeout(function() {
                             window.location = $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/?view=plantram&key=' + $keyGlobal + '&id=' + idpacienteToken + '&v=planform&idplan=' + $idtratamiento;
                         }, 1500);
-
                     }
                 }
             }
@@ -469,6 +457,8 @@ $("#mensajetext").keyup(function() {
 //Commentari adicional muestra el modal y guarda el comentario
 function clearModalCommentAdicional(iddetcita, html)
 {
+    $("#comment_adicional").val(null);
+
     if(iddetcita != "")
     {
         $.ajax({
@@ -531,7 +521,7 @@ function UpdateCitasCommentAdicional(iddetcita)
 
                 if(resp.error == ''){
                     var table = $('#tableAgenda').DataTable();
-                    table.ajax.reload();
+                    table.ajax.reload(null, false);
                     $('#modal_coment_adicional').modal('hide');
                 }else {
                     notificacion(resp.error , 'error');
@@ -628,6 +618,28 @@ function limpiarInpust(){
     $("#n_citasPacientes").val(null);
 }
 
+var ImprimirCitasAgendadas = function(){
+    if( $("[name='checkedCitas']:checked").length == 0 )
+        notificacion('Debe selecionar al menos una o varias Citas Agendadas', 'question');
+    else{
+        var checked = [];
+        $("[name='checkedCitas']:checked").each(function(i, item) {
+            checked.push($(item).prop('dataset').idcitadet);
+        });
+
+        if(!ModulePermission(2,1)){
+            notificacion('Ud. No tiene permiso para Consultar', 'question');
+            return false;
+        }else{
+
+            if(checked.length>0){
+                var urlprint = $DOCUMENTO_URL_HTTP + '/application/system/agenda/export/export_pdf_citas_agendadas.php?idagend='+checked.toString();
+                window.open(urlprint, '_blank');
+            }
+        }
+
+    }
+};
 
 $(document).ready(function() {
 

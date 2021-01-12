@@ -201,8 +201,9 @@ if( (isset($_POST['ajaxSend']) && isset($_POST['accion'])) || (isset($_GET['ajax
                 $nameDocument           = GETPOST("nameDocument");
                 $ElementoString         = GETPOST("ElementoString");
                 $DataFormCamposTable    = GETPOST("DataFormCamposTable");
+                $DescriptionForm        = GETPOST("DescripFormClinico");
 
-                #echo '<pre>'; print_r($ElementoString); die();
+//                echo '<pre>'; print_r($DescriptionForm); die();
 
                 $nameDirectDocumento = "FormDocumentosEntity_".base64_encode($conf->EMPRESA->ID_ENTIDAD."".$conf->EMPRESA->ENTIDAD);
                 if(!file_exists(DOL_DOCUMENT."/application/system/documentos_clinicos/form_documentos/".$nameDirectDocumento)){
@@ -224,7 +225,7 @@ if( (isset($_POST['ajaxSend']) && isset($_POST['accion'])) || (isset($_GET['ajax
                     if(file_exists($urlFile))
                     {
                         $queryInsert = "INSERT INTO `tab_documentos_clinicos` (`nombre_documento`, `Descripcion`, `element_text`, `campos_asignados`, `id_table_form_document`, `datecreate`)";
-                        $queryInsert .= " VALUES ('".$NameDocumentTable."', '', '".$nameDocument."', '".$DataFormCamposTable."', 'form_".(strtolower($nameDocument))."' , now() )";
+                        $queryInsert .= " VALUES ('".$NameDocumentTable."', '".$DescriptionForm."', '".$nameDocument."', '".$DataFormCamposTable."', 'form_".(strtolower($nameDocument))."' , now() )";
 
                         #print_r($queryInsert); die();
                         $result = $db->query($queryInsert);

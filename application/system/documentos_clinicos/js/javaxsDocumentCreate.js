@@ -333,6 +333,7 @@ $("#crearte_form_dom").click(function() {
     FormInformation.append("accion","crear_form_documento");
     FormInformation.append("ajaxSend","ajaxSend");
     FormInformation.append("nameDocument",$nameDocumentClinico );
+    FormInformation.append("DescripFormClinico", $DescripcionDocumnClinico );
     FormInformation.append("ElementoString",ElementoString.toString() );
     FormInformation.append("NameDocumentTable",$("#namClinicoPrincipalTitulo").text() );
     FormInformation.append("DataFormCamposTable", ((DataForm.length>0)?DataForm.toString():"") );

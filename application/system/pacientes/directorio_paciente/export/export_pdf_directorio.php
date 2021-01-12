@@ -140,7 +140,7 @@ $footer = '<!--<hr style="margin-bottom: 2px"><table width="100%" style="font-si
 
 
 $header = ' 
-    <table width="100%" style="vertical-align: bottom; font-family: Arial; font-size: 9pt; color: black;">
+    <table width="100%" style="vertical-align: bottom;  font-size: 9pt; color: black;">
         <tr>
              <td width="100%" align="left"><span style="font-size:28pt;">'.$InformacionEntity->nombre.'</span></td>
         </tr>
@@ -161,7 +161,7 @@ $header = '
 ob_end_clean();
 
 
-$mpdf=new mPDF('c','LETTER','11px','Calibri',
+$mpdf=new mPDF('c','LETTER','11px','',
     12, //left
     12, // right
     23, //top

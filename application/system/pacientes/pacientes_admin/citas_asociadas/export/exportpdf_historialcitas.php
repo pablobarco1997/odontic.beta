@@ -118,7 +118,7 @@ $pdf .= '
 
 $pdf .= "
     <table  width='100%' class='tables'>
-        <tr  style='width: 100%; background-color: #A9CCE3'>
+        <tr  style='width: 100%; background-color: #f0f0f0'>
             <td style='text-align: center'> <h2> HISTORIAL DE CITAS </h2> </td>
         </tr>
     </table>    
@@ -137,7 +137,7 @@ $pdf .= "
 
 $pdf .= "<table class='tables' width='100%'>";
     $pdf .= "    <thead>
-                    <tr style='background-color: #A9CCE3'>
+                    <tr style='background-color: #f0f0f0'>
                         <th class='tables' width='10%'>Fecha</th>    
                         <th class='tables' width='30%'>Hora</th>    
                         <th class='tables' width='20%'>Espacialidad</th>    
@@ -207,7 +207,7 @@ $footer = '<!--<hr style="margin-bottom: 2px"><table width="100%" style="font-si
 
 
 $header = ' 
-    <table width="100%" style="vertical-align: bottom; font-family: Arial; font-size: 9pt; color: black;">
+    <table width="100%" style="vertical-align: bottom;  font-size: 9pt; color: black;">
         <tr>
           <td width="100%" align="left"><span style="font-size:28pt;">'.$InformacionEntity->nombre.'</span></td>
         </tr>
@@ -225,7 +225,7 @@ $header = '
 ob_end_clean();
 
 
-$mpdf=new mPDF('c','LETTER','','Calibri',
+$mpdf=new mPDF('c','LETTER','','',
     12, //left
     12, // right
     23, //top
