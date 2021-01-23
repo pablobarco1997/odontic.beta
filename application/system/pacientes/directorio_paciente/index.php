@@ -28,7 +28,7 @@ if(isset($_GET['view']))
         margin-top: 5px;
     }
 
-    #table_direc tr:hover{
+    #table_direc tbody tr:hover{
         background-color: #E5E8E8;
     }
 

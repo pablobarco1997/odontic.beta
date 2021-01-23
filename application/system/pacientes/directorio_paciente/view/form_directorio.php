@@ -54,7 +54,7 @@
                         <div class="col-md-12  col-sm-12 margenTopDiv">
                             <div style=" border-radius: 3px; padding: 3px; width: 100%">
                                 <div class="table-responsive">
-                                    <table class="table table-striped" id="table_direc" width="100%">
+                                    <table class="table  compact" id="table_direc" width="100%">
                                         <thead>
                                             <tr>
                                                 <th width="2%">&nbsp;</th>

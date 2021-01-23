@@ -31,7 +31,8 @@ if(isset($_POST['ajaxSend']) || isset($_GET['ajaxSend']))
             $year = GETPOST("year");
             $mes  = GETPOST("mes");
 
-            $total_anual = $db->query("SELECT  IFNULL(ROUND(SUM(pd.amount), 2),0) AS totalMes FROM tab_pagos_independ_pacientes_det pd where YEAR(pd.feche_create) = ".$year." limit 1")->fetchObject()->totalMes;
+            $quAnual = "SELECT  IFNULL(ROUND(SUM(pd.amount), 2),0) AS total_anual FROM tab_pagos_independ_pacientes_det pd where YEAR(pd.feche_create) = ".$year." limit 1";
+            $total_anual = $db->query($quAnual)->fetchObject()->total_anual;
 
             $Meses = [1,2,3,4,5,6,7,8,9,10,11,12];
 

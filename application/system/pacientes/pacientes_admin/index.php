@@ -69,6 +69,11 @@ require_once DOL_DOCUMENT.'/application/system/pacientes/pacientes_admin/control
 
         <section class="content container-fluid" id="boxViewadminPrincipal">
 
+            <!--SCRIPT BOX PRINCIPAL-->
+            <script>
+                $boxContentViewAdminPaciente = $("#boxViewadminPrincipal");
+            </script>
+
             <div class="box box-solid">
                 <div class="box-header with-border">
                     <div id="tituloInfo" style="display: block" class="no-margin">
@@ -110,12 +115,6 @@ require_once DOL_DOCUMENT.'/application/system/pacientes/pacientes_admin/control
                 </div>
             </div>
         </section>
-
-        <!--SCRIPT BOX PRINCIPAL-->
-        <script>
-            $boxContentViewAdminPaciente = $("#boxViewadminPrincipal");
-        </script>
-
     </div>
 </div>
 

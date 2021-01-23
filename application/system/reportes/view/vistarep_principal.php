@@ -12,6 +12,16 @@
     var YearDinamic = <?= $Year ?>;
 </script>
 
+<style>
+
+    .filtroFecha{
+        border: 0;
+        font-weight: bolder;
+        font-size: 1.6rem;
+    }
+
+</style>
+
 <div class="form-group col-xs-12 col-md-12">
     <br>
     <div class=" col-xs-12 col-md-6 col-sm-12 col-centered " style="border-bottom: 1px solid #e8e8e8; border-top: 1px solid #e8e8e8">
@@ -21,11 +31,8 @@
     <br>
     <div class="form-group col-xs-12 col-md-12 col-lg-12">
         <div class="form-group col-md-5 col-lg-5 col-sm-8 col-xs-12 col-centered">
-            <label for="">Filtro x Fecha</label>
-            <div class="input-group form-group rango" style="margin: 0">
-                <input type="text" class="form-control filtroFecha  " id="startDate" value="" readonly>
-                <span class="input-group-addon" style="border-radius: 0"><i class="fa fa-calendar"></i></span>
-            </div>
+<!--            <label for="">Filtro x Fecha</label>-->
+            <input type="text" class="form-control filtroFecha  " id="startDate" value="" readonly>
         </div>
     </div>
 

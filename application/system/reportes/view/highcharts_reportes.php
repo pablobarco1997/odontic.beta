@@ -102,14 +102,14 @@
 
     $url_reportes = $DOCUMENTO_URL_HTTP + '/application/system/reportes/controller/controller_reporte.php';
 
-    function chartBrowzerPagosRecibidos(dataMensual, Total, meses){
+    function chartBrowzerPagosRecibidos(dataMensual, Total, meses, YearText){
 
         Highcharts.chart('container_pagos_recibidos', {
             chart:{
                 type:'column'
             },
             title: {
-                text: 'Pago Total de lo que lleva del año ' + '<b>$  '+Total+'</b>'
+                text: 'Pago Total de lo que lleva del año '+ YearText + ' <b>$'+Total+'</b>'
             },
             xAxis: {
                 categories: meses,
@@ -179,7 +179,7 @@
             function(data) {
                 var respuesta = $.parseJSON(data);
                 if(respuesta['error']==''){
-                    chartBrowzerPagosRecibidos(respuesta['err'],respuesta['totalAnual'],$Mes);
+                    chartBrowzerPagosRecibidos(respuesta['err'],respuesta['totalAnual'],$Mes, $("#report_anual").find(":selected").text());
                 }
         });
         if(focus==true){

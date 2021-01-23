@@ -10,13 +10,35 @@ if(isset($_GET['v']))
 $option1 = "<option></option>";
 $sql = "SELECT * FROM tab_odontologos WHERE estado = 'A'";
 $rs = $db->query($sql);
-if($rs->rowCount()>0)
-{
+if($rs->rowCount()>0) {
     while ($ob = $rs->fetchObject()){
         $option1 .= "<option value='$ob->rowid'> ".$ob->nombre_doc."  ".$ob->apellido_doc." </option>";
     }
 }
 
+$optionCajasClinicas = "<option></option>";
+$result = $db->query("SELECT 
+                                b.rowid,
+                                (SELECT u.usuario FROM tab_login_users u WHERE u.rowid = b.userAuthor) user,
+                                b.name,
+                                b.direccion, 
+                                round((SELECT sum(t.value) FROM tab_bank_transacciones t where t.id_account = b.id_account),2) as saldo_caja,
+                                case 
+                                  when b.estado = 'A' then 'Activo'
+                                  when b.estado = 'E' then 'Eliminado'
+                                  when b.estado = 'C' then 'Cerrado'
+                                  else ''
+                                end as estado
+                                   
+                            FROM
+                                tab_cajas_clinicas b
+                                where b.estado <> 'E' ")->fetchAll();
+
+//echo '<pre>';print_r($result); die();
+foreach ($result as $k => $valueCajas){
+    $label = "Caja #".$valueCajas['rowid']."  -  ".str_replace('CAJA_','', $valueCajas['name']);
+    $optionCajasClinicas .= "<option value='".($valueCajas['rowid'])."'>". $label ."</option>";
+}
 
 $v = null;
 if(isset($_GET['v'])){
@@ -194,6 +216,7 @@ if(isset($_GET['v'])){
                               </table>
                           </div>
                       </div>
+
                 <?php  } ?>
 
                 <?php
@@ -208,16 +231,33 @@ if(isset($_GET['v'])){
                         }
                     </style>
 
+                    <div class="form-group col-xs-12 col-md-12">
+                        <div class="col-xs-12 col-md-12 col-centered">
+                            <span style=" color: #eb9627">
+                                <i class="fa fa-info-circle"></i>
+                                Tener en cuenta que no puede Eliminar un perfil si está asociado a un Usuario
+                            </span>
+                        </div>
+                    </div>
 
                     <div class="form-horizontal">
 
                         <div class="form-group">
-                            <label class="control-label col-sm-2" for="">Doctor</label>
+                            <label class="control-label col-sm-2" for="">Doctor:</label>
                             <div class="col-sm-8">
                                 <select name="usu_doctor" id="usu_doctor" class="form-control select2_max_ancho" onchange="FormValidacion($(this),true)" style="width: 100%">
                                     <?= $option1 ?>
                                 </select>
                                 <small style="color: #9f191f" id="msg_doctorUsuario"></small>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="" class="control-label col-sm-2">Caja:</label>
+                            <div class="col-sm-8">
+                                <select name="caja_id_users" id="caja_id_users" class="form-control" style="width: 100%">
+                                    <?= $optionCajasClinicas ?>
+                                </select>
                             </div>
                         </div>
 
@@ -249,23 +289,18 @@ if(isset($_GET['v'])){
                                 <small style="color: #9f191f" id="msg_password"></small>
                             </div>
                         </div>
+                    </div>
 
-
-                        <div class="form-group col-xs-12 col-md-12">
-                            <hr>
+                    <div class="form-group">
+                        <div class="col-xs-12 col-md-9 col-sm-12 col-centered">
                             <label class="bold">ASIGNAR PERMISOS</label>
                             <div class="table-responsive">
-
                                 <table class="table" width="100%">
                                     <thead style="background-color: #e9edf2">
                                         <tr>
                                             <th width="20%" style="font-size: 1.3rem">PERFIL</th>
                                             <th width="30%" style="font-size: 1.3rem">CREAR PERFIL</th>
                                             <th width="30%" style="font-size: 1.3rem">ELIMINAR PERFIL</th>
-<!--                                            <th width="15%" style="font-size: 1.3rem">CONSULTAR</th>-->
-<!--                                            <th width="15%" style="font-size: 1.3rem">AGREGAR</th>-->
-<!--                                            <th width="15%" style="font-size: 1.3rem">MODIFICAR</th>-->
-<!--                                            <th width="15%" style="font-size: 1.3rem">ELIMINAR</th>-->
                                             <th width="30%" style="font-size: 1.3rem">MODIFICAR PERFIL</th>
                                         </tr>
                                     </thead>
@@ -277,36 +312,21 @@ if(isset($_GET['v'])){
                                                 </select>
                                                 <small style="color: #9f191f; display: block" id="msg_permisos"></small>
                                             </td>
-
                                             <td> <button class="btn" style="background-color: #D5F5E3; color: green; font-weight: bolder" data-toggle="modal" data-target="#modalCreatePerfil" id="addPerfilUsers">Agregar  Perfil</button> </td>
                                             <td> <button class="btn" style="background-color: #FADBD8; color: red; font-weight: bolder" id="deletePerfilUsers" >Eliminar Perfil</button> </td>
                                             <td> <button class="btn" style="background-color: #D5F5E3; color: green; font-weight: bolder"  id="modificarPerfilUsers">Modificar  Perfil</button> </td>
-
-<!--                                            <td  width="100%" class="text-center" style="font-size: 4rem"> <input type="checkbox" id="chek_consultar" disabled class="disabled_link3"> </td>-->
-<!--                                            <td  width="100%" class="text-center" style="font-size: 4rem"> <input type="checkbox" id="chek_agregar" disabled class="disabled_link3">   </td>-->
-<!--                                            <td  width="100%" class="text-center" style="font-size: 4rem"> <input type="checkbox" id="chek_modificar" disabled class="disabled_link3"> </td>-->
-<!--                                            <td  width="100%" class="text-center" style="font-size: 4rem"> <input type="checkbox" id="chek_eliminar" disabled class="disabled_link3">  </td>-->
-
                                         </tr>
                                     </tbody>
-
                                 </table>
-                                <br>
                             </div>
+                        </div>
+                        <div class="col-xs-12 col-md-9 col-sm-12 col-centered">
                             <br>
+                            <a class="btn btnhover pull-right" style="font-weight: bolder; color: green; " id="nuevoUpdateUsuario"> Guardar </a>
                         </div>
-
-                        <div class="form-group col-xs-12 col-md-12">
-                            <div class="pull-right">
-                                <a class="btn btnhover " style="font-weight: bolder; color: green" id="nuevoUpdateUsuario"> Guardar </a>
-                            </div>
-                        </div>
-
                     </div>
 
-
                     <!--modal create perfil-->
-
                     <div id="modalCreatePerfil"  class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false" >
                         <div class="modal-dialog" style="width: 60%; margin: 1% auto">
 
@@ -330,7 +350,7 @@ if(isset($_GET['v'])){
                                                 </div>
                                                 <div class="form-group" style="margin-bottom: 5px">
                                                     <div class="col-md-12">
-                                                        <p style="border-bottom: 1px solid #f0f0f0; font-weight: bolder">Modulos</p>
+                                                        <p style="border-bottom: 1px solid #f0f0f0; font-weight: bolder">Módulos</p>
                                                         <div class="elemenErrorPermisosModule"></div>
                                                     </div>
                                                 </div>
@@ -343,7 +363,7 @@ if(isset($_GET['v'])){
                                                                         <tr>
                                                                             <th width="40%" rowspan="2">Modulo</th>
                                                                             <th width="20%" rowspan="2" class="text-center">Permiso</th>
-                                                                            <th width="80%" rowspan="1" colspan="4" style="text-align: center">accion</th>
+                                                                            <th width="80%" rowspan="1" colspan="4" style="text-align: center">acción</th>
                                                                         </tr>
                                                                         <tr>
                                                                             <th width="10%" class="text-center" >Consultar</th>

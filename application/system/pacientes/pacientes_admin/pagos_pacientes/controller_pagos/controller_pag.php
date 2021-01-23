@@ -5,7 +5,7 @@ session_start();
 include_once '../../../../../config/lib.global.php';
 require_once DOL_DOCUMENT .'/application/config/main.php';
 
-global  $db , $conf;
+global  $db , $conf, $user, $messErr;
 
 if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 {
@@ -60,7 +60,17 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $datosp['amoun_t']      = $amount_total;
             $datosp['observ']       = $observa;
 
-            $respuesta = realizar_PagoPacienteIndependiente( $datosp, $idpaciente, $idplancab );
+            if(ConsultarCajaUsers($user->id, false)==1){
+
+                $respuesta = realizar_PagoPacienteIndependiente( $datosp, $idpaciente, $idplancab );
+                if($respuesta == 1){
+
+                }else{
+
+                }
+            }else{
+                $respuesta = "Este usuario no tiene asociada una caja <br> <b>No puede realizar esta Operación</b>";
+            }
 
             $Output = [
                 'error' => $respuesta
@@ -204,9 +214,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                     $row = array();
                     $row[] = $object->descripcion;
-                    $row[] = "<small>".$object->observacion."</small>"; #descricopm del pago option
-                    $row[] = "";
-                    $row[] = $object->rowid;
+                    $row[] = $object->observacion; #descricopm del pago option
+                    $row["rowid"] = $object->rowid;
 
                     $data[] = $row;
                 }
@@ -286,6 +295,25 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 }
             }
 
+
+            $Output= [
+                'error' => $error ,
+            ];
+            echo json_encode($Output);
+            break;
+
+        case 'consulCajaUsuario':
+
+            $error = "";
+
+            $respuesta = ConsultarCajaUsers($user->id, false);
+
+//            print_r($respuesta);
+            if($respuesta==1){
+                $error = "";
+            }else{
+                $error = "No tiene asociado una caja";
+            }
 
             $Output= [
                 'error' => $error ,
@@ -579,6 +607,8 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
             // PA => Pagado
             // PS => saldo
 
+            #se realiza las transacciones ingreso o egreso de caja
+            realizarTrasaccionCobrosRecaudaciones($observacion, $idplancab, $idpacgos, $datosdet[$i]['valorAbonar'], $datosdet[$i]['fk_prestacion']);
         }
 
         //Consulto los pagos que este y actualizo el estado si ya esta pagada o solo haya saldo
@@ -783,6 +813,42 @@ function UpdatePagosParticular($idpagos, $idpaciente, $idPlantratmCab){
     }
 
     return "";
+}
+
+function realizarTrasaccionCobrosRecaudaciones($mensage = "", $idplanTratamiento, $idpacgos, $abonar, $idprestacion){
+
+    global $db, $user, $conf;
+
+    require_once DOL_DOCUMENT. '/application/system/cajas/class_transacciones/class_transsacion.php';
+
+    #numero de plan de tratamiento
+    $numtratm = $db->query("select concat('Plan de Tratamiento',' #',pc.numero) as trat_n from tab_plan_tratamiento_cab pc where pc.rowid = $idplanTratamiento")->fetchObject()->trat_n;
+    #nombre del paciente
+    $nombrePaciente = $db->query("select (select concat(d.nombre, ' ', d.apellido) from tab_admin_pacientes d where d.rowid = pc.fk_paciente)  as nom_p from tab_plan_tratamiento_cab pc where pc.rowid = $idplanTratamiento")->fetchObject()->nom_p;
+    #nombre de la prestacion
+    $nombprestacion = $db->query("select descripcion as name from tab_conf_prestaciones where rowid = $idprestacion")->fetchObject()->name;
+
+    $idCajaAcount = ConsultarCajaUsers($user->id, true)->id_caja_account; // OBTENGO EL ID CUENTA DE LA CAJA
+
+    if($idCajaAcount!=0){
+        $transacciones = new transsacion($db);
+        $comment = "Recaudación  del ".$numtratm. "\nPaciente: ".$nombrePaciente.""."\nprestación: ".$nombprestacion."\ncomment(".$mensage.")";
+
+        // COBOR DE PLAN DE TRATAMIENTO HACIA CAJA
+        // MOVIMIENTO DE PLAN DE TRATAMIENTO id =  2
+        $transacciones->type_mov = 2;
+
+        $transacciones->userAuthor = $user->id;
+
+        $transacciones->type_operacion = 2; //cobros de la planes de tratamiento
+        $log_tmp = "Cobro realizado del $numtratm \n prestación: $nombprestacion";
+        $error = $transacciones->create_movimiento_bank($idCajaAcount,$idpacgos,$abonar,$comment,"tab_plan_tratamiento_cab", $log_tmp);
+        return $error;
+    }else{
+        return 0;
+    }
+
+
 }
 
 ?>

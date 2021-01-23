@@ -1,7 +1,7 @@
 <?php
 
 
-    global   $db, $conf, $user , $permisos, $dateZoneCurrent, $Server;
+    global   $db, $conf, $user , $permisos, $dateZoneCurrent, $Server, $messErr;
 
     /** Coneccion a la entidad de la empresa o clinica x login*/
     require_once  DOL_DOCUMENT .'/application/config/conneccion_entidad.php';
@@ -41,6 +41,9 @@
         "idPerfil"          => $_SESSION["fk_perfil"],
         "admin"             => $_SESSION["admin"],
     );
+
+    /**Mensage de error global*/
+    $messErr = "Ocurrió un error con la Operación consulte con Soporte";
 
     /** conf **/
     $conf->Entidad    = $_SESSION['entidad'];
@@ -101,7 +104,7 @@
     ); */
 
 
-    #echo '<pre>'; print_r($user); die();
+    #echo '<pre>'; print_r($conf); die();
 
 
 ?>

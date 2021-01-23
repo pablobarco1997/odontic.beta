@@ -43,6 +43,11 @@ $Active="module_cajas";
             </section>
 
             <section  class="content container-fluid" id="boxContentCajasModule">
+
+                <script>
+                    $boxContentCajasModule = $("#boxContentCajasModule");
+                </script>
+
                 <div class="box box-solid">
                     <div class="box-header with-border">
                         <h4 class="no-margin"><span><b><?= $NAME_MODULO ?></b></span></h4>
@@ -70,3 +75,14 @@ $Active="module_cajas";
 
 
 <?php include_once DOL_DOCUMENT .'/public/view/footer_principal.php';?>
+
+<script>
+
+    window.onload =  boxloading($boxContentCajasModule, true);
+
+    $(window).on('load', function() {
+
+        boxloading($boxContentCajasModule, false,1000);
+    });
+
+</script>

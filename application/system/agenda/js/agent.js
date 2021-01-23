@@ -9,6 +9,7 @@ function loadtableAgenda()
         // destroy:true,
         // scrollX: true,
         // scrollY: 700,
+        fixedHeader: true,
         paging:true,
         processing: true,
         lengthMenu:[ 5, 10, 25, 50, 100 ],
@@ -53,10 +54,10 @@ function loadtableAgenda()
          //         }
          //     }
          // ],
-        select: {
-             style:    'os',
-             selector: 'td:first-child'
-        },
+        // select: {
+        //      style:    'os',
+        //      selector: 'td:first-child'
+        // },
          "language": {
              "sProcessing":     "Procesando...",
              "sLengthMenu":     "Mostrar _MENU_ registros",
@@ -89,6 +90,7 @@ function loadtableAgenda()
         // },
     });
     // new $.fn.dataTable.FixedHeader( table );
+
 }
 
 function filtrarAgenda(validStatus="") {

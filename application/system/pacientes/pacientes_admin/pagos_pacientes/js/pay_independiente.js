@@ -98,14 +98,11 @@ function listaprestacionesApagar()
 //Formas de pagos lista option modificar
 function listFormasPagos() {
 
-    $("#listformapago").DataTable({
+    $("#listTiposPagos").DataTable({
         searching: false,
         ordering:false,
         destroy:true,
         paging:false,
-        // scrollY: "300px",
-        // scrollX: true,
-        // scrollCollapse: true,
         ajax:{
             url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/pagos_pacientes/controller_pagos/controller_pag.php',
             type:'POST',
@@ -117,22 +114,9 @@ function listFormasPagos() {
                 },
             dataType:'json',
         },
-        columnDefs:[
-            // {
-            //     targets: 2,
-            //     render:function (data, type, row) {
-            //
-            //
-            //
-            //         var btnAction = "<ul class='list-inline' style='float: right'>";
-            //             btnAction += "<li> "+"<a class='btn btn-block btn-xs' style='background-color: #D5F5E3; color: green; font-weight: bolder' onclick='' >Modificar</a>"+" </li>";
-            //             btnAction += "<li> "+"<a class='btn btn-block btn-xs' style='background-color: #D5F5E3; color: green; font-weight: bolder' onclick='' >Eliminar</a>"+" </li>";
-            //         btnAction += "</ul>";
-            //
-            //         return btnAction;
-            //     }
-            // }
-        ],
+        createdRow:function(row, data, dataIndex){
+            $(row).children().css('font-size', '1.4rem').css('padding','5px');
+        },
         language:{
             "sProcessing":     "Procesando...",
             "sLengthMenu":     "Mostrar _MENU_ registros",
@@ -491,6 +475,11 @@ $('#btnApagar').click(function() {
         puedo++;
     }
 
+    if(cajaUsuario()==false){
+        puedo++;
+        notificacion("Este usuario no tiene asociada una caja <br> <b>No puede realizar esta Operación</b>", "question");
+    }
+
     if(puedo == 0)
     {
         var datos = fetch_apagar();
@@ -538,6 +527,40 @@ $('#btnApagar').click(function() {
 
 });
 
+
+var cajaUsuario = function consulCajaUsuario(){
+
+    var valid = false;
+    $.ajax({
+        url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/pagos_pacientes/controller_pagos/controller_pag.php',
+        type:'POST',
+        data:{
+          "accion":"consulCajaUsuario",
+          "ajaxSend":"ajaxSend",
+        },
+        complete:function(xhr, status) {
+            if(xhr['status']=='200'){
+                boxloading($boxContentViewAdminPaciente,false,1000);
+            }else{
+                if(xhr['status']=='404'){
+                    notificacion("Ocurrió un error con la <b>FETCH</b> <br> <b>xhr: "+xhr['status']+" <br> Consulte con Soporte </b>");
+                }
+                boxloading($boxContentViewAdminPaciente,false,1000);
+            }
+        },
+        dataType: 'json',
+        async: false,
+        cache:false,
+        success:function(resp) {
+            if(resp['error']==''){
+                valid=true; 
+            }else{
+                valid=false;
+            }
+        }
+    });
+    return valid;
+};
 
 
 

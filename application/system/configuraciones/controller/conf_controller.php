@@ -311,6 +311,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             $subaccion           = GETPOST('subaccion');
 
+            $idCajaAccount       = GETPOST('idcajaAccount');
             $doctor              = GETPOST('doctor'); //id doctor
             $usuario             = GETPOST('usuario');  //usuario name
             $passd               = GETPOST('passwords'); //password en base64
@@ -342,17 +343,18 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     if(empty($error))
                     {
 
-                        $sql = "INSERT INTO `tab_login_users` (`usuario`, `passwords` ,`fk_doc`, `permisos`, `tipo_usuario`, `passwor_abc`, `cedula`, `fk_perfil_entity`, `entity`) ";
+                        $sql = "INSERT INTO `tab_login_users` (`usuario`, `passwords` ,`fk_doc`, `tipo_usuario`, `passwor_abc`, `cedula`, `fk_perfil_entity`, `entity`, `id_caja_account`) ";
                         $sql .= "VALUES(";
                         $sql .= "'$usuario',";
                         $sql .= " md5('".base64_decode($passd)."'),"; #encrypt md5
                         $sql .= "'$doctor',";
-                        $sql .= "'',"; //permisos
+//                        $sql .= "'',"; //permisos
                         $sql .= "'".$fk_perfil_entity."',";
                         $sql .= "'".$passd."' ,"; #encryt base64
                         $sql .= "'".$objOdontolo->cedula."' ,"; #cedula
                         $sql .= " ".$fk_perfil_entity." ,";  #fk perfil entity relacionado directamento con la clinicas  global
-                        $sql .= "'".$conf->EMPRESA->ENTIDAD."' "; #para poder comprobar a que entidad pertenece
+                        $sql .= "'".$conf->EMPRESA->ENTIDAD."' ,"; #para poder comprobar a que entidad pertenece
+                        $sql .= " ".(empty($idCajaAccount)?0:$idCajaAccount)." ";
                         $sql .= ");";
 
                         $rs = $db->query($sql);
@@ -409,12 +411,13 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 {
 
                     $sql1  = " UPDATE `tab_login_users` SET ";
-                    $sql1 .= "`usuario`='$usuario' ,";
-                    $sql1 .= "`passwor_abc`='".$passd."' ,";
-                    $sql1 .= "`passwords`= md5('".base64_decode($passd)."') ,";
+                    $sql1 .= " `usuario`='$usuario' ,";
+                    $sql1 .= " `passwor_abc`='".$passd."' ,";
+                    $sql1 .= " `passwords`= md5('".base64_decode($passd)."') ,";
 //                    $sql1 .= "`permisos`= '".json_encode($permisos)."' ,";
-                    $sql1 .= "`tipo_usuario`='".$tipoUsuario."' ,";
-                    $sql1 .= "`fk_perfil_entity`=".$fk_perfil_entity." ";
+                    $sql1 .= " `tipo_usuario`='".$tipoUsuario."' ,";
+                    $sql1 .= " `fk_perfil_entity`=".$fk_perfil_entity." ,";
+                    $sql1 .= " `id_caja_account`=".(empty($idCajaAccount)?0:$idCajaAccount)." ";
 
                     $sql1 .= " WHERE `rowid`= '$idUsuariolink' ";
                     $rs1 = $db->query($sql1);
@@ -1620,6 +1623,36 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             );
             echo json_encode($output);
             break;
+
+
+            //eliminar perfil de la entidad
+        case 'delete_perfil_users':
+
+            $error = '';
+            $idPerfilEntity = GETPOST("idPerfilEntity");
+
+            $cn = new CONECCION_ENTIDAD();
+
+            $resultquestion = $cn::CONNECT_ENTITY()->query("select count(*) as count from tab_login_entity where fk_perfiles = $idPerfilEntity")->fetchObject();
+
+            if($resultquestion->count == 0){
+
+                $sql = "DELETE FROM `tab_perfiles_add` WHERE `rowid`= $idPerfilEntity and `numero_entity`= '".$conf->EMPRESA->ENTIDAD."' ";
+                $result = $cn::CONNECT_ENTITY()->query($sql);
+
+                $cn::CONNECT_ENTITY()->query("DELETE FROM `tab_permisos_user` WHERE `fk_perfil_module`= $idPerfilEntity and `numero_entity`='".$conf->EMPRESA->ENTIDAD."' ;");
+
+            }else{
+
+                $error = "Registro asociado a uno o varios Usuario";
+
+            }
+
+            $output = array(
+                "error"       => $error,
+            );
+            echo json_encode($output);
+            break;
     }
 
 
@@ -2003,7 +2036,7 @@ function infolistUsuarios($cual, $idusuMod)
                         concat(od.nombre_doc ,' ', od.apellido_doc) as nomdoc , 
                         us.tipo_usuario as tipusuarioNum, 
                         if(us.tipo_usuario=1,'administrador','normal') as tipoUsuario , 
-                        us.permisos, 
+                      
                         us.fk_perfil_entity
                     FROM
                         tab_login_users us,

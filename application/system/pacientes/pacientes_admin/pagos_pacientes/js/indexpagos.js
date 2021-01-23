@@ -5,7 +5,7 @@ function listPagosIndependientes()
         searching: false,
         ordering:false,
         destroy:true,
-        paging:false,
+        paging:true,
 
         ajax:{
             url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/pagos_pacientes/controller_pagos/controller_pag.php',

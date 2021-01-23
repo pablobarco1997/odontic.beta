@@ -484,7 +484,8 @@ $('#nuevoUpdateUsuario').on('click', function(){
             'tipoUsuario'      : $('#tipoUsuarioPerfil').find(':selected').val(),
             'fk_perfil_entity' : $('#tipoUsuarioPerfil').find(':selected').val(),
             'idUsuario'        : (UrlGet.get("id")=="")?0:UrlGet.get("id"),
-            'idEntityusers'    : $idUsersEntity
+            'idEntityusers'    : $idUsersEntity,
+            'idcajaAccount'    : $("#caja_id_users").find(":selected").val()
 
         };
 
@@ -666,6 +667,7 @@ function fetchUsuarioUpdate( id_usu )
                     var password             = obj.passwor_abc;
                     var confir_password      = obj.passwor_abc;
                     var tipousuario          = obj.tipo_usuario; /** Tipo de usuario o perfil de la entidad */
+                    var idcajaAccount        = obj.id_caja_account;
                     // var permisos             = JSON.parse(obj.permisos);
                     var idcedula             = obj.cedula;
 
@@ -674,6 +676,7 @@ function fetchUsuarioUpdate( id_usu )
 
 
                     $('#tipoUsuarioPerfil').val(tipousuario).trigger('change');
+                    $('#caja_id_users').val(idcajaAccount).trigger('change');
 
                     // $("#chek_consultar").prop('checked', ( permisos.consultar == "true" ) ? true : false);
                     // $("#chek_agregar").prop('checked'  , ( permisos.agregar == "true" ) ? true : false);
@@ -1037,7 +1040,31 @@ $("#modificarPerfilUsers").on("click", function() {
 
 });
 
+$("#deletePerfilUsers").on("click", function () {
 
+    if($("#tipoUsuarioPerfil").find(':selected').val()==""){
+        notificacion("Debe selecionar un Perfil", "error");
+        return false;
+    }
+
+    var url = $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php';
+    var data = {
+        "accion":"delete_perfil_users",
+        "ajaxSend":"ajaxSend",
+        "idPerfilEntity":$("#tipoUsuarioPerfil").find(':selected').val(),
+    };
+
+    $.get(url,data, function (data) {
+        var datos = $.parseJSON(data);
+        if(datos['error']==''){
+
+            notificacion('Información Actualizado', 'success');
+        }else{
+            notificacion(datos['error'], 'error');
+        }
+    });
+
+});
 
 $(document).ready(function() {
 
@@ -1045,6 +1072,11 @@ $(document).ready(function() {
 
     $('#usu_doctor').select2({
         placeholder: 'Odontolog@',
+        allowClear: true,
+    });
+
+    $('#caja_id_users').select2({
+        placeholder: 'Seleccione una opción',
         allowClear: true,
     });
 

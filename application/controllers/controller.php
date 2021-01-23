@@ -601,4 +601,26 @@ function PermitsModule($idModule = "", $action = ""){
     return $valid;
 }
 
+function ConsultarCajaUsers($id_users=0, $objectp=false){#se consulta la caja para que usuario puede realizar cobros de un plan de tratamiento
+
+    global $db, $messErr;
+
+    if($id_users==0){
+        return 'Este usuario no está asociado a ninguna caja';
+    }
+
+    $result = $db->query("select * from tab_login_users where rowid = $id_users and id_caja_account != 0 limit 1");
+    if($result && $result->rowCount()==1){
+        if($objectp==false){
+            return 1;
+        }
+        if($objectp==true){
+            return $result->fetchObject();
+        }
+    }else{
+        return $messErr;
+    }
+
+}
+
 ?>

@@ -62,44 +62,63 @@
 
 <?php
 
+
+global $db, $user;
+
+
+
+$showCaja = ConsultarCajaUsers($user->id, false);
+
+if($showCaja!=1){
+    $showCaja = "Este usuario no tiene asociada una caja <br> <b>No puede realizar esta Operación</b>";
+}else{
+    $showCaja="1";
+}
+
+
 if(isset($_GET['v']) && $_GET['v'] == 'paym')
 {
 
+
 ?>
 
-<style>
-
-</style>
-
+<script>
+    $(window).on("load", function () {
+        if("<?= $showCaja ?>" != "1"){
+            notificacion("<?= $showCaja ?>", "question");
+        }
+    });
+</script>
 
 <div class="form-group col-xs-12 col-md-12">
-
-    <div class="table-responsive">
-
-        <table class="table table-striped" id="pagos_planestratamiento_list" width="100%">
-            <thead>
-                <tr>
-                    <th colspan="3">PAGOS POR PLANES DE TRATAMIENTO DE PACIENTES</th>
-                </tr>
-                <tr>
-                    <th width="5%">COBRAR</th>
-                    <th width="8%">FECHA</th>
-                    <th width="25%">PLAN DE TRATAMIENTO</th>
-                    <th width="15%">CITA ASOCIADA</th>
-                    <th width="15%"><i class="fa fa-dollar"></i>&nbsp;TOTAL</th>
-                    <th width="15%"><i class="fa fa-dollar"></i>&nbsp;REALIZADO</th>
-                    <th width="15%"><i class="fa fa-dollar"></i>&nbsp;PAGADO</th>
-                </tr>
-            </thead>
-        </table>
-
+    <div class="row">
+        <div class="col-md-12 col-xs-12">
+            <div class="table-responsive">
+                <table class="table table-striped" id="pagos_planestratamiento_list" width="100%">
+                    <thead>
+                    <tr>
+                        <th colspan="3">PAGOS POR PLANES DE TRATAMIENTO DE PACIENTES</th>
+                    </tr>
+                    <tr>
+                        <th width="5%">Cobrar</th>
+                        <th width="8%">Fecha</th>
+                        <th width="25%">Plan de Tratamiento</th>
+                        <th width="15%">Cita Asociada</th>
+                        <th width="15%">$&nbsp;Total</th>
+                        <th width="15%">$&nbsp;Realizado</th>
+                        <th width="15%">$&nbsp;Abono de Paciente</th>
+                    </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
     </div>
-
 </div>
 
 <?php
 
 }
+
 ?>
 
 
@@ -219,13 +238,13 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
 
      <!--modal de forma de pago-->
      <div class="modal fade" id="FormaPagoadd" role="dialog" data-backdrop="static">
-         <div class="modal-dialog " style="width: 50%; margin: 2% auto">
+         <div class="modal-dialog " style="width: 60%; margin: 2% auto">
 
              <!-- Modal content-->
              <div class="modal-content">
                  <div class="modal-header modal-diseng">
                      <button type="button" class="close" data-dismiss="modal">&times;</button>
-                     <h4 class="modal-title"><span>Agregar Nueva Forma de Pago <i class="fa fa-dollar"></i></span></h4>
+                     <h4 class="modal-title"><span>Agregar Nueva Forma de Pago</span></h4>
                  </div>
                  <div class="modal-body">
 
@@ -249,13 +268,19 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
                          </div>
 
                          <div class="form-group col-md-12 col-xs-12">
-                             <div class="table-responsive" style="width: 100%; height: 300px">
-                                 <table class="table table-striped" id="listformapago" width="100%" >
-                                     <thead style="background-color: #d2d6de">
-                                        <th width="45%">Forma de Pago</th>
-                                        <th width="45%">Observación</th>
-                                     </thead>
-                                 </table>
+                             <div class="row">
+                                 <div class="col-md-12 col-xs-12">
+                                     <div style="width: 100%; display: block">
+                                         <table class="table listTiposPagos" width="100%" id="listTiposPagos">
+                                             <thead>
+                                                 <tr>
+                                                     <th width="30%" style="font-size: 1.4rem">Forma de pago</th>
+                                                     <th width="70%" style="font-size: 1.4rem">&nbsp;</th>
+                                                 </tr>
+                                             </thead>
+                                         </table>
+                                     </div>
+                                 </div>
                              </div>
                          </div>
 
@@ -271,6 +296,15 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
      </div>
 
 
+     <script>
+         $(window).on("load", function () {
+             if("<?= $showCaja ?>" != "1"){
+                 notificacion("<?= $showCaja ?>", "question");
+                $("#btnApagar").attr("disabled",true).addClass("disabled_link3");
+                $('.Abonar').attr("disabled",true);
+             }
+         });
+     </script>
 
 <?php
 
