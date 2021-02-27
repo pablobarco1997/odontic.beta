@@ -3,7 +3,7 @@
   <component name="BookmarkManager">
     <bookmark url="file://$PROJECT_DIR$/application/system/configuraciones/view/form_configuraciones_prestaciones.php" line="45" />
     <bookmark url="file://$PROJECT_DIR$/application/system/login/controller/controller_login.php" line="144" />
-    <bookmark url="file://$PROJECT_DIR$/application/config/conneccion_entidad.php" line="42" />
+    <bookmark url="file://$PROJECT_DIR$/application/config/conneccion_entidad.php" line="41" />
     <bookmark url="file://$PROJECT_DIR$/application/system/agenda/controller/agenda_controller.php" line="66" />
     <bookmark url="file://$PROJECT_DIR$/public/view" />
     <bookmark url="file://$PROJECT_DIR$/admin_entidades_dentales/class/create_clinica.class.php" line="105" mnemonic="9" />
@@ -11,7 +11,10 @@
     <bookmark url="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/pagos_pacientes/controller_pagos/controller_pag.php" line="641" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="948b3356-947b-4215-9243-67d8ff74bc7d" name="Default" comment="" />
+    <list default="true" id="948b3356-947b-4215-9243-67d8ff74bc7d" name="Default" comment="">
+      <change beforePath="$PROJECT_DIR$/application/config/conneccion_entidad.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/config/conneccion_entidad.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/application/config/lib.global.php" beforeDir="false" afterPath="$PROJECT_DIR$/application/config/lib.global.php" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -35,30 +38,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="emails_program.php" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_programar/view/emails_program.php">
+      <file leaf-file-name="index.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/application/system/login/index.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="334">
-              <caret line="156" column="116" selection-start-line="156" selection-start-column="116" selection-end-line="156" selection-end-column="116" />
-              <folding>
-                <element signature="n#style#0;n#button#0;n#div#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#a#0;n#li#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#a#0;n#li#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#a#0;n#li#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#p#0;n#!!top" expanded="true" />
-              </folding>
+            <state relative-caret-position="-724">
+              <caret line="3" column="43" lean-forward="true" selection-start-line="3" selection-start-column="43" selection-end-line="3" selection-end-column="43" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="controller.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_programar/controller.php">
+      <file leaf-file-name="lib.global.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/application/config/lib.global.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="310">
-              <caret line="253" column="32" selection-start-line="253" selection-start-column="32" selection-end-line="253" selection-end-column="32" />
-              <folding>
-                <element signature="n#style#0;n#small#0;n#!!top" expanded="true" />
-              </folding>
+            <state relative-caret-position="90">
+              <caret line="6" column="22" lean-forward="true" selection-start-line="6" selection-start-column="22" selection-end-line="6" selection-end-column="22" />
             </state>
           </provider>
         </entry>
@@ -67,7 +60,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>col-center</find>
       <find>append</find>
       <find>processData</find>
       <find>$mail-&gt;send</find>
@@ -97,6 +89,7 @@
       <find>ajax.reload()</find>
       <find>listdateCorreosProgram</find>
       <find>tab_send_email_programa_to_file</find>
+      <find>schema_dental_entity_login</find>
     </findStrings>
     <dirStrings>
       <dir>C:\wamp64\www\dental\public</dir>
@@ -110,8 +103,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/application/system/pacientes/nuevo_paciente/view/form_nuevo_paciente.php" />
-        <option value="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/export/exportFichaPaciente.php" />
         <option value="$PROJECT_DIR$/application/system/agenda/export/export_pdf_citas_agendadas.php" />
         <option value="$PROJECT_DIR$/application/system/pacientes/directorio_paciente/export/export_pdf_directorio.php" />
         <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/citas_asociadas/export/exportpdf_historialcitas.php" />
@@ -161,6 +152,8 @@
         <option value="$PROJECT_DIR$/application/system/configuraciones/js/UsuariosOdonti.js" />
         <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_programar/controller.php" />
         <option value="$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_programar/view/emails_program.php" />
+        <option value="$PROJECT_DIR$/application/config/lib.global.php" />
+        <option value="$PROJECT_DIR$/application/config/conneccion_entidad.php" />
       </list>
     </option>
   </component>
@@ -184,7 +177,7 @@
   <component name="PhpServers">
     <servers />
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="119" />
     <option name="y" value="83" />
     <option name="width" value="1378" />
@@ -213,52 +206,14 @@
               <item name="betaodontic" type="b2602c69:ProjectViewProjectNode" />
               <item name="betaodontic" type="462c0819:PsiDirectoryNode" />
               <item name="application" type="462c0819:PsiDirectoryNode" />
-              <item name="system" type="462c0819:PsiDirectoryNode" />
+              <item name="config" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="betaodontic" type="b2602c69:ProjectViewProjectNode" />
               <item name="betaodontic" type="462c0819:PsiDirectoryNode" />
               <item name="application" type="462c0819:PsiDirectoryNode" />
-              <item name="system" type="462c0819:PsiDirectoryNode" />
-              <item name="pacientes" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="betaodontic" type="b2602c69:ProjectViewProjectNode" />
-              <item name="betaodontic" type="462c0819:PsiDirectoryNode" />
-              <item name="application" type="462c0819:PsiDirectoryNode" />
-              <item name="system" type="462c0819:PsiDirectoryNode" />
-              <item name="pacientes" type="462c0819:PsiDirectoryNode" />
-              <item name="pacientes_admin" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="betaodontic" type="b2602c69:ProjectViewProjectNode" />
-              <item name="betaodontic" type="462c0819:PsiDirectoryNode" />
-              <item name="application" type="462c0819:PsiDirectoryNode" />
-              <item name="system" type="462c0819:PsiDirectoryNode" />
-              <item name="pacientes" type="462c0819:PsiDirectoryNode" />
-              <item name="pacientes_admin" type="462c0819:PsiDirectoryNode" />
-              <item name="email_programar" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="betaodontic" type="b2602c69:ProjectViewProjectNode" />
-              <item name="betaodontic" type="462c0819:PsiDirectoryNode" />
-              <item name="application" type="462c0819:PsiDirectoryNode" />
-              <item name="system" type="462c0819:PsiDirectoryNode" />
-              <item name="pacientes" type="462c0819:PsiDirectoryNode" />
-              <item name="pacientes_admin" type="462c0819:PsiDirectoryNode" />
-              <item name="email_programar" type="462c0819:PsiDirectoryNode" />
-              <item name="adjunto" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="betaodontic" type="b2602c69:ProjectViewProjectNode" />
-              <item name="betaodontic" type="462c0819:PsiDirectoryNode" />
-              <item name="application" type="462c0819:PsiDirectoryNode" />
-              <item name="system" type="462c0819:PsiDirectoryNode" />
-              <item name="pacientes" type="462c0819:PsiDirectoryNode" />
-              <item name="pacientes_admin" type="462c0819:PsiDirectoryNode" />
-              <item name="email_programar" type="462c0819:PsiDirectoryNode" />
-              <item name="adjunto" type="462c0819:PsiDirectoryNode" />
-              <item name="CarpetaAddAttachment_Nzk3XzE=" type="462c0819:PsiDirectoryNode" />
+              <item name="config" type="462c0819:PsiDirectoryNode" />
+              <item name="conneccion_entidad.php" type="88303cf5:PhpFileNode" />
             </path>
             <path>
               <item name="betaodontic" type="b2602c69:ProjectViewProjectNode" />
@@ -806,12 +761,12 @@
       <workItem from="1614298406542" duration="428000" />
       <workItem from="1614303096616" duration="10395000" />
       <workItem from="1614365206255" duration="9052000" />
-      <workItem from="1614452414273" duration="2981000" />
+      <workItem from="1614452414273" duration="7032000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="4161785000" />
+    <option name="totallyTimeSpent" value="4165836000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="754" extended-state="6" />
@@ -877,21 +832,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/application/system/documentos_clinicos/form_documentos/document_ficha_clinica.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-390" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/system/documentos_clinicos/view/doc_clinicos.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2720" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/application/system/documentos_clinicos/export/export_ficha_clinica.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1170" />
-      </provider>
-    </entry>
     <entry file="file://$APPLICATION_HOME_DIR$/plugins/JavaScriptLanguage/jsLanguageServicesImpl/external/lib.dom.d.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="220">
@@ -1222,8 +1162,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/application/system/pacientes/pacientes_admin/email_programar/view/emails_program.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="334">
-          <caret line="156" column="116" selection-start-line="156" selection-start-column="116" selection-end-line="156" selection-end-column="116" />
+        <state relative-caret-position="484">
+          <caret line="184" column="43" lean-forward="true" selection-start-line="184" selection-start-column="43" selection-end-line="184" selection-end-column="43" />
           <folding>
             <element signature="n#style#0;n#button#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#a#0;n#li#0;n#!!top" expanded="true" />
@@ -1231,6 +1171,27 @@
             <element signature="n#style#0;n#a#0;n#li#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#p#0;n#!!top" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/system/login/index.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-724">
+          <caret line="3" column="43" lean-forward="true" selection-start-line="3" selection-start-column="43" selection-end-line="3" selection-end-column="43" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/config/conneccion_entidad.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1665">
+          <caret line="9" column="12" selection-start-line="9" selection-start-column="12" selection-end-line="9" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/application/config/lib.global.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="22" lean-forward="true" selection-start-line="6" selection-start-column="22" selection-end-line="6" selection-end-column="22" />
         </state>
       </provider>
     </entry>
