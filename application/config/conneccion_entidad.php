@@ -4,7 +4,6 @@ class CONECCION_ENTIDAD{
 
     public static function CONNECT_ENTITY(){
 
-
         if(md5($_SERVER['SERVER_NAME'])=='068234a2d85a5233fd17f6d0507d3454'){
 
             #REMOTO
@@ -14,6 +13,7 @@ class CONECCION_ENTIDAD{
             $username = 'adminnub_entidad_dental'; //Usuario de la Base de datos todos los privilegios
             $password = 'Pablo_1997'; #PASSWIRD #PASSWORD SERVIDOR REMOTO ==> Pablo_1997
             $utf8mb4  = 'utf8mb4';
+
         }else{
 
             #LOCAL
