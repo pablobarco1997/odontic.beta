@@ -11,7 +11,7 @@ class CONECCION_ENTIDAD{
             $host     = 'localhost'; #ip o nombre del servidor remoto o local
             $database = 'adminnub_sch_dental_entity_login'; //SE ENCUENTRA TODAS LAS ENTIDADES REGISTRADAS
             $username = 'adminnub_entidad_dental'; //Usuario de la Base de datos todos los privilegios
-            $password = 'Pablo_1997'; #PASSWIRD #PASSWORD SERVIDOR REMOTO ==> Pablo_1997
+            $password = '740631f8cd06c9b56f1190b29db9ec54'; #PASSWIRD #PASSWORD SERVIDOR REMOTO ==> Pablo_1997
             $utf8mb4  = 'utf8mb4';
 
         }else{
