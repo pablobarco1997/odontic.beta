@@ -181,6 +181,9 @@
        position: -webkit-sticky !important;
        position: sticky !important;
    }
+    .fixedHeader-floating{
+        top: -4px!important;
+    }
 </style>
 
 <div class="form-group col-md-12 col-xs-12 col-sm-12 col-lg-12" >

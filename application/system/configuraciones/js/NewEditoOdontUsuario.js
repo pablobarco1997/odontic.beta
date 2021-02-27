@@ -228,9 +228,9 @@ if($accion == 'dentist')
 
     function nuevoGuardarOdontologo(datos, subaccion, id, fichero)
     {
-        var boxModalFormOdonto = $("#modal_conf_doctor");
+        // var boxModalFormOdonto = $("#modal_conf_doctor");
 
-        boxloading(boxModalFormOdonto, true);
+        // boxloading(boxModalFormOdonto, true);
 
         var form = new FormData();
 
@@ -256,35 +256,40 @@ if($accion == 'dentist')
             async:false,
             error:function(xhr, status){
                 if(xhr['status']=='200'){
-                    boxloading(boxModalFormOdonto,false,1000);
+                    // boxloading(boxModalFormOdonto,false,1000);
                 }else{
                     if(xhr['status']=='404'){
                         notificacion("Ocurrió un error con la <b>Nuevo Update Odontólog@</b> <br> <b>xhr: "+xhr['status']+" <br> Consulte con Soporte </b>");
                     }
-                    boxloading(boxModalFormOdonto,false,1000);
+                    // boxloading(boxModalFormOdonto,false,1000);
                 }
             },
             complete:function(xhr, status) {
 
                 if(xhr['status']=='200'){
-                    boxloading(boxModalFormOdonto,false,1000);
+                    // boxloading(boxModalFormOdonto,false,1000);
                 }else{
                     if(xhr['status']=='404'){
                         notificacion("Ocurrió un error con la <b>Nuevo Update Odontólog@</b> <br> <b>xhr: "+xhr['status']+" <br> Consulte con Soporte </b>");
                     }
-                    boxloading(boxModalFormOdonto,false,1000);
+                    // boxloading(boxModalFormOdonto,false,1000);
                 }
             },
             success: function(resp){
 
                 if(resp.error == ''){
+
                     notificacion('Información Actualizada', 'success');
-                    setTimeout(function () { location.reload(true); } ,1000);
+                    var table = $("#gention_odontologos_list").DataTable();
+
+                    table.ajax.reload(null, false);
+                    $('#modal_conf_doctor').modal("hide");
+
                 }else{
                     notificacion(resp.error, 'error');
                 }
 
-                boxloading(boxModalFormOdonto,false,1000);
+                // boxloading(boxModalFormOdonto,false,1000);
             }
 
         });

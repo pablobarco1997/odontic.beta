@@ -125,8 +125,26 @@ $pdf .= '<style>
             </style>';
 
 
-$pdf .= '<br>';
-$pdf .= '<br>';
+$header = ' 
+    <table width="100%" style="vertical-align: bottom;  font-size: 10pt; color: black;">
+        <tr>
+             <td width="100%" align="left"><span style="font-size:28pt;">'.$InformacionEntity->nombre.'</span></td>
+        </tr>
+        <tr>
+            <td WIDTH="33%">'.$ImagenLogoClinica.'</td>
+        </tr>
+        <tr>
+            <td width="33%">'.$InformacionEntity->direccion.' <span style="font-size:10pt;"></span></td>
+            <td width="33%" style="text-align: right;">Usuario:<span style="font-weight: bold;"> '.$loginUsuario.'</span></td>
+        </tr>
+        <tr>
+            <td width="33%">'.$InformacionEntity->email.'<span style="font-size:10pt;"></span></td>
+            <td width="33%" style="text-align: right;">Fecha de Impresión: <span style="font-weight: bold;">'.date("Y/m/d").'</span></td>
+        </tr>
+    </table> ';
+
+//$pdf .= $header;
+
 $pdf .= '<br>';
 $pdf .= "<table class='tables' style='width: 100%'>";
     $pdf .= "<thead>";
@@ -198,49 +216,29 @@ $pdf .= "<table class='tables' style='width: 100%'>";
 $pdf .= "</table>";
 
 
-
 $footer = '<!--<hr style="margin-bottom: 2px"><table width="100%" style="font-size: 10pt;">-->
-<br>
-          <table>
-                <tr>
-                    <td width="50%">
-                        <div align="left" style="display: none">'. $InformacionEntity->email .'</div>
-                    </td>
-                    <td width="50%" align="right">
-                        <!--<div  style="float: right">Pagina:{PAGENO}</div>-->
-                    </td>
-                </tr>
-            </table>';
-
-$header = ' 
-    <table width="100%" style="vertical-align: bottom;  font-size: 9pt; color: black;">
-        <tr>
-             <td width="100%" align="left"><span style="font-size:28pt;">'.$InformacionEntity->nombre.'</span></td>
-        </tr>
-        <tr>
-            <td WIDTH="33%">'.$ImagenLogoClinica.'</td>
-        </tr>
-        <tr>
-            <td width="33%">'.$InformacionEntity->direccion.' <span style="font-size:10pt;"></span></td>
-            <td width="33%" style="text-align: right;">Usuario:<span style="font-weight: bold;"> '.$loginUsuario.'</span></td>
-        </tr>
-        <tr>
-            <td width="33%">'.$InformacionEntity->email.'<span style="font-size:10pt;"></span></td>
-            <td width="33%" style="text-align: right;">Fecha de Impresión: <span style="font-weight: bold;">'.date("Y/m/d").'</span></td>
-        </tr>
-    </table> 
-    ';
+              <table width="100%" style="border-collapse: collapse">
+                    <tr>
+                        <td width="50%">
+                            <div align="left">&nbsp;</div>
+                        </td>
+                        <td width="50%" align="right">
+                            <div  style="float: right">Hoja:{PAGENO}</div>
+                        </td>
+                    </tr>
+                </table>';
 
 ob_end_clean();
-$mpdf=new mPDF('c','LETTER','11px','',
+$mpdf=new mPDF('c','LETTER','12px','',
     12, //left
     12, // right
-    23, //top
-    18, //bottom
+    40, //top
+    10, //bottom
     3, //header top
     3 //footer botoom
 );
 
+$mpdf->setFooter("{PAGENO}");
 $mpdf->SetHTMLHeader($header,"E",true);
 $mpdf->SetHTMLHeader($header,"O",true);
 $mpdf->SetHTMLFooter($footer,"E",true);

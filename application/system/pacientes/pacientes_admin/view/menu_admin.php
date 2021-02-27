@@ -67,6 +67,12 @@
                 'permiso' => ''
             ];
 
+            $array_email_contrap = (object)[
+                'url'     => DOL_HTTP.'/application/system/pacientes/pacientes_admin/index.php?view=programa_email&key='.KEY_GLOB.'&id='.tokenSecurityId($idPaciente).'&v=emails_program',
+                'active'  =>  ($VISTAS == "programa_email") ? "ActivaLista" : "",
+                'permiso' => ''
+            ];
+
 
 ?>
 
@@ -151,6 +157,11 @@
                                 <li class="lipaddi <?=  $array_coment_pacient->active ?>">
                                     <a class="lista" href="<?= $array_coment_pacient->url ?>">&nbsp;&nbsp;
                                         <i class="fa fa-comment-o"></i>&nbsp;&nbsp; <b>Comentarios administrativos</b> </a>
+                                </li>
+
+                                <li class="lipaddi <?=  $array_email_contrap->active ?>">
+                                    <a class="lista" href="<?= $array_email_contrap->url ?>">&nbsp;&nbsp;
+                                        <i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp; <b>Programar Email</b> </a>
                                 </li>
 
                                 <!--CLINICO-->

@@ -249,24 +249,6 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
                  <div class="modal-body">
 
                      <div class="row">
-
-                         <div class="form-group col-md-12 col-xs-12">
-                             <div class="form-horizontal">
-                                 <div class="form-group">
-                                     <label for="" class="control-label col-xs-12 col-sm-4 col-md-4">Forma de Pago:</label>
-                                     <div class="col-md-7">
-                                         <input type="text" class="form-control" id="formp_descrip_formp" name="formp_descrip_formp" onkeyup="FomValidFormaPagos()">
-                                     </div>
-                                 </div>
-                                 <div class="form-group">
-                                     <label for="" class="control-label col-xs-12 col-sm-4 col-md-4">Observación:</label>
-                                     <div class="col-md-7">
-                                         <textarea name="formp_observacion" id="formp_observacion" cols="30" rows="5" class="form-control" maxlength="650"></textarea>
-                                     </div>
-                                 </div>
-                             </div>
-                         </div>
-
                          <div class="form-group col-md-12 col-xs-12">
                              <div class="row">
                                  <div class="col-md-12 col-xs-12">
@@ -274,8 +256,12 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
                                          <table class="table listTiposPagos" width="100%" id="listTiposPagos">
                                              <thead>
                                                  <tr>
+                                                     <th colspan="3" style="font-size: 1.4rem;text-align: right; background-color: #f4f4f4; vertical-align: middle"> <a href="#modal_edit_tipoPago" data-toggle="modal" onclick="nuevoTipoPago()">  Agregar nueva tipo de pago</a></th>
+                                                 </tr>
+                                                 <tr>
                                                      <th width="30%" style="font-size: 1.4rem">Forma de pago</th>
                                                      <th width="70%" style="font-size: 1.4rem">&nbsp;</th>
+                                                     <th width="10%" style="font-size: 1.4rem">&nbsp;</th>
                                                  </tr>
                                              </thead>
                                          </table>
@@ -286,6 +272,32 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
 
                      </div>
                  </div>
+             </div>
+
+         </div>
+     </div>
+
+     <div class="modal fade" id="modal_edit_tipoPago" role="dialog">
+         <div class="modal-dialog">
+
+             <!-- Modal content-->
+             <div class="modal-content">
+                 <div class="modal-header modal-diseng">
+                     <button type="button" class="close" data-dismiss="modal">&times;</button>
+                     <h4 class="modal-title" id="tipo_pago_id" data-idpagotype="">Editar</h4>
+                 </div>
+                 <div class="modal-body">
+                   <div class="row">
+                       <div class="col-md-12 col-xs-12">
+                           <label for="">Tipo de pago</label>
+                           <input type="text" class="form-control" id="formp_descrip_formp" name="formp_descrip_formp" placeholder="descripción del pago" onkeyup="FomValidFormaPagos()">
+                       </div>
+                       <div class="col-md-12 col-xs-12">
+                           <label for="">Explicación</label>
+                           <textarea name="formp_observacion" id="formp_observacion" cols="30" rows="5" class="form-control" maxlength="650" placeholder="opcional"></textarea>
+                       </div>
+                   </div>
+                 </div>
                  <div class="modal-footer">
                      <a href="#" class="btn btnhover " style="font-weight: bolder; color: green; float: right" id="addFormaPago">Guardar</a>
                      <a type="button" class="btn btnhover " style="font-weight: bolder;  float: right" data-dismiss="modal">cerrar</a>
@@ -294,7 +306,6 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
 
          </div>
      </div>
-
 
      <script>
          $(window).on("load", function () {

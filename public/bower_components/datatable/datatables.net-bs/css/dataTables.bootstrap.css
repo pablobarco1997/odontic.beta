@@ -182,3 +182,16 @@ div.table-responsive > div.dataTables_wrapper > div.row > div[class^="col-"]:fir
 div.table-responsive > div.dataTables_wrapper > div.row > div[class^="col-"]:last-child {
   padding-right: 0;
 }
+.dataTables_paginate .pagination a{
+  font-size: 1.3rem !important;
+  padding: 3px 8px;
+}
+.dataTables_paginate .pagination .active a{
+  background-color: #212f3d !important;
+  border: 1px #212f3d solid;
+}
+.dataTables_length select{
+  padding: 0px 0px;
+  height: 25px;
+}
+

@@ -33,6 +33,7 @@
         <div class="form-group col-md-5 col-lg-5 col-sm-8 col-xs-12 col-centered">
 <!--            <label for="">Filtro x Fecha</label>-->
             <input type="text" class="form-control filtroFecha  " id="startDate" value="" readonly>
+            <h4 class="text-center" style="" id="labelSpanishSatrDtae" ><span style="margin-top: 10px">1 de enero de 2021 hasta 1 de enero de 2022</span></h4>
         </div>
     </div>
 
@@ -46,7 +47,7 @@
                 <div class="icon" style="top: 5px;">
                     <i class="ion ion-person-add iconShadow"></i>
                 </div>
-                <a href="#" class="small-box-footer">Mas Información <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="#" class="small-box-footer" id="reportes_pacientes_anulados">Mas Información <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
 

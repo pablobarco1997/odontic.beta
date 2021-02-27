@@ -87,6 +87,7 @@
                                 <input type="text" class="form-control" id="perf_usu" onkeyup="FormValidationPerfilGlobal()">
                                 <br>
                             </div>
+
                             <label for="" class="control-label control-label col-sm-4 col-md-4 col-xs-12">password</label>
                             <div class="col-sm-6 col-md-8 col-xs-12">
                                 <div class="input-group">
@@ -96,6 +97,19 @@
                                 </div>
                                 <small style="color: #9f191f" id="msg_password_d"></small>
                                 <br>
+                            </div>
+
+                            <label for="" class="control-label control-label col-sm-4 col-md-4 col-xs-12">Caja</label>
+                            <div class="col-sm-6 col-md-8 col-xs-12">
+                                <select name="perf_cajaUsers" id="perf_cajaUsers" class="form-control">
+                                    <option value=""></option>
+                                    <?php
+                                        $resulCajasPerfil = $db->query("select rowid, concat('Caja #',rowid) as nom from tab_cajas_clinicas")->fetchAll(PDO::FETCH_ASSOC);
+                                        foreach ($resulCajasPerfil as $value){
+                                                print '<option value="'.$value['rowid'].'">'.$value['nom'].'</option>';
+                                        }
+                                    ?>
+                                </select>
                             </div>
 
 

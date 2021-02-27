@@ -190,7 +190,6 @@ if($accion == 'addplan')
                 html += "  <p class='text-bold' style='margin: 0px' data-diente='"+iddiente+"' > Pieza: "+iddiente+" &nbsp;&nbsp; " +
                         "     <img src='"+$DOCUMENTO_URL_HTTP+"/logos_icon/logo_default/diente.png' width='17px' height='17px' alt=''> " +
                         "  </p>";
-
             }
 
 

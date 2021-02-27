@@ -17,13 +17,14 @@ $_JS_DOCMENT               =  ""; #BUSCAR JAVASCRIPT
 $NAME_MODULO               =  "";
 
 $idPaciente = 0;  #ID PACIENTES ----------------------------------------------------------------------------------------
-
+$Paciente_id_Hexadecimal = 0;
 if(isset($_GET['id']))
 {
 
     PERMISO_ACCESO_ADMIN_PACIENTES(GETPOST('key'));  #permisos
 
     $idPaciente  = decomposeSecurityTokenId($_GET['id']); #id del paciente
+    $Paciente_id_Hexadecimal = $_GET['id'];
 
     #VISTAS FORMULARIOS ------------------------------------------------------------------------------------------------
     include_once 'view/vistas_mod.php';
@@ -51,6 +52,7 @@ require_once DOL_DOCUMENT.'/application/system/pacientes/pacientes_admin/control
     $DOCUMENTO_URL_HTTP        = "<?=  DOL_HTTP ?>"; //URL  HTTP DOCUMENTO
     $HTTP_DIRECTORIO_ENTITY    = "<?=  $conf->NAME_DIRECTORIO ?>";  //ENTIDAD DE LA EMPRESA PARA JAVASCRIPT
     $keyGlobal                 = "<?=  KEY_GLOB ?>"; //KEY GLOBAL
+    $Paciente_id               = "<?=  $Paciente_id_Hexadecimal ?>"; //Paciente_id
 
 </script>
 

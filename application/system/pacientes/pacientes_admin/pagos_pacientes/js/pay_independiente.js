@@ -114,8 +114,51 @@ function listFormasPagos() {
                 },
             dataType:'json',
         },
+        columnDefs:[
+            {
+                targets:2,
+                render:function (data, type, full, meta) {
+                    var idtipopago = full['rowid'];
+                    var t = "<table width='100%' style='border-collapse: collapse'>";
+                            t += "<tr> " +
+                                    "<td> <a href='#' id='tipoPago_edit' title='editar' class='tipoPago_edit' data-id='"+idtipopago+"' data-name='"+full[0]+"' data-explic='"+full[1]+"'> <i style='color: #308d50' class='fa fa-edit'></i> </a></td> " +
+                                    "<td> &nbsp;<a href='#' id='tipoPago_elim' title='eliminar' class='tipoPago_elim' onclick='eliminarTipoPago("+idtipopago+")' data-id='"+idtipopago+"'> <i style='color: #ff1b45' class='fa fa-trash'></i> </a></td> " +
+                                 "</tr>" ;
+                        t += "</table>";
+
+                    // console.log(meta);
+                    // console.log(full['rowid']);
+
+                    $(".tipoPago_edit").on("click", function() {
+
+                        var idp = $(this).prop('dataset').id;
+                        var nom = $(this).prop('dataset').name;
+                        var expli = $(this).prop('dataset').explic;
+
+                        $("#tipo_pago_id").attr("data-idpagotype", idp);
+                        $("#modal_edit_tipoPago").modal("show");
+
+                        $('#formp_descrip_formp').val(nom);
+                        $('#formp_observacion').val(expli);
+
+                    });
+
+
+                    if(full['system']==0){
+                        return t;
+                    }else{
+                        return "";
+                    }
+                }
+            }
+
+        ],
         createdRow:function(row, data, dataIndex){
             $(row).children().css('font-size', '1.4rem').css('padding','5px');
+            $(row).find('td').eq(0).css('width','25%');
+            $(row).find('td').eq(2).css('width','8%');
+            $(row).find('td').eq(1).css('width','70%');
+            console.log( $(row).find('td') );
         },
         language:{
             "sProcessing":     "Procesando...",
@@ -170,6 +213,7 @@ function fetchUpdateFormaPago(fetch , idFormaPago){
                 notificacion('Información Actualizada', 'success');
                 listFormasPagos();
                 fetchPagosListSelect();//select2 formas de pagos
+                $("#modal_edit_tipoPago").modal("hide");
             }else{
                 notificacion(respuesta['error'], 'error');
                 listFormasPagos();
@@ -186,9 +230,17 @@ $("#addFormaPago").on("click", function() {
     if(FomValidFormaPagos()==false)
         return false;
 
-    fetchUpdateFormaPago("nuevo", null);
-    $('#formp_descrip_formp').val(null);
-    $('#formp_observacion').val(null);
+    var idpagotipo = $("#tipo_pago_id").prop("dataset").idpagotype;
+
+    if(idpagotipo!="" && idpagotipo !=0){
+        fetchUpdateFormaPago("update", idpagotipo);
+    }else{
+        fetchUpdateFormaPago("nuevo", null);
+        $('#formp_observacion').val(null);
+        $('#formp_descrip_formp').val(null);
+    }
+
+
 
 });
 
@@ -527,6 +579,46 @@ $('#btnApagar').click(function() {
 
 });
 
+var nuevoTipoPago = function () {
+    $("#tipo_pago_id").attr("data-idpagotype", "");
+    $('#formp_descrip_formp').val(null);
+    $('#formp_observacion').val(null);
+};
+
+var eliminarTipoPago = function (idpagotipo) {
+    var parametros = {
+        "accion":"deleteTipoPago",
+        "ajaxSend":"ajaxSend",
+        "idpago":idpagotipo
+    };
+    $.ajax({
+        url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/pagos_pacientes/controller_pagos/controller_pag.php',
+        type:'POST',
+        data:parametros,
+        complete:function(xhr, status) {
+            if(xhr['status']=='200'){
+                boxloading($boxContentViewAdminPaciente,false,1000);
+            }else{
+                if(xhr['status']=='404'){
+                    notificacion("Ocurrió un error con la <b>FETCH</b> <br> <b>xhr: "+xhr['status']+" <br> Consulte con Soporte </b>");
+                }
+                boxloading($boxContentViewAdminPaciente,false,1000);
+            }
+        },
+        dataType: 'json',
+        async: false,
+        cache:false,
+        success:function(resp){
+            if(resp['error'] == ''){
+                notificacion('Información Actualizada', 'success');
+                listFormasPagos();
+                fetchPagosListSelect();//select2 formas de pagos
+            }else{
+                notificacion(resp['error'] , 'error');
+            }
+        }
+    });
+};
 
 var cajaUsuario = function consulCajaUsuario(){
 

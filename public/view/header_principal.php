@@ -19,7 +19,7 @@
 
     <link rel="stylesheet" href="<?php echo DOL_HTTP .'/public/css/css_global/breadcrumb.css'?>">
     <!--    datatable-->
-    <link rel="stylesheet" href="<?php echo DOL_HTTP .'/public/bower_components/datatable/datatables.net-bs/css/dataTables.bootstrap.css'?>">
+    <link rel="stylesheet" href="<?php echo DOL_HTTP .'/public/bower_components/datatable/datatable.code/datatables.min.css'?>">
     <!--    select2-->
     <link rel="stylesheet" href="<?= DOL_HTTP .'/public/bower_components/select2/dist/css/select2.min.css'?>">
     <!--    sweetarlert2 -->
@@ -40,6 +40,9 @@
     <link rel="stylesheet" href="<?= DOL_HTTP .'/public/bower_components/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css'?>">
     <!--link jquery ui css-->
     <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/themes/base/jquery-ui.css" type="text/css" media="all" />
+
+    <!--script import-->
+
     <!-- jQuery 3 -->
     <script src="<?php echo DOL_HTTP.'/public/bower_components/jquery/dist/jquery.js'?>"></script>
     <!-- Bootstrap 3.4 -->
@@ -49,8 +52,7 @@
     <!-- AdminLTE App -->
     <script src="<?php echo DOL_HTTP .'/public/js/adminlte.min.js'?>"></script>
     <!--datatable-->
-    <script src="<?php echo DOL_HTTP .'/public/bower_components/datatable/datatables.net/js/jquery.dataTables.js'?>"></script>
-    <script src="<?php echo DOL_HTTP .'/public/bower_components/datatable/datatables.net-bs/js/dataTables.bootstrap.js'?>"></script>
+    <script src="<?php echo DOL_HTTP .'/public/bower_components/datatable/datatable.code/datatables.min.js'?>"></script>
 
     <!--select2-->
     <script src="<?= DOL_HTTP .'/public/bower_components/select2/dist/js/select2.full.min.js'?>"></script>
@@ -71,37 +73,38 @@
     <!--Jqueyr UI-->
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 
+
+    <!--google Font 2-->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
     <style>
 
 
         *{
+            /*@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');*/
             /*font-family: 'Varela Round', sans-serif ;*/
             /*font-size: 0.8rem !important;*/
-            font-family: 'Baloo Da 2', cursive;
+            /*font-family: 'Baloo Da 2', cursive;*/
+            font-family: 'Roboto', sans-serif;
         }
 
-        /*@font-face {*/
-            /*font-family: 'Baloo Da 2', cursive;*/
-            /*src: url("../font/Baloo2-Regular.ttf");*/
-            /*src: url("../font/Baloo2-ExtraBold.ttf");*/
-            /*src: url("../font/Baloo2-Medium.ttf");*/
-            /*src: url("../font/Baloo2-Regular.ttf");*/
-            /*src: url("../font/Baloo2-SemiBold.ttf");*/
-        /*}*/
-
         h3{
+            font-family: 'Roboto', sans-serif;
             /*font-family: 'Varela Round', sans-serif ;*/
-            font-family: 'Baloo Da 2', cursive;
+            /*font-family: 'Baloo Da 2', cursive;*/
         }
 
         h5{
+            font-family: 'Roboto', sans-serif;
             /*font-family: 'Varela Round', sans-serif ;*/
-            font-family: 'Baloo Da 2', cursive;
+            /*font-family: 'Baloo Da 2', cursive;*/
         }
 
         div{
+            font-family: 'Roboto', sans-serif;
             /*font-family: 'Varela Round', sans-serif ;*/
-            font-family: 'Baloo Da 2', cursive;
+            /*font-family: 'Baloo Da 2', cursive;*/
         }
 
         .table  tr {

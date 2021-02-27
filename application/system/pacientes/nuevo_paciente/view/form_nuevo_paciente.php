@@ -53,7 +53,7 @@
                                                                         </div>
 
                                                                         <div class="form-group">
-                                                                            <label for="" class="control-label col-sm-2">cedula</label>
+                                                                            <label for="" class="control-label col-sm-2">C. I.	</label>
                                                                             <div class="col-sm-10">
                                                                                 <input type="text" class="form-control input-sm" id="rud_dni" onkeyup="invalicrucCedula(this, true); invalic_paciente(true)">
                                                                                 <small id="noti_ruddni" style="color: red"></small>

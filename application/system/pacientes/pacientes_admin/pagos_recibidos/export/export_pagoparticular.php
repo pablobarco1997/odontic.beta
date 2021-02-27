@@ -12,6 +12,18 @@ require_once  DOL_DOCUMENT .'/application/system/conneccion/conneccion.php';    
 require_once  DOL_DOCUMENT .'/public/lib/mpdf60/mpdf.php';
 require_once  DOL_DOCUMENT .'/application/controllers/controller.php';
 
+$DirectorioImgClinicaHttp = DOL_HTTP.'/logos_icon/icon_logos_'.$_SESSION['entidad'];
+if(isset($_SESSION['logoClinica'])) {
+    if($_SESSION['logoClinica']!="" && !file_exists($DirectorioImgClinicaHttp)){
+        $iconClinica = $DirectorioImgClinicaHttp.'/'.$_SESSION['logoClinica'];
+    }else{
+        $iconClinica = DOL_HTTP.'/logos_icon/logo_default/none-icon-20.jpg';
+    }
+}else{
+    $iconClinica = DOL_HTTP.'/logos_icon/logo_default/none-icon-20.jpg';
+}
+$ImagenLogoClinica = "<img src='".$iconClinica."' style='width:40px; height: 40px; border-radius: 100%;' >";
+
 /**SE CREA LAS VARIABLES DE INICIO**/
 $cn = new ObtenerConexiondb();                    //Conexion global Empresa Fija
 $db = $cn::conectarEmpresa($_SESSION['db_name']); //coneccion de la empresa variable global
@@ -28,6 +40,7 @@ $InformacionEntity = (object)array(
 
 
 $loginUsuario = $_SESSION['usuario']; #Login Inicio de Sesion
+
 $pdf = null;
 
 /**------------------------------------------------------------------------------------------------------------------**/
@@ -39,12 +52,17 @@ $dataPagosDet = [];
 $idpaciente   = GETPOST('idpac');
 $idpago       = GETPOST('npag');
 
-$queryCabPag = "SELECT cast(fecha as  date) as fecha , n_fact_boleta  FROM tab_pagos_independ_pacientes_cab where  rowid = $idpago; ";
+$queryCabPag = "SELECT 
+          cast(fecha as  date) as fecha , 
+          n_fact_boleta ,
+          observacion ,
+          (select c.descripcion from tab_tipos_pagos c where c.rowid = fk_tipopago) as tp
+      FROM tab_pagos_independ_pacientes_cab where  rowid = $idpago; ";
 $dataPagosCab   = $db->query($queryCabPag)->fetchObject();
 
 
 $queryDetPag = "SELECT 
-   concat('PAG-',d.rowid) AS codpag ,
+   concat('AGR_',d.rowid) AS codpag ,
     (SELECT 
             c.descripcion
         FROM
@@ -74,7 +92,7 @@ if($rsDet && $rsDet->rowCount()>0){
         if($dp->diente==0){
             $prestacion = "&nbsp;&nbsp;&nbsp;&nbsp;".$dp->prestacion;
         }else{
-            $prestacion = "&nbsp;&nbsp;&nbsp;&nbsp;".$dp->prestacion ." ". "<img src='".DOL_HTTP."/logos_icon/logo_default/diente.png' width='15px' height='15px' > ".$dp->diente;
+            $prestacion = "&nbsp;&nbsp;&nbsp;&nbsp;".$dp->prestacion ." ". "<img src='".DOL_HTTP."/logos_icon/logo_default/diente.png' width='10px' height='10px' > ".$dp->diente;
         }
         $dataPagosDet[] = (object)array(
               'codpag'   => $dp->codpag,
@@ -86,24 +104,28 @@ if($rsDet && $rsDet->rowCount()>0){
 
 //echo '<pre>'; print_r($dataPagosCab); die();
 
-
+$objectInfoPaciente = getnombrePaciente($idpaciente);
 
 $pdf .= '<style>
-
-            .tables { font-size: 1.2rem; }
-            .theader{background-color: #688fc2;                border: 1px solid black;}
-            .detalle{ border: 1px solid black; font-size: 1.2rem; padding: 5px !important;}
-            .listdetalle tr:nth-child(even){background-color: #f2f2f2;}
+                
+            .tables {  }
+            .theader{ border: 1px solid black;}
+            .detalle{ border: 1px solid black;  padding: 1px !important;}
+            /*.listdetalle tr:nth-child(even){background-color: #f2f2f2;}*/
             
-            </style>';
+        </style>';
 
 
-$pdf .= '<table width="100%" class="tables">
+$pdf .= '<br>
+        <table width="100%" class="tables" style="margin-top: 20px">
+            
             <tr>
-                <td><b><h3>COMPROBANTE DE PAGO</h3></b></td>
-                <td align="right" > <span> <img  src="'.$InformacionEntity->logoClinica.'"   style="border-radius: 50%" width="80px" height="80px" alt=""> </span> </td>
+                <td><b><h3>COMPROBANTE DE RECAUDACIÓN</h3></b></td>
+                <td align="right" > <span> </td>
             </tr>
         </table>';
+
+
 
 $pdf .= '<br>';
 $pdf .= '<table width="100%" class="tables">
@@ -111,16 +133,32 @@ $pdf .= '<table width="100%" class="tables">
                 <td>
                     <table width="100%" class="tables">
                         <tr>
-                            <td><b>Clinica:</b>&nbsp;&nbsp; '.$InformacionEntity->nombre.'</td> 
+                            <td class="" style="width: 20%"><b>Paciente:</b></td> 
+                            <td class="" style="text-align: left"> '.($objectInfoPaciente->nombre.' '.$objectInfoPaciente->apellido).' </td> 
                         </tr>
                         <tr>
-                            <td><b>Direcciòn:</b> &nbsp;&nbsp; '.$InformacionEntity->direccion.'</td>
+                            <td class="" style="width: 20%"><b>C.I.:</b></td> 
+                            <td class="" style="text-align: left"> '.($objectInfoPaciente->ruc_ced).' </td> 
                         </tr>
                         <tr>
-                            <td><b>Telefono:</b> &nbsp;&nbsp; '.$InformacionEntity->telefonoClinica.'</td>
+                            <td class="" style="width: 20%"><b>Clinica:</b></td> 
+                            <td class="" style="text-align: left"> '.$InformacionEntity->nombre.' </td> 
                         </tr>
                         <tr>
-                            <td><b>E-mail:</b> &nbsp;&nbsp; '.$InformacionEntity->email.'</td>
+                            <td class="" style="width: 20%"><b>Dirección:</b></td> 
+                            <td class="">'.$InformacionEntity->direccion.'</td>
+                        </tr>
+                        <tr>
+                            <td class="" style="width: 20%"><b>Telefono:</b></td>
+                            <td class="">'.$InformacionEntity->telefonoClinica.'</td>
+                        </tr>
+                        <tr>
+                            <td class="" style="width: 20%"><b>E-mail:</b></td>
+                            <td class="">'.$InformacionEntity->email.'</td>
+                        </tr>
+                        <tr>
+                            <td class="" style="width: 20%"><b>Descripción:</b></td>
+                            <td class="">'.$dataPagosCab->observacion.'</td>
                         </tr>
                     </table> 
                 </td>
@@ -150,8 +188,8 @@ $pdf .= '<table width="100%" class="tables">
 $pdf .= ' <br><br>
     <table width="100%" class="tables listdetalle" style="border-collapse: initial" >
         <thead>
-            <tr class="theader">
-                <th class="theader">Nº PAGO</th>
+            <tr class="theader" style="background-color: #f0f0f0">
+                <th class="theader">Nº AGR</th>
                 <th class="theader">PRESTACIONES</th>
                 <th class="theader">ABONO</th>
             </tr>
@@ -161,30 +199,49 @@ $pdf .= ' <br><br>
         $amountTotal = 0;
         foreach ($dataPagosDet as $key => $item) {
 
+
             $pdf.= '<tr>
                           <td  class="detalle">'.$item->codpag.'</td>
                           <td  class="detalle">'.$item->prestacion.'</td>
-                          <td  class="detalle">'.$item->amount.'</td>  
+                          <td  class="detalle">'.(number_format($item->amount,2,'.',',')).'</td>  
                     </tr>';
+
 
             $amountTotal += (double)$item->amount;
         }
 
         $pdf .= '<tr> 
                     <td  class="detalle" colspan="2"> <b>TOTAL PAGOS</b> </td> 
-                    <td  class="detalle"><b> '.$amountTotal.' </b></td> 
+                    <td  class="detalle"><b> '.(number_format($amountTotal,2,'.',',')).' </b></td> 
                 </tr>';
 
 $pdf .='</tbody>
     </table>';
 
+$header = ' 
+    <table width="100%" style="vertical-align: bottom;  font-size: 10pt; color: black;">
+        <tr>
+             <td width="100%" align="left"><span style="font-size:28pt;">'.$InformacionEntity->nombre.'</span></td>
+        </tr>
+        <tr>
+            <td WIDTH="33%">'.$ImagenLogoClinica.'</td>
+        </tr>
+        <tr>
+            <td width="33%">'.$InformacionEntity->direccion.' <span style="font-size:10pt;"></span></td>
+            <td width="33%" style="text-align: right;">Usuario:<span style="font-weight: bold;"> '.$loginUsuario.'</span></td>
+        </tr>
+        <tr>
+            <td width="33%">'.$InformacionEntity->email.'<span style="font-size:10pt;"></span></td>
+            <td width="33%" style="text-align: right;">Fecha de Impresión: <span style="font-weight: bold;">'.date("Y/m/d").'</span></td>
+        </tr>
+    </table> 
+    ';
+
 ob_end_clean();
-
-
-$mpdf=new mPDF('c','LETTER','10px','Calibri',
+$mpdf=new mPDF('c','LETTER','12px','',
     12, //left
     12, // right
-    23, //top
+    40, //top
     18, //bottom
     3, //header top
     3 //footer botoom
@@ -208,8 +265,9 @@ $mpdf->SetTitle('Comprobante de Pago' );
 $mpdf->WriteHTML($body.$pdf);
 
 
-$mpdf->Output('ejemplo.pdf', 'I');
+$mpdf->Output('Comprobante de Pago.pdf', 'I');
 
-print_r($pdf);
-die();
+//print_r($pdf);
+//die();
+
 ?>

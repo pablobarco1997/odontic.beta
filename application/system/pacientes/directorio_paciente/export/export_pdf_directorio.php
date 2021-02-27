@@ -80,67 +80,9 @@ $pdf .= '<style>
             
             </style>';
 
-$pdf .= "
-    <br>
-    <table  width='100%' class='tables' style='margin-top: 25px'>
-        <tr  style='width: 100%; '>
-            <td style='text-align: center; background-color: #f0f0f0' > <h2> Directorio de Pacientes</h2> </td>
-        </tr>
-    </table>    
-        ";
-
-
-//echo '<pre>';
-//print_r($datos);
-//die();
-//LISTA DE PACIENTES
-
-$pdf .= "<table width='100%' class=\"tables\">";
-    $pdf .= "<thead>
-                <tr class='tables' style=\"background-color: #f0f0f0\">
-                    <th class='tables' style='font-size: 1.2rem'>Paciente</th>
-                    <th class='tables' style='font-size: 1.2rem'>Cedula</th>
-                    <th class='tables' style='font-size: 1.2rem'>E-mail</th>
-                    <th class='tables' style='font-size: 1.2rem'>Telefono</th>
-                    <th class='tables' style='font-size: 1.2rem'>Género</th>
-                </tr>
-            </thead>
-            <tbody>";
-
-    foreach ($datos as $key => $val){
-
-        $pdf .= "<tr>";
-            $pdf .= "<td width='40%' class=\"tables\">".$val->nombre."</td>";
-            $pdf .= "<td width='15%' class=\"tables\">".$val->ruc_ced."</td>";
-            $pdf .= "<td width='35%' class=\"tables\">".$val->email."</td>";
-            $pdf .= "<td width='15%' class=\"tables\">".$val->numeroCelular."</td>";
-            $pdf .= "<td width='15%' class=\"tables\"><b>".strtoupper($val->genero)."</b></td>";
-        $pdf .= "</tr>";
-
-    }
-
-    $pdf .= "</tbody>";
-$pdf .= "</table>";
-
-
-$footer = '<!--<hr style="margin-bottom: 2px"><table width="100%" style="font-size: 10pt;">-->
-<br>
-          <table>
-                <tr>
-                    <td width="50%">
-                        <div align="left" style="display: none">'. $InformacionEntity->email .'</div>
-                    </td>
-                    <td width="50%" align="right">
-                        <!--<div  style="float: right">Pagina:{PAGENO}</div>-->
-                    </td>
-                </tr>
-            </table>';
-
-
-
 
 $header = ' 
-    <table width="100%" style="vertical-align: bottom;  font-size: 9pt; color: black;">
+    <table width="100%" style="vertical-align: bottom;  font-size: 10pt; color: black;">
         <tr>
              <td width="100%" align="left"><span style="font-size:28pt;">'.$InformacionEntity->nombre.'</span></td>
         </tr>
@@ -158,14 +100,69 @@ $header = '
     </table> 
     ';
 
+
+$pdf .= "
+    <table  width='100%' class='tables' style='margin-top: 25px'>
+        <tr  style='width: 100%; '>
+            <td style='text-align: center; background-color: #f0f0f0' > <h2> Directorio de Pacientes</h2> </td>
+        </tr>
+    </table>    
+        ";
+
+
+//echo '<pre>';
+//print_r($datos);
+//die();
+//LISTA DE PACIENTES
+
+$pdf .= "
+
+ <table width='100%' class=\"tables\" style='padding-top: 60px'>";
+    $pdf .= "<thead>
+                <tr class='tables' style=\"background-color: #f0f0f0\">
+                    <th class='tables' style='font-size: 1.2rem'>Paciente</th>
+                    <th class='tables' style='font-size: 1.2rem'>	C. I.</th>
+                    <th class='tables' style='font-size: 1.2rem'>E-mail</th>
+                    <th class='tables' style='font-size: 1.2rem'>Telefono</th>
+                    <th class='tables' style='font-size: 1.2rem'>Género</th>
+                </tr>
+            </thead>
+            <tbody>";
+
+    foreach ($datos as $key => $val){
+
+        $pdf .= "<tr>";
+            $pdf .= "<td width='40%' class=\"tables\">".$val->nombre."</td>";
+            $pdf .= "<td width='15%' class=\"tables\">".$val->ruc_ced."</td>";
+            $pdf .= "<td width='35%' class=\"tables\">".$val->email."</td>";
+            $pdf .= "<td width='15%' class=\"tables\">".$val->numeroCelular."</td>";
+            $pdf .= "<td width='15%' class=\"tables\"><b>".strtoupper($val->genero)."</b></td>";
+        $pdf .= "</tr>";
+
+
+    }
+
+    $pdf .= "</tbody>";
+$pdf .= "</table>";
+
+
+$footer = '<!--<hr style="margin-bottom: 2px"><table width="100%" style="font-size: 10pt;">-->
+              <table width="100%" style="border-collapse: collapse">
+                    <tr>
+                        <td width="50%" align="right">
+                            <div  style="float: right">hoja:{PAGENO}</div>
+                        </td>
+                    </tr>
+                </table>';
+
 ob_end_clean();
 
 
-$mpdf=new mPDF('c','LETTER','11px','',
+$mpdf=new mPDF('c','LETTER','12px','',
     12, //left
     12, // right
-    23, //top
-    18, //bottom
+    40, //top
+    10, //bottom
     3, //header top
     3 //footer botoom
 );

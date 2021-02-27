@@ -15,6 +15,9 @@
         var $login_user = "";
         var $login_id   = "";
 
+        var $service_Email      = "odontic2@adminnube.com";
+        var $service_Password   = "7))UK[zmjVn$";
+
         public  function __construct()
         {
             $this->PACIENTES                 = array();

@@ -95,21 +95,74 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             case 'pacientesxDate':
 
+                $data = [];
+
+                $object     = GETPOST("object");
                 $date       = GETPOST("date");
                 $arr_date   = explode('-', $date);
                 $dateInicio = str_replace('/','-',$arr_date[0]);
                 $dateFin    = str_replace('/','-',$arr_date[1]);
 
-                $sql    = " SELECT count(*) as fetchpaciente FROM tab_admin_pacientes WHERE estado = 'A' and rowid > 0";
+                $count = "";
+                if($object==0){
+                    $count = "count(*) as fetchpaciente";
+                }else{
+                    $count = "*";
+                }
 
-                if($date!="")
+                $sql    = " SELECT $count FROM tab_admin_pacientes WHERE estado = 'A' and rowid > 0";
+                if($date!=""){
                     $sql .= " and tms between '$dateInicio' and '$dateFin' ";
+                }
 
-                $resul  = $db->query($sql)->fetchObject();
+                if($object==0){
+                    $resul  = $db->query($sql)->fetchObject()->fetchpaciente;
+                    $out = array('pacientesxDate' => $resul);
+                }
+                else{
 
-                $output = [
-                    'pacientesxDate' => $resul->fetchpaciente,
-                ];
+                    $Total          = 0;
+                    $start          = $_POST["start"];
+                    $length         = $_POST["length"];
+
+                    $Total  = $db->query($sql)->rowCount();
+
+                    if($start || $length){
+                        $sql .=" LIMIT $start,$length;";
+                    }
+
+//                    print_r($sql); die();
+                    $resul  = $db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
+                    if (count($resul) > 0 )
+                    {
+                        foreach ($resul as $k => $arr){
+
+                            $contactos = "";
+                            if($arr['telefono_movil']!=""){
+                                $contactos = '
+                                            <span>'.$arr['email'].'</span> <br> 
+                                            <span> <i class="fa fa-phone-square"></i> '.$arr['telefono_movil'].' </span>';
+                            }
+
+                            $row = array();
+                            $row[] = $arr['nombre'].' '.$arr['apellido'];
+                            $row[] = $arr['direccion'];
+                            $row[] = $arr['ruc_ced'];
+                            $row[] = $contactos;
+
+                            $data[] = $row;
+                        }
+                    }
+
+                    $out = array(
+                        "data" => $data,
+                        "recordsTotal"    => $Total,
+                        "recordsFiltered" => $Total
+
+                    );
+                }
+
+                $output = $out;
 
                 echo json_encode($output);
                 break;
@@ -221,7 +274,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     od.email , 
                     od.fk_especialidad ,
                     od.cedula as cedula_odontologo, 
-                    od.celular
+                    od.celular,
+                    lu.id_caja_account
                  FROM tab_login_users lu , tab_odontologos od 
                  where 
                  lu.fk_doc = od.rowid 
@@ -241,16 +295,27 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
         case 'UpdatePerfilLogin';
 
+
+            $respuesta['error'] = "";
+            $respuesta['msg'] = "";
+            $respuesta['refrescar'] = "";
+
             $paramts        = GETPOST("params");
             $UsuarioCurrent = GETPOST("usuarioActual");
-            $respuesta = UpdatePerfilOdont($paramts, $UsuarioCurrent);
 
-            if($respuesta['error']==""){
-                /**Se cierra la session*/
-//                session_unset(); //borra los valores de las sessiones
-//                session_destroy(); //destrulle la session
+            $objectUsuario  = getnombreUsuario($user->id);
+
+            #print_r($objectUsuario); die();
+
+            // si el usuario que esta modificando el perfil no es administrador
+            if($objectUsuario->admin==0){
+                $respuesta['error'] = "Ud. No tiene permiso para modificar el usuario <b> Esta acción solo la puede realizar un usuario admin</b>";
             }
 
+
+            if($respuesta['error']==""){
+                $respuesta = UpdatePerfilOdont($paramts, $UsuarioCurrent);
+            }
 
             $output = [
                 'error'       =>   $respuesta['error'],
@@ -550,7 +615,7 @@ function UpdatePerfilOdont($datos = array(), $UsuarioCurrent = "")
                     //si no existe ese usuario - y se puede update
                     if($usuarioYaExiste==0)
                     {
-                        $sqldblogin = "UPDATE `tab_login_users` SET `usuario`='".$datos['usuario']."', `passwor_abc`='".$datos['passwd']."' , `passwords` = md5('".(base64_decode($datos['passwd']))."') , `cedula` =  '".$datos['cedula']."'  WHERE `rowid`>0 and fk_doc = $user->id;";
+                        $sqldblogin = "UPDATE `tab_login_users` SET `usuario`='".$datos['usuario']."', `passwor_abc`='".$datos['passwd']."' , `passwords` = md5('".(base64_decode($datos['passwd']))."') , `cedula` =  '".$datos['cedula']."' , `id_caja_account` = ".$datos['CajaUsers']."   WHERE `rowid`>0 and fk_doc = $user->id;";
                         $rslogin = $db->query($sqldblogin);
                         if($rslogin)
                         {

@@ -13,7 +13,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
     require_once DOL_DOCUMENT .'/application/system/pacientes/class/class_paciente.php';
 
 
-    global $db, $conf, $user;
+    global $db, $conf, $user, $messErr;
 
     $paciente = new Pacientes($db); //se declara la clase de pacientes
 
@@ -914,6 +914,12 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
         case 'list_tratamiento':
 
+
+            $Total          = 0;
+            $start          = $_POST["start"];
+            $length         = $_POST["length"];
+
+
             $idplantmiento            = GETPOST('idplantmiento');
             $idpaciente               = GETPOST('idpaciente');
             $estadotram               = GETPOST('mostrar_anulados');
@@ -984,6 +990,14 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $sql .= " order by tc.rowid desc";
             #echo '<pre>';print_r($sql);die();
 
+            $sqlTotal = $sql;
+
+            if($start || $length){
+                $sql.=" LIMIT $start,$length;";
+            }
+
+            $Total = $db->query($sqlTotal)->rowCount();
+
             $rul = $db->query($sql);
 
             if($rul->rowCount()>0){
@@ -1032,7 +1046,10 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             }
 
             $output = [
-                'data' => $dataprincipal
+                "draw" => $_POST['draw'],
+                "data" => $dataprincipal,
+                "recordsTotal"    => $Total,
+                "recordsFiltered" => $Total
             ];
 
             echo json_encode($output);
@@ -1227,7 +1244,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         dt.estado_pay , 
                         dt.estadodet , 
                         (select cfp.descripcion from tab_conf_prestaciones cfp WHERE cfp.rowid = dt.fk_prestacion) as prestacion ,
-                        round(dt.total, 2) as total
+                        round(dt.total, 2) as total, 
+                        (select ifnull(round(sum(P.amount), 2),0) from tab_pagos_independ_pacientes_det P where P.fk_plantram_cab = cb.rowid and P.fk_plantram_det = dt.rowid) as cancelado_cobro
                     FROM
                         tab_plan_tratamiento_det dt,
                         tab_plan_tratamiento_cab cb
@@ -1252,6 +1270,11 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 #COMPRUEBO EL ESTADO EN ESTA PRESTACION TIENE SALDO - O  ABONADO
                 if( $obj->estado_pay == 'PS'){
                     $error = 'No puede Eliminar esta prestación <br><b>' .$obj->prestacion .'</b><br> tiene <i class="fa fa-dollar"></i> saldo asociado comprueba en el modulo de pagos de este plan de tratamiento ';
+                }
+
+                #SALDO ASOCIADO
+                if( (double)$obj->cancelado_cobro > 0){
+                    $error = 'Se encuentra saldo asociado '. '<span style="color: green">$ '.$obj->cancelado_cobro.'</span>';
                 }
 
                 #REALIZADA
@@ -1299,45 +1322,31 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $idpaciente  = GETPOST('idpaciente');
             $idplantram  = GETPOST('idplant');
 
+//            die();
             if($subaccion == 'consultarfinalizado')
             {
 
             }
 
-            if($subaccion == 'finalizar_plantram')
+            if($subaccion == 'finalizar_plantram')//Finalizar Plan de tratamiento
             {
                 $sql2 = "SELECT 
                         c.rowid,
-                        (SELECT 
-                                cp.descripcion
-                            FROM
-                                tab_conf_prestaciones cp
-                            WHERE
-                                cp.rowid = d.fk_prestacion) AS labelprestacion,
-                                
+                        (SELECT cp.descripcion FROM tab_conf_prestaciones cp WHERE cp.rowid = d.fk_prestacion) AS labelprestacion,
                         d.estado_pay,
-                        
-                        (SELECT 
-                                SUM(pd.amount)
-                            FROM
-                                tab_pagos_independ_pacientes_det pd
-                            WHERE
-                                pd.fk_plantram_cab = c.rowid
-                                    AND pd.fk_plantram_det = d.rowid
-                                    AND pd.fk_paciente = c.fk_paciente
-                                    AND pd.fk_prestacion = d.fk_prestacion) AS cancelado_saldo , 
-                        d.estadodet
-                                    
-                    FROM
-                        tab_plan_tratamiento_cab c,
-                        tab_plan_tratamiento_det d
-                    WHERE
-                        c.rowid = d.fk_plantratam_cab
-                            AND c.rowid = $idplantram
-                            AND c.fk_paciente = $idpaciente; ";
+                        (SELECT SUM(pd.amount) FROM tab_pagos_independ_pacientes_det pd WHERE pd.fk_plantram_cab = c.rowid AND pd.fk_plantram_det = d.rowid AND pd.fk_paciente = c.fk_paciente AND pd.fk_prestacion = d.fk_prestacion) AS cancelado_saldo , 
+                        d.estadodet 
+                        FROM
+                            tab_plan_tratamiento_cab c,
+                            tab_plan_tratamiento_det d
+                        WHERE
+                            c.rowid = d.fk_plantratam_cab
+                                AND c.rowid = $idplantram
+                                AND c.fk_paciente = $idpaciente; ";
                 $rs2 = $db->query($sql2);
 
 //                echo '<pre>';  print_r($sql2);  die();
+
                 $puedeFinalizar = "";
                 $invalic = 0;
                 $prestaciones_pendientes = []; #PRESTACIONES QUE AUN NO ESTAN PAGADAS
@@ -1358,7 +1367,12 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         }
 
                         #prestaciones que aun no estan realizadas
-                        if($obprestFinal->estadodet == 'A'){
+                        /*
+                         * A estado Activo No realizada
+                         * P estado Pendiente No realizada
+                         * R Realizada
+                         * */
+                        if($obprestFinal->estadodet == 'A' || $obprestFinal->estadodet == 'P'){
                             $prestacion_Norealizada[] = $obprestFinal->labelprestacion; #prestaciones que aun no estan realizada
                             $invalic++;
                         }
@@ -1367,7 +1381,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     $error = "No hay prestaciones";
 
                 }
-//die();
+
                 if($invalic > 0){
 
                     $error = 'no puede finalizar este tratamiento';
@@ -1964,6 +1978,44 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             ];
             echo json_encode($output);
             break;
+
+
+        case 'UpdateOdontolTratamiento':
+
+            $error = '';
+            $idTratamiento = GETPOST('idTratamiento');
+            $idOdontol = GETPOST('idOdontol');
+
+            if($idTratamiento=="" || $idTratamiento==0)
+                $error = "Ocurrio un error  obteniendo los parametros <br> <b>Vuelva a intentarlo o consulte con soporte Tecnico</b>";
+            if($idOdontol=="" || $idOdontol == 0)
+                $error = "Ocurrio un error con la Operación <br> No se identifica el profecional a cargo selecionado <br> compruebe la información o consulte con soporte ";
+
+
+//            print_r($idTratamiento); die();
+            if(empty($error)){
+
+                $valid = "select count(*) as count from tab_plan_tratamiento_cab where rowid = $idTratamiento and fk_doc = 0";
+                $countValid = $db->query($valid)->fetchObject()->count;
+
+//                print_r($valid); die();
+                if($countValid==1){
+                    $update = "UPDATE `tab_plan_tratamiento_cab` SET `fk_doc`= $idOdontol WHERE `rowid`= $idTratamiento;";
+                    $result = $db->query($update);
+                    if(!$result){
+                        $error = $messErr;
+                    }
+                }else{
+                    $error = "No puede asociar un <b>Odontolog@</b> a este plan de tratamiento <br> Registro ya se encuentra Asociado";
+                }
+            }
+
+            $output = [
+                'error' => $error
+            ];
+            echo json_encode($output);
+            break;
+
 
 
     }

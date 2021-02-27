@@ -166,13 +166,13 @@
     var ElemenAttr = function(id){ $("#idElemnDocument").attr("data-id", id).attr("data-idregistro", id) };
 
 
-    //Eliminar Registro Documento Clinicos
+    //Eliminar Registro Documento Clinicos ( tab_documentos_clinicos_data )
     $("#EliminarDocumentoClinico").on("click", function() {
 
         if( $("#idElemnDocument").prop("dataset").id != "" && $("#idElemnDocument").prop("dataset").id != 0 ){
 
             var parametros = {
-                "accion"            : "EliminarDomClinicoRegistro",
+                "accion"            : "eleminar_Registro_Doc_Data",
                 "ajaxSend"          : "ajaxSend",
                 "idtableDocument"   : "<?= base64_encode($idDoc) ?>",
                 "id"                : $("#idElemnDocument").prop("dataset").idregistro ,

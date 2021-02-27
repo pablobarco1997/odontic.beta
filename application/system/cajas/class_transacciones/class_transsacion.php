@@ -55,9 +55,11 @@ class transsacion{
         if($this->type_mov==1){ //si es caso es un ingreso de caja o egreso
             return "CAJA";
         }
-
         if($this->type_mov==2){ // si en caso es un ingreso
             return "COBOR_PLAN_DE_TRATAMIENTO";
+        }
+        if($this->type_mov==3){ // si en caso es un egreso pago eliminado de plan de tratamiento
+            return "COBRO_ELIMINADO_PLAN_DE_TRATAMIENTO";
         }
     }
 

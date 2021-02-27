@@ -24,33 +24,60 @@ if($accionPagospacientes = "pagos_particular")
                 dataType:'json',
             },
             columnDefs:[
-                {
-                    targets:0,
-                    render:function(data, type, row) {
-                        var idpago = row[8];
-                        return "<input type='checkbox' class='custom-checkbox-myStyle' value='"+idpago+"' >";
-                    }
-                },
+                // {
+                //     targets:0,
+                //     render:function(data, type, row) {
+                //         var idpago = row[8];
+                //         return "<input type='checkbox' class='custom-checkbox-myStyle' value='"+idpago+"' >";
+                //     }
+                // },
                 {
                     targets:8,
                     render: function (data, type, row) {
 
+                        // console.log(row);
                         var dropdown_menu = "<div class='dropdown col-centered col-xs-1 '>";
                         dropdown_menu += "<button class='btn btnhover  btn-xs dropdown-toggle' data-toggle=\"dropdown\" type='button' aria-expanded='false'><i class=\"fa fa-ellipsis-v\"></i></button>";
                         dropdown_menu += "<ul class='dropdown-menu pull-right' >";
-                                dropdown_menu += "<li>"+row['url_imprimir']+"</li>";
-                                dropdown_menu += "<li><a href='#'>Enviar Email</a></li>";
-                                dropdown_menu += "<li><a href='#detalleprestacionPagos' data-toggle='modal'  onclick='detalle_prestaciones_pagosParticulares("+row[8]+", \""+row['name_tratamiento']+"\" )'  >Mostrar detalle</a></li>";
-                                dropdown_menu += "<li><a href='#' onclick='deletePagoPrestacion("+row['id_pagocab']+","+row['idPlantratamCab']+")' >Eliminar Pago</a></li>";
+                                dropdown_menu += "<li>" + row['url_imprimir'] + "</li>";
+                                dropdown_menu += "<li><a href='#'> Enviar Email </a></li>";
+                                dropdown_menu += "<li><a href='#detalleprestacionPagos' data-toggle='modal' data-nametratam='"+row['name_tratamiento']+"' data-idp='"+row['id_pagocab']+"' data-nboleta='"+row['n_boleta']+"' onclick='detalle_prestaciones_pagosParticulares("+row['id_pagocab']+", $(this))'  >Mostrar detalle</a></li>";
+                                dropdown_menu += "<li><a href='#' data-nametratam='"+row['name_tratamiento']+"' data-valor='"+row['valor']+"' onclick='deletePagoPrestacion("+row['id_pagocab']+","+row['idPlantratamCab']+", $(this))' >Eliminar Pago</a></li>";
                             dropdown_menu += "</ul>";
                         dropdown_menu += "</div>";
 
-
-                        console.log(row);
-                        return dropdown_menu;
+                        if(row['boldPlanCab']!=1){
+                            return dropdown_menu;
+                        }else{
+                            return "&nbsp;";
+                        }
                     }
                 }
             ],
+            createdRow: function (row, data, dataIndex) {
+                if(data['boldPlanCab'] == 1){
+                    var objectTd =  $(row).children();
+                    console.log($(row).children());
+                    $.each(objectTd, function(i , item) {
+                        $(item).attr("colspan", "8").css("background-color", "#f9f9f9");
+                        console.log($(item));
+                        if($(item).text()==""){
+                            $(item).css("display", "none");
+                        }else{
+                            if(i>2){
+                                $(item).html("<a class='btnhover btn-sm btn' onclick='PrintPagosParticulares("+(data['idPlantratamCab'])+")' style='font-weight: bolder'> <i class='fa fa-print'></i> Imprimir</a>");
+                            }
+                        }
+                    });
+                }else{
+                    $("td:eq(1)", row).css("width", "10%").css("padding","6px 6px");
+                    $("td:eq(2)", row).css("width", "5%").css("padding","6px 6px");
+                    $("td:eq(3)", row).css("width", "15%").css("padding","6px 6px");
+                    $("td:eq(4)", row).css("width", "15%").css("padding","6px 6px");
+                    $("td:eq(5)", row).css("width", "20%").css("padding","6px 6px");
+                    $("td:eq(6)", row).css("width", "20%").css("padding","6px 6px");
+                }
+            },
             language:{
                 "sProcessing":     "Procesando...",
                 "sLengthMenu":     "Mostrar _MENU_ registros",
@@ -82,7 +109,7 @@ if($accionPagospacientes = "pagos_particular")
     }
 
     /**delete pago prestacion plande tratamiento*/
-    function deletePagoPrestacion(idpagosCab, idPlantratamCab)
+    function deletePagoPrestacion(idpagosCab, idPlantratamCab, Element)
     {
         if(idpagosCab!=0){
 
@@ -93,6 +120,8 @@ if($accionPagospacientes = "pagos_particular")
                 'idpagocab'     : idpagosCab,
                 'idpaciente'    : $id_paciente,
                 'idPlantratam'  : idPlantratamCab,
+                'numTratamiento': Element.prop('dataset').nametratam,
+                'valor': Element.prop('dataset').valor,
             }, function (data) {
                 var respuesta = $.parseJSON(data);
                 if(respuesta['error'] == '') {
@@ -108,10 +137,11 @@ if($accionPagospacientes = "pagos_particular")
     }
     
     
-    function detalle_prestaciones_pagosParticulares($idpago, n_plantrat)
+    function detalle_prestaciones_pagosParticulares($idpago, elemento)
     {
 
-        $("#n_plantrtam_detalle").html("<b>"+n_plantrat+"</b>");
+        $("#n_plantrtam_detalle").html("<b>"+(elemento.prop('dataset').nametratam)+"</b>").css('font-size','2rem');
+        $("#n_documento_pago_detalle").html('Numero de Documento: '+elemento.prop('dataset').nboleta);
 
         $('#detalle_prestaciones_pagos_part').DataTable({
             searching: true,
@@ -210,6 +240,24 @@ if($accionPagospacientes = "pagos_particular")
     });
 
 }
+
+
+var PrintPagosParticulares = function(idTratamiento){
+
+    if(!ModulePermission(24, 1)){
+        notificacion('Ud. no tiene permiso para esta Operación', 'error');
+        return false;
+    }
+
+    if(idTratamiento==0||idTratamiento==''){
+        notificacion('Ocurrio un error de paramtros consulte con soporte', 'error');
+        return false;
+    }
+
+    var parametros = '?idplantratamiento='+idTratamiento;
+    var url = $DOCUMENTO_URL_HTTP+'/application/system/pacientes/pacientes_admin/pagos_recibidos/export/export_recaudaciones_realizadas.php'+parametros;
+    window.open(url, '_blank');
+};
 
 $(document).ready(function() {
 

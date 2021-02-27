@@ -116,6 +116,12 @@ function UpdateDeletePrestacionAsignada(html, AuxSatus = '')
             $('#modDeletePrestacion').modal('show');
             $('#AceptarDeletePrestacion').attr('onclick', 'DeletePrestacion('+iddetplant+')');
         }
+
+        if( status.data('estadodet') == 'P') {
+            $('#modDeletePrestacion').modal('show');
+            $('#AceptarDeletePrestacion').attr('onclick', 'DeletePrestacion('+iddetplant+')');
+        }
+        // console.log(status);
     }
 
     if(AuxSatus!=''){ //cambiar de estados

@@ -14,6 +14,22 @@ require_once  DOL_DOCUMENT .'/public/lib/mpdf60/mpdf.php';
 require_once  DOL_DOCUMENT .'/application/controllers/controller.php';
 
 
+$DirectorioImgClinicaHttp = DOL_HTTP.'/logos_icon/icon_logos_'.$_SESSION['entidad'];
+
+if(isset($_SESSION['logoClinica']))
+{
+    if($_SESSION['logoClinica']!="" && !file_exists($DirectorioImgClinicaHttp)){
+        $iconClinica = $DirectorioImgClinicaHttp.'/'.$_SESSION['logoClinica'];
+    }else{
+        $iconClinica = DOL_HTTP.'/logos_icon/logo_default/none-icon-20.jpg';
+    }
+}else{
+    $iconClinica = DOL_HTTP.'/logos_icon/logo_default/none-icon-20.jpg';
+}
+
+$ImagenLogoClinica = "<img src='".$iconClinica."' style='width:40px; height: 40px; border-radius: 100%;' >";
+
+
 /**SE CREA LAS VARIABLES DE INICIO**/
 $cn = new ObtenerConexiondb();                    //Conexion global Empresa Fija
 $db = $cn::conectarEmpresa($_SESSION['db_name']); //coneccion de la empresa variable global
@@ -106,7 +122,7 @@ $pdf .= '
             
             .tables {
                 border: 1px solid black;
-                font-size: 1.1rem;
+                font-size: 1.2rem;
                 padding: 3px;
             }
             
@@ -131,8 +147,8 @@ $pdf .= "<br>";
 
 $pdf .= "
     <p style='margin: 0.5px'><b>Nombre de Paciente:</b>&nbsp; ".($objPaciente->nombre). " ". ($objPaciente->apellido) ."</p>
-    <p style='margin: 0.5px'><b>Ruc/cedula:</b>&nbsp; ".($objPaciente->ruc_ced). "</p>
-    <p style='margin: 0.5px'><b>Email:</b>&nbsp; ".($objPaciente->email). "</p>
+    <p style='margin: 0.5px'><b>C.I.:</b>&nbsp; ".($objPaciente->ruc_ced). "</p>
+    <p style='margin: 0.5px'><b>E-mail:</b>&nbsp; ".($objPaciente->email). "</p>
     <br>";
 
 $pdf .= "<table class='tables' width='100%'>";
@@ -184,6 +200,8 @@ $pdf .= "<table class='tables' width='100%'>";
             $pdf .= "<td class='tables' width='10%' style='vertical-align: top'> ". $item->plantratamiento ." </td>";
             $pdf .= "<td class='tables' width='15%' style='vertical-align: top'> <p style='background-color: $item->color; margin-top: 3px;'> ".$item->estado." </p> </td>";
         $pdf .= "</tr>";
+
+
     }
 
     $pdf .= "</tbody>";
@@ -207,9 +225,12 @@ $footer = '<!--<hr style="margin-bottom: 2px"><table width="100%" style="font-si
 
 
 $header = ' 
-    <table width="100%" style="vertical-align: bottom;  font-size: 9pt; color: black;">
+    <table width="100%" style="vertical-align: bottom;  font-size: 10pt; color: black;">
         <tr>
-          <td width="100%" align="left"><span style="font-size:28pt;">'.$InformacionEntity->nombre.'</span></td>
+             <td width="100%" align="left"><span style="font-size:28pt;">'.$InformacionEntity->nombre.'</span></td>
+        </tr>
+        <tr>
+            <td WIDTH="33%">'.$ImagenLogoClinica.'</td>
         </tr>
         <tr>
             <td width="33%">'.$InformacionEntity->direccion.' <span style="font-size:10pt;"></span></td>
@@ -217,9 +238,9 @@ $header = '
         </tr>
         <tr>
             <td width="33%">'.$InformacionEntity->email.'<span style="font-size:10pt;"></span></td>
-            <td width="33%" style="text-align: right;">Fecha: <span style="font-weight: bold;">{DATE j/m/Y}</span></td>
+            <td width="33%" style="text-align: right;">Fecha de Impresión: <span style="font-weight: bold;">'.date("Y/m/d").'</span></td>
         </tr>
-    </table>
+    </table> 
     ';
 
 ob_end_clean();
@@ -228,7 +249,7 @@ ob_end_clean();
 $mpdf=new mPDF('c','LETTER','','',
     12, //left
     12, // right
-    23, //top
+    40, //top
     18, //bottom
     3, //header top
     3 //footer botoom

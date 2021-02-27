@@ -54,6 +54,13 @@
         'permiso' => '',
     );
 
+    //Modulo de Tareas Clinicas
+    $Permissions_TareasClinicas = array(
+        'url'     =>  DOL_HTTP .'/application/system/tareas_clinicas/index.php?view=tareas' ,
+        'Active'  => (isset($Active)  && $Active == 'module_tareas') ? 'Active_link' : '' ,
+        'permiso' => '',
+    );
+
 
 ?>
 
@@ -138,3 +145,6 @@
 
 <!--MODULO DE CAJA-->
 <li class="<?= $Permissions_Cajas['Active'] ?>"><a href="<?= $Permissions_Cajas['url'] ?>"><i class="fa fa-bar-chart"></i><span>Cajas Clinicas</span></a></li>
+
+<!--MODULO DE TAREAS CLINICAS-->
+<li class="<?= $Permissions_TareasClinicas['Active'] ?>"><a href="<?= $Permissions_TareasClinicas['url'] ?>"><i class="fa fa-calendar"></i><span>Tareas Clinicas</span></a></li>

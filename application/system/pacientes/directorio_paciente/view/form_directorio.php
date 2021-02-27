@@ -60,7 +60,7 @@
                                                 <th width="2%">&nbsp;</th>
                                                 <th width="20%">Nombre</th>
                                                 <th width="10%">Dirección</th>
-                                                <th width="10%">Cedula</th>
+                                                <th width="10%">C. I.	</th>
                                                 <th width="15%">Contactos</th>
                                                 <th width="10%">Género</th>
                                                 <th width="5%">&nbsp;</th>

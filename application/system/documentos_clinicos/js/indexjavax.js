@@ -82,7 +82,9 @@ function  cargarlistdocummclini()
 
 
 /**Eliminar Documento Clinico Drop*/
-var ElemenAttr = function(id){ $("#idElemnDocument").attr("data-id", id) };
+var ElemenAttr = function(id){
+    $("#idElemnDocument").attr("data-id", id).val(id);
+};
 
 $("#EliminarDocumentoClinico").on("click", function() {
 

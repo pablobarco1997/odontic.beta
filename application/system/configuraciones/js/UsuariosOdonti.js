@@ -384,6 +384,8 @@ function statusUserslogin( idusers = 0, status ) {
             if(respuesta['error'] == ''){
                 notificacion("información Actualizada", "success");
                 CargarUsuarioInfo();
+            }else{
+                notificacion(respuesta['error'], 'error');
             }
 
             boxloading($boxContentConfiguracion,true,1000);
@@ -848,9 +850,9 @@ function fetchPerfiles( $id = 0){
 
     $('#tipoUsuarioPerfil').select2({
         placeholder: 'Seleccione un Perfil',
-        allowClear: true,
+        allowClear: false,
         data: Perfiles,
-        dropdownParent: $('.box-body')
+        dropdownPosition: 'below'
     });
 
 

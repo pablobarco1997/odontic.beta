@@ -409,40 +409,46 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                 if( $idUsuariolink != ""  || $idUsuariolink != "0")
                 {
+                    $objUsuario = getnombreUsuario($idUsuariolink);
 
-                    $sql1  = " UPDATE `tab_login_users` SET ";
-                    $sql1 .= " `usuario`='$usuario' ,";
-                    $sql1 .= " `passwor_abc`='".$passd."' ,";
-                    $sql1 .= " `passwords`= md5('".base64_decode($passd)."') ,";
-//                    $sql1 .= "`permisos`= '".json_encode($permisos)."' ,";
-                    $sql1 .= " `tipo_usuario`='".$tipoUsuario."' ,";
-                    $sql1 .= " `fk_perfil_entity`=".$fk_perfil_entity." ,";
-                    $sql1 .= " `id_caja_account`=".(empty($idCajaAccount)?0:$idCajaAccount)." ";
+                    if($objUsuario->admin == 0){ //el modificar usario no sea administrador
 
-                    $sql1 .= " WHERE `rowid`= '$idUsuariolink' ";
-                    $rs1 = $db->query($sql1);
+                        $sql1  = " UPDATE `tab_login_users` SET ";
+                        $sql1 .= " `usuario`='$usuario' ,";
+                        $sql1 .= " `passwor_abc`='".$passd."' ,";
+                        $sql1 .= " `passwords`= md5('".base64_decode($passd)."') ,";
+                        $sql1 .= " `tipo_usuario`='".$tipoUsuario."' ,";
+                        $sql1 .= " `fk_perfil_entity`=".$fk_perfil_entity." ,";
+                        $sql1 .= " `id_caja_account`=".(empty($idCajaAccount)?0:$idCajaAccount)." ";
+                        $sql1 .= " WHERE `rowid`= '$idUsuariolink' ";
+                        $rs1 = $db->query($sql1);
 
-                    if(!$rs1){
-                        $error = 'Ocurrió un error con la Operación Modificar el Usuario, consulte con soporte Técnico';
-                    }
+                        if(!$rs1){
+                            $error = 'Ocurrió un error con la Operación Modificar el Usuario, consulte con soporte Técnico';
+                        }
 
-                    if($rs1){
+                        if($rs1){
 
-                        $datos = [];
-                        $ob = getnombreDentiste($doctor); #obtengo el dastos del dentista
+                            $datos = [];
+                            $ob = getnombreDentiste($doctor); #obtengo el dastos del dentista
 
-                        $datos['nombre']            = $ob->nombre_doc;
-                        $datos['apellido']          = $ob->apellido_doc;
-                        $datos['celular']           = $ob->celular;
-                        $datos['pass']              = $passd; #pass se encrypt md5
-                        $datos['email']             = $ob->email;
-                        $datos['usuario']           = $usuario;
-                        $datos['id_usuario']        = $idUsuariolink;
-                        $datos['idcedula']          = $ob->cedula;
-                        $datos['fk_perfil_entity']  = $fk_perfil_entity;
-                        $datos['idEntityusers']     = GETPOST("idEntityusers"); #id usuario de la entity clinicas
+                            $datos['nombre']            = $ob->nombre_doc;
+                            $datos['apellido']          = $ob->apellido_doc;
+                            $datos['celular']           = $ob->celular;
+                            $datos['pass']              = $passd; #pass se encrypt md5
+                            $datos['email']             = $ob->email;
+                            $datos['usuario']           = $usuario;
+                            $datos['id_usuario']        = $idUsuariolink;
+                            $datos['idcedula']          = $ob->cedula;
+                            $datos['fk_perfil_entity']  = $fk_perfil_entity;
+                            $datos['idEntityusers']     = GETPOST("idEntityusers"); #id usuario de la entity clinicas
 
-                        $error = GenerarUsuarioGlob($datos, $subaccion);
+                            $error = GenerarUsuarioGlob($datos, $subaccion);
+                        }
+                    }else{
+
+                        $error = "Ud. no puede modificar un usuario administrador <br>
+                                <b> El usuario administrado solo puede ser modificado por el mismo </b>";
                     }
 
                 }else{
@@ -1140,7 +1146,12 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             #print_r($objectUser); die();
             if($status!=""){
-                $err = status_update_usuario($idloginusers, $objectUser->login_idusers_entity, $status);
+                if($objectUser->admin == 0){
+                    $err = status_update_usuario($idloginusers, $objectUser->login_idusers_entity, $status);
+                }else{
+                    $err = "Ud. no puede modificar un usuario administrador <br>
+                                <b> El usuario administrado solo puede ser modificado por el mismo </b>";
+                }
             }
 
             $output = [

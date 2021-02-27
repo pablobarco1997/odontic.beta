@@ -79,9 +79,19 @@ if($result && $result->rowCount()>0){
 }
 
 $iconPaciente = $object->icon;
-$iconimg = $DirectorioImgClinicaHttp.'/'.$iconPaciente;
-if(!file_exists(DOL_DOCUMENT.'/logos_icon/icon_logos_'.$_SESSION['entidad'].'/'.$iconPaciente) )
-    $iconimg = DOL_HTTP.'/logos_icon/logo_default/avatar_none.png';
+
+if(!empty($iconPaciente))
+    $iconimg = $DirectorioImgClinicaHttp.'/'.$iconPaciente;
+else{
+    $iconPaciente = 'file_No_found.png';
+    $iconimg = $DirectorioImgClinicaHttp.'/'.$iconPaciente;
+}
+
+//print_r($iconPaciente); die();
+
+if( file_exists(DOL_DOCUMENT.'/logos_icon/icon_logos_'.$_SESSION['entidad'].'/'.$iconPaciente) != 1 ){
+    $iconimg = DOL_HTTP.'/logos_icon/logo_default/avatar_none.PNG';
+}
 
 
 $pdf .= "
@@ -165,7 +175,7 @@ $footer = '<!--<hr style="margin-bottom: 2px"><table width="100%" style="font-si
 
 
 $header = ' 
-    <table width="100%" style="vertical-align: bottom;  font-size: 9pt; color: black;">
+    <table width="100%" style="vertical-align: bottom;  font-size: 10pt; color: black;">
         <tr>
              <td width="100%" align="left"><span style="font-size:28pt;">'.$InformacionEntity->nombre.'</span></td>
         </tr>
@@ -185,7 +195,7 @@ $header = '
 
 ob_end_clean();
 
-$mpdf=new mPDF('c','LETTER','11px','',
+$mpdf=new mPDF('c','LETTER','12px','',
     12, //left
     12, // right
     23, //top

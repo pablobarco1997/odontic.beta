@@ -142,3 +142,7 @@ trunquea la letra que no entra en un contenedor
     margin-left: 49.5%;
 }
 /*END LOADDING*/
+
+.modal-header {
+    padding: 5px !important;
+}

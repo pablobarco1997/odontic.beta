@@ -285,7 +285,7 @@
         <div class="modal-content">
             <div class="modal-header modal-diseng">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title" id="tomar" data-id="0" data-subaccion="">ELIMNAR</h4>
+                <h4 class="modal-title" id="tomar" data-id="0" data-subaccion=""><span>Eliminar</span></h4>
             </div>
             <div class="modal-body">
                 <p>Seguro desea <b>Eliminar este registro seleccionado ?</b> </p>

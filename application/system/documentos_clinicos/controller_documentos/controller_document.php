@@ -10,7 +10,7 @@ if( (isset($_POST['ajaxSend']) && isset($_POST['accion'])) || (isset($_GET['ajax
     require_once DOL_DOCUMENT .'/application/config/main.php';
     require_once DOL_DOCUMENT .'/application/system/pacientes/class/class_paciente.php';
 
-    global $db, $conf;
+    global $db, $conf, $messErr;
 
 
     if(isset($_POST['accion']) || isset($_GET['accion']))
@@ -384,6 +384,26 @@ if( (isset($_POST['ajaxSend']) && isset($_POST['accion'])) || (isset($_GET['ajax
                 echo json_encode($outuput);
                 break;
 
+
+            /////////////////**************************/////////////////////////////////////////
+            case "eleminar_Registro_Doc_Data":
+
+                //tab_documentos_clinicos_data
+
+                $error = "";
+
+                $iddocData = GETPOST("id");
+                $result = $db->query("DELETE FROM `tab_documentos_clinicos_data` WHERE `id_registro_form`=$iddocData ");
+
+                if(!$result){
+                    $error = $messErr;
+                }
+
+                $outuput = [
+                    "error" => $error,
+                ];
+                echo json_encode($outuput);
+                break;
 
             /////////////////**************************/////////////////////////////////////////
             case "NuevoModificarDocumento":

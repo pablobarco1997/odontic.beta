@@ -348,8 +348,11 @@ function ConsultarDateNow( dateadd, hour ) {
 
 function datepickerCloneOrigin(html){
 
+    var Dateadd = new Date();
+
     html.daterangepicker({
         drops: 'up',
+        minDate : new Date(Dateadd.getFullYear(), Dateadd.getMonth(), Dateadd.getDate()),
         locale: {
             format: 'YYYY/MM/DD' ,
             daysOfWeek: [

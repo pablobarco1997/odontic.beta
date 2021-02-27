@@ -94,7 +94,50 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $start          = $_POST["start"];
             $length         = $_POST["length"];
 
-            $query = " SELECT 
+            $group_pagos = []; //agrupo los pagos por plan de tratamiento
+
+
+            $sqlP = "select cast(p.fecha as date) as fecha , p.fk_plantram , 
+                        ifnull((select ifnull(c.edit_name, concat('Plan de Tratamiento #', c.numero)) from tab_plan_tratamiento_cab c where c.rowid = p.fk_plantram) , 'error plan de tratamiento no asigando consulte con soporte tecnico')as nombplan
+                      from tab_pagos_independ_pacientes_cab p where p.fk_paciente = $idpaciente and p.fk_plantram <> 0 ";
+            if(!empty($plan_tratam)){
+                $sqlP .= " and p.fk_plantram = $plan_tratam ";
+            }
+            $sqlP .= " group by p.fk_plantram";
+            $sqlTotal = $sqlP; //total agrupado x plan de tratamiento
+            if($start || $length){
+                $sqlP .= " LIMIT $start,$length;";
+            }
+
+//            print_r($sqlTotal); die();
+            $Total = $db->query($sqlTotal)->rowCount();
+            $resultP = $db->query($sqlP)->fetchAll(PDO::FETCH_ASSOC);
+
+            if(count($resultP)>0)
+            {
+
+                $data = array();
+                $i = 0;
+                foreach ($resultP as $k => $value) {
+
+                    $idplanCab = $value['fk_plantram'];
+
+                    /*PLAN DE TRATAMIENTO*/
+                    $rowlabel = array(); // plan de tratamineto Group
+                    $rowlabel[] = "";
+                    $rowlabel[] = "<b>".$value['nombplan']."</b>";
+                    $rowlabel['boldPlanCab'] = 1;
+                    $rowlabel['idPlantratamCab'] = $idplanCab;//id plan de tratamiento
+                    $co = 0;
+                    while ($co <= 7){
+                        $rowlabel[] = "";
+                        $co++;
+                    }
+
+                    $data[] = $rowlabel;
+
+                    /*DETALLE X PLAN DE TRATAMIENTO PAGADO*/
+                    $query = " SELECT 
                         p.rowid as idpagoCabezera, 
                         cast(p.fecha as date) fecha,
                         p.fk_paciente , 
@@ -107,55 +150,57 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         (select pt.descripcion from tab_tipos_pagos pt where pt.rowid = p.fk_tipopago) as mediopago
                     FROM tab_pagos_independ_pacientes_cab p where p.rowid > 0 ";
 
-            if(!empty($formap))
-                $query .= " and p.fk_tipopago = $formap ";
-            if(!empty($plan_tratam))
-                $query .= " and p.fk_plantram = $plan_tratam ";
-            if(!empty($npago))
-                $query .= " and p.rowid like '%$npago%' ";
-            if(!empty($n_x_documento))
-                $query .= " and p.n_fact_boleta like '%$n_x_documento%' ";
+                    $query .= " and p.fk_plantram = " .$idplanCab;
+                    if(!empty($formap))
+                        $query .= " and p.fk_tipopago = $formap ";
+                    if(!empty($plan_tratam))
+                        $query .= " and p.fk_plantram = $plan_tratam ";
+                    if(!empty($npago))
+                        $query .= " and p.rowid like '%$npago%' ";
+                    if(!empty($n_x_documento))
+                        $query .= " and p.n_fact_boleta like '%$n_x_documento%' ";
+                    if($idpaciente>0)
+                        $query .= " and p.fk_paciente = $idpaciente";
 
 
-            if($idpaciente>0){
-                $query .= " and p.fk_paciente = $idpaciente";
-            }
+                    $countRegistro = 0; //cuento los registro
+                    $resul = $db->query($query);
+                    if($resul && $resul->rowCount()>0){
+                        while ($ob = $resul->fetchObject())
+                        {
+                            $countRegistro++;
 
-            $sqlTotal = $query;
+                            $name_plantratamiento = $ob->nombplan;
+                            $row = array();
 
-            if($start || $length)
-                $query.=" LIMIT $start,$length;";
+                            $row[] = "";
+                            $row[] = str_replace('-','/',$ob->fecha);
+                            $row[] = 'P_'.str_pad($ob->idpagoCabezera, 6, "0", STR_PAD_LEFT);
+                            $row[] = $ob->nombplan;
+                            $row[] = $ob->mediopago;
+                            $row[] = $ob->observacion;
+                            $row[] = $ob->n_fact_boleta;
+                            $row[] = number_format($ob->monto, 2,'.',',');
+                            $row[] = "";
 
+                            $row[] = $ob->idpagoCabezera; #id del pago cabezara
+                            $row['n_boleta'] = $ob->n_fact_boleta;
+                            $row['url_imprimir'] = "<a href='".DOL_HTTP."/application/system/pacientes/pacientes_admin/pagos_recibidos/export/export_pagoparticular.php?npag=$ob->n_pago&idpac=$idpaciente' target='_blank'> <i class='fa fa-print'></i> Imprimir  </a>";
+                            $row['name_tratamiento'] = $name_plantratamiento;
+                            $row['idPlantratamCab']  = $ob->fk_plantramCab;
+                            $row['id_pagocab']  = $ob->idpagoCabezera;
+                            $row['valor']  = $ob->monto;
 
-            $Total = $db->query($sqlTotal)->rowCount();
+                            $data[] = $row;
+                        }
+                    }
 
-            $resul = $db->query($query);
-            if($resul && $resul->rowCount()>0)
-            {
-                while ($ob = $resul->fetchObject())
-                {
-                    $name_plantratamiento = $ob->nombplan;
-                    $row = array();
-
-                    $row[] = "";
-                    $row[] = str_replace('-','/',$ob->fecha);
-                    $row[] = 'PAG_'.str_pad($ob->idpagoCabezera, 6, "0", STR_PAD_LEFT);
-                    $row[] = $ob->nombplan;
-                    $row[] = $ob->mediopago;
-                    $row[] = $ob->observacion;
-                    $row[] = $ob->n_fact_boleta;
-                    $row[] = number_format($ob->monto, 2,'.',',');
-                    $row[] = "";
-
-                    $row[] = $ob->idpagoCabezera; #id del pago cabezara
-                    $row['url_imprimir'] = "<a href='".DOL_HTTP."/application/system/pacientes/pacientes_admin/pagos_recibidos/export/export_pagoparticular.php?npag=$ob->n_pago&idpac=$idpaciente' target='_blank'> <i class='fa fa-print'></i> Imprimir  </a>";
-                    $row['name_tratamiento'] = $name_plantratamiento;
-                    $row['idPlantratamCab']  = $ob->fk_plantramCab;
-                    $row['id_pagocab']  = $ob->idpagoCabezera;
-
-                    $data[] = $row;
+                    $i++;
                 }
             }
+
+
+//            print_r($Total); die();
 
             $Output = [
                 "data" => $data,
@@ -188,7 +233,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     $row = array();
 
                     $row[] = $dp->prestacion." &nbsp;&nbsp;&nbsp; ". (($dp->diente==0) ? "" : " <img src='".DOL_HTTP."/logos_icon/logo_default/diente.png' width='17px' height='17px' > ".$dp->diente );
-                    $row[] = $dp->amount;
+                    $row[] = number_format($dp->amount,2,'.','');
                     $data[] = $row;
                 }
             }
@@ -205,17 +250,17 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             $data = array();
 
-            $sql = "SELECT rowid ,  descripcion , observacion FROM tab_tipos_pagos";
+            $sql = "SELECT rowid ,  descripcion , observacion, system FROM tab_tipos_pagos";
             $result = $db->query($sql);
             if($result && $result->rowCount()>0){
                 while ($object = $result->fetchObject()){
 
-//                    $btnModificar = "<a class='btn btn-block btn-xs' style='background-color: #D5F5E3; color: green; font-weight: bolder'  >Modificar</a>";
-
                     $row = array();
                     $row[] = $object->descripcion;
                     $row[] = $object->observacion; #descricopm del pago option
-                    $row["rowid"] = $object->rowid;
+                    $row[] = "";
+                    $row["rowid"]  = $object->rowid;
+                    $row["system"] = $object->system;
 
                     $data[] = $row;
                 }
@@ -232,19 +277,23 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             $error = "";
 
-            $sub = GETPOST("subaccion");
-            $nameForm = GETPOST("name_formap");
-            $textForm = GETPOST("text_formap");
+            $sub        = GETPOST("subaccion");
+            $nameForm   = GETPOST("name_formap");
+            $textForm   = GETPOST("text_formap");
+            $idtypepago = GETPOST("idformapago");
 
             if($sub=="nuevo"){
-                $sqlinsert = "INSERT INTO `tab_tipos_pagos` (`fecha_create`,`descripcion`, `observacion`) VALUES (now(),'$nameForm', '$textForm');";
+                $sqlinsert = "INSERT INTO `tab_tipos_pagos` (`fecha_create`,`descripcion`, `observacion`, `system`) VALUES (now(),'$nameForm', '$textForm', 0);";
                 $resul = $db->query($sqlinsert);
                 if(!$resul){
                     $error = "Ocurrio un error con la Operación <small><b>nuevo Pago</b></small>>";
                 }
             }
             if($sub=="update"){
-
+                if(!empty($idtypepago) && $idtypepago!=0){
+                    $sqlUpdate = "UPDATE tab_tipos_pagos SET `descripcion`='$nameForm', `observacion`='$textForm' WHERE `rowid`= $idtypepago;";
+                    $db->query($sqlUpdate);
+                }
             }
             if($sub=="delete"){
 
@@ -282,19 +331,41 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $idpagos        = GETPOST("idpagocab");
             $idpaciente     = GETPOST("idpaciente");
             $idPlantratmCab = GETPOST("idPlantratam");
+            $numeroPlantramiento = GETPOST("numTratamiento");
+            $valor = GETPOST("valor");
+            $idCajaAcount = ConsultarCajaUsers($user->id, true)->id_caja_account;
 
-            if($idPlantratmCab){
+            //tiene caja asociada
+            if( ConsultarCajaUsers($user->id, false) == 1){
 
-                $Estado_tratam = $db->query("select estados_tratamiento from tab_plan_tratamiento_cab where rowid = $idPlantratmCab")->fetchObject()->estados_tratamiento;
+                $saldo = $db->query("select sum(value) as value from tab_bank_transacciones  where id_account = $idCajaAcount")->fetchObject()->value;
+                if((double)$valor <= (double)$saldo){
+                    if($idPlantratmCab){
 
-                if($Estado_tratam!='F'){
-                    $error = UpdatePagosParticular($idpagos, $idpaciente, $idPlantratmCab);
+                        $Estado_tratam = $db->query("select estados_tratamiento from tab_plan_tratamiento_cab where rowid = $idPlantratmCab")->fetchObject()->estados_tratamiento;
+                        $objectPago = $db->query("select * from tab_pagos_independ_pacientes_cab where rowid = $idpagos")->fetchObject();
+
+                        //Estado F  == Plan de Tratamiento Finalizado
+                        if($Estado_tratam!='F'){
+                            $error = UpdatePagosParticular($idpagos, $idpaciente, $idPlantratmCab);
+                            if($error==""){
+                                //realiza un egreso de caja
+                                trasacionEgresoDeletePago($idpagos, $objectPago, $numeroPlantramiento, $valor);
+                            }else{
+                                $error = $messErr." <br>"."error de transacción ( egreso )";
+                            }
+                        }
+                        if($Estado_tratam=='F'){
+                            $error = 'No puede eliminar el Pago <br> <b>El plan de tratamiento se encuentra en  estado Finalizado</b>';
+                        }
+                    }
+                }else{
+                    $error = 'Saldo insuficiente de Caja';
                 }
-                if($Estado_tratam=='F'){
-                    $error = 'No puede eliminar el Pago <br> <b>El plan de tratamiento se encuentra en  estado Finalizado</b>';
-                }
+
+            }else{
+                $error = 'Ud. No puede realizar esta Operación no tiene caja asociada';
             }
-
 
             $Output= [
                 'error' => $error ,
@@ -312,7 +383,31 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             if($respuesta==1){
                 $error = "";
             }else{
-                $error = "No tiene asociado una caja";
+                $error = "Ud. No tiene asociado una caja";
+            }
+
+            $Output= [
+                'error' => $error ,
+            ];
+            echo json_encode($Output);
+            break;
+
+        case 'deleteTipoPago':
+
+            $error = "";
+
+            $idpa = GETPOST("idpago");
+            $result = $db->query("select count(*) as count from tab_pagos_independ_pacientes_cab where fk_tipopago = $idpa")->fetchObject()->count;
+            if($result>0){
+                $error = "No puede eliminar el pago registro asociado";
+            }else{
+
+                $system = $db->query("select count(*) as count from tab_tipos_pagos where rowid = $idpa and system = 1")->fetchObject()->count;
+                if($system==0){
+                    $db->query("DELETE FROM `tab_tipos_pagos` WHERE `rowid`= $idpa;");
+                }else{
+                    $error = "Ud. no puede eliminar este registro";
+                }
             }
 
             $Output= [
@@ -384,11 +479,11 @@ function list_pagos_independientes($idpaciente = 0)
             $row[] = date('d/m/Y', strtotime($objpagos->fecha_create));
             $row[] = $objpagos->name_tratamm;
             $row[] = "<img  src='". DOL_HTTP. "/logos_icon/logo_default/cita-medica.ico' class='img-sm img-rounded'  > - " . (($objpagos->cita == 0) ? "No asignada" : str_pad($objpagos->cita,5,'0',STR_PAD_LEFT));
-            $row[] = "<span class='' style='padding: 5px; border-radius: 5px; font-weight: bolder; background-color: #66CA86'> <i class='fa fa-dollar'></i> $objpagos->totalprestaciones </span>  ";
-            $row[] = "<span class='' style='padding: 5px; border-radius: 5px; font-weight: bolder; background-color: #ffcc00'> <i class='fa fa-dollar'></i> $objpagos->totalprestaciones_realizadas </span>  ";
+            $row[] = "<span class='' style='padding: 1px 2px; border-radius: 5px; font-weight: bolder; background-color: #66CA86'>$ $objpagos->totalprestaciones </span>  ";
+            $row[] = "<span class='' style='padding: 1px 2px; border-radius: 5px; font-weight: bolder; background-color: #ffcc00'>$ $objpagos->totalprestaciones_realizadas </span>  ";
 
             #pago o saldo ++
-            $row[] = "<span class='' style='padding: 5px; border-radius: 5px; font-weight: bolder; background-color: #66CA86'> <i class='fa fa-dollar'></i> ". (($objpagos->totalpresta_pagadasSaldo==null) ? "0.00" : $objpagos->totalpresta_pagadasSaldo) ." </span>  ";
+            $row[] = "<span class='' style='padding: 1px 2px; border-radius: 5px; font-weight: bolder; background-color: #66CA86'>$ ". (($objpagos->totalpresta_pagadasSaldo==null) ? "0.00" : $objpagos->totalpresta_pagadasSaldo) ." </span>  ";
 
             $row[] = "";
 
@@ -846,6 +941,34 @@ function realizarTrasaccionCobrosRecaudaciones($mensage = "", $idplanTratamiento
         return $error;
     }else{
         return 0;
+    }
+
+
+}
+
+
+function trasacionEgresoDeletePago($idPago, $objectPago, $numeroPlantramiento, $valor){
+
+    global $db, $user;
+
+    require_once DOL_DOCUMENT. '/application/system/cajas/class_transacciones/class_transsacion.php';
+
+    if($idPago && $numeroPlantramiento != ""){
+
+        $idCajaAcount = ConsultarCajaUsers($user->id, true)->id_caja_account;
+
+        $transacciones = new transsacion($db);
+
+        // DELETE COBRO DEL PLAN DE TRATAMIENTO
+        // MOVIMIENTO DE PLAN DE TRATAMIENTO EGRESO DE COBRO SALE DE CAJA
+        $transacciones->type_mov = 3;
+        $comment = "Eliminación de cobro Documento ".$objectPago->n_fact_boleta."\n"."Plan de Tratamiento: ".$numeroPlantramiento;
+        $transacciones->userAuthor = $user->id;
+        $transacciones->type_operacion = 3;
+        $log_tmp = "Se elimina el registro del pago:"."AGR_".str_pad($idPago, 6, "0", STR_PAD_LEFT)."\n"."Plan de Tratamiento: ".$numeroPlantramiento;
+        $error = $transacciones->create_movimiento_bank($idCajaAcount,$idPago,($valor*-1),$comment,"tab_pagos_independ_pacientes_cab", $log_tmp);
+        return $error;
+
     }
 
 

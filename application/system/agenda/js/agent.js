@@ -90,6 +90,12 @@ function loadtableAgenda()
         // },
     });
     // new $.fn.dataTable.FixedHeader( table );
+    new $.fn.dataTable.FixedHeader( table,
+        {
+            // headerOffset: 50
+        }
+    );
+
 
 }
 

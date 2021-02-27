@@ -118,13 +118,11 @@ $pdf .= '<style>
            
             .tables {
                 border: 1px solid black;
-                font-size: 0.9rem;
                 padding: 3px; 
             }
             
             .tablesTd{
                 border: 1px solid black;
-                font-size: 0.8rem;
                 padding: 2px;
             }
             
@@ -155,19 +153,23 @@ $pdf .= '
              </thead>';
 
 $pdf .= '<tbody>';
-foreach ($data as $key => $value){
-    $pdf .= '<tr>';
-        foreach ($value as $key2 => $val){
-            $pdf .= '<td class="tablesTd">'.$val.'</td>';
-        }
-    $pdf .= '</tr>';
-}
+
+    foreach ($data as $key => $value){
+
+        $pdf .= '<tr>';
+            foreach ($value as $key2 => $val){
+                $pdf .= '<td class="tablesTd">'.$val.'</td>';
+            }
+        $pdf .= '</tr>';
+
+    }
+
 $pdf .= '</tbody>';
 
 $pdf .= '</table>';
 
 $header = ' 
-    <table width="100%" style="vertical-align: bottom; font-family: Arial; font-size: 9pt; color: black;">
+    <table width="100%" style="vertical-align: bottom;  font-size: 10pt; color: black;">
         <tr>
              <td width="100%" align="left"><span style="font-size:28pt;">'.$InformacionEntity->nombre.'</span></td>
         </tr>
@@ -187,11 +189,11 @@ $header = '
 
 ob_end_clean();
 
-$mpdf=new mPDF('c','LETTER','','Calibri',
+$mpdf=new mPDF('c','LETTER','12px','',
     12, //left
     12, // right
-    23, //top
-    18, //bottom
+    40, //top
+    10, //bottom
     3, //header top
     3 //footer botoom
 );

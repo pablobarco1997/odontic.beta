@@ -34,6 +34,9 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
         case "listCajas":
 
 
+            $caja_id  = GETPOST("idcaja");
+            $valor_id = GETPOST("valor");
+
             $data = array();
 
             $saldo = "round((SELECT sum(t.value) FROM tab_bank_transacciones t where t.id_account = b.id_account),2) as saldo_caja,";
@@ -53,7 +56,12 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     b.estado as estado_id
                        
                 FROM
-                    tab_cajas_clinicas b";
+                    tab_cajas_clinicas b where b.rowid > 0 ";
+            if(!empty($caja_id)){
+                $sql .= " and b.rowid = ".$caja_id;
+            }if(!empty($valor_id)){
+                $sql .= " and round((SELECT sum(t.value) FROM tab_bank_transacciones t where t.id_account = b.id_account),2) <= round($valor_id,2) ";
+            }
             $sql .= " order by b.rowid desc";
             $result = $db->query($sql);
             if($result){
@@ -122,18 +130,18 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 	                from tab_cajas_clinicas c where rowid = ".$id;
             $fetchColumnData = $db->query($sql)->fetchAll(PDO::FETCH_ASSOC)[0];
 
-
+            /*
             $sql = "select * from tab_bank_transacciones where id_account = ".$fetchColumnData['id_account'];
             $fetchColumnDataMov = $db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 
             if(count($fetchColumnData)==0 && count($fetchColumnDataMov)==0){
                 $error = 'No hay data';
-            }
+            }*/
 
             $output = [
                 'error' => $error,
                 'fetchColumnData' => $fetchColumnData,
-                'fetchColumnDataMov' => $fetchColumnDataMov
+//                'fetchColumnDataMov' => $fetchColumnDataMov
             ];
 
             echo json_encode($output);
@@ -144,6 +152,12 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $data = array();
             $idCaja = GETPOST("idCaja");
 
+
+            $Total          = 0;
+            $start          = $_POST["start"];
+            $length         = $_POST["length"];
+
+
             $id_account = $db->query("select id_account from tab_cajas_clinicas where rowid = $idCaja limit 1")->fetchObject()->id_account;
 
             $sql = "select 
@@ -153,6 +167,14 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                          t.value
                     from tab_bank_transacciones t where t.id_account = $id_account";
 
+            $sqlTotal = $sql;
+
+            if($start || $length){
+                $sql.=" LIMIT $start,$length;";
+            }
+
+            $Total = $db->query($sqlTotal)->rowCount();
+
             $result = $db->query($sql);
             if($result && $result->rowCount()>0){
                 while ($obj =$result->fetchObject()){
@@ -160,13 +182,21 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     $row[] = $obj->dateff;
                     $row[] = $obj->comment;
                     $row[] = $obj->operacion;
-                    $row[] = "<span data-value='$obj->value' style='color: green' > $ $obj->value</span>";
+                    if($obj->value>0){
+                        $row[] = "<span data-value='$obj->value' style='color: green' > $ $obj->value</span>";
+                    }
+                    if($obj->value<0){
+                        $row[] = "<span data-value='$obj->value' style='color: red' > $ $obj->value</span>";
+                    }
                     $data[] = $row;
                 }
             }
 
             $output = [
-                'data' => $data
+                'data' => $data,
+                "recordsTotal"    => $Total,
+                "recordsFiltered" => $Total
+
             ];
 
             echo json_encode($output);

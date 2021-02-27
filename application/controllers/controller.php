@@ -155,6 +155,19 @@ function getnombreUsuario($id=''){
         }
     }
 
+    $idEntity = "USUID_".$conf->EMPRESA->ENTIDAD."_".$id; //id usuario de la entidad unico
+    $cnEntity = new CONECCION_ENTIDAD();
+
+    #Se comprueba si es super usuario
+    $sqladmin = "SELECT admin FROM tab_login_entity where login_idusers_entity = '$idEntity'";
+    $rs = $cnEntity::CONNECT_ENTITY()->query($sqladmin);
+    if($rs && $rs->rowCount()==1){
+        $admin = $rs->fetchObject()->admin;
+        $objet->admin = $admin;
+    }else{
+        $objet->admin = -1;
+    }
+
     return $objet;
 }
 

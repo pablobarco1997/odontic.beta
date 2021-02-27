@@ -16,6 +16,7 @@ function  listplaneTratamiento(){
         ordering:false,
         destroy:true,
         paging: true,
+        serverSide: true,
         // scrollX: true,
 
         ajax:{
@@ -43,7 +44,7 @@ function  listplaneTratamiento(){
                 'className': 'dt-body-center',
                 'render': function (data, type, full, meta){
 
-                    console.log(full);
+                    // console.log(full);
 
                     var idplantratamiento     = null;
                     var numeroPlantratamiento = null;
@@ -53,6 +54,9 @@ function  listplaneTratamiento(){
                     var estadoPlanTram        = null;
                     var situacionPlatram      = null;
                     var estadoanulado         = null;
+
+
+                    var modalProfecional      = "";
 
                     idplantratamiento     = full[6];
                     profecionalCargo      = full[1];
@@ -80,7 +84,9 @@ function  listplaneTratamiento(){
                     {
                         situacion = "<i class='fa fa-user-md'></i> &nbsp; "+ 'ANULADO';
                     }
-
+                    if(profecionalCargo=='No asignado'){
+                        modalProfecional = " data-toggle='modal' data-target='#modal_asociar_profecional' ";
+                    }
 
                     //Se bloqueara si ya tiene asociada una cita
                     var disablelinkCitasAsocid = "";
@@ -137,7 +143,7 @@ function  listplaneTratamiento(){
                                                 "<small style='color: #85929E; font-weight: bold'>PROFESIONAL</small>" +
                                                 "<br>" +
                                                 "<br>" +
-                                                  "<small style='font-weight: bold; width: 100%; display: block' class='trunc'> <i class='fa fa-user-md'></i> &nbsp; " + profecionalCargo + " </small>" +
+                                                  "<small style='font-weight: bold; width: 100%; display: block; cursor: pointer' class='trunc' "+modalProfecional+" data-idtratamiento='"+idplantratamiento+"' onclick='cambiar_attr_id_tratamiento($(this), \"#PlantTratamientoAsociOdont\")' > <i class='fa fa-user-md'></i> &nbsp; " + profecionalCargo + " </small>" +
                                                 "<br>" +
                                         "</div>" +
 
@@ -507,7 +513,6 @@ if($accion == 'addplan')
 
 
 //CARAS PIEZAS ACTIVAR FETCH  ------------------------------------------------------------------------------------------
-
 function fetchPiezasCaras( seach_diente ){
 
     var dataPrincipal = [];
@@ -617,9 +622,69 @@ function fetchPiezasCaras( seach_diente ){
 }
 
 
+
+
+//asociar Odontologo procesional
+var cambiar_attr_id_tratamiento = function(elemento, attrElement){
+
+    var id = elemento.prop('dataset').idtratamiento;
+    $(attrElement).attr('data-idtratamiento', id).attr('value',id);
+};
+
+$('#asociar_profecional_').on('click', function() {
+
+    var id = $("#PlantTratamientoAsociOdont").val();
+
+    if(id == "" ){
+        notificacion('Ocurrio un error de parametros , consulte con soporte','question');
+        return false;
+    }
+
+    if($('#odontolog_id').find(':selected').val() != ""){
+
+        $.ajax({
+            url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
+            type:'POST',
+            data:{
+                'ajaxSend':'ajaxSend',
+                'accion':'UpdateOdontolTratamiento',
+                'idTratamiento':id ,
+                'idOdontol':$('#odontolog_id').find(':selected').val()
+            },
+            dataType:'json',
+            async:false,
+            cache:false,
+            success:function(resp) {
+                if(resp['error'] == ''){
+                    notificacion('Información Actualizada', 'success');
+                    $("#odontolog_id").val(null).trigger('change');
+                    listplaneTratamiento();
+                    $("#modal_asociar_profecional").modal("hide");
+                }else{
+                   notificacion(resp['error'], 'error');
+                   listplaneTratamiento();
+                }
+            }
+        });
+
+    }else{
+        notificacion('Debe selecionar un profecional a cargo ','question');
+    }
+});
+
+
 //window onload
 window.onload = boxloading($boxContentViewAdminPaciente ,true);
 //window load
 $(window).on("load", function() {
     boxloading($boxContentViewAdminPaciente ,false, 1000);
+
+    //Principal
+    $('#odontolog_id').select2({
+        placeholder:'Seleccione una opción',
+        allowClear:false,
+    });
+    $('#modal_asociar_profecional').on('show.bs.modal', function () {
+        $('#odontolog_id').val(null).trigger('change');
+    }) ;
 });

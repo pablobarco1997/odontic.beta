@@ -15,12 +15,9 @@ function loadtabledirectPacien(estado)
               dataType:'json',
         },
         columnDefs:[
-
             {
                 targets:0 ,
                 render: function (data, type, row) {
-
-                    console.log(row);
 
                     var menu = "<div class='dropdown pull-left'> ";
 
@@ -39,6 +36,10 @@ function loadtabledirectPacien(estado)
                 }
             }
         ],
+        createdRow:function(row, data, index){
+            console.log($('td',row));
+            $('td:eq(4)',row).attr('style','width: 20%');
+        },
         language:{
             "sProcessing":     "Procesando...",
             "sLengthMenu":     "Mostrar _MENU_ registros",

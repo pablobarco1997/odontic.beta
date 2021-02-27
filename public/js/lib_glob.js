@@ -513,6 +513,7 @@ function fetch_perfil()
         $('#perf_email').val(prf.email);
         $('#perf_celular').val(prf.celular);
         $('#especialidadPerfil').val(prf.fk_especialidad).trigger('change');
+        $('#perf_cajaUsers').val(prf.id_caja_account).trigger('change');
 
 
     });
@@ -548,6 +549,7 @@ function GuardarPerfilGlob()
     var email               = $('#perf_email').val();
     var perfilEspecialidad  = $('#especialidadPerfil').find(':selected').val();
     var celularPerfil       = $('#perf_celular').val();
+    var CajaUsers           = $('#perf_cajaUsers').find(':selected').val();
 
 
     var puedeNO = 0;
@@ -558,10 +560,11 @@ function GuardarPerfilGlob()
         puedeNO++;
     }
 
-    if(FormValidationPerfilGlobal()==false)
+    if(FormValidationPerfilGlobal()==false){
         puedeNO++;
+    }
 
-    var $datosPerfil  = { idcedula , usuario, passwd, nombreOdont, apellidoOdont, cedula, email, perfilEspecialidad, celularPerfil };
+    var $datosPerfil  = { idcedula , usuario, passwd, nombreOdont, apellidoOdont, cedula, email, perfilEspecialidad, celularPerfil, CajaUsers };
 
     // alert( JSON.stringify($datosPerfil) );
     var parametros = {'ajaxSend':'ajaxSend', 'accion':'UpdatePerfilLogin', 'params': $datosPerfil, 'usuarioActual': usersActual };
@@ -705,3 +708,14 @@ $('#especialidadPerfil').select2({
     allowClear: false,
     language:'es'
 });
+
+function ToLocalDateSpanish(date = "") {
+    if(date==""){
+        return "";
+    }
+    var arrdate = date.split('/');
+    var dateFormat = new Date(arrdate[0],(arrdate[1]-1),arrdate[2]);
+    var options = { year: 'numeric', month: 'long', day: 'numeric' };
+
+    return dateFormat.toLocaleDateString('es-ES', options);
+}

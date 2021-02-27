@@ -152,15 +152,6 @@ if(isset($_GET['view']) && $_GET['view'] == 'agendadd'){
                 </div>
             </div>
             <div class="form-group">
-                <label class="control-label col-sm-3" >Hora de la Cita:</label>
-                <div class="col-sm-9">
-                    <select  id="" name="hora[0].det" class="form-control optionSelect2 select2_max_ancho horaCita" style="width: 100%">
-                        <option value=""></option>
-                        <?= $horaCita;  ?>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group">
                 <label class="control-label col-sm-3" >Fecha de la Cita:</label>
                 <div class="col-sm-9">
                     <div class="date2">
@@ -172,6 +163,15 @@ if(isset($_GET['view']) && $_GET['view'] == 'agendadd'){
                         </div>
                         <small class="msg-error" style="color: red"></small>
                     </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-sm-3" >Hora de la Cita:</label>
+                <div class="col-sm-9">
+                    <select  id="" name="hora[0].det" class="form-control optionSelect2 select2_max_ancho horaCita" style="width: 100%">
+                        <option value=""></option>
+                        <?= $horaCita;  ?>
+                    </select>
                 </div>
             </div>
             <input type="button" class="btn btnhover btn-block" style="font-weight: bolder; color: green" id="nuevoGuardarCitas" value="Guardar">

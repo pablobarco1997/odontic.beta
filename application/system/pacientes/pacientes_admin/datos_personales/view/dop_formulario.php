@@ -28,7 +28,7 @@
                 </div>
 
                 <div class="form-group col-xs-12 col-md-12">
-                    <label for="">cedula</label>
+                    <label for="">C.I.</label>
                     <input type="text"  class="form-control" id="rud_dni" name="rud_dni" onkeyup="invalicrucCedula(this, true)">
                     <small style="color: red" id="noti_ruddni"></small>
                 </div>

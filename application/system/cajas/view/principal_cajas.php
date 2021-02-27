@@ -8,6 +8,8 @@ $modulo = true;
 
 ?>
 
+
+
 <div class="form-group col-xs-12 col-md-12 col-lg-12 no-padding">
     <div  class="form-group col-md-12 col-xs-12">
         <?= Breadcrumbs_Mod($titulo, $url_breadcrumbs, $modulo); ?>
@@ -25,7 +27,31 @@ $modulo = true;
             <div class="row">
                 <div class="form-group col-md-3 col-sm-12 col-xs-12">
                     <label for="">Cajas</label>
-                    <select name="" id="" class="form-control"></select>
+                    <select name="caja_id" id="caja_id" class="form-control" style="width: 100%">
+                        <option value=""></option>
+                        <?php
+                            $resultCaja = $db->query("select rowid , concat('Caja #',rowid) as name from tab_cajas_clinicas")->fetchAll();
+                            foreach ($resultCaja as $k => $value){
+                                print '<option value="'.$value['rowid'].'">'.$value['name'].'</option>';
+                            }
+                        ?>
+                    </select>
+                </div>
+
+                <div class="form-group col-md-3 col-sm-12 col-xs-12">
+                    <label for="">Valor</label>
+                    <input type="text" class="form-control" id="valor_id_caja" name="valor_id_caja">
+                </div>
+
+            </div>
+
+
+            <div class="row">
+                <div class="form-group col-md-12 no-margin">
+                    <ul class="list-inline pull-right no-margin">
+                        <li>  <button class="limpiar btn   btn-block  btn-default" style="float: right; padding: 10px" id="limpiar_search"> &nbsp; &nbsp; Limpiar &nbsp; &nbsp;</button> </li>
+                        <li>  <button class="aplicar btn   btn-block  btn-success" style="float: right; padding: 10px" id="aplicar_search"> &nbsp;  &nbsp;Aplicar busqueda &nbsp;</button> </li>
+                    </ul>
                 </div>
             </div>
 
@@ -139,7 +165,7 @@ $modulo = true;
     function ActivarDesactivarCaja(id_caja,estado, Element){
 
         if( (id_caja=="" && estado=="") && (Element.prop('dataset').id=="" && Element.prop('dataset').status=="") ){
-            notificacion('Ocurrió un error con la Operación caja', 'error');
+                notificacion('Ocurrió un error con la Operación caja', 'error');
             return false;
         }
 
@@ -203,7 +229,7 @@ $modulo = true;
 
                         var datatransaccionCaja = {
                             'datacab' : respuesta['fetchColumnData'],
-                            'datadetMov' : respuesta['fetchColumnDataMov']
+                            // 'datadetMov' : respuesta['fetchColumnDataMov']
                         };
 
                         fetchInformacionModal(datatransaccionCaja, id);
@@ -232,15 +258,18 @@ $modulo = true;
 
         Dtable_transaccion(idcaja);
 
-        console.log(data);
+        // console.log(data);
     };
 
     var Dtable_transaccion = function(idCaja){
 
         $("#transacionesCaja").DataTable({
             searching: false,
+            serverSide:true,
+            padding:true,
             destroy:true,
             ordering:false,
+            processing:true,
             ajax:{
                 url: $DOCUMENTO_URL_HTTP + '/application/system/cajas/controller/controller_caja.php',
                 type:"POST",
@@ -291,6 +320,22 @@ $modulo = true;
     };
 
 
+    $("#aplicar_search").click(function() {
+        search();
+    });
+
+    var search = function(){
+
+        var url = $DOCUMENTO_URL_HTTP + '/application/system/cajas/controller/controller_caja.php';
+        var accion = url + '?accion='+'listCajas'+'&ajaxSend=ajaxSend';
+        var parametros = accion + '&idcaja=' + $('#caja_id').find(':selected').val();
+        parametros += '&valor='+ $('#valor_id_caja').val();
+
+        var ajaxUrl = parametros;
+        var table = $("#listCajas").DataTable();
+
+        table.ajax.url(ajaxUrl).load();
+    };
 
     $(window).on("load", function() {
 
@@ -357,6 +402,12 @@ $modulo = true;
             },
         });
 
+        $('#caja_id').select2({
+            placeholder:'Selecione una opcion',
+            allowClear:true
+        });
+
+        $('#valor_id_caja').maskMoney({precision:2,thousands:'', decimal:'.',allowZero:true,allowNegative:true, defaultZero:true,allowEmpty: true});
     });
 
 </script>

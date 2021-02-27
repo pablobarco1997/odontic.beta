@@ -82,7 +82,7 @@
 
     <div class="form-group col-xs-12 col-md-12 col-lg-12">
         <div class="table-responsive">
-            <table id="pag_particular" class="table table-striped" width="100%">
+            <table id="pag_particular" class="table" width="100%" style="border-collapse: collapse">
                 <thead>
                     <tr>
                         <th>&nbsp;</th>
@@ -92,7 +92,7 @@
                         <th>Forma de Pago</th>
                         <th>Observación</th>
                         <th># Documento</th>
-                        <th>$ Monto</th>
+                        <th>Valor</th>
                         <th>&nbsp;</th>
                     </tr>
                 </thead>
@@ -118,20 +118,31 @@
             <div class="modal-body">
                 <div class="row">
 
-                    <div class="form-group col-md-12 col-xs-12">
-                        <h5><span id="n_plantrtam_detalle"></span></h5>
+                    <div class="col-md-12 col-xs-12">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12">
+                                <h5><span id="n_plantrtam_detalle"></span></h5>
+                            </div>
+                            <div class="col-xs-12 col-md-9 ">
+                                <h5><span id="n_documento_pago_detalle"></span></h5>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-group col-md-12 col-xs-12">
-                        <div class="table-responsive">
-                            <table class="table-striped table" id="detalle_prestaciones_pagos_part" width="100%">
-                                <thead>
-                                <tr>
-                                    <th WIDTH="75%">Prestaciones</th>
-                                    <th WIDTH="25%">Monto <i class="fa fa-dollar"></i></th>
-                                </tr>
-                                </thead>
-                            </table>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-12">
+                                <div>
+                                    <table class="table-striped table" id="detalle_prestaciones_pagos_part" width="100%" style="border-collapse: collapse">
+                                        <thead>
+                                            <tr>
+                                                <th WIDTH="75%">Prestaciones</th>
+                                                <th WIDTH="25%">Valor</th>
+                                            </tr>
+                                        </thead>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

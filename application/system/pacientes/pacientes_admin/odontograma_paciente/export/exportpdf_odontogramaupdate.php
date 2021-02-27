@@ -28,6 +28,21 @@ $loginUsuario = $_SESSION['usuario']; #Login Inicio de Sesion
 
 //echo '<pre>';print_r($_SESSION['usuario']);die();
 
+$DirectorioImgClinicaHttp = DOL_HTTP.'/logos_icon/icon_logos_'.$_SESSION['entidad'];
+
+if(isset($_SESSION['logoClinica']))
+{
+    if($_SESSION['logoClinica']!="" && !file_exists($DirectorioImgClinicaHttp)){
+        $iconClinica = $DirectorioImgClinicaHttp.'/'.$_SESSION['logoClinica'];
+    }else{
+        $iconClinica = DOL_HTTP.'/logos_icon/logo_default/none-icon-20.jpg';
+    }
+}else{
+    $iconClinica = DOL_HTTP.'/logos_icon/logo_default/none-icon-20.jpg';
+}
+
+$ImagenLogoClinica = "<img src='".$iconClinica."' style='width:40px; height: 40px; border-radius: 100%;' >";
+
 //numero de dientes asignados
 $dataNumeroDientes   = array();
 $dataNumeroDientes[] = [18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28];
@@ -112,7 +127,7 @@ $pdf .= '<style>
                      text-align: left;
                 }
                 .fonttml{
-                    font-size: 1.3rem;
+                    /*font-size: 1.3rem; */
                 }
                 .boderTd{
                     border: 1px solid black;
@@ -125,37 +140,32 @@ $pdf .= '<style>
             </style>';
 
 
-$pdf  .= "<br>";
-
 $pdf .= "
-    <table  width='100%' class='tables'>
+    <table  width='100%'>
         <tr  style='width: 100%'>
             <td style='text-align: center'> <h2> ODONTOGRAMA </h2> </td>
         </tr>
+        <tr> <td>&nbsp;</td> </tr>
+        <tr> <td width='50%'> <H3>ESTADOS ASIGNADOS</H3> </td> </tr>
     </table>    
         ";
 
-$pdf .= "<br>";
-$pdf .= "<br>";
+$pdf .= "<table width='100%' style='border-collapse: collapse'>";
+    $pdf .= "<tr><td></td></tr>";
+    $pdf .= "<tr> <td width='50%' class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/ausente.png' alt='' width='22px'>         Ausente</td> </tr>";
+    $pdf .= "<tr> <td width='50%' class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/caries.png' alt='' width='22px'>          Caries</td> </tr>";
+    $pdf .= "<tr> <td width='50%' class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/corona.png' alt='' width='22px'>          Corona</td> </tr>";
+    $pdf .= "<tr> <td width='50%' class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/endodoncia.png' alt='' width='22px'>      Endodoncia</td> </tr>";
+    $pdf .= "<tr> <td width='50%' class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/fractura.png' alt='' width='22px'>        Fractura</td> </tr>";
+    $pdf .= "<tr> <td width='50%' class='fonttml'>  <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/implante.png' alt='' width='22px'>        Implante</td> </tr>";
+    $pdf .= "<tr> <td width='50%' class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/indicacion_extraccion.png' alt='' width='22px'> Indicacion extraccion</td> </tr>";
+    $pdf .= "<tr> <td width='50%' class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/infeccion_pulpar.png' alt='' width='22px'>     Infeccion pulpar</td> </tr>";
+    $pdf .= "<tr> <td width='50%' class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/perno_punon.png' alt='' width='22px'>          Perno muñon</td> </tr>";
+    $pdf .= "<tr> <td width='50%' class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/restauracion.png' alt='' width='22px'>         Restauracion</td> </tr>";
 
-
-
-$pdf .= "<table width='100%'>";
-
-    $pdf .= "<tr> <td> <H3>ESTADOS ASIGNADOS</H3> </td> </tr>";
-    $pdf .= "<tr> <td>&nbsp;</td> </tr>";
-    $pdf .= "<tr> <td class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/ausente.png' alt='' width='22px'>         ausente</td> </tr>";
-    $pdf .= "<tr> <td class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/caries.png' alt='' width='22px'>          caries</td> </tr>";
-    $pdf .= "<tr> <td class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/corona.png' alt='' width='22px'>          corona</td> </tr>";
-    $pdf .= "<tr> <td class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/endodoncia.png' alt='' width='22px'>      endodoncia</td> </tr>";
-    $pdf .= "<tr> <td class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/fractura.png' alt='' width='22px'>        fractura</td> </tr>";
-    $pdf .= "<tr> <td class='fonttml'>  <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/implante.png' alt='' width='22px'>        implante</td> </tr>";
-    $pdf .= "<tr> <td class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/indicacion_extraccion.png' alt='' width='22px'> indicacion extraccion</td> </tr>";
-    $pdf .= "<tr> <td class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/infeccion_pulpar.png' alt='' width='22px'>     infeccion pulpar</td> </tr>";
-    $pdf .= "<tr> <td class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/perno_punon.png' alt='' width='22px'>          perno muñon</td> </tr>";
-    $pdf .= "<tr> <td class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/restauracion.png' alt='' width='22px'>         restauracion</td> </tr>";
-$pdf .= "
-</table> 
+    $pdf .= "
+    </table> 
+    
 <br>";
 
 
@@ -214,9 +224,9 @@ $pdf .= "</table>";
 $pdf .= "<br>";
 $pdf .= "<br>";
 
-$pdf .= "<table width='100%' class='tables' style='padding: 3px;  font-size: 1.2rem'>";
+$pdf .= "<table width='100%' class='tables' style='padding: 3px;' >";
     $pdf .= "<thead >
-                <tr style='background-color: #688fc2;'>
+                <tr style='background-color: #f2f2f2;'>
                     <th>Fecha</th>
                     <th>Pieza</th>
                     <th>Caras</th>
@@ -232,8 +242,9 @@ $pdf .= "<table width='100%' class='tables' style='padding: 3px;  font-size: 1.2
                 $pdf .= "<td class='tables' style='padding: 3px'>". $valor[0] ."</td>";
                 $pdf .= "<td class='tables' style='padding: 3px'>". $valor[1] ."</td>";
                 $pdf .= "<td class='tables' style='padding: 3px'>". $valor[2] ."</td>";
-                $pdf .= "<td class='tables' style='padding: 3px'>". $valor[3] ."</td>";
+                $pdf .= "<td class='tables' style='padding: 3px'>". (strtoupper($valor[3])) ."</td>";
             $pdf.= "</tr>";
+
         }
 
     $pdf .= "</tbody>";
@@ -374,36 +385,13 @@ function anatomiaCarasView( $arr_caras , $n_diente )
 }
 
 
-//echo '<pre>';  print_r($pdf); die();
-
-#CONF PDF --------------------------------------------------------------------------------------------------------------
-$footer = '<!--<hr style="margin-bottom: 2px"><table width="100%" style="font-size: 10pt;">-->
-<br>
-  <table>
-        <tr>
-            <td width="50%">
-                <div align="left">'. $InformacionEntity->email .'</div>
-            </td>
-            <td width="50%" align="right">
-                <!--<div  style="float: right">Pagina:{PAGENO}</div>-->
-            </td>
-        </tr>
-    </table>';
-
-$mpdf=new mPDF('c','LETTER','10px','Calibri',
-    12, //left
-    12, // right
-    23, //top
-    18, //bottom
-    3, //header top
-    3 //footer botoom
-);
-
-
 $header = ' 
-    <table width="100%" style="vertical-align: bottom; font-family: Arial !important; font-size: 9pt; color: black;">
+    <table width="100%" style="vertical-align: bottom;  font-size: 10pt; color: black; margin-bottom: 10px">
         <tr>
-          <td width="100%" align="left"><span style="font-size:28pt;">'.$InformacionEntity->nombre.'</span></td>
+             <td width="100%" align="left"><span style="font-size:28pt;">'.$InformacionEntity->nombre.'</span></td>
+        </tr>
+        <tr>
+            <td WIDTH="33%">'.$ImagenLogoClinica.'</td>
         </tr>
         <tr>
             <td width="33%">'.$InformacionEntity->direccion.' <span style="font-size:10pt;"></span></td>
@@ -411,20 +399,37 @@ $header = '
         </tr>
         <tr>
             <td width="33%">'.$InformacionEntity->email.'<span style="font-size:10pt;"></span></td>
-            <td width="33%" style="text-align: right;">Fecha: <span style="font-weight: bold;">'.date('Y/m/d').'</span></td>
+            <td width="33%" style="text-align: right;">Fecha de Impresión: <span style="font-weight: bold;">'.date("Y/m/d").'</span></td>
         </tr>
-    </table>
-    ';
+    </table> ';
 
+
+$footer = '<!--<hr style="margin-bottom: 2px"><table width="100%" style="font-size: 10pt;">-->
+              <table width="100%" style="border-collapse: collapse">
+                    <tr>
+                        <td width="50%" align="right">
+                            <div  style="float: right">hoja:{PAGENO}</div>
+                        </td>
+                    </tr>
+                </table>';
 
 ob_end_clean();
 
-$mpdf->mirrorMargins = 1;	// Use different Odd/Even headers and footers and mirror margins
+$mpdf=new mPDF('c','LETTER','12px','',
+    12, //left
+    12, // right
+    40, //top
+    10, //bottom
+    3, //header top
+    3 //footer botoom
+);
 
 $mpdf->SetHTMLHeader($header,"E",true);
 $mpdf->SetHTMLHeader($header,"O",true);
 $mpdf->SetHTMLFooter($footer,"E",true);
 $mpdf->SetHTMLFooter($footer,"O",true);
+
+$mpdf->mirrorMargins = 1;	// Use different Odd/Even headers and footers and mirror margins
 
 // Make it DOUBLE SIDED document with 4mm bleed
 $mpdf->mirrorMargins = 1;

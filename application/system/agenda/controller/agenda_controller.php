@@ -1253,20 +1253,21 @@ function notificarCitaEmail($datos, $token_confirmacion)
     $mail->Port = 465;
     $mail->SMTPAutoTLS = TRUE;
     $mail->SMTPSecure = "ssl";
-    $mail->Username = "odontic@adminnube.com";//correo del servidor
-    $mail->Password = "#OWF-o(C-tQDU";//password de servidor de correo
+
+    $mail->Username = $conf->service_Email;//correo del servidor
+    $mail->Password = $conf->service_Password;//password de servidor de correo
+
     $mail->Subject = "Clinica dental ".$conf->EMPRESA->INFORMACION->nombre; //nombre de la clinica
     $mail->addCustomHeader("'Reply-to:".$conf->EMPRESA->INFORMACION->conf_email."'");
     $mail->isHTML(TRUE);
     $mail->msgHTML("Notificación Clinica ".$conf->EMPRESA->INFORMACION->nombre);
     $mail->setFrom($conf->EMPRESA->INFORMACION->conf_email, $conf->EMPRESA->INFORMACION->nombre);
     $mail->addAddress($to);
+
     #$mail->msgHTML("");
     #$mail->headerLine($headerLine);
 
     $mail->Body = $htmlSend."".$card;
-
-
     $error_insert_notific_email = "";#Se usa para comprobar el registro
 
     if($conf->EMPRESA->INFORMACION->conf_email != ""){

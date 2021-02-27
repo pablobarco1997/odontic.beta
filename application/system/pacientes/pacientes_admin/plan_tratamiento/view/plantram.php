@@ -289,6 +289,40 @@
             </div>
         </div>
 
+        <!--MODAL ASOCIAR PROFECIONAL-->
+        <div id="modal_asociar_profecional" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header modal-diseng">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"><span>Asociar Profecional</span></h4>
+                        <input type="text" class="hidden" id="PlantTratamientoAsociOdont">
+                    </div>
+                    <div class="modal-body">
+                        <label for="">Asociar profecional acargo:</label>
+                        <select name="odontolog_id" id="odontolog_id" class="form-control" style="width: 100%">
+                            <option value=""></option>
+                            <?php
+                                $result = $db->query("select rowid, concat(nombre_doc,' ', apellido_doc) as nom from tab_odontologos where estado = 'A'")->fetchAll(PDO::FETCH_ASSOC);
+                                foreach ($result as $c => $value){
+                                    print '<option value="'.$value['rowid'].'">'.$value['nom'].'</option>';
+                                }
+
+
+                            ?>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" style="font-weight: bolder; color: green" class="btn btnhover" id="asociar_profecional_" >Confirm</button>
+                        <button type="button" style="font-weight: bolder;" class="btn btnhover" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
         <!--MENSAJE DE CONFIRMACION DE ELIMINACION DE PLAN DE TRATAMIENTO-->
         <div id="confirm_finalizar_plantramiento" class="modal fade" role="dialog">
             <div class="modal-dialog">
@@ -317,7 +351,7 @@
             </div>
         </div>
 
-    <?php }?>
+    <?php } ?>
 
 </div>
 
