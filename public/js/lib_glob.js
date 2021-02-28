@@ -679,7 +679,7 @@ var ModulePermission = function(idModule = 0, actionPermiso = 0){
     FormDataFetch.append("actionPermiso", actionPermiso);
 
     $.ajax({
-        url: $DOCUMENTO_URL_HTTP + '/application/controllers/controller_peticiones_globales',
+        url: $DOCUMENTO_URL_HTTP + '/application/controllers/controller_peticiones_globales.php',
         type:'POST',
         data: FormDataFetch ,
         dataType:'json',
