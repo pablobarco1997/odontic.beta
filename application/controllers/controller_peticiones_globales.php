@@ -1,10 +1,15 @@
 
 <?php
+if( !headers_sent() && '' == session_id() ) {
+    session_start();
+}
+?>
 
+<?php
 
 if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 {
-    session_start();
+
 
     require_once '../config/lib.global.php';
     require_once DOL_DOCUMENT.'/application/config/main.php';
