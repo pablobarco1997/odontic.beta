@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 require_once '../../../controllers/controller.php';
 require_once '../../../config/conneccion_entidad.php';
 require_once '../../../config/lib.global.php';
@@ -43,8 +45,6 @@ if(isset($_POST['ajaxSend']) || isset($_GET['ajaxSend']))
 
                         if ($rs->rowCount() > 0)
                         {
-
-                            session_start();
 
                             $row = $rs->fetchObject();
 

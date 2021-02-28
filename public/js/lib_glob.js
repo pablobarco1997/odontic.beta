@@ -330,7 +330,7 @@ function buscarpacientes(input = false) {
                 }
             }
         });
-        
+
         console.log(Element);
     }
 }
