@@ -306,7 +306,7 @@ function buscarpacientes(input = false) {
         var content = $(".content-box-search");
 
 
-        var url =  $DOCUMENTO_URL_HTTP + '/application/controllers/controller_peticiones_globales';
+        var url =  $DOCUMENTO_URL_HTTP + '/application/controllers/controller_peticiones_globales.php';
         var dataparametros = {'ajaxSend':'ajaxSend', 'accion':'ObtenerPacienteslistaSearch', 'label' : Element.val() };
 
         $.get(url , dataparametros , function (data) {
