@@ -309,22 +309,28 @@ function buscarpacientes(input = false) {
         var url =  $DOCUMENTO_URL_HTTP + '/application/controllers/controller_peticiones_globales.php';
         var dataparametros = {'ajaxSend':'ajaxSend', 'accion':'ObtenerPacienteslistaSearch', 'label' : Element.val() };
 
-        $.get(url , dataparametros , function (data) {
-            var object = $.parseJSON(data);
-            if(object['data'] == true){
-                $(".list_search").empty();
+        $.ajax({
+            url:url,
+            type:'GET',
+            data:dataparametros,
+            dataType:'json',
+            cache:false,
+            success:function(object){
+                if(object['data'] == true){
+                    $(".list_search").empty();
                     $.each(object['object'], function(i, item) {
                         var li = document.createElement('li');
                         $(li).html(item['name']);
                         $(".list_search").append($(li));
                     });
-                $(".contlistsearch").css("display", "block");
-            }else{
-                $(".contlistsearch").css("display", "none");
-                $(".list_search").empty();
+                    $(".contlistsearch").css("display", "block");
+                }else{
+                    $(".contlistsearch").css("display", "none");
+                    $(".list_search").empty();
+                }
             }
         });
-
+        
         console.log(Element);
     }
 }
