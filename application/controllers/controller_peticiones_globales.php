@@ -11,7 +11,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
     global $db, $conf, $user;
 
-    $accion = GETPOST("accion");
+    $accion = isset($_GET['accion'])?$_GET['accion']:$_POST['accion'];
 
     switch($accion)
     {
