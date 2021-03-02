@@ -148,13 +148,14 @@ function NOTIFICACION_CITAS_NUMEROS()
 
     });
 
+    // setInterval(function(){
+    //
+    // },50000)
 
-    setInterval(function(){
-        $.get(url , parameters , function(data) {
-            var datos = $.parseJSON(data);
-            $("#numCitas").text( datos.result );
-        });
-    },3500)
+    $.get(url , parameters , function(data) {
+        var datos = $.parseJSON(data);
+        $("#numCitas").text( datos.result );
+    });
 }
 
 

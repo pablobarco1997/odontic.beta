@@ -93,9 +93,7 @@ $('#buscarPaciente').on('click', function() {
 
 $("#startDate").on("change", function() {
 
-    obtenerPacientesxDate();
-    CitasAnuladaxDateAtendidos();
-    Npresupuestos();
+    cargarRecursosInfo();
 
     var textDate = $("#labelSpanishSatrDtae");
     var arrDate  = ($("#startDate").val()).split("-");
@@ -141,13 +139,25 @@ $("#reportes_pacientes_anulados").click(function() {
             },
         },
         createdRow:function (row, data, dataIndex) {
-            $('td:eq(0)', row).css('width','10%');
+            $('td:eq(0)', row).css('width','20%');
             $('td:eq(1)', row).css('width','30%');
             $('td:eq(2)', row).css('width','8%');
             $('td:eq(3)', row).css('width','10%');
         },
         "language": $tableLanguaje
     });
+
+});
+
+var cargarRecursosInfo = function(){
+
+    obtenerPacientesxDate();
+    CitasAnuladaxDateAtendidos();
+    Npresupuestos();
+
+};
+
+$(document).ready(function () {
 
 });
 
@@ -203,11 +213,12 @@ $(window).on("load", function() {
     });
 
 
-    setTimeout(()=>{
-        $('#startDate').data('daterangepicker').setStartDate(YearDinamic+'/01/01');
-        $('#startDate').data('daterangepicker').setEndDate(YearDinamic+'/12/31');}
-    ,1500);
+    cargarRecursosInfo();
 
+    // setTimeout(()=>{
+    //     $('#startDate').data('daterangepicker').setStartDate(YearDinamic+'/01/01');
+    //     $('#startDate').data('daterangepicker').setEndDate(YearDinamic+'/12/31');}
+    // ,1500);
 
     boxloading($boxHomeInicio ,true, 1500);
 

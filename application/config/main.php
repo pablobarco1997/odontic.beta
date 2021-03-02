@@ -106,5 +106,6 @@
 
     #echo '<pre>'; print_r($conf); die();
 
+    #echo phpversion();
 
 ?>

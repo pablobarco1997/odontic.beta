@@ -82,42 +82,42 @@ setTimeout(function() {
         }
     });
 
-},timeOut);
+},1000);
 
-interval_notification = setInterval(function () {
-
-    $.get(url, paramt , function(data){
-
-        var HTML = $.parseJSON(data);
-        if(HTML['error'] == ""){
-            Htmlnotificacion( HTML.data, HTML.N_noti );
-        }
-
-    });
-
-},timeReal);
+// interval_notification = setInterval(function () {
+//
+//     $.get(url, paramt , function(data){
+//
+//         var HTML = $.parseJSON(data);
+//         if(HTML['error'] == ""){
+//             Htmlnotificacion( HTML.data, HTML.N_noti );
+//         }
+//
+//     });
+//
+// },timeReal);
 
 $( window ).on("load", function() {
 
-    $('.notiflist , .media').mouseleave(function() {
+    // $('.notiflist , .media').mouseleave(function() {
+    //
+    //     interval_notification = setInterval(function(){
+    //
+    //         $.get(url, paramt , function(data){
+    //
+    //             var HTML = $.parseJSON(data);
+    //             if(HTML['error'] == ""){
+    //                 Htmlnotificacion( HTML.data, HTML.N_noti );
+    //             }
+    //         });
+    //
+    //     },timeReal);
+    //
+    // });
 
-        interval_notification = setInterval(function(){
-
-            $.get(url, paramt , function(data){
-
-                var HTML = $.parseJSON(data);
-                if(HTML['error'] == ""){
-                    Htmlnotificacion( HTML.data, HTML.N_noti );
-                }
-            });
-
-        },timeReal);
-
-    });
-
-    $('.notiflist , .media').mouseenter(function() {
-        clearInterval( interval_notification );
-    });
+    // $('.notiflist , .media').mouseenter(function() {
+    //     clearInterval( interval_notification );
+    // });
 
 
 });
