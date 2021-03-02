@@ -1,6 +1,5 @@
 <?php
 
-session_start();
 
 require_once '../../../controllers/controller.php';
 require_once '../../../config/conneccion_entidad.php';
@@ -47,6 +46,8 @@ if(isset($_POST['ajaxSend']) || isset($_GET['ajaxSend']))
                         {
 
                             $row = $rs->fetchObject();
+
+                            session_start();
 
                             $_SESSION['is_open']                = true;
                             $_SESSION['id_user']                = $row->fk_doc; #usuario de sesion es el doctor del usuario
