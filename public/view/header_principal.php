@@ -39,8 +39,7 @@
     <!-- Bootstrap Color Picker -->
     <link rel="stylesheet" href="<?= DOL_HTTP .'/public/bower_components/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css'?>">
     <!--link jquery ui css-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" type="text/css" media="all" />
-    <script src="https://code.jquery.com/ui/1.8.9/jquery-ui.min.js" integrity="sha256-6FAtibB+JcgrP3dlXlHhIjzGg791TLgxUZz/vqd16/0=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css"  />
 
     <!--script import-->
 
