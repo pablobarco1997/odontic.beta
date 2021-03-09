@@ -574,7 +574,7 @@ function GuardarPerfilGlob()
 
     // alert( JSON.stringify($datosPerfil) );
     var parametros = {'ajaxSend':'ajaxSend', 'accion':'UpdatePerfilLogin', 'params': $datosPerfil, 'usuarioActual': usersActual };
-    var url = $DOCUMENTO_URL_HTTP + '/application/controllers/controller_peticiones_globales';
+    var url = $DOCUMENTO_URL_HTTP + '/application/controllers/controller_peticiones_globales.php';
 
     if(puedeNO==0) {
         $.get(url, parametros , function($data){

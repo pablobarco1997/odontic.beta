@@ -6,7 +6,7 @@ if(md5($_SERVER['SERVER_NAME'])=='068234a2d85a5233fd17f6d0507d3454'){//servidor 
     $doll_http_ip = "https://adminnube.com/odontic.beta";
 }else{//servidor local
     $doll_document = $_SERVER['DOCUMENT_ROOT'].'/betaodontic';
-    $doll_http_ip  = "https://localhost/betaodontic";
+    $doll_http_ip  = "http://localhost/betaodontic";
 }
 
 $DOL_DOCUMENT = $doll_document; //DIRECTORIO LOCAL
