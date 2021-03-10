@@ -9,7 +9,7 @@
         <div class="modal-content">
             <div class="modal-header modal-diseng">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title" id="info_clinica"><span>Clinica <i class="fa fa-info"></i> </span></h4>
+                <h4 class="modal-title" id="info_clinica"><span>Clinica </span></h4>
             </div>
             <div class="modal-body">
 

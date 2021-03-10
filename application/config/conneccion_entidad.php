@@ -6,12 +6,14 @@ class CONECCION_ENTIDAD{
 
         if(md5($_SERVER['SERVER_NAME'])=='068234a2d85a5233fd17f6d0507d3454'){
 
+            $Server = json_decode( file_get_contents( DOL_DOCUMENT.'/application/config/privileges.json') , true );
+
             #REMOTO
             $conexion = null;
             $host     = 'localhost'; #ip o nombre del servidor remoto o local
-            $database = 'adminnub_sch_dental_entity_login'; //SE ENCUENTRA TODAS LAS ENTIDADES REGISTRADAS
-            $username = 'adminnub_entidad_dental'; //Usuario de la Base de datos todos los privilegios
-            $password = '740631f8cd06c9b56f1190b29db9ec54'; #PASSWIRD #PASSWORD SERVIDOR REMOTO ==> Pablo_1997
+            $database = $Server->database; //SE ENCUENTRA TODAS LAS ENTIDADES REGISTRADAS
+            $username = $Server->usuario_server; //Usuario de la Base de datos todos los privilegios
+            $password = $Server->password_server; #PASSWIRD #PASSWORD SERVIDOR REMOTO ==> Pcgyhvhvbhghbhughhjkhuiuhn111568908740326m1cxv54xf4n1xv52b1n
             $utf8mb4  = 'utf8mb4';
 
         }else{

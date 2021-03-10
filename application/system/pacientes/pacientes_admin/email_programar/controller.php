@@ -310,7 +310,7 @@
         $mail->setFrom($conf->service_Email, "Clínica Dental ". $conf->EMPRESA->INFORMACION->nombre);
         $mail->addAddress($to);
 
-        $mail->Body = "<h3>".($asunto)."</h3> <br> <p>".($message)."</p>";
+        $mail->Body = "<h3>".($asunto)."</h3> <br> <p style='white-space: pre-wrap'>".($message)."</p>";
 
         if(count($FileNames)>0){
             foreach ($FileNames as $k => $value){
@@ -457,6 +457,7 @@
         return $err;
 
     }
+
 
 
 ?>

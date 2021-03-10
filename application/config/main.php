@@ -1,7 +1,7 @@
 <?php
 
 
-    global   $db, $conf, $user , $permisos, $dateZoneCurrent, $Server, $messErr;
+    global   $db, $conf, $user , $permisos, $dateZoneCurrent,  $messErr;
 
     /** Coneccion a la entidad de la empresa o clinica x login*/
     require_once  DOL_DOCUMENT .'/application/config/conneccion_entidad.php';
