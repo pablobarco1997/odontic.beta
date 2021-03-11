@@ -5,11 +5,6 @@ require_once '../../application/config/lib.global.php';
 require_once DOL_DOCUMENT.'/application/config/conneccion_entidad.php';
 require_once DOL_DOCUMENT.'/admin_entidades_dentales/class/create_clinica.class.php';
 
-global $dbEntidad;
-
-$cnnEntidada = new CONECCION_ENTIDAD();
-$dbEntidad   = $cnnEntidada::CONNECT_ENTITY();
-
 if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 {
     $accion = GETPOST('accion');

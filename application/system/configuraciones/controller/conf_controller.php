@@ -1787,7 +1787,7 @@ function UpdateOdontologos($nombre, $apellido, $celular, $telefo_conve, $email, 
 function GenerarUsuarioGlob($datos = array(), $subaccion)
 {
 
-    global  $conf, $user;
+    global  $conf, $user, $dbConectar;
 
     $error = '';
     $nombreUsuario      = $datos["nombre"];
@@ -1816,13 +1816,13 @@ function GenerarUsuarioGlob($datos = array(), $subaccion)
     $Entidad_Login = new CONECCION_ENTIDAD(); //OBTENGO LAS FUNCIONES DE LA FUNCION PRINCIPAL
 
     if($subaccion == "nuevo") {
-        $error = $Entidad_Login::LOGIN_USUARIO_ENTITY("nuevo", $object);
+        $error = $Entidad_Login::LOGIN_USUARIO_ENTITY("nuevo", $object, $dbConectar);
     }
 
     if($subaccion=="modificar") {
 
         $object->idEntityusers = $datos['idEntityusers']; //id usuario entity clinica
-        $error = $Entidad_Login::LOGIN_USUARIO_ENTITY("modificar", $object);
+        $error = $Entidad_Login::LOGIN_USUARIO_ENTITY("modificar", $object, $dbConectar);
     }
 
     #print_r($object); die();

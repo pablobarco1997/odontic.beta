@@ -1,7 +1,7 @@
 <?php
 
 
-    global   $db, $conf, $user , $permisos, $dateZoneCurrent,  $messErr;
+    global   $db, $conf, $user , $permisos, $dateZoneCurrent,  $messErr, $dbConectar;
 
     /** Coneccion a la entidad de la empresa o clinica x login*/
     require_once  DOL_DOCUMENT .'/application/config/conneccion_entidad.php';
@@ -15,6 +15,10 @@
     /** Informacion del servidor - priviligios o credenciales del servidor - REMOTO or LOCAL */
     #INFORMACION JSON PRIVILEGIOS SERVER
     $Server = json_decode( file_get_contents( DOL_DOCUMENT.'/application/config/privileges.json') , true );
+
+
+    $coneccion  = new CONECCION_ENTIDAD();
+    $dbConectar = $coneccion::CONNECT_ENTITY();
 
     /**
      * Conccion a la empresa asociada al usuario logeado
@@ -58,7 +62,7 @@
         "ID_ENTIDAD"    => $_SESSION["id_Entidad"],
         "ENTIDAD"       => $conf->Entidad,
         "SCHEMA"        => $conf->db_schema,
-        "INFORMACION"   => $entity::INFORMACION_EMPRESA_GLOB($_SESSION["id_Entidad"]) #INFORMACION DE LA ENTIDAD GLOB
+        "INFORMACION"   => $entity::INFORMACION_EMPRESA_GLOB($_SESSION["id_Entidad"], $dbConectar) #INFORMACION DE LA ENTIDAD GLOB
     );
 
     $conf->ObtnerNoficaciones($db, false);

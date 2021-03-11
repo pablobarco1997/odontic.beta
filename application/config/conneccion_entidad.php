@@ -68,14 +68,11 @@ class CONECCION_ENTIDAD{
         return $error;
     }
 
-    public static function LOGIN_USUARIO_ENTITY($status, $object )
+    public static function LOGIN_USUARIO_ENTITY($status, $object, $cn )
     {
         global $conf;
 
         $error = 0;
-
-        $cn = new CONECCION_ENTIDAD();
-
         $sql = "";
 
         if($status=="nuevo")
@@ -97,7 +94,7 @@ class CONECCION_ENTIDAD{
             $sql .= " '".$USERS_ENTITY."' ,";
             $sql .= " '".$object->pass."' "; #base 64 password abc
             $sql .= ")";
-            $resp = $cn::CONNECT_ENTITY()->query($sql);
+            $resp = $cn->query($sql);
 
             if($resp){
                 $error = 1;
@@ -117,7 +114,7 @@ class CONECCION_ENTIDAD{
             $sql .= "    WHERE fk_entidad = '".$conf->EMPRESA->ID_ENTIDAD."' and rowid != 0 and entity = '".$conf->EMPRESA->ENTIDAD."' and fk_entidad = ".$conf->EMPRESA->ID_ENTIDAD." ";
             $sql .= " and login_idusers_entity = '".$USERS_ENTITY."'  ";
 
-            $rs  = $cn::CONNECT_ENTITY()->query($sql);
+            $rs  = $cn->query($sql);
             if($rs){
                 $error = 1;
             }else{
@@ -128,11 +125,9 @@ class CONECCION_ENTIDAD{
         return $error;
     }
 
-    public static function INFORMACION_EMPRESA_GLOB($idEntidad)
+    public static function INFORMACION_EMPRESA_GLOB($idEntidad, $cn)
     {
         $datos = array();
-        $coneccion = new CONECCION_ENTIDAD();
-        $cn = $coneccion::CONNECT_ENTITY();
 
         $sql = "SELECT * FROM tab_entidades_dental WHERE rowid = $idEntidad";
         $result = $cn->query($sql);
