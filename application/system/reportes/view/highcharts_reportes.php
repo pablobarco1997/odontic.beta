@@ -206,9 +206,7 @@
             language:'es'
         });
 
-
         $("#report_anual").val(<?= $Year ?>).trigger("change");
-        loadcharRecaudacionesPagosRecibidos();
 
     });
 

@@ -96,7 +96,7 @@ $('#buscarPaciente').on('click', function() {
 
 $("#startDate").on("change", function() {
 
-    cargarRecursosInfo();
+    // cargarRecursosInfo();
 
     var textDate = $("#labelSpanishSatrDtae");
     var arrDate  = ($("#startDate").val()).split("-");
@@ -122,6 +122,7 @@ $("#reportes_pacientes_anulados").click(function() {
     );
 
     $('#pacientes_registrados_').modal('show');
+
     $('#reporte_pacientes_registrados').DataTable({
         "processing": true,
         "serverSide": true,
@@ -215,14 +216,7 @@ $(window).on("load", function() {
         $(this).parent().find('input').click();
     });
 
-
-    // cargarRecursosInfo();
-
-    // setTimeout(()=>{
-    //     $('#startDate').data('daterangepicker').setStartDate(YearDinamic+'/01/01');
-    //     $('#startDate').data('daterangepicker').setEndDate(YearDinamic+'/12/31');}
-    // ,1500);
-
+    $("#startDate").trigger('change');
     boxloading($boxHomeInicio ,true, 1500);
 
 });
