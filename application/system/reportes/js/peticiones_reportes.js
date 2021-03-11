@@ -96,7 +96,7 @@ $('#buscarPaciente').on('click', function() {
 
 $("#startDate").on("change", function() {
 
-    // cargarRecursosInfo();
+    cargarRecursosInfo();
 
     var textDate = $("#labelSpanishSatrDtae");
     var arrDate  = ($("#startDate").val()).split("-");
