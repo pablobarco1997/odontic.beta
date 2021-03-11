@@ -27,7 +27,7 @@ class CONECCION_ENTIDAD{
 
         try{
 
-            $conexion = new PDO("mysql:host=$host;dbname=$database;charset=$utf8mb4",$username, $password );
+            $conexion = new PDO("mysql:host=$host;port=3306;dbname=$database;charset=$utf8mb4",$username, $password );
 
         }catch (PDOException $e){
 
@@ -52,15 +52,11 @@ class CONECCION_ENTIDAD{
         $sql .= " telefono = '$telefono' ,";
         $sql .= " celular  = '$celular' ,";
         $sql .= " email    = '$email' ,";
-
         $sql .= " conf_email    = '$conf_email' ,";
         $sql .= " conf_password    = '$conf_password' ,";
-
-        if($logo != "")
-        {
+        if($logo != "") {
             $sql .= " logo     = '$logo' , ";
         }
-
         $sql .= " pais = '$pais', ciudad = '$ciudad'";
         $sql .= " where rowid = $id ";
 
@@ -135,15 +131,14 @@ class CONECCION_ENTIDAD{
     public static function INFORMACION_EMPRESA_GLOB($idEntidad)
     {
         $datos = array();
-        $cn = new CONECCION_ENTIDAD();
+        $coneccion = new CONECCION_ENTIDAD();
+        $cn = $coneccion::CONNECT_ENTITY();
 
         $sql = "SELECT * FROM tab_entidades_dental WHERE rowid = $idEntidad";
-        $result = $cn::CONNECT_ENTITY()->query($sql);
+        $result = $cn->query($sql);
 
-        if($result->rowCount()>0)
-        {
-            while ($Obj = $result->fetchObject())
-            {
+        if($result->rowCount()>0) {
+            while ($Obj = $result->fetchObject()) {
                 $datos = $Obj;
             }
         }

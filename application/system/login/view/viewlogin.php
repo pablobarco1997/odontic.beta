@@ -66,39 +66,48 @@
         var usu  =  $('#usu').val();
         var pass = $('#pass').val();
 
+        $("#btn_logearse").attr("value", "Redirigiendo...");
+
         var param = {
             'accion': 'logearse',
             'ajaxSend':'ajaxSend',
             'usua': usu,
             'pass': pass,
         };
-        $.ajax({
-            url: "<?php echo DOL_HTTP .'/application/system/login/controller/controller_login.php'?>",
-            type:'POST',
-            data: param,
-            dataType:'json',
-            async:false,
-            success:function(resp)
-            {
-                if(resp.error == "SesionIniciada")
+
+        setTimeout(function () {
+            $.ajax({
+                url: "<?php echo DOL_HTTP .'/application/system/login/controller/controller_login.php'?>",
+                type:'POST',
+                data: param,
+                dataType:'json',
+                async:false,
+                complete:function(xhr, status){
+
+                    $("#btn_logearse").attr("value","LOGIN")
+                },
+                success:function(resp)
                 {
-                    location.href = "<?php echo DOL_HTTP.'/index.php?view=inicio' ?>";
+                    if(resp.error == "SesionIniciada")
+                    {
+                        location.href = "<?php echo DOL_HTTP.'/index.php?view=inicio' ?>";
 
-                }else{
-
-                    if(resp['msg_err']!=''){
-                        Swal.fire('Información' , resp['msg_err'], 'question');
                     }else{
-                        var text = " <i class='fa fa-fw fa-user'></i> Usuario: " + $('#usu').val() + " <br> " +
-                            "<b>" +
-                            "   <small> usuario no encontrado <br> <span class=''> compruebe la información antes de iniciar <i class='fa fa-fw fa-times-circle'></i> </span> </small>" +
-                            "</b>";
-                        Swal.fire('Error' , text, 'error');
+
+                        if(resp['msg_err']!=''){
+                            Swal.fire('Información' , resp['msg_err'], 'question');
+                        }else{
+                            var text = " <i class='fa fa-fw fa-user'></i> Usuario: " + $('#usu').val() + " <br> " +
+                                "<b>" +
+                                "   <small> usuario no encontrado <br> <span class=''> compruebe la información antes de iniciar <i class='fa fa-fw fa-times-circle'></i> </span> </small>" +
+                                "</b>";
+                            Swal.fire('Error' , text, 'error');
+                        }
                     }
                 }
-            }
 
-        });
+            });
+        },1000);
     }
 
     $('#btn_logearse').on('click', function() {

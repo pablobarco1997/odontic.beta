@@ -105,3 +105,5 @@
         <?php require_once DOL_DOCUMENT.'/application/system/reportes/view/highcharts_reportes.php'?>
     </div>
 </div>
+
+<script src="<?= DOL_HTTP ?>/application/system/reportes/js/peticiones_reportes.js"></script>
