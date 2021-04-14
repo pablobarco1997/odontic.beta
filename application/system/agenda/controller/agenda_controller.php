@@ -831,9 +831,10 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
 
 
             #numero o codigo de cita
+            $src = "data: image/png; base64, ".base64_encode(file_get_contents(DOL_HTTP.'/logos_icon/logo_default/cita-medica.ico'));
             $numeroCita = "<table>
                                 <tr>
-                                    <td> <img  src='". DOL_HTTP. "/logos_icon/logo_default/cita-medica.ico' class='img-rounded' style='width: 25px; height: 25px' >  - </td>
+                                    <td> <img  src='".$src."' class='img-rounded' style='width: 25px; height: 25px' >  - </td>
                                     <td> ".(str_pad($acced->id_cita_det, 5, "0", STR_PAD_LEFT))." </td>
                                 </tr>
                            </table>";
@@ -864,10 +865,10 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
 
             $html2 .= "<div class='col-xs-10 col-md-10 '> <i class='fa fa-user'></i> $acced->paciente </div>";
                 $html2 .= "
-                        <div class='col-xs-2 col-md-2 no-padding pull-right '>
-                            <div class='dropdown pull-right'>
+                        <div class='col-xs-2 col-md-2 no-padding pull-right ' style='position: relative'>
+                            <div class='dropdown pull-right' >
                                 <button class='btn btnhover  btn-xs dropdown-toggle' type='button' data-toggle='dropdown' style='height: 100%'> <i class='fa fa-ellipsis-v'></i> </button>
-                                <ul class='dropdown-menu'>";
+                                <ul class='dropdown-menu' style='z-index: +2000'>";
 
                                 $tienePlanTratamiento = "";
                                 $tieneComentarioadicional = "";
@@ -902,7 +903,7 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
             if(!empty($acced->comentario))
             {
 
-                $html4 .= '<span class="text-sm text-justify" title="' .$acced->comentario. '">  
+                $html4 .= '<span class="text-sm text-justify "    title="' .$acced->comentario. '">  
                                 <i class="fa fa-x3 fa-comment" style="cursor: pointer" ></i> '. $acced->comentario .'
                             </span> <br>';
 
@@ -946,10 +947,10 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
                         </div>";
 
             $html3 .= "<div class='col-xs-12 col-ms-2 col-md-2 no-padding no-margin'>
-                            <div class='dropdown pull-right'>";
+                            <div class='dropdown pull-right' >";
 //            onclick='menuDropdownCita($(this), 0)'
                 $html3 .= "    <button class='btn btnhover  dropdown-toggle btn-xs ' id='estadoDropw' type='button' data-toggle='dropdown' style='height: 100%'> <i class='fa fa-ellipsis-v'></i> </button>";
-                        $html3 .= " <ul class='dropdown-menu pull-right'>";
+                        $html3 .= " <ul class='dropdown-menu pull-right' style='position: absolute!important;'>";
 
                         $sqlMenuDrowpdown = "SELECT rowid,text,comment,system,color FROM tab_pacientes_estado_citas";
                         $rsdrown = $db->query($sqlMenuDrowpdown);

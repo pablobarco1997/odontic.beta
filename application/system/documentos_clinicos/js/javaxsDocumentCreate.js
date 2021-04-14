@@ -150,7 +150,7 @@ $("#namebtnFormClinico").on("click", function() {
  * lo show de nuevo*/
 $("#addNameDocumento").on("hidden.bs.modal", function() {
     if($nameDocumentClinico==""){
-        notificacion("Debe Ingresar un nombre al Formulario Clinico", "question");
+        // notificacion("Debe Ingresar un nombre al Formulario Clinico", "question");
         setTimeout(()=>{ $("#addNameDocumento").modal("show"); }, 1000)
     }
 });
@@ -440,7 +440,6 @@ function EmpityListDesplegable(){
 $(document).ready(function() {
 
     if($nameDocumentClinico == ""){
-        notificacion("Debe Ingresar un nombre al Formulario Clinico", "question");
         $("#addNameDocumento").modal("show");
     }
 
@@ -451,4 +450,6 @@ window.onload =  boxloading($boxContentDocumento,true);
 $(window).on("load", function() {
     boxloading($boxContentDocumento,false, 1000);
     $idFormDocument           = $("#ContentForm").find("form").attr("id");
+
+    notificacion("Debe Ingresar un nombre al Formulario Clinico", "question");
 });

@@ -35,13 +35,6 @@
          </table>
      </div>
 
-     <div class="form-group col-md-6 col-xs-12">
-         <ul class="list-inline pull-right">
-             <li><p class="text-center labeltextBono " style="font-size: 1.5em; font-weight: bold; text-shadow: 1px 1px 0.2rem #00a157;"> Saldo Deudor </p></li>
-             <li><p class="text-center labeltextBono " style="font-size: 1.5em; font-weight: bold; text-shadow: 1px 1px 0.2rem #00a157;"> <i class="fa fa-dollar"></i> <span id="saldoPagado" class="text-center"> 0.00 </span> </p></li>
-         </ul>
-     </div>
-
 <!--    DETALLES -->
     <div class="form-group col-xs-12 col-md-12">
 

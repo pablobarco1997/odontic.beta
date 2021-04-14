@@ -310,7 +310,8 @@ if($accion == 'dentist')
 
         //Modificar
         $('#accion').attr('data-id', id).attr('data-subaccodontol','modificar');
-        $('#accion').text( 'Modificar' );
+        $('#accion').text('MODIFICAR');
+
         $.ajax({
             url: $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php',
             type:'POST',
@@ -346,12 +347,12 @@ if($accion == 'dentist')
                 especialidad.val( datos.fk_especialidad ).trigger('change');
 
                 if(datos.icon != '' && datos.icon != null){
-                    img.attr('src',  $DOCUMENTO_URL_HTTP + '/logos_icon/' + $DIRECTORIO + '/' + datos.icon );
+                    // img.attr('src',  $DOCUMENTO_URL_HTTP + '/logos_icon/' + $DIRECTORIO + '/' + datos.icon );
                     validimg.val("TieneImagen");
                 }
 
                 if( datos.icon == null || datos.icon == ""){
-                    img.attr('src',  $DOCUMENTO_URL_HTTP + '/logos_icon/logo_default/doct-icon.ico' );
+                    // img.attr('src',  $DOCUMENTO_URL_HTTP + '/logos_icon/logo_default/doct-icon.ico' );
                     validimg.val("NoTieneImagen");
                 }
 
@@ -400,7 +401,7 @@ if($accion == 'dentist')
 
         //Odontologos
         $('#accion').attr('data-id', 0).attr('data-subaccodontol', 'nuevo');
-        $('#accion').text( 'Nuevo' );
+        $('#accion').text('NUEVO');
 
         $('#nombre_doct').val(null);
         $('#apellido_doct').val(null);
@@ -411,7 +412,7 @@ if($accion == 'dentist')
         $('#ciudad_doct').val(null);
         $('#rucedula_doct').val(null).attr("data-idcedula","");
         $('#especialidad_doct').val(0).trigger('change');
-        $('#icon_usuario_doct').attr('src',  $DOCUMENTO_URL_HTTP + '/logos_icon/logo_default/doct-icon.ico' );
+        // $('#icon_usuario_doct').attr('src',  $DOCUMENTO_URL_HTTP + '/logos_icon/logo_default/doct-icon.ico' );
         $('#valid_ico').val("NoTieneImagen");
         FormValidationOdontolotoMod();
 
@@ -435,7 +436,8 @@ if($accion == 'dentist')
             $("#valid_ico").val("NoTieneImagen");
 
 
-        SubirImagenes( this , $('#icon_usuario_doct') , $DOCUMENTO_URL_HTTP + '/logos_icon/logo_default/doct-icon.ico');
+        // SubirImagenes( this , $('#icon_usuario_doct') , $DOCUMENTO_URL_HTTP + '/logos_icon/logo_default/doct-icon.ico');
+
     });
 
 

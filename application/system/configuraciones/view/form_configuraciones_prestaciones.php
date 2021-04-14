@@ -261,10 +261,10 @@
                            <table class="table table-striped" id="listprestacionestable" width="100%">
                                <thead>
                                     <tr>
-                                        <th WIDTH="5%">Fecha creación</th>
+                                        <th WIDTH="5%">Emitido</th>
                                         <th WIDTH="35%">Descripción</th>
                                         <th WIDTH="15%">Categoría</th>
-                                        <th WIDTH="10%">Costo de Paciente $</th>
+                                        <th WIDTH="10%">Costo $</th>
                                         <th width="5%">Acciones</th>
                                     </tr>
                                </thead>

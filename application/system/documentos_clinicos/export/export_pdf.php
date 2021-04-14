@@ -20,6 +20,23 @@ $db             = $cn::conectarEmpresa($_SESSION['db_name']); //coneccion de la 
 $iddoc          = GETPOST("idform");
 $document_blank = GETPOST("docblank");
 
+$DirectorioImgClinicaHttp = DOL_HTTP.'/logos_icon/icon_logos_'.$_SESSION['entidad'];
+
+if(isset($_SESSION['logoClinica']))
+{
+    if($_SESSION['logoClinica']!="" && !file_exists($DirectorioImgClinicaHttp)){
+        $iconClinica = $DirectorioImgClinicaHttp.'/'.$_SESSION['logoClinica'];
+    }else{
+        $iconClinica = DOL_HTTP.'/logos_icon/logo_default/none-icon-20.jpg';
+    }
+}else{
+    $iconClinica = DOL_HTTP.'/logos_icon/logo_default/none-icon-20.jpg';
+}
+
+$ImagenLogoClinica = "<img src='".$iconClinica."' style='width:40px; height: 40px; border-radius: 100%;' >";
+
+//print_r(DOL_HTTP); die();
+
 $pdf .= '<style>
             .tables {
                 border-collapse: collapse;
@@ -90,9 +107,12 @@ $footer = '<!--<hr style="margin-bottom: 2px"><table width="100%" style="font-si
 
 
 $header = ' 
-    <table width="100%" style="vertical-align: bottom; font-family: Arial; font-size: 9pt; color: black;">
+    <table width="100%" style="vertical-align: bottom;  font-size: 10pt; color: black;">
         <tr>
-          <td width="100%" align="left"><span style="font-size:28pt;">'.$InformacionEntity->nombre.'</span></td>
+             <td width="100%" align="left"><span style="font-size:28pt;">'.$InformacionEntity->nombre.'</span></td>
+        </tr>
+        <tr>
+            <td WIDTH="33%">'.$ImagenLogoClinica.'</td>
         </tr>
         <tr>
             <td width="33%">'.$InformacionEntity->direccion.' <span style="font-size:10pt;"></span></td>
@@ -100,17 +120,20 @@ $header = '
         </tr>
         <tr>
             <td width="33%">'.$InformacionEntity->email.'<span style="font-size:10pt;"></span></td>
-            <td width="33%" style="text-align: right;">Fecha: <span style="font-weight: bold;">{DATE j/m/Y}</span></td>
+            <td width="33%" style="text-align: right;">Fecha de Impresión: <span style="font-weight: bold;">'.date("Y/m/d").'</span></td>
         </tr>
-    </table>
+    </table> 
     ';
 
 
-$mpdf=new mPDF('c','LETTER','11px','Calibri',
+ob_end_clean();
+
+
+$mpdf=new mPDF('c','LETTER','12px','',
     12, //left
     12, // right
-    23, //top
-    18, //bottom
+    40, //top
+    10, //bottom
     3, //header top
     3 //footer botoom
 );

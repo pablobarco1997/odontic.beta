@@ -79,7 +79,7 @@
 </script>
 
 
-<div class="form-group col-md-12 col-xs-12" style="margin-bottom: 150px">
+<div class="form-group col-md-12 col-xs-12" >
 
 
     <?php

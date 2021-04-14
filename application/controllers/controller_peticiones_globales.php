@@ -28,10 +28,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $name_fichero    = "";
             $link            = false;
 
-            if(isset($_FILES["logo"]))
-            {
+            if(isset($_FILES["logo"])) {
                 $logo = $_FILES["logo"];
-
                 switch ($logo["type"])
                 {
                     case "image/jpeg":
@@ -45,8 +43,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                 $tmp_name          =  $logo["tmp_name"];
                 $name_fichero = "entidad_logo_".$conf->EMPRESA->ID_ENTIDAD."_".$conf->EMPRESA->ENTIDAD."".$type;
-                $link = UploadFicherosLogosEntidadGlob($name_fichero,$type,$tmp_name);
-
+                $link = UploadFicherosLogosEntidadGlob($name_fichero,$type,$tmp_name, '', true);
             }
 
             $clinica      = GETPOST("nombre");
@@ -65,8 +62,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $UpdateEntidad = new CONECCION_ENTIDAD();
 
             #SE ACTUALIZA LA ENTIDAD DE LA EMPRESA
-            $rs = $UpdateEntidad
-                ::UPDATE_ENTIDAD(
+            $rs = $UpdateEntidad::UPDATE_ENTIDAD(
                         $clinica,
                         $direccion,
                         $telefono,
@@ -80,13 +76,18 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         $conf_password
                 );
 
-            if($rs == 0) //No se Update
-            {
-                if($link != false) //Si el link me retorna un false entonces se envia
-                {
+            //No se Update
+            if($rs==0) {//Si el link me retorna un false entonces se envia
+                if($link == false) {
+                    $rs=-1;
                     unlink($link);
                 }
+            }else{
+                $_SESSION['nombreClinica']    = $clinica;
+                $_SESSION['direccionClinica'] = $direccion;
+                $_SESSION['emailClinica']     = $conf_email;
             }
+
 
             $output = [
                 'error' => $rs,
@@ -446,7 +447,7 @@ function info_noti( $data = array() )
         if( $v->tipo_notificacion == 'NOTIFICAIONES_CITAS_PACIENTES' )
         {
 
-
+            $ico = "data: image/*; base64, ".base64_encode(file_get_contents(DOL_HTTP."/logos_icon/logo_default/cita-medica.ico"));
             $hora_desde_A = substr($v->horaIni, 0, 5 ) ." A " . substr($v->horafin, 0, 5 ); //Corto
 
             $HTML_CITAS_PACIENTES = "
@@ -455,7 +456,7 @@ function info_noti( $data = array() )
                     <div class='form-group col-md-12 col-xs-12 no-margin no-padding'>
                         
                         <div class='media' style='border-top: 1px solid #f4f4f4; padding:10px 10px'>
-                            <a class='pull-left'> <img src='".DOL_HTTP."/logos_icon/logo_default/cita-medica.ico' class='img-rounded img-md' alt=''> </a>
+                            <a class='pull-left'> <img src='".$ico."' class='img-rounded img-md' alt=''> </a>
                             <div class='media-body'>
                             
                                 <div class='text-justify' style='font-size: 1.2rem; ' >
@@ -488,10 +489,10 @@ function info_noti( $data = array() )
         {
             $icon2 = "";
             if(!empty($v->icon_paciente) && file_exists(DOL_DOCUMENT."/logos_icon/".$conf->NAME_DIRECTORIO."/".$v->icon_paciente)){
-                $icon2 = DOL_HTTP."/logos_icon/".$conf->NAME_DIRECTORIO."/".$v->icon_paciente;
+                $icon2 = "data: image/*; base64, ".base64_encode(file_get_contents(DOL_HTTP."/logos_icon/".$conf->NAME_DIRECTORIO."/".$v->icon_paciente));
             }
             else{
-                $icon2 = DOL_HTTP."/logos_icon/logo_default/avatar-user.png";
+                $icon2 = "data: image/*; base64, ".base64_encode(file_get_contents(DOL_HTTP."/logos_icon/logo_default/avatar-user.png"));
             }
 
             $HTML_NOTIFICACION_X_PACIENTES_EMAIL = "
@@ -503,7 +504,10 @@ function info_noti( $data = array() )
                                     <div class='text-justify' style='font-size: 1.2rem;'>
                                         <b>Paciente: </b> &nbsp;&nbsp;   <span title='$v->paciente'>$v->paciente</span> <br>
                                         <b>Comentario: </b> &nbsp;&nbsp;   <span title='$v->accion'>$v->accion <i class=\"fa fa-bell\"></i>  </span> <br>
-                                        <b>Estado Confirmado: </b> &nbsp;&nbsp;   <span title='$v->estado_confirmado' > <span style='font-weight: bold; color: blue'>$v->estado_confirmado</span> <i class=\"fa fa-bell\"></i>  </span> <br>
+                                        <b>Estado Confirmado: </b> &nbsp;&nbsp;   <span title='$v->estado_confirmado' > 
+                                        <span style='font-weight: bold; color: blue'>
+                                                <small>$v->estado_confirmado</small> </span>
+                                        </span>   <br>
                                         <button class='btn-sm btn btn-block btnhover'  onclick='to_accept_noti_confirmpacient($v->id)' style='font-weight: bolder; color: green'>ACEPTAR</button> 
                                     </div>
                                 </div>

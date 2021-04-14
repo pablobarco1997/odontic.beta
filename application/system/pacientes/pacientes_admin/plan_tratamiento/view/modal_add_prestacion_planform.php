@@ -14,8 +14,6 @@
         $prestacion .= '</optgroup>';
     }
 
-//    echo '<pre>'; print_r($objectServicios);die();
-
 ?>
 
 <style>
@@ -77,7 +75,7 @@
                 <hr style="margin: 5px; background-color: #e2e2e2">
                 <div class="row">
 
-                    <div class="form-group col-md-4 col-xs-12">
+                    <div class="form-group col-md-7 col-xs-12">
                         <div class="box_prestaciones">
                             <label for="prestacion_planform">Todas las prestaciones</label>
                             <select id="prestacion_planform" class="form-control " style="width: 100%">

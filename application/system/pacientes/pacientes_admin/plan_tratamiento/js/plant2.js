@@ -2,9 +2,17 @@
 
 //CUANDO LA PLANFORM - formulario asociar plan de tratamiento una prestaciones o varias
 
-
 if($accion == 'addplan')
 {
+
+    $arr_caras = [
+        'vestibular',
+        'distal',
+        'palatino',
+        'mesial',
+        'lingual',
+        'oclusal'
+    ];
 
     //FORM DETALLE MUESTRA TODOS LOS DETALLES CON SUS ESTADO DE LAS PRESTACIONES GURADAS
     function fetch_plantratamiento(subaccion)
@@ -262,10 +270,8 @@ if($accion == 'addplan')
             dataType:'json',
             async: false,
             success: function(resp) {
-
                 dataPrest = resp;
             }
-
         });
 
         return dataPrest;
@@ -289,105 +295,43 @@ if($accion == 'addplan')
             $('#detalle-prestacionesPlantram tr').remove();
         }
 
-        //OBTENGO TODOS LAS PIEZAS Y CARAS SELECCIONADAS
-        var objPiezas =  fetchPiezasCaras(null);
-        var dientes   = objPiezas.piezas;
-        console.log(objectPresst);
+        //Obtengo todas las piezas seleciondas Activas
+        var objPiezas =  ArrayPeizas();
 
         var htmlpress = "";
-
-        //CALCULO DE PRESTACIONES  -------------------
+        //Calculo de la Prestacion
         var total = 0;
         total = (parseFloat(objectPresst.valor) - (( parseFloat(objectPresst.valor) * parseFloat(objectPresst.convenio_valor) ) / 100)).toFixed(2) ;
 
         //ciclo por diente seleccionados
-        if( dientes.length > 0){
-
+        if( objPiezas.length > 0){
             var io = 0;
-            while(io < dientes.length)
-            {
-
-                var detalleDiente = dientes[io];
-
-                // se valida el diente y la prestacion
-                if( invalicErrorPrestacionDiente(idprestacion, detalleDiente.diente, 'diente') == 0 )
-                {
-
-                    $formatoIndexPrestacion++;
-
-                    //obtengo solo las caras de las piezas seleccionadas
-                    var pieza = fetchPiezasCaras(detalleDiente.diente).piezas[0].caras;
-
-                    htmlpress += "" +
-                        "<tr  data-idprestacion='" + idprestacion + "'  data-iddiente='" + detalleDiente.diente + "' name='detalleRow["+$formatoIndexPrestacion+"].detalle' class='detallePrincipalPrestacion' data-caras='"+JSON.stringify(pieza)+"' >" +
-
-                        "<td> <a class='btn btn-xs text-bold btnhover' style='cursor:pointer;color: #9f191f' id='del-row' onclick='delete_row($(this))'> <i class='fa fa-trash'></i> Eliminar </a> </td>" +
-
-                        //PRESTACION
-                        "<td name='Prestacion[" + $formatoIndexPrestacion + "].detalle' class='prestacion' data-idprestacion='" + idprestacion + "'  data-iddiente='" + detalleDiente.diente + "'>" +
-                            "<p style='margin: 0px'>" + objectPresst.descripcion + "</p>" +
-                            "<small title='Diente: " + detalleDiente.diente + "'>Diente: &nbsp; " + detalleDiente.diente + " <img src='" + $DOCUMENTO_URL_HTTP + "/logos_icon/logo_default/diente.png' width='15px' height='15px' > </small>" +
-                        "</td>" +
-
-                        //subtotal
-                        "<td name='subtotalPresst[" + $formatoIndexPrestacion + "].detalle' class='subtotal' >" + objectPresst.valor + "</td>" +
-
-                        //desc de prestacion
-                        "<td name='convenioPresst["+$formatoIndexPrestacion+"].detalle' class='convenioSubtotal'>"+ objectPresst.convenio_valor +"</td>" +
-
-                        //cantidad
-                        "<td> <input name='cantPresst["+$formatoIndexPrestacion+"].detalle' type='number' class='cantidadPrest input-sm' style='width: 150px;' value='1'> </td> "+
-
-                        //desc adicional
-                        "<td> <input name='descAdicional["+$formatoIndexPrestacion+"].detalle' type='text' class='adicional input-sm' style='width: 150px;'> </td>" +
-
-                        //total
-                        "<td name='totalPrestacion["+$formatoIndexPrestacion+"].detalle' class='totalprestacion'>"+ total +"</td>" +
-
-                        "</tr>";
-
-
-                }
-
-
-                io++;
-            }
-
-        }else{
-
-            //Se Ingresa Solo las Prestacion   -----------------------------------------------------------------------------
-
-            if( invalicErrorPrestacionDiente(idprestacion, 0, 'prestacion') == 0 )
-            {
+            while(io < objPiezas.length) {
+                // if( invalicErrorPrestacionDiente(idprestacion, detalleDiente.diente, 'diente') == 0 ) { }
+                var detalleDiente = objPiezas[io];
                 $formatoIndexPrestacion++;
+                //obtengo solo las caras de las piezas seleccionadas
 
                 htmlpress += "" +
-                    "<tr data-idprestacion='"+idprestacion+"' name='detalleRow["+$formatoIndexPrestacion+"].detalle' data-iddiente='0' class='detallePrincipalPrestacion' data-caras='{\"vestibular\":false,\"distal\":false,\"palatino\":false,\"oclusal\":false,\"mesial\":false,\"lingual\":false}'>" +
-
-                    "<td> <a class='btn btn-xs text-bold btnhover' style='cursor:pointer;color: #9f191f' id='del-row' onclick='delete_row($(this))' > <i class='fa fa-trash'></i> Eliminar </a> </td>" +
-
-                    //PRESTACION
-                    "<td name='Prestacion["+$formatoIndexPrestacion+"].detalle' class='prestacion' data-idprestacion='"+idprestacion+"'  data-iddiente='0'>" +
-                    "<p style='margin: 0px'>"+objectPresst.descripcion+"</p>" +
-                    "</td>" +
-
-                    //subtotal
-                    "<td name='subtotalPresst[" + $formatoIndexPrestacion + "].detalle' class='subtotal' >" + objectPresst.valor + "</td>" +
-                    //desc de prestacion
-                    "<td name='convenioPresst["+$formatoIndexPrestacion+"].detalle' class='convenioSubtotal' >"+ objectPresst.convenio_valor +"</td>" +
-
-                    //cantidad
-                    "<td> <input name='cantPresst["+$formatoIndexPrestacion+"].detalle' type='number' class='cantidadPrest input-sm' onkeyup='recalcularPrestacion($(this))'  style='width: 150px;' value='1'> </td> "+
-
-                    //desc adicional
-                    "<td> <input name='descAdicional["+$formatoIndexPrestacion+"].detalle' type='text' class='adicional input-sm' onkeyup='recalcularPrestacion($(this))' style='width: 150px;'> </td>" +
-
-                    //total
-                    "<td name='totalPrestacion["+$formatoIndexPrestacion+"].detalle' class='totalprestacion'>"+ total +"</td>" +
-
-
+                    "<tr  data-idprestacion='" + idprestacion + "'  data-iddiente='" + detalleDiente.pieza + "' name='detalleRow["+$formatoIndexPrestacion+"].detalle' class='detallePrincipalPrestacion' data-caras='"+JSON.stringify(detalleDiente.carasActivas)+"' >" +
+                        "<td> <a class='btn btn-xs text-bold btnhover' style='cursor:pointer;color: #9f191f' id='del-row' onclick='delete_row($(this))'> <i class='fa fa-trash'></i> Eliminar </a> </td>" +
+                        //PRESTACION
+                        "<td name='Prestacion[" + $formatoIndexPrestacion + "].detalle' class='prestacion' data-idprestacion='" + idprestacion + "'  data-iddiente='" + detalleDiente.pieza + "'>" +
+                            "<p style='margin: 0px'>" + objectPresst.descripcion + "</p>" +
+                            "<small title='Diente: " + detalleDiente.pieza + "'>Pieza: &nbsp; " + detalleDiente.pieza + " <i class='fa fa-tooth'></i> <img src='"+$iconDienteGlob+"' width='15px' height='15px' > </small>" +
+                        "</td>" +
+                        //subtotal
+                        "<td name='subtotalPresst[" + $formatoIndexPrestacion + "].detalle' class='subtotal' >" + objectPresst.valor + "</td>" +
+                        //desc de prestacion
+                        "<td name='convenioPresst["+$formatoIndexPrestacion+"].detalle' class='convenioSubtotal'>"+ objectPresst.convenio_valor +"</td>" +
+                        //cantidad
+                        "<td> <input name='cantPresst["+$formatoIndexPrestacion+"].detalle' type='number' class='cantidadPrest input-sm' style='width: 150px;' value='1'> </td> "+
+                        //desc adicional
+                        "<td> <input name='descAdicional["+$formatoIndexPrestacion+"].detalle' type='text' class='adicional input-sm' style='width: 150px;'> </td>" +
+                        //total
+                        "<td name='totalPrestacion["+$formatoIndexPrestacion+"].detalle' class='totalprestacion'>"+ total +"</td>" +
                     "</tr>";
-
+                io++;
             }
 
         }
@@ -727,7 +671,6 @@ if($accion == 'addplan')
         if( $("#prestacion_planform").find(':selected').val() != "" )
         {
             var idprestacion = $("#prestacion_planform").find(':selected').val();
-
             if(idprestacion > 0){
 
                 var objetoPrestacion = fetch_prestaciones(idprestacion);
@@ -923,11 +866,44 @@ if($accion == "principal")
 }
 
 
-//OBTENER EL ID DE UNA URL CON JQUERY         ---------------------------------------- --------------------------------
+//OBTENER EL ID DE UNA URL CON JQUERY
 function Get_jquery_URL(Getparam)
 {
     let paramsGet = new URLSearchParams(location.search);
     var idGetUrl = paramsGet.get(Getparam);
 
     return idGetUrl;
+}
+
+function ArrayPeizas(){
+    var objPieza  = [];
+    $(".PiezaActiva").each(function (i,item) {
+        objPieza.push({
+            'pieza':$(item).attr("id"),
+            'carasActivas': {
+                'vestibular': ($(item).find(".vestibularActivar").length>0)?true:false,
+                'distal':($(item).find('.distalActivar').length>0)?true:false,
+                'palatino':($(item).find('.palatinoActivar').length>0)?true:false,
+                'mesial':($(item).find('.mesialActivar').length>0)?true:false,
+                'lingual':($(item).find('.lingualActivar').length>0)?true:false,
+                'oclusal':($(item).find('.oclusalActivar').length>0)?true:false
+            }
+        });
+    });
+
+    if(objPieza.length==0){
+        objPieza.push({
+            'pieza':0,
+            'carasActivas': {
+                'vestibular': false,
+                'distal':false,
+                'palatino':false,
+                'mesial':false,
+                'lingual':false,
+                'oclusal':false
+            }
+        });
+    }
+
+    return objPieza;
 }

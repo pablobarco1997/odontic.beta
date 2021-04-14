@@ -1,6 +1,25 @@
 
+$(window).on('load', function () {
+
+    setTimeout(function () {
+        $(document)
+            .ajaxStart(function () {
+                var ElemmentoContentload = $("#tableAgenda");
+                boxTableLoad(ElemmentoContentload, true);
+            })
+            .ajaxStop(function () {
+                var ElemmentoContentload = $("#tableAgenda");
+                boxTableLoad(ElemmentoContentload, false);
+            });
+    },1500);
+
+});
+
+
 function loadtableAgenda()
 {
+     var ElemmentoContentload = $("#tableAgenda");
+
      var table = $('#tableAgenda').DataTable({
         searching: false,
         "ordering":false,
@@ -12,7 +31,7 @@ function loadtableAgenda()
         fixedHeader: true,
         paging:true,
         processing: true,
-        lengthMenu:[ 5, 10, 25, 50, 100 ],
+        lengthMenu:[ 5 ],
         "ajax":{
             "url": $DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php",
             "type":'POST',
@@ -27,6 +46,9 @@ function loadtableAgenda()
                 'search_ncita'         : $('#n_citasPacientes').val(),
             },
             "dataType":'json',
+            "complete": function(xhr, status) {
+                // boxTableLoad(ElemmentoContentload, false);
+            }
         },
         'createdRow':function(row, data, index){
 

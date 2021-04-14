@@ -13,16 +13,18 @@
 html,
 body {
   height: 100%;
+  padding: 0px !important;
 }
+
 .layout-boxed html,
 .layout-boxed body {
   height: 100%;
 }
 body {
-  font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  font-weight: 400;
+  /*font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;*/
+  font-weight: 200;
   overflow-x: hidden;
-  overflow-y: auto;
+  /*overflow-y: auto;*/
 }
 /* Layout */
 .wrapper {

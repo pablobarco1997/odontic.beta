@@ -37,7 +37,7 @@
         {
             $module = true;
             $url_breadcrumb = $_SERVER['REQUEST_URI'];
-            $titulo         = 'odontogramas';
+            $titulo         = 'odontogramas creados';
 
     ?>
 
@@ -51,7 +51,7 @@
             <label for="">LISTA DE COMPORTAMIENTOS</label>
             <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px">
                 <li>
-                    <a href="#add_odontograma" data-toggle="modal" class="btnhover btn btn-sm " style="color: #333333" id="createOdontograma"> <b> &nbsp;&nbsp; <img  src=" <?= DOL_HTTP .'/logos_icon/logo_default/diente.png';?>" width="12px" height="14px" alt="">Crear Odontograma  </b> </a>
+                    <a href="#add_odontograma" data-toggle="modal" class="btnhover btn btn-sm " style="color: #333333" id="createOdontograma"> <b> &nbsp;&nbsp; <img  src="<?= "data:image/png; base64, ". base64_encode(file_get_contents(DOL_HTTP."/logos_icon/logo_default/diente.png"))?>" width="12px" height="14px" alt=""> &nbsp; Crear Odontograma  </b> </a>
                 </li>
             </ul>
 
@@ -65,10 +65,10 @@
                 <table class="table dataTable" id="odontPLant" width="100%">
                     <thead>
                         <tr>
-                            <th WIDTH="10%">FECHA</th>
-                            <th WIDTH="20%">NÚMERO</th>
-                            <th WIDTH="30%">DESCRIPCIÓN</th>
-                            <th WIDTH="20%">PLAN DE TRATAMIENTO</th>
+                            <th WIDTH="10%">Emitido</th>
+                            <th WIDTH="20%">Secuencial</th>
+                            <th WIDTH="30%">Observación</th>
+                            <th WIDTH="20%">Plan de Tratamiento</th>
                             <th WIDTH="20%"></th>
                         </tr>
                     </thead>
@@ -83,6 +83,7 @@
 
 <!--    FORMULARIO ODONTOGRAMA-->
 
+
     <?php if($v == 'fordont')
         {
 
@@ -90,6 +91,19 @@
             $url_breadcrumb = $_SERVER['REQUEST_URI'];
             $titulo         = 'Actualizar odontograma';
     ?>
+
+        <script>
+            $(document)
+                .ajaxStart(function () {
+                    //ajax request went so show the loading image
+                    boxloading($boxContentViewAdminPaciente ,true);
+                })
+                .ajaxStop(function () {
+                    //got response so hide the loading image
+                    boxloading($boxContentViewAdminPaciente ,true,1000);
+                });
+        </script>
+
         <div class="form-group col-md-6 col-xs-12 col-lg-6 pull-left">
             <div class="col-md-12 col-xs-12 pull-left no-padding">
                 <?php echo Breadcrumbs_Mod($titulo, $url_breadcrumb, $module) ?>
@@ -116,7 +130,8 @@
                 <div class="text-center showblock" id="odontload"><b>Cargando Odontograma ...</b></div>
                 <div id="CargarOdontogramalodd" class="hiddenblock">
                     <!--Odontograma dibujo-->
-                    <?php include_once DOL_DOCUMENT .'/application/system/pacientes/pacientes_admin/odontograma_paciente/view/picture_piezas_odontograma.php'; ?>
+<!--                    --><?php //include_once DOL_DOCUMENT .'/application/system/pacientes/pacientes_admin/odontograma_paciente/view/picture_piezas_odontograma.php'; ?>
+                    <?php include_once DOL_DOCUMENT .'/application/system/pacientes/pacientes_admin/odontograma_paciente/view/view_new_odontograma2021.php'; ?>
                 </div>
             </div>
             <br>

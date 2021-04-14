@@ -593,9 +593,10 @@ if(isset($_GET['v'])){
                             <div class="form-group col-md-12 no-margin">
 
                                 <div class="form-group no-margin" >
-                                    <p class="text-center">
+                                    <h2 style="margin-top:0px ">ODONTÓLOGO</h2>
+                                    <p class="text-center hidden">
                                         <label for="icon_doct">
-                                            <img id="icon_usuario_doct"  src="<?= DOL_HTTP .'/logos_icon/logo_default/doct-icon.ico' ;?>" class="img-circle" width="100px" height="100px" alt="" style="cursor:pointer;">
+                                            <img id="icon_usuario_doct"  src="<?php /*DOL_HTTP .'/logos_icon/logo_default/doct-icon.ico'*/ ;?>" class="img-circle" width="100px" height="100px" alt="" style="cursor:pointer;">
                                             <input type="file" id="icon_doct" style="display: none">
                                         </label>
                                         <span style="display: block"> </span>

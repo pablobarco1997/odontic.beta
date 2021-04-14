@@ -82,6 +82,7 @@
 
 
         *{
+            font-size: small;
             /*@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');*/
             /*font-family: 'Varela Round', sans-serif ;*/
             /*font-size: 0.8rem !important;*/
@@ -90,6 +91,7 @@
         }
 
         h3{
+            font-size: small;
             font-family: 'Roboto', sans-serif;
             /*font-family: 'Varela Round', sans-serif ;*/
             /*font-family: 'Baloo Da 2', cursive;*/
@@ -102,13 +104,15 @@
         }
 
         div{
+            font-size: small;
             font-family: 'Roboto', sans-serif;
             /*font-family: 'Varela Round', sans-serif ;*/
             /*font-family: 'Baloo Da 2', cursive;*/
         }
 
         .table  tr {
-            font-size: 1.5rem !important;
+            font-size: small;
+            /*font-size: 1.5rem !important;*/
         }
 
 
@@ -116,7 +120,7 @@
 </head>
 
 
-<body class="skin-blue sidebar-mini">
+<body class="skin-blue sidebar-mini sidebar-collapse" style="padding-right:0px !important; ">
 
 <?php include_once DOL_DOCUMENT .'/public/view/informacion_entidad.php'; ?>
 

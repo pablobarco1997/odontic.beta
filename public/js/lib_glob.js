@@ -429,10 +429,11 @@ $("#Update_entidad").click(function() {
         contentType: false,
         processData:false,
         success:function(resp) {
-
-            if(resp.error == 1)
-            {
+            if(resp.error == 1) {
                 location.reload();
+            }
+            if(resp.error != 1){
+                notificacion('Ocurrio un error con la actualización de Información consulte con soporte', 'error');
             }
         }
     });
@@ -538,6 +539,10 @@ function passwordMostrarOcultarPERFIL( por , el )
 /*obtener datos de perfil*/
 $('#modificarPerfil').on('click', function() {
     fetch_perfil();
+});
+
+//detectar modal de perfiles update global
+$("#ModificarPerfilUsuario").on("shown.bs.modal", function () {
     notificacion('<br> Tener en cuenta que al cambiar el usuario el <b>sistema cerrara la sessión</b> y tendra que iniciar con el nuevo usuario registrado', 'question');
 });
 
@@ -617,6 +622,9 @@ function GuardarPerfilGlob()
 
 function boxloading(box = false, load = false , Timer = 0 ){
 
+    var scroll_position_px = (window.scrollY)+100;
+    console.log((parseFloat((scroll_position_px)))+'px');
+
     var elementSidebar = $(".MenumainSidebar");
 
     $(".Elementboxloading").remove();
@@ -631,20 +639,22 @@ function boxloading(box = false, load = false , Timer = 0 ){
 
         var Elementboxload = document.createElement("div");
         Elementboxload.setAttribute("class","Elementboxloading");
+        Elementboxload.style.top = scroll_position_px+'px';
 
         $(Elementboxload)
             .addClass("form-group")
             .css("position","absolute");
 
-        var imgload  = document.createElement("img");
-        imgload.setAttribute("src",  $DOCUMENTO_URL_HTTP + "/logos_icon/logo_default/iconload.gif");
-        imgload.setAttribute("class","img-md");
+        // var imgload  = document.createElement("img");
+        // imgload.setAttribute("src",  $DOCUMENTO_URL_HTTP + "/logos_icon/logo_default/iconload.gif");
+        // imgload.setAttribute("class","img-md");
+
+        var divload  = document.createElement("div");
+        divload.setAttribute("class","loader_odontic");
 
         var concentp = document.createElement("p");
         $(concentp)
-            .html($(imgload))
-            .append("<br>Procesando")
-            .addClass("text-center")
+            .html($(divload))
             .css("display","inline-block");
 
         $(Elementboxload).html(concentp);
@@ -671,6 +681,38 @@ function boxloading(box = false, load = false , Timer = 0 ){
         $(".Elementboxloading").remove();
     }
 
+}
+
+//esta funcion se usa para el load de cada table
+function  boxTableLoad(Element = false, load=false) {
+
+    // alert(Element.height());
+
+    if(Element!=false){
+
+        if(load==true){
+            var div = document.createElement('div');
+            div.setAttribute("class","loader_odontic");
+            var p = document.createElement('p');
+            p.setAttribute('class','table_load_id');
+            p.style.position = 'absolute';
+            p.style.marginLeft = '50%';
+            p.style.top = (Element.height()/2)+'px';
+            $(p).html($(div));
+
+            Element.css('position', 'relative');
+            Element.parents('.table-responsive').addClass('disabled_link3');
+            Element.append($(p));
+        }
+
+        if(load==false){
+            setTimeout(()=>{
+                Element.find('.table_load_id').remove();
+                Element.parents('.table-responsive').removeClass('disabled_link3');
+            },1000);
+        }
+
+    }
 }
 
 var ModulePermission = function(idModule = 0, actionPermiso = 0){
@@ -707,14 +749,6 @@ var ModulePermission = function(idModule = 0, actionPermiso = 0){
 };
 
 
-$('#perf_cedula').mask("000000000-0",{placeholder:"_________-_"});
-
-$('#especialidadPerfil').select2({
-    placeholder:'Selecione opcion',
-    allowClear: false,
-    language:'es'
-});
-
 function ToLocalDateSpanish(date = "") {
     if(date==""){
         return "";
@@ -724,4 +758,14 @@ function ToLocalDateSpanish(date = "") {
     var options = { year: 'numeric', month: 'long', day: 'numeric' };
 
     return dateFormat.toLocaleDateString('es-ES', options);
+}
+
+
+if($('#perf_cedula').length>0 && $('#especialidadPerfil').length>0){
+    $('#perf_cedula').mask("000000000-0",{placeholder:"_________-_"});
+    $('#especialidadPerfil').select2({
+        placeholder:'Selecione opcion',
+        allowClear: false,
+        language:'es'
+    });
 }

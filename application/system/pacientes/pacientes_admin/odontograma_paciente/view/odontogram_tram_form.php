@@ -2,13 +2,13 @@
 <div class="form-group col-md-12 col-lg-12">
     <div class="table-responsive">
         <h3 style="font-weight: bolder">Información de Estados</h3>
-        <table class="table" id="detalles_estados_odontograma">
+        <table class="table" id="detalles_estados_odontograma" width="100%">
             <thead>
-                <th>FECHA</th>
-                <th>PIEZAS</th>
-                <th>CARAS</th>
-                <th>ESTADOS</th>
-                <th>ANULAR</th>
+                <th>Emitido</th>
+                <th>Pieza</th>
+                <th>Caras</th>
+                <th>Estado</th>
+                <th>&nbsp;</th>
             </thead>
         </table>
     </div>

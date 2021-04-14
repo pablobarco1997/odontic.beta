@@ -62,14 +62,4 @@ input[type=submit] {
 
 
 
-/*LOADDING GLOB*/
-.loadding-text{
-    position: absolute ;
-    padding-top: 300px;
-    margin: 0px;
-    width: 100%;
-    height: 5000px;
-    z-index: 3000;
-    background-color: rgba(229, 232, 2321,0.7);
-    overflow-y: hidden !important;
-}
+

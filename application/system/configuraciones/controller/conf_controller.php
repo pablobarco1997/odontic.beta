@@ -1959,10 +1959,10 @@ function list_odontolosGention($estado){
             $row[] = ( $obj->especialidad == '0') ? 'General' :  $obj->especialidad;
 
             if($obj->estado == 'A'){
-                $row[] = '<a class="btn" style="background-color: #fadbd8; color: red; font-weight: bolder; " onclick="UpdateEstadoOdontologos('.$obj->rowid.', \'E\')"> Desactivar</a>';
+                $row[] = '<a class="btn btn-xs" style="background-color: #fadbd8; color: red; font-weight: bolder; " onclick="UpdateEstadoOdontologos('.$obj->rowid.', \'E\')"> Desactivar</a>';
             }
             if($obj->estado == 'E'){
-                $row[] = '<a class="btn" style="background-color: #D5F5E3; color: green; font-weight: bolder" onclick="UpdateEstadoOdontologos('.$obj->rowid.', \'A\')">Activar</a>';
+                $row[] = '<a class="btn btn-xs" style="background-color: #D5F5E3; color: green; font-weight: bolder" onclick="UpdateEstadoOdontologos('.$obj->rowid.', \'A\')">Activar</a>';
             }
 
             $row[] = $obj->rowid;

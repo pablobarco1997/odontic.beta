@@ -45,7 +45,14 @@
                 <div class="page-header" style="padding-left: 7px; background-color: #2980B9; margin-bottom: 0px; border: none!important; ">
                     <ul class="list-inline" style="margin-bottom: 0px !important;">
 
-                        <li style="width: 20%"><img class="img-rounded"  src="<?= DOL_HTTP .'/logos_icon/icon_logos_'.$objPacienteInfo[2] .'/'.$objPacienteInfo[4] ;?>"
+                        <?php
+                            if(file_exists(DOL_DOCUMENT .'/logos_icon/icon_logos_'.$objPacienteInfo[2] .'/'.$objPacienteInfo[4])){
+                                $img = "data: image/*; base64, ".base64_encode(file_get_contents(DOL_HTTP .'/logos_icon/icon_logos_'.$objPacienteInfo[2] .'/'.$objPacienteInfo[4]));
+                            }else
+                                $img="";
+                        ?>
+
+                        <li style="width: 20%"><img class="img-rounded"  src="<?= $img ;?>"
                                   alt="icon_clinica" style="width: 60px; height: 60px; background-color: #ffffff">
                         </li>
 

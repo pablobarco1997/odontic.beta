@@ -724,17 +724,17 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     #FK_PLAN DE TRATAMIENTO QUE ESTA ASOCIADO A ESTE ODONTOGRAMA
                     $URL_idplantramiento = '&idplantram='.$ob->fk_tratamiento;
 
-                    $url_updateOdont = DOL_HTTP.'/application/system/pacientes/pacientes_admin/?view=odot&key='.KEY_GLOB.'&id='.tokenSecurityId($idpaciente).'&v=fordont'.$URL_idplantramiento;
+                    $url_updateOdont = DOL_HTTP.'/application/system/pacientes/pacientes_admin/index.php?view=odot&key='.KEY_GLOB.'&id='.tokenSecurityId($idpaciente).'&v=fordont'.$URL_idplantramiento;
 
-                    $opciones = "<div class='form-group col-md-12 col-lg-6 col-xs-12 col-sm-12'>
-                                     <a href='$url_updateOdont' class='btnhover btn btn-sm ' style='font-weight: bolder'> <i class='fa fa-edit'></i> ACTUALIZAR </a>     
-                                 </div>
-                                 <div class='form-group col-md-12 col-lg-6 col-xs-12 col-sm-12'>
-                                     <a href='#' class='btnhover btn btn-sm ' style='font-weight: bolder; color: red' > <i class='fa fa-trash'></i> ELIMINAR </a> 
-                                 </div>";
+                    $opciones = "<table>
+                                   <tr>
+                                       <td><a href='$url_updateOdont' class='btnhover btn btn-xs ' style='font-weight: bolder'> <i class='fa fa-edit'></i> ACTUALIZAR </a>     </td>
+                                       <td><a href='#' class='btnhover btn btn-xs ' style='font-weight: bolder; color: red' > <i class='fa fa-trash'></i> ELIMINAR </a></td>
+                                   </tr> 
+                                </table>";
 
                     $row[] = date('Y/m/d', strtotime($ob->fecha));
-                    $row[] = 'Odontograma N.'.$ob->numero .' - '.'<img src="'.DOL_HTTP.'/logos_icon/logo_default/diente.png'.'" width="12px" height="14px" >';
+                    $row[] = 'Odontograma N.'.$ob->numero .' - '.'<img src="'."data:image/png; base64, ". base64_encode(file_get_contents(DOL_HTTP."/logos_icon/logo_default/diente.png")).'" width="12px" height="14px" >';
                     $row[] = $ob->descripcion;
                     $row[] = $ob->labeltram; #PLAN DE TRATAMIENTO NOMBRE
                     $row[] = $opciones;
@@ -1456,15 +1456,25 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             if($idpaciente != "" && $idtratamiento != "")
             {
 
-                $sql = "SELECT * FROM tab_odontograma_update u WHERE u.fk_tratamiento = $idtratamiento and u.fk_paciente = $idpaciente ";
+                $sql = "SELECT *
+                  , (select image_status from tab_odontograma_estados_piezas e where e.rowid=u.fk_estado_pieza) as img_status 
+                  , (select descripcion from tab_odontograma_estados_piezas e where e.rowid=u.fk_estado_pieza) as nom_status 
+                FROM tab_odontograma_update u WHERE u.fk_tratamiento = $idtratamiento and u.fk_paciente = $idpaciente ";
                 $resul = $db->query($sql);
-
-//                print_r($sql); die();
                 if($resul->rowCount()>0){
 
                     while ($ob = $resul->fetchObject()){
-                        $dataPrincipal[] = $ob;
+
+                        $dataPrincipal[$ob->fk_diente] = $ob;
+
+                        if(!empty($ob->img_status)){
+                            $url=DOL_HTTP.'/application/system/pacientes/pacientes_admin/odontograma_paciente/img/'.$ob->img_status;
+                            $imgbase64=base64_encode(file_get_contents($url));
+                            $dataPrincipal[$ob->fk_diente]->img_status = ((!empty($ob->img_status))?'data:image/png; base64, '.$imgbase64 : '');
+                        }
+
                     }
+//                    die();
                 }
             }else{
                 $error = 'Ocurró un error inesperado, consulte con soporte Técnico';
@@ -1529,11 +1539,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 while ($obj = $rs->fetchObject()){
 
                     $row = array();
-
                     $observacion = "";
-
-                    if(!empty($obj->obsrvacion))
-                    {
+                    if(!empty($obj->obsrvacion)) {
                         $observacion = ''.' ( ' . $obj->obsrvacion.' )';
                     }
 
@@ -1542,7 +1549,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         $row[] = $obj->fk_diente;
                         $row[] = $obj->list_caras  ;
                         $row[] = $obj->estado .''.$observacion;
-                        $row[] = "<a class='btn ' style='padding: 4px 8px; background-color: #a55759; color:#ffffff ' onclick='anular_estado_update($obj->rowid)'  >Anular</a>";
+                        $row[] = "<a class='btn btn-xs' style='padding: 4px 8px; background-color: #a55759; color:#ffffff ' onclick='anular_estado_update($obj->rowid)'  >Anular</a>";
                     }
 
                     if($obj->estado_anulado == 'E'){
@@ -1550,7 +1557,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         $row[] = "<strike> ".$obj->fk_diente." </strike>";
                         $row[] = "<strike>".$obj->list_caras."</strike>"  ;
                         $row[] = "<strike>".$obj->estado ." ".$observacion."</strike>";
-                        $row[] = "<a class='btn disabled_link3' style='padding: 4px 8px; background-color: #a55759; color:#ffffff '  >Anular</a>";
+                        $row[] = "<a class='btn btn-xs disabled_link3' style='padding: 4px 8px; background-color: #a55759; color:#ffffff '  >Anular</a>";
                     }
 
 
@@ -1621,9 +1628,9 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                 if($rs2){
 
-                    for ($i =0; $i <= count($datos['piezas']) -1; $i++){
+                    for ($i =0; $i <= count($datos) -1; $i++){
 
-                        $val = $datos['piezas'][$i];
+                        $val = $datos[$i];
 
                         $fkdiente       = $val['diente'];
                         $json_caras     = $val['caras'];
@@ -1638,7 +1645,6 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         $sql3 .= "'$fk_plantratamiento' , ";
                         $sql3 .= "'$fk_paciente' ";
                         $sql3 .= ")";
-//                      print_r($val);
                         $rs3 = $db->query($sql3);
 
                         if(!$rs3){
@@ -1652,9 +1658,9 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             }else{ #caso contrario ingreso por primera vez
 
-                for ($i =0; $i <= count($datos['piezas']) ; $i++){
+                for ($i =0; $i <= count($datos) ; $i++){
 
-                    $val = $datos['piezas'][$i];
+                    $val = $datos[$i];
 
                     $fkdiente       = $val['diente'];
                     $json_caras     = $val['caras'];
@@ -1669,7 +1675,6 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     $sql3 .= "'$fk_plantratamiento' , ";
                     $sql3 .= "'$fk_paciente' ";
                     $sql3 .= ")";
-//                    print_r($val);
                     $rs3 = $db->query($sql3);
 
                     if(!$rs3){

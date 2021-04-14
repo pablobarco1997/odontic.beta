@@ -39,6 +39,8 @@ if(isset($_SESSION['is_open']))
     <script src="../../../public/bower_components/jquery/dist/jquery.js"></script>
     <script src="../../../public/bower_components/bootstrap/dist/js/bootstrap.js"></script>
     <script src="<?php echo DOL_HTTP .'/public/lib/sweetalert2/sweetalert2.js'?>" ></script>
+    <!--javascript global-->
+    <script src="<?php echo DOL_HTTP .'/public/js/lib_glob.js' ?>"></script>
 
     <title>login</title>
 

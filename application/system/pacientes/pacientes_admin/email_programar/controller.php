@@ -174,7 +174,7 @@
                         $row[] = $value['destinario'];
                         $row[] = $value['asunto'];
                         $row[] = "<p class='trunc' title='".$value['message']."'>".$value['message']."</p>"." ".(implode(" ", $File));
-                        $row[] = $value['date_program'];
+                        $row[] = ($value['date_program']!="")? date('Y/d/m', strtotime($value['date_program'])):"";
                         $row[] = "<small style='font-weight: bolder; color: $color'>".$labelSatus."</small>";
                         $row[] = "";
                         $row['dataCorreo'] = base64_encode(json_encode($value));

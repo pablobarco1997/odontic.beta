@@ -73,15 +73,7 @@ function Actulizar_notificacion_citas(idcita)
 // Consultar Tiempo Real
 
 setTimeout(function() {
-
-    $.get(url, paramt , function(data) {
-
-        var HTML = $.parseJSON(data);
-        if(HTML['error'] == ""){
-            Htmlnotificacion( HTML.data, HTML.N_noti );
-        }
-    });
-
+    Notify_odontic();
 },1000);
 
 // interval_notification = setInterval(function () {
@@ -142,15 +134,19 @@ $('.messages-menu').on({
 //click Agendar Citas
 if( $('#nuevoGuardarCitas').length > 0){
     $('#nuevoGuardarCitas').click(function(){
-        $.get(url, paramt , function(data) {
-            var HTML = $.parseJSON(data);
-            if(HTML['error'] == ""){
-                Htmlnotificacion( HTML.data, HTML.N_noti );
-            }
-        });
+        Notify_odontic();
     }); 
 }
 
+
+function Notify_odontic() {
+    $.get(url, paramt , function(data) {
+        var HTML = $.parseJSON(data);
+        if(HTML['error'] == ""){
+            Htmlnotificacion( HTML.data, HTML.N_noti );
+        }
+    });
+}
 
 //Filtrar x Fecha
 

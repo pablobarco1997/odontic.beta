@@ -20,11 +20,20 @@
                         <!--form horizontal-->
                         <div class="form-group form-horizontal col-md-12 col-xs-12 col-centered">
 
+                            <?php
+
+                                $infoModsrc='';
+                                if(!empty($conf->EMPRESA->INFORMACION->logo)){ //si existe el logo de la clinica
+                                    $infoModsrc = 'data:image/png; base64, '.base64_encode(file_get_contents(DOL_HTTP.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$conf->EMPRESA->INFORMACION->logo));
+                                }else{
+//                                    $infoModsrc = 'data:image/png; base64, '.base64_encode(file_get_contents(DOL_HTTP .'/logos_icon/logo_default/icon_software_dental.png'));
+                                }
+                            ?>
 
                             <div class="form-group">
                                 <div class="col-md-3 col-centered">
                                     <div class="col-md-3 col-centered" style="width: 60%;display: block; overflow: hidden">
-                                        <img src=" <?= !empty($conf->EMPRESA->INFORMACION->logo) ? DOL_HTTP.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$conf->EMPRESA->INFORMACION->logo :  DOL_HTTP .'/logos_icon/logo_default/icon_software_dental.png'?>" style="width: 100%" alt="" id="imgLogo">
+                                        <img src=" <?= !empty($conf->EMPRESA->INFORMACION->logo) ? $infoModsrc :  $infoModsrc ?>" style="width: 100%" alt="" id="imgLogo">
 
                                         <table width="100%" style="margin-top: 10px">
                                             <tr>

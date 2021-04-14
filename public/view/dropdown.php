@@ -15,9 +15,10 @@
 
         <li class="dropdown user user-menu">
             <!-- Menu Toggle Button -->
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" >
                 <!-- The user image in the navbar-->
-                <img src="<?= $conf->PERFIL->icon ?>" class="user-image" alt="User Image">
+                <!--<img src="< ?= $conf->PERFIL->icon ?> " class="user-image" alt="User Image">-->
+                <i class="fa fa-user"></i>
                 <!-- hidden-xs hides the username on small devices so only the image appears. -->
                 <span class="hidden-xs hide"><?php echo $conf->PERFIL->nombre ?></span>
                 <span class="hidden-xs"><?php echo $user->name ?></span>
@@ -26,11 +27,11 @@
             <ul class="dropdown-menu">
                 <!-- The user image in the menu -->
                 <li class="user-header" style="background-color: #212f3d">
-                    <img src="<?php echo $conf->PERFIL->icon ; ?>" class="img-circle" alt="User Image">
-
+                <!--<img src="< ?php //echo $conf->PERFIL->icon ; ?> " class="img-circle" alt="User Image">-->
+                    <i class="fa fa-4x fa-user" style="color: #f6f6f6"></i>
                     <p>
                         <?php echo $user->name ?>
-<!--                        <small>Member since Nov. 2012</small>-->
+                        <small>odont. <?= $conf->PERFIL->nombre .' '.$conf->PERFIL->apellido ?></small>
                     </p>
                 </li>
                 <!-- Menu Body -->
@@ -46,7 +47,7 @@
 <!--                        <a href="#" class="btn btn-default btn-flat">Profile</a>-->
                     </div>
                     <div class="pull-right">
-                        <a  href="#ModPerfilModal3" id="modificarPerfil"  data-toggle="modal" class="btn btn-default btn-flat"><i class="fa fa-user"></i></a>
+                        <a  href="#" id="modificarPerfil"  data-toggle="modal" data-target="#ModificarPerfilUsuario" class="btn btn-default btn-flat"><i class="fa fa-user"></i></a>
                         <a  id="cerrarSesionlink"  class="btn btn-default btn-flat"><i class="fa fa-power-off"></i></a>
                     </div>
                 </li>

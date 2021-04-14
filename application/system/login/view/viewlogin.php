@@ -28,7 +28,7 @@
 
             <br>
 
-            <img  width="35%" class="img-rounded center-block" src="<?php echo DOL_HTTP .'/application/system/login/img/dental_icon.png'?>" alt="">
+            <img  width="35%" id="iconLoginPrincipal" class="img-rounded center-block" src="<?php echo DOL_HTTP .'/application/system/login/img/dental_icon.png'?>" alt="">
 
             <div class="form-group">
                 <div class="col-3">
@@ -138,7 +138,15 @@
     });
 
     $(document).ready(function() {
+        var iconLoginPrincipal = $("#iconLoginPrincipal");
+        console.log(iconLoginPrincipal);
+    });
 
+    //window onload
+    window.onload = boxloading($('body') ,true);
+    //window load
+    $(window).on("load", function() {
+        boxloading($('body') ,false, 1000);
     });
 
 </script>

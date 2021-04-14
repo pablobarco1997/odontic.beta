@@ -30,7 +30,7 @@ function GETPOST($paramname, $check = '', $method = 0)
 }
 
 
-function UploadFicherosLogosEntidadGlob($name, $type, $tmp_name, $new_url = '') //Mueve los archivos a una carpeta creada
+function UploadFicherosLogosEntidadGlob($name, $type, $tmp_name, $new_url = '', $sinOptimizar=false) //Mueve los archivos a una carpeta creada
 {
     global $db, $conf;
 
@@ -44,6 +44,16 @@ function UploadFicherosLogosEntidadGlob($name, $type, $tmp_name, $new_url = '') 
     // Obtenemos la información de la imagen
     $imgInfo    = getimagesize($tmp_name);
     $mime       = $imgInfo['mime'];
+
+    if($sinOptimizar==true){
+        $link_sinOptimizar = $conf->DIRECTORIO.'/'.(basename($name)); //creo la ruta donde se guarda el ico o png
+        if(!move_uploaded_file($tmp_name, $link_sinOptimizar)){
+            return false;
+        }else{
+            return true;
+        }
+
+    }
 
     if($type){
         if(!empty($type))
@@ -369,9 +379,9 @@ function Breadcrumbs_Mod( $titulo, $url, $module )
             if(isset($Breadcrumbs_Mod[$i])) //verifico si existe o hay valores
             {
                 if($i==0){
-                    $Breadcrumbs .= '<li><a href=" '. $Breadcrumbs_Mod[$i]['url'] .' " title="'. $Breadcrumbs_Mod[$i]['titulo'] .'"  > '. $Breadcrumbs_Mod[$i]['titulo'] .' &nbsp;</a></li>';
+                    $Breadcrumbs .= '<li><a href=" '. $Breadcrumbs_Mod[$i]['url'] .'" style="font-size: x-small; font-weight: lighter;" title="'. $Breadcrumbs_Mod[$i]['titulo'] .'"  > '. $Breadcrumbs_Mod[$i]['titulo'] .' &nbsp;</a></li>';
                 }else{
-                    $Breadcrumbs .= '<li><a href=" '. $Breadcrumbs_Mod[$i]['url'] .' " title="'. $Breadcrumbs_Mod[$i]['titulo'] .'"  >  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; '. $Breadcrumbs_Mod[$i]['titulo'] .' &nbsp;</a></li>';
+                    $Breadcrumbs .= '<li><a href=" '. $Breadcrumbs_Mod[$i]['url'] .'" style="font-size: x-small; font-weight: lighter;" title="'. $Breadcrumbs_Mod[$i]['titulo'] .'"  >  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; '. $Breadcrumbs_Mod[$i]['titulo'] .' &nbsp;</a></li>';
 
                 }
             }

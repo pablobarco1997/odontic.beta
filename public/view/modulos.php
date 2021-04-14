@@ -2,7 +2,7 @@
 <?php
 
     $Permissions_inicio = array(
-        'url'     => DOL_HTTP .'?view=inicio',
+        'url'     => DOL_HTTP .'/index.php?view=inicio',
         'Active'  => ( isset($Active) && $Active == 'inicio') ? 'Active_link' : '',
         'permiso' => '',
     );
@@ -65,13 +65,17 @@
 ?>
 
 
-
-
-
+<style>
+    ul.sidebar-menu  li.treeview a span{
+        font-size: 1.5rem;
+    }
+    ul.sidebar-menu a span{
+        font-size: 1.5rem;
+    }
+</style>
 
 
 <li class="header">NAVEGACIÓN</li>
-
 
 
 <li class=" <?php if(isset($Active) && $Active =='inicio'){ echo 'disabled_link3'; } ?> hide">

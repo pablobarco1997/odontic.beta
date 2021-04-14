@@ -187,7 +187,7 @@
 </style>
 
 <div class="form-group col-md-12 col-xs-12 col-sm-12 col-lg-12" >
-    <div class="table-responsive" >
+    <div class="table-responsive" style="width: 100%">
         <table class="table table-striped  tableAgenda compact" id="tableAgenda" width="100%" >
             <thead  style="background-color: #f4f4f4; width: 100%; border-bottom: 1px solid #333333" id="headAgendaDiaria">
                 <tr id="cabezeraListAgenda" class="cabezeraListAgenda " >
@@ -204,7 +204,6 @@
                 </tr>
             </thead>
         </table>
-        <br><br><br><br><br>
     </div>
 </div>
 

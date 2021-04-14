@@ -182,11 +182,11 @@
 
                         if($NotiConfirmPacientes->action == 'ASISTIR'){
                             $confirmacion = 'Este paciente confirmo el e-mail';
-                            $EstadoConfirmado = 'El paciente confirmo que si asistirá a la consulta';
+                            $EstadoConfirmado = 'El paciente confirmó que si asistirá a la consulta';
                         }
                         if($NotiConfirmPacientes->action == 'NO_ASISTIR'){
                             $confirmacion = 'Este paciente confirmo el e-mail';
-                            $EstadoConfirmado = 'El paciente confirmo que no asistirá a la consulta';
+                            $EstadoConfirmado = 'El paciente confirmó que no asistirá a la consulta';
                         }
 
                         $this->NOTIFICACIONES->Glob_Notificaciones[] = (object)array(

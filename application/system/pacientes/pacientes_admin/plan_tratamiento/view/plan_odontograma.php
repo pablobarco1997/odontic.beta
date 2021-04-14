@@ -1,231 +1,219 @@
 
 
-
-<!--estylos caras dientes-->
-<style>
-
-    .boderTd{
-        border: 1px solid black;
-        padding: 7px;
-        cursor: pointer;
-    }
-
-    .activeCara{
-        background-color: #9f191f;
-    }
-
-    .pieza .boderTd:hover{
-        background-color: #9f191f;
-    }
-
-</style>
-
-
 <?php
 
+function fetchPiezaCaras($pieza){
 
-$dataNumeroPiezas = array();
-$dataNumeroPiezas1 = [18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28];
-$dataNumeroPiezas2 = [48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38];
+    $h_usp_derecha    =[18,17,16,15,14,13,12,11];
+    $h_usp_izquierda  =[21,22,23,24,25,26,27,28];
 
-#HEMIARCADA SUPERIOR DERECHA
-$listHemiarSupDerech  = "";
-for ($i = 0; $i <= count($dataNumeroPiezas1)-1; $i++){
+    $hb_usp_derecha   =[48,47,46,45,44,43,42,41];
+    $hb_usp_izquierda =[31,32,33,34,35,36,37,38];
 
-    if($i > 7)
-       continue;
+    $hermiarcada_top       = "";
+    $hermiarcada_bottom    = "";
+    $hermiarcada_left      = "";
+    $hermiarcada_right     = "";
+    $hermiarcada_center    = "";
 
-    $piezaN = $dataNumeroPiezas1[$i];
-    $listHemiarSupDerech .= '<li class="diente-'.$piezaN.' dientePermanente" data-diente="'.$piezaN.'" style="margin-right: 6.5px ; margin-left: 6.5px">';
-    $listHemiarSupDerech .= '<table class="pieza piezaClick " id="" style="padding: 5px; margin-left: 2px" >';
-    $listHemiarSupDerech .= '<tr>
-                                        <td></td>
-                                        <td  style="font-size: 1.5rem" class="text-center" title="">'.$piezaN.'</td>
-                                        <td></td>
-                                    </tr>';
-    $listHemiarSupDerech .= '<tr>
-                                        <td></td>
-                                        <td  class="boderTd CaraClickDenticionPermanente cara" data-id="vestibular" title="vestibular"></td>
-                                        <td></td>
-                                    </tr>';
-    $listHemiarSupDerech .= '<tr>
-                                        <td class="boderTd CaraClickDenticionPermanente cara" data-id="distal"   title="distal"></td>
-                                        <td class="boderTd CaraClickDenticionPermanente cara" data-id="oclusal"  title="oclusal"></td>
-                                        <td class="boderTd CaraClickDenticionPermanente cara" data-id="mesial"   title="mesial"></td>
-                                    </tr>';
-    $listHemiarSupDerech .= '<tr>
-                                        <td></td>
-                                        <td class="boderTd CaraClickDenticionPermanente cara" data-id="palatino" title="palatino" ></td>
-                                        <td></td>
-                                    </tr>';
+    if(in_array($pieza, $h_usp_derecha)){
+        $hermiarcada_top      = "vestibular";
+        $hermiarcada_bottom   = "palatino";
+        $hermiarcada_left     = "mesial";
+        $hermiarcada_right    = "distal";
+        $hermiarcada_center   = "oclusal";
+    }if(in_array($pieza, $h_usp_izquierda)){
+        $hermiarcada_top      = "vestibular";
+        $hermiarcada_bottom   = "palatino";
+        $hermiarcada_left     = "distal";
+        $hermiarcada_right    = "mesial";
+        $hermiarcada_center   = "oclusal";
+    }if(in_array($pieza, $hb_usp_derecha)){
+        $hermiarcada_top      = "lingual";
+        $hermiarcada_bottom   = "vestibular";
+        $hermiarcada_left     = "mesial";
+        $hermiarcada_right    = "distal";
+        $hermiarcada_center   = "oclusal";
+    }if(in_array($pieza, $hb_usp_izquierda)){
+        $hermiarcada_top      = "lingual";
+        $hermiarcada_bottom   = "vestibular";
+        $hermiarcada_left     = "distal";
+        $hermiarcada_right    = "mesial";
+        $hermiarcada_center   = "oclusal";
+    }
 
-    $listHemiarSupDerech .= '<tr>
-                                <td></td>
-                                <td class="text-center"><input type="checkbox" id="CheckPiezas" class="CheckPiezasDenticionPermanente"></td>
-                                <td></td>
-                             </tr>';
 
-    $listHemiarSupDerech .= '</table>';
-    $listHemiarSupDerech .= '</li>';
+    $caras = '<div class="TableDiv CaraDiv" style="height: 30px;">
+                        <div class="RowDiv">
+                            <div class="CellDiv"></div>
+                            <div class="CellDiv borderCell selectCell '.$hermiarcada_top.'  " title="'.$hermiarcada_top.'"></div>
+                            <div class="CellDiv"></div>
+                        </div>
 
-}
+                        <div class="RowDiv">
+                            <div class="CellDiv borderCell selectCell '.$hermiarcada_right.' " title="'.$hermiarcada_right.'"></div>
+                            <div class="CellDiv borderCell selectCell '.$hermiarcada_center.'" title="'.$hermiarcada_center.'"></div>
+                            <div class="CellDiv borderCell selectCell '.$hermiarcada_left.'  " title="'.$hermiarcada_left.'"></div>
+                        </div>
 
-#HEMIARCADA  SUPERIOR IZQUIERDA
-$listHemiarSupIzquied = "";
-for ($iu = 8; $iu <= count($dataNumeroPiezas1) -1; $iu++){
+                        <div class="RowDiv">
+                            <div class="CellDiv"></div>
+                            <div class="CellDiv borderCell selectCell '.$hermiarcada_bottom.' " title="'.$hermiarcada_bottom.'"></div>
+                            <div class="CellDiv"></div>
+                        </div>
+                    </div>';
 
-    if($iu == 16)
-        continue;
-
-    $piezaN2  = $dataNumeroPiezas1[$iu];
-    $listHemiarSupIzquied .= '<li class="diente-'.$piezaN2.' dientePermanente" data-diente="'.$piezaN2.'" style="margin-right: 6.5px ; margin-left: 6.5px">';
-    $listHemiarSupIzquied .= '<table class="pieza piezaClick " id="" style="padding: 5px; margin-left: 2px" >';
-    $listHemiarSupIzquied .= '<tr>
-                                    <td></td>
-                                    <td  style="font-size: 1.5rem" class="text-center" title="">'.$piezaN2.'</td>
-                                    <td></td>
-                                 </tr>';
-
-    $listHemiarSupIzquied .= '<tr>
-                                    <td></td>
-                                    <td  class="boderTd CaraClickDenticionPermanente cara" data-id="vestibular" title="vestibular"></td>
-                                    <td></td>
-                                 </tr>';
-
-    $listHemiarSupIzquied .= '<tr>
-                                    <td class="boderTd CaraClickDenticionPermanente cara" data-id="mesial" title="mesial"></td>
-                                    <td class="boderTd CaraClickDenticionPermanente cara" data-id="oclusal" title="oclusal"></td>
-                                    <td class="boderTd CaraClickDenticionPermanente cara" data-id="distal" title="distal"></td>
-                                 </tr>';
-
-    $listHemiarSupIzquied .= '<tr>
-                                    <td></td>
-                                    <td class="boderTd CaraClickDenticionPermanente cara"data-id="palatino" title="palatino" ></td>
-                                    <td></td>
-                                  </tr>';
-
-    $listHemiarSupIzquied .= '<tr>
-                                    <td></td>
-                                    <td class="text-center"><input type="checkbox" id="CheckPiezas" class="CheckPiezasDenticionPermanente"></td>
-                                    <td></td>
-                                 </tr>';
-
-    $listHemiarSupIzquied .= '</table>';
-    $listHemiarSupIzquied .= '</li>';
+    return $caras;
 
 }
 
-#HEMIARCADA  INFERIOR DERECHA
-$listHemiarInfDerech = "";
-for ($c = 0; $c <= count($dataNumeroPiezas2)-1; $c++){
 
-    if($c > 7)
-        continue;
-
-    $piezaN3 = $dataNumeroPiezas2[$c];
-    $listHemiarInfDerech  .= '<li class="diente-'.$piezaN3.' dientePermanente" data-diente="'.$piezaN3.'" style="margin-right: 6.5px ; margin-left: 6.5px">';
-    $listHemiarInfDerech  .= '<table class="pieza piezaClick " id="" style="padding: 5px; margin-left: 2px" >';
-
-    $listHemiarInfDerech  .= '<tr>
-                                <td></td>
-                                <td  style="font-size: 1.5rem" class="text-center" title="">'.$piezaN3.'</td>
-                                <td></td>
-                              </tr>';
-
-    $listHemiarInfDerech  .= '<tr>
-                                   <td></td>
-                                   <td  class="boderTd CaraClickDenticionPermanente cara" data-id="lingual" title="lingual"></td>
-                                   <td></td>
-                              </tr>';
-
-    $listHemiarInfDerech  .= '<tr>
-                                <td class="boderTd CaraClickDenticionPermanente cara"   data-id="distal"  title="distal" ></td>
-                                <td class="boderTd CaraClickDenticionPermanente cara"   data-id="oclusal" title="oclusal"></td>
-                                <td class="boderTd CaraClickDenticionPermanente cara"   data-id="mesial"  title="mesial"></td>
-                              </tr>';
-
-    $listHemiarInfDerech  .= '<tr>
-                                <td></td>
-                                <td class="boderTd CaraClickDenticionPermanente cara" data-id="vestibular" title="vestibular" ></td>
-                                <td></td>
-                              </tr>';
-
-    $listHemiarInfDerech  .= '<tr>
-                                 <td></td>
-                                 <td class="text-center"><input type="checkbox" id="CheckPiezas" class="CheckPiezasDenticionPermanente"> </td>
-                                 <td></td>
-                               </tr>';
-
-    $listHemiarInfDerech  .= '</table>';
-    $listHemiarInfDerech  .= '</li>';
-
-}
-
-#HEMIARCADA INFERIOR IZQUIERDA
-$listHemiarInfIzqui = "";
-for ($co = 8; $co <= count($dataNumeroPiezas2)-1; $co++){
-
-    if($co == 16)
-        continue;
-
-    $piezaN4 = $dataNumeroPiezas2[$co];
-    $listHemiarInfIzqui .= '<li class="diente-'.$piezaN4.' dientePermanente" data-diente="'.$piezaN4.'" style="margin-right: 6.5px ; margin-left: 6.5px">';
-    $listHemiarInfIzqui .= '<table class="pieza piezaClick " id="" style="padding: 5px; margin-left: 2px" >';
-
-    $listHemiarInfIzqui .= '<tr>
-                               <td></td>
-                               <td  style="font-size: 1.5rem" class="text-center" title="">'.$piezaN4.'</td>
-                               <td></td>
-                            </tr>';
-
-    $listHemiarInfIzqui .= '<tr>
-                                <td></td>
-                                <td  class="boderTd CaraClickDenticionPermanente cara" data-id="lingual" title="lingual"></td>
-                                <td></td>
-                            </tr>';
-
-    $listHemiarInfIzqui .= '<tr>
-                                <td class="boderTd CaraClickDenticionPermanente cara" data-id="mesial" title="mesial"></td>
-                                <td class="boderTd CaraClickDenticionPermanente cara" data-id="oclusal" title="oclusal"></td>
-                                <td class="boderTd CaraClickDenticionPermanente cara" data-id="distal" title="distal"></td>
-                            </tr>';
-
-    $listHemiarInfIzqui .= '<tr>
-                                <td></td>
-                                <td class="boderTd CaraClickDenticionPermanente cara" data-id="vestibular" title="vestibular"></td>
-                                <td></td>
-                            </tr>';
-
-    $listHemiarInfIzqui .= '<tr>
-                                <td></td>
-                                <td class="text-center"><input type="checkbox" id="CheckPiezas" class="CheckPiezasDenticionPermanente"> </td>
-                                <td></td>
-                            </tr>';
-
-    $listHemiarInfIzqui .= '</table>';
-    $listHemiarInfIzqui .= '</li>';
-
-}
-
+//numero de dientes asignados
+$dataNumeroDientes   = array();
+$dataNumeroDientes['derecha_izquierda'] = [18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28];
+$dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38];
 
 ?>
 
 
+<style>
+    .vestibular:hover{
+        background-color: #5474b5;
+    }.distal:hover{
+         background-color: #17855b;
+    }.palatino:hover{
+          background-color: #fddcf3;
+    }.mesial:hover{
+           background-color: #a82f4a;
+    }.lingual:hover{
+            background-color: yellow;
+    }.oclusal:hover{
+             background-color: #fddcf3;
+    }
+
+    .vestibularActivar{
+        background-color: #5474b5;
+    }.distalActivar{
+         background-color: #17855b;
+    }.palatinoActivar{
+          background-color: #fddcf3;
+    }.mesialActivar{
+           background-color: #a82f4a;
+    }.lingualActivar{
+            background-color: yellow;
+    }.oclusalActivar{
+             background-color: #fddcf3;
+    }
+
+    .TableDiv {
+        display: table;
+    }
+    .RowDiv {
+        display: table-row;
+    }
+    .CellDiv {
+        display: table-cell;
+        padding-left: 6px;
+        padding-right: 6px;
+        padding-bottom: 15px;
+    }
+    .borderCell {
+        border: solid;
+        border-width: thin;
+    }
+    .selectCell:hover {
+        cursor: pointer;
+    }
+
+    .SelectedTableEstado{
+        background-color: #f4f4f4;
+    }
+</style>
+
+<div class="table-responsive">
+    <table style="margin: auto;">
+
+        <tr class="columnRow">
+            <?php
+            $c = 0;
+            $Empieza=8;
+            foreach ($dataNumeroDientes['derecha_izquierda'] as $value_id){
+                ?>
+                <td style="padding: 3px;" align="center" class="odontoPieza_<?= $value_id?> odontoPieza" id="<?= $value_id ?>"  >
+                    <div class="TableDiv" style="margin-bottom: 4px;">
+                        <div class="RowDiv" id="<?= $value_id?>">
+                        </div>
+                        <div class="RowDiv">
+                            <div class="CellDiv"><?= $value_id ?></div>
+                        </div>
+                    </div>
+
+                    <?= fetchPiezaCaras($value_id) ?>
+                </td>
+
+                <?php $c++;
+            }
+            ?>
+        </tr>
+
+        <tr>
+            <td colspan="16"><br>
+                <hr>
+            </td>
+        </tr>
+
+        <tr class="columnRow">
+            <?php
+            $c = 0;
+            $Empieza=8;
+            foreach ($dataNumeroDientes['inferior_derecha_inferior_izquierda'] as $value_id){
+                ?>
+                <td style="padding: 3px;" align="center" class="odontoPieza_<?= $value_id ?> odontoPieza" id="<?= $value_id ?>">
+                    <div class="TableDiv" style="margin-bottom: 4px;">
+                        <div class="RowDiv">
+                        </div>
+                        <div class="RowDiv">
+                            <div class="CellDiv"><?= $value_id ?></div>
+                        </div>
+                    </div>
+
+                    <?= fetchPiezaCaras($value_id) ?>
+                </td>
+
+                <?php $c++;
+            }
+            ?>
+        </tr>
 
 
-<div class="center-block" style="width: 1140px !important;">
-
-    <ul class="list-inline">
-        <?php echo $listHemiarSupDerech; ?>
-        <?php echo $listHemiarSupIzquied; ?>
-    </ul>
-
+    </table>
 </div>
 
 
-<div class="center-block" style="width: 1140px !important;">
-    <ul class="list-inline">
-        <?php echo $listHemiarInfDerech; ?>
-        <?php echo $listHemiarInfIzqui; ?>
-    </ul>
-</div>
+<script>
+
+    $iconDienteGlob  = "<?= "data:image/png; base64, ". base64_encode(file_get_contents(DOL_HTTP."/logos_icon/logo_default/diente.png"))?>";
+
+    $(".selectCell").click(function () {
+        pintarCuadro(1, $(this));
+    });
+    $(".selectCell").dblclick(function () {
+        pintarCuadro(2, $(this));
+    });
+    var pintarCuadro = function(count=0, Element){
+        if(count!=0){
+            if(count==1){
+                Element.addClass(Element.attr('title')+'Activar ActivaCaraGlod');
+                Element.parents('td').addClass('PiezaActiva');
+            }
+            if(count==2){
+                Element.removeClass(Element.attr('title')+'Activar ActivaCaraGlod');
+                console.log(Element.parents('.CaraDiv').find(".ActivaCaraGlod").length);
+                if(Element.parents('.CaraDiv').find(".ActivaCaraGlod").length==0){
+                    Element.parents('td').removeClass('PiezaActiva');
+                }
+            }
+        }
+    };
+
+</script>
