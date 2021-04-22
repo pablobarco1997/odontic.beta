@@ -115,7 +115,6 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 }else{
                     $count = "*";
                 }
-
                 $sql    = " SELECT $count FROM tab_admin_pacientes WHERE estado = 'A' and rowid > 0";
                 if($date!=""){
                     $sql .= " and tms between '$dateInicio' and '$dateFin' ";

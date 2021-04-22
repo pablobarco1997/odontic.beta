@@ -72,7 +72,7 @@
             <div class="small-box bg-blue-active">
                 <div class="inner">
                     <h3 id="nu_plantActivoAbonad">0</h3>
-                    <p class="textboxInformation">TRATAMIENTOS ACTIVOS O ABONADOS</p>
+                    <p class="textboxInformation">TRATAMIENTOS ACTIVOS</p>
                 </div>
                 <div class="icon" style="top: 5px;">
                     <i class="ion ion-stats-bars iconShadow" style="font-size:100px !important;"></i>

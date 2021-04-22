@@ -30,69 +30,50 @@ $tableLanguaje = {
 };
 
 
-function Npresupuestos() {
-    var url = $DOCUMENTO_URL_HTTP + '/application/controllers/controller_peticiones_globales.php';
-    var Data = {
-        'ajaxSend' :'ajaxSend',
-        'accion'   :'Npresupuestos',
-        'date': $('#startDate').val()
+
+function consultarAcciones(){
+
+    var date = $('#startDate').val();
+
+    var parametros = {
+        'ajaxSend': 'ajaxSend',
+        'accion':'consultar_accion_date',
+        'date': date
     };
-    $.get(url, Data, function (data) {
-        var respuesta = $.parseJSON(data);
-        $("#nu_plantActivoAbonad").text(respuesta['presupuestos']);
-    })
-}
-
-function CitasAnuladaxDateAtendidos() {
-    var url = $DOCUMENTO_URL_HTTP + '/application/controllers/controller_peticiones_globales.php';
-    var Data = {
-        'ajaxSend' :'ajaxSend',
-        'accion'   :'CitasAnuladaxDate_Atendidos',
-        'date': $('#startDate').val(),
-    };
-    $.get(url, Data, function (data) {
-        var respuesta = $.parseJSON(data);
-        $("#nu_citasAnuladaCancel").text(respuesta['citasAnulaxDate']);
-        $("#nu_citasAtendidas").text(respuesta['citasAtendidas']);
-    })
-}
-
-function obtenerPacientesxDate(object = 0) {
-    var data = [];
-
 
     $.ajax({
-        url: $DOCUMENTO_URL_HTTP + '/application/controllers/controller_peticiones_globales.php',
-        type:'GET',
-        data:{'ajaxSend':'ajaxSend', 'accion':'pacientesxDate', 'date': $('#startDate').val(), 'object': object },
+        url: $DOCUMENTO_URL_HTTP + '/application/system/reportes/controller/controller_reporte.php',
+        type: 'POST',
+        data:parametros,
         dataType:'json',
-        async:false,
+        async: false,
         cache:false,
-        success:function( resp ) {
-            if(object==0){
-                $('#nu_paciente').text( resp['pacientesxDate'] );
-            }else{
-                data = resp['data'];
-            }
+        success:function (respuesta) {
+            console.log(respuesta);
+
+            var object = respuesta['result'];
+            $("#nu_plantActivoAbonad").text(object['n_tratamientos']);
+            $("#nu_citasAnuladaCancel").text(object['citas_canceladas']);
+            $("#nu_citasAtendidas").text(object['atendidos']);
+            $("#nu_paciente").text(object['n_pacientes']);
         }
     });
 
 }
 
 
-//BUSCAR PACIENTE
+
 $('#buscarPaciente').on('click', function() {
 
     var $id =  $('#idpacienteAutocp').text();
     if($id !="" && $('.seachPacienteHome').val() !="")
     {
-        // var $url = $DOCUMENTO_URL_HTTP + '/application/system/pacientes/admin_paciente/?view=form_datos_personales&id='+$id;
         var $url = $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin?view=dop&key=' + $keyGlobal + '&id=' + $id;
-        // alert($url);
         location.href = $url;
     }
 
 });
+
 
 $("#startDate").on("change", function() {
 
@@ -154,11 +135,7 @@ $("#reportes_pacientes_anulados").click(function() {
 });
 
 var cargarRecursosInfo = function(){
-
-    obtenerPacientesxDate();
-    CitasAnuladaxDateAtendidos();
-    Npresupuestos();
-
+    consultarAcciones();
 };
 
 $(document)
@@ -226,7 +203,6 @@ $(window).on("load", function() {
         $(this).parent().find('input').click();
     });
 
-    $("#startDate").trigger('change');
     boxloading($boxHomeInicio ,true ,1500);
 
 });

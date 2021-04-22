@@ -15,7 +15,7 @@
                     </div>
                     <div class="col-md-12 col-xs-12">
                         <div class="table-responsive">
-                            <table class="table table-striped" id="reporte_pacientes_registrados" width="100%">
+                            <table class="table table-striped table-condensed" id="reporte_pacientes_registrados" width="100%">
                                 <thead>
                                     <tr>
                                         <th width="10%">Nombre</th>

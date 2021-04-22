@@ -54,10 +54,16 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     $Ruc_Cedula = (!empty($fila->ruc_ced))?$fila->ruc_ced:'no asignado';
 
                     $img = DOL_DOCUMENT."/logos_icon/icon_logos_".$conf->EMPRESA->ENTIDAD."/".$fila->icon;
-                    if(file_exists($img) && $fila->icon != "")
-                        $img = "<div style='padding: 0px; '> <img src='".DOL_HTTP."/logos_icon/icon_logos_".$conf->EMPRESA->ENTIDAD."/".$fila->icon."' class='img-sm' > </div>";
-                    else
-                        $img = "<div style='padding: 0px; '> <img src='".DOL_HTTP."/logos_icon/logo_default/avatar_none.ico' class='img-sm' > </div>";
+
+
+                    if(file_exists($img) && $fila->icon != ""){
+                        $img64 = 'data:image/*; base64, '.base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/icon_logos_'.$conf->EMPRESA->ENTIDAD.'/'.$fila->icon));
+                        $img = "<div style='padding: 0px; '> <img src='".$img64."' class='img-sm' > </div>";
+                    }
+                    else{
+                        $img64 = 'data:image/*; base64, '.base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/avatar_none.ico'));
+                        $img = "<div style='padding: 0px; '> <img src='".$img64."' class='img-sm' > </div>";
+                    }
 
                     $url_datosPersonales = DOL_HTTP ."/application/system/pacientes/pacientes_admin?view=$view&key=".KEY_GLOB."&id=$token";
 

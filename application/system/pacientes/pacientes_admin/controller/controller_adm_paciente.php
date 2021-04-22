@@ -109,6 +109,10 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 }else{
 
                     $data = $resp[0];
+                    if(file_exists(DOL_DOCUMENT.'/logos_icon/icon_logos_'.$conf->EMPRESA->ENTIDAD.'/'.$data->icon)){
+                        $img64 = base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/icon_logos_'.$conf->EMPRESA->ENTIDAD.'/'.$data->icon));
+                        $data->img_logo = 'data:image/png; base64, '.$img64;
+                    }
                 }
 
             }else{
@@ -175,10 +179,18 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                             while($obj2 =  $rs12->fetchObject())
                             {
                                 $nombreCarpeta = 'carpeta_entidad_'.(base64_encode($conf->EMPRESA->ENTIDAD));
-                                $Directorio = DOL_DOCUMENT .'/application/system/pacientes/pacientes_admin/archivos_ficheros/filesave/'.$nombreCarpeta.'/'.$obj2->ruta_fichero;
-                                $DirectHttp = DOL_HTTP .'/application/system/pacientes/pacientes_admin/archivos_ficheros/filesave/'.$nombreCarpeta.'/'.$obj2->ruta_fichero;
+                                $DirectorioFile = DOL_DOCUMENT .'/application/system/pacientes/pacientes_admin/archivos_ficheros/filesave/'.$nombreCarpeta.'/'.$obj2->ruta_fichero;
+                                $DirectorioFileHTTP = DOL_HTTP.'/application/system/pacientes/pacientes_admin/archivos_ficheros/filesave/'.$nombreCarpeta.'/'.$obj2->ruta_fichero;
 
-                                if(!file_exists($Directorio)){
+                                if($obj2->type=='.jpeg'||$obj2->type=='.png'||$obj2->type=='.pdf'){
+                                    $icon_tipo = 'data:image/*; base64, '.base64_encode(file_get_contents(DOL_HTTP .'/application/system/pacientes/pacientes_admin/archivos_ficheros/filesave/'.$nombreCarpeta.'/'.$obj2->ruta_fichero));
+
+                                    if($obj2->type=='.pdf'){
+                                        $icon_tipo = 'data:image/*; base64, '.base64_encode(file_get_contents(DOL_HTTP .'/logos_icon/logo_default/pdf.png'));
+                                    }
+                                }
+
+                                if(!file_exists($DirectorioFile)){
                                     $html2 .= "
                                                 <a href='#' title='No se encuentra el fichero en la dataFile consulte con soporte Tecnico'>
                                                  No File
@@ -193,8 +205,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                                         case '.jpeg':
                                             $html2 .= "
-                                                <a href='".$DirectHttp."' target='_blank' >
-                                                <img width='50px' height='50px' src='".$DirectHttp."'  >
+                                                <a href='".$DirectorioFileHTTP."' target='_blank' >
+                                                <img width='50px' height='50px' src='".$icon_tipo."'  >
                                                 &nbsp;   
                                                 &nbsp;
                                                 $obj->titulo
@@ -202,8 +214,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                                             break;
                                         case '.png':
                                             $html2 .= "
-                                               <a  href='".$DirectHttp."' target='_blank' >
-                                               <img width='50px' height='50px' src='".$DirectHttp."'  >         
+                                               <a  href='".$DirectorioFileHTTP."' target='_blank' >
+                                               <img width='50px' height='50px' src='".$icon_tipo."'  >         
                                                &nbsp;   
                                                &nbsp;
                                                $obj->titulo
@@ -212,8 +224,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                                         case '.pdf':
                                             $html2 .= "
-                                               <a href='".$DirectHttp."' target='_blank' >
-                                               <img width='50px' height='50px' src='".DOL_HTTP."/logos_icon/logo_default/pdf.png'  >       
+                                               <a href='".$DirectorioFileHTTP."' target='_blank' >
+                                               <img width='50px' height='50px' src='".$icon_tipo."'  >       
                                                &nbsp;   
                                                &nbsp;
                                                $obj->titulo
@@ -2159,9 +2171,11 @@ function listcitas_admin($idPaciente, $fechaInicio, $fechafin, $n_citas, $Estado
                 $citas_atrazadas = "<small style='display: block; color: red' class=''> ". $obj->cita_atrazada ." </small>";
             }
 
+            $iconCita = 'data:image/*; base64, '.base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/cita-medica.ico'));
+
             $numero_cita_asociada = "<table>
                                         <tr> 
-                                            <td title='número de cita' > <img  src='". DOL_HTTP. "/logos_icon/logo_default/cita-medica.ico' class='img-rounded' style='width: 25px; height: 25px' > - </td>
+                                            <td title='número de cita' > <img  src='". $iconCita. "' class='img-rounded' style='width: 25px; height: 25px' > - </td>
                                             <td> ".(str_pad($obj->id_cita_det, 6, "0", STR_PAD_LEFT))." </td> 
                                         </tr>
                                      </table>";

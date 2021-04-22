@@ -48,7 +48,7 @@ function obtenerDatosP($id)
                     img.classList.add('img-circle'); //agrego setAttribute y css
 
                     //$HTTP_DIRECTORIO_ENTITY esta variable global de js contiene el directorio si alguna vez fue creado
-                    img.setAttribute('src', $DOCUMENTO_URL_HTTP + '/logos_icon/' + $HTTP_DIRECTORIO_ENTITY + '/' + data['icon']);
+                    img.setAttribute('src', data['img_logo']);
                     $('#imgpaciente').append(img);
                     $('#imgClasica').remove(); //remuevo la img anterior
 
