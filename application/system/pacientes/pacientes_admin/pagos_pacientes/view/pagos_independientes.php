@@ -187,16 +187,12 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
                  <div class="form-group">
                      <label for=""  class="control-label col-sm-4 col-md-4 col-xs-12">Medio de Pago:</label>
                      <div class="col-sm-6 col-md-6 col-xs-12">
-                         <div class="input-group">
-                             <select id="t_pagos" class="form-control" style="width: 100%">
-                                 <option value=""></option>
-                                 <?php
+                         <select id="t_pagos" class="form-control" style="width: 100%">
+                             <option value=""></option>
+                             <?php
 
-                                 ?>
-                             </select>
-                             <span class="input-group-addon" style="cursor: pointer" data-toggle="modal" data-target="#FormaPagoadd" ><i class="fa fa-plus"></i></span>
-                             <span class="input-group-addon hide" style="cursor: pointer" data-toggle="modal" data-target="#" ><i class="fa fa-minus"></i></span>
-                         </div>
+                             ?>
+                         </select>
                          <small style="color: red" id="err_t_pago"></small>
                      </div>
                  </div>
@@ -235,47 +231,6 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
          </div>
      </div>
 
-
-     <!--modal de forma de pago-->
-     <div class="modal fade" id="FormaPagoadd" role="dialog" data-backdrop="static">
-         <div class="modal-dialog " style="width: 60%; margin: 2% auto">
-
-             <!-- Modal content-->
-             <div class="modal-content">
-                 <div class="modal-header modal-diseng">
-                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                     <h4 class="modal-title"><span>Agregar Nueva Forma de Pago</span></h4>
-                 </div>
-                 <div class="modal-body">
-
-                     <div class="row">
-                         <div class="form-group col-md-12 col-xs-12">
-                             <div class="row">
-                                 <div class="col-md-12 col-xs-12">
-                                     <div style="width: 100%; display: block">
-                                         <table class="table listTiposPagos" width="100%" id="listTiposPagos">
-                                             <thead>
-                                                 <tr>
-                                                     <th colspan="3" style="font-size: 1.4rem;text-align: right; background-color: #f4f4f4; vertical-align: middle"> <a href="#modal_edit_tipoPago" data-toggle="modal" onclick="nuevoTipoPago()">  Agregar nueva tipo de pago</a></th>
-                                                 </tr>
-                                                 <tr>
-                                                     <th width="30%" style="font-size: 1.4rem">Forma de pago</th>
-                                                     <th width="70%" style="font-size: 1.4rem">&nbsp;</th>
-                                                     <th width="10%" style="font-size: 1.4rem">&nbsp;</th>
-                                                 </tr>
-                                             </thead>
-                                         </table>
-                                     </div>
-                                 </div>
-                             </div>
-                         </div>
-
-                     </div>
-                 </div>
-             </div>
-
-         </div>
-     </div>
 
      <div class="modal fade" id="modal_edit_tipoPago" role="dialog">
          <div class="modal-dialog">

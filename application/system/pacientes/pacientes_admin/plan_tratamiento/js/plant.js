@@ -483,11 +483,13 @@ if($accion == 'addplan')
     //END CARAS PIEZAS -------------------------------------------------------------------------------------------------
 
 
-    $('#prestacion_planform').select2({
-       placeholder:'Seleccione una prestacion',
-       allowClear: true,
-       language:'es'
-    });
+    // $('#prestacion_planform').select2({
+    //      placeholder:'Seleccione una prestación',
+    //      allowClear: true,
+    //      language:'es',
+    //      // dropdownParent: $(".modal-backdrop"),
+    //
+    // });
 
     recalculoViewForm(); //RECALCULAR TOTAL PRESTACION
 

@@ -41,13 +41,7 @@
                     </div>
                 </div>
 
-                <style>
-                    #table_direc thead th{
-                        box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
-                        position: -webkit-sticky !important;
-                        position: sticky !important;
-                    }
-                </style>
+
 
                 <div class="row">
                     <div class="form-group col-md-12 col-xs-12">

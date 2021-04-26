@@ -97,7 +97,7 @@
 
         <div class="form-group col-md-12 col-xs-12 no-margin">
             <label for="">LISTA DE COMPORTAMIENTOS</label>
-            <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px">
+            <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px; background-color: #f4f4f4">
                 <li><a data-toggle="collapse"  data-target="#contentFilter" class="btnhover btn btn-sm " style="color: #333333" > <b>   ▼  Filtrar  </b>  </a> </li>
                 <li>
                     <a href="#" style="color: #333333" class="btnhover btn btn-sm " id="createPlanTratamientoCab"> <b>  <i class="fa fa-file-text"></i> Crear Plan de Tratamiento Independiente </b> </a>

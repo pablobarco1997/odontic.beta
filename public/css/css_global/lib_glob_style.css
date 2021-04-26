@@ -1,4 +1,11 @@
 
+/*diseño table > head*/
+table.table > thead tr th{
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+}
+/*end*/
+
+
 .list_search li a:hover{
     background-color: #f4f4f4;
     cursor: pointer;

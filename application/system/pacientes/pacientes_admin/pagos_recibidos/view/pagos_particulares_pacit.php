@@ -15,11 +15,11 @@
                     <select name="formaPago" id="formaPago" class="form-control" style="width: 100%">
                         <option value=""></option>
                         <?php
-                            $quy = "SELECT * FROM tab_tipos_pagos where estado = 'A' ";
+                            $quy = "select rowid, nom from tab_bank_operacion where rowid not in(1,2,3,4,7)";
                             $result = $db->query($quy);
                             if($result&&$result->rowCount()>0){
                                 while ($object = $result->fetchObject()){
-                                    print "<option value='".$object->rowid."'>".$object->descripcion."</option>";
+                                    print "<option value='".$object->rowid."'>".$object->nom."</option>";
                                 }
                             }
                         ?>
@@ -97,8 +97,6 @@
                     </tr>
                 </thead>
             </table>
-            <br><br>
-            <br><br>
         </div>
     </div>
 

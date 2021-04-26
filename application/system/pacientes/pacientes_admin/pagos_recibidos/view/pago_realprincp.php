@@ -15,7 +15,7 @@
 
 <div class="form-group col-md-12 col-xs-12">
     <label for="">LISTA DE COMPORTAMIENTOS</label>
-    <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px">
+    <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px; background-color: #f4f4f4">
         <li><a href="#FiltrarPagoPacientes" data-toggle="collapse" style="color: #333333" class="btnhover btn btn-sm " > <b>   ▼  Filtrar  </b> </a> </li>
         <li>
             <a href="<?= DOL_HTTP .'/application/system/pacientes/pacientes_admin/?view=pagrealipricp&key='.KEY_GLOB.'&id='. tokenSecurityId($idPaciente) .'&v=pagospartic' ?>" style="color: #333333" class="btnhover btn btn-sm " id="">

@@ -22,8 +22,8 @@ $modulo = false;
                 <label class="control-label col-sm-3" for="nom_caja">Nombre:</label>
                 <div class="col-sm-7">
                     <div class="input-group">
-                        <span class="input-group-addon">CAJA_</span>
-                            <input type="text" class="form-control" id="nom_caja" placeholder="Nombre de la Caja" name="nom_caja" onkeyup="FormValidAddCaja()">
+                        <span class="input-group-addon">referencia</span>
+                            <input type="text" class="form-control" id="referencia_caja" placeholder="referencia" name="referencia_caja" onkeyup="FormValidAddCaja()">
                         <span class="input-group-addon"><i class="fa fa-bar-chart"></i></span>
                     </div>
                 </div>
@@ -31,7 +31,7 @@ $modulo = false;
             <div class="form-group">
                 <label class="control-label col-sm-3" for="direccion_caja">Dirección:</label>
                 <div class="col-sm-7">
-                    <input type="text" class="form-control" id="direccion_caja" placeholder="Direccion de caja" name="direccion_caja">
+                    <input type="text" class="form-control" id="direccion_caja" placeholder="Dirección" name="direccion_caja">
                 </div>
             </div>
             <div class="form-group">

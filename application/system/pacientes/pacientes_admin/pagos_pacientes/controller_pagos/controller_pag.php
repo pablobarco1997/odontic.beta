@@ -147,7 +147,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         p.monto, 
                         p.observacion, 
                         p.fk_plantram as fk_plantramCab , 
-                        (select pt.descripcion from tab_tipos_pagos pt where pt.rowid = p.fk_tipopago) as mediopago
+                        (select bt.nom from tab_bank_operacion bt where bt.rowid = p.fk_tipopago) as mediopago
                     FROM tab_pagos_independ_pacientes_cab p where p.rowid > 0 ";
 
                     $query .= " and p.fk_plantram = " .$idplanCab;
@@ -185,7 +185,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                             $row[] = $ob->idpagoCabezera; #id del pago cabezara
                             $row['n_boleta'] = $ob->n_fact_boleta;
-                            $row['url_imprimir'] = "<a href='".DOL_HTTP."/application/system/pacientes/pacientes_admin/pagos_recibidos/export/export_pagoparticular.php?npag=$ob->n_pago&idpac=$idpaciente' target='_blank'> <i class='fa fa-print'></i> Imprimir  </a>";
+                            $row['url_imprimir'] = "<a href='".DOL_HTTP."/application/system/pacientes/pacientes_admin/pagos_recibidos/export/export_pagoparticular.php?npag=$ob->n_pago&idpac=$idpaciente' target='_blank'>Imprimir PDF</a>";
                             $row['name_tratamiento'] = $name_plantratamiento;
                             $row['idPlantratamCab']  = $ob->fk_plantramCab;
                             $row['id_pagocab']  = $ob->idpagoCabezera;
@@ -309,12 +309,12 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
         case 'fetchTiposPagos':
 
             $object = [];
-            $querypagos = "SELECT rowid ,  descripcion , observacion FROM tab_tipos_pagos";
-            $rspagos = $db->query($querypagos);
+            $type = "SELECT rowid ,  nom FROM tab_bank_operacion where  rowid not in(1,2,3,4,7)";
+            $result = $db->query($type);
 
-            if($rspagos && $rspagos->rowCount() > 0) {
-                while ( $pag =  $rspagos->fetchObject() ) {
-                    $row = array('id' => $pag->rowid , 'text' => $pag->descripcion );
+            if($result && $result->rowCount() > 0) {
+                while ( $bank =  $result->fetchObject() ) {
+                    $row = array('id' => $bank->rowid , 'text' => $bank->nom );
                     $object[] = $row;
                 }
             }

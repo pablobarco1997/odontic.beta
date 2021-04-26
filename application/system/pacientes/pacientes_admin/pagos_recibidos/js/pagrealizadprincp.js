@@ -65,7 +65,7 @@ if($accionPagospacientes = "pagos_particular")
                             $(item).css("display", "none");
                         }else{
                             if(i>2){
-                                $(item).html("<a class='btnhover btn-sm btn' onclick='PrintPagosParticulares("+(data['idPlantratamCab'])+")' style='font-weight: bolder'> <i class='fa fa-print'></i> Imprimir</a>");
+                                $(item).html("<a class='btnhover btn-sm btn' onclick='PrintPagosParticulares("+(data['idPlantratamCab'])+")' style='font-weight: bolder'> <i class='fa fa-print'></i> Imprimir PDF</a>");
                             }
                         }
                     });

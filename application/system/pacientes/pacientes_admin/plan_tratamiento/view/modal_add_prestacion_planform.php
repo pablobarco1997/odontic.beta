@@ -32,7 +32,7 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="form-group col-xs-12 col-md-12" style="margin: 0px">
+                    <div class="form-group col-xs-12 col-md-12" style="margin: 0px; padding-left: 30px">
                         <ul class="list-inline" >
                             <li >
                                 <div class="checkbox btn btn-block btn-sm" style="border-left: 1.5px solid #202a33">
@@ -59,7 +59,7 @@
                         </ul>
                     </div>
                 </div>
-                <hr style="margin: 5px; background-color: #e2e2e2">
+                <hr style="margin: 10px; background-color: #e2e2e2">
                 <div class="row">
                     <div class="col-md-12 col-xs-12">
                         <div class="table-responsive">
@@ -72,25 +72,23 @@
                 </div>
 
                 <!--PRESTACIOANES CATEGORIZADA  -->
-                <hr style="margin: 5px; background-color: #e2e2e2">
+                <hr style="margin: 20px; background-color: #e2e2e2">
                 <div class="row">
-
-                    <div class="form-group col-md-7 col-xs-12">
+                    <div class="form-group col-md-9 col-xs-12" style="padding-left: 30px">
                         <div class="box_prestaciones">
-                            <label for="prestacion_planform">Todas las prestaciones</label>
                             <select id="prestacion_planform" class="form-control " style="width: 100%">
+                                <option value="" selected disabled>Selecione un Prestación</option>
                                 <?= $prestacion;  ?>
                             </select>
                         </div>
                     </div>
                     <div class="form-group col-md-3 col-xs-12">
-                        <label style="display: block">&nbsp;</label>
                         <a href="#" class="btnhover btn" id="addprestacionPlantram" style="background-color: #efefef; color: #333333">Agregar Prestación</a>
                     </div>
-                    <div class="form-group col-md-5 col-xs-12">
-                        <label style="display: block">&nbsp;</label>
-                        <small style="color: red" id="errores_msg_addplantram"></small>
-                    </div>
+                    <!--                    <div class="form-group col-md-5 col-xs-12">-->
+                    <!--                        <label style="display: block">&nbsp;</label>-->
+                    <!--                        <small style="color: red" id="errores_msg_addplantram"></small>-->
+                    <!--                    </div>-->
                 </div>
 
                 <style>
