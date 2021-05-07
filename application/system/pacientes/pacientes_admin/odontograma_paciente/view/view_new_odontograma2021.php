@@ -226,10 +226,14 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
             <div class="modal-body">
                 <div class="row">
                     <div class="col-sm-12 col-xs-12 col-md-8 col-centered">
-                        <label for="">Observación</label>
-                        <textarea name="" id="observacionUpdateStado"  class="form-control" placeholder="opcional" style="resize: vertical"></textarea>
-                        <table width="100%" class="table table-hover" id="selectedEstadosPieza">
 
+                        <table width="100%" class="table table-hover" id="selectedEstadosPieza">
+                            <tr>
+                                <td colspan="2" style="background-color: #f4f4f4">
+                                    <label for="">Observación</label>
+                                    <textarea name="" id="observacionUpdateStado"  class="form-control" placeholder="opcional" style="resize: vertical"></textarea>
+                                </td>
+                            </tr>
                             <?php
 
                             $directElement = opendir( DOL_DOCUMENT.'/application/system/pacientes/pacientes_admin/odontograma_paciente/img/');
@@ -388,6 +392,12 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
 
     var Aplicar_Estados = function(){
 
+
+        if($(".SelectedTableEstado").length==0){
+            notificacion("Debe seleccionar un Estado","question");
+            return false;
+        }
+
         if($(".SelectedTableEstado").length==1){
 
             //id estado de (pieza o diente) selecionado
@@ -529,6 +539,7 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
                 }else{
                     fetchOdontograma();
                     detallesOdontogramasEstados();
+                    notificacion("Información Actualizada", "success");
                 }
             }
         });

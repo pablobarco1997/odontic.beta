@@ -10,7 +10,8 @@
             $array_imagenes_archivos = (object)[
                 'url'     =>  DOL_HTTP .'/application/system/pacientes/pacientes_admin/index.php?view=arch&key='.KEY_GLOB.'&id='.tokenSecurityId($idPaciente).'' ,
                 'active'  =>  ($VISTAS == "arch") ? "ActivaLista" : "",
-                'permiso' => ''
+                'url_disabled'    => '#',
+                'permiso'         => ''
             ];
 
             $array_plan_tratamiento = (object)[
@@ -119,7 +120,7 @@
                 <div class="row">
                     <div class="col-md-12 col-xs-12" style="padding: 0px">
                         <div style="background-color: #ffffff; border-radius: 0px;" id="menus_admin">
-                            <ul style="width: 100%;list-style: none;padding-left: 0px;padding: 0px;margin-bottom: 0px;" class="listItem">
+                            <ul style="width: 100%;list-style: none;padding-left: 0px;padding: 15px;margin-bottom: 0px;" class="listItem">
                                 <li>
                                     <div style="width: 100%">
                                         <p class="text-center"><i class="fa fa-4x fa-user"></i></p>
@@ -139,9 +140,9 @@
                                         <i class="fa fa-link"></i>&nbsp;&nbsp; <b>Carga Familiares</b> </a>
                                 </li>
 
-                                <li class="lipaddi <?= $array_imagenes_archivos->active ?>">
-                                    <a class="lista" href="<?= $array_imagenes_archivos->url ?>">&nbsp;&nbsp;
-                                        <i class="fa fa-folder"></i>&nbsp;&nbsp; <b>Imagenes y Archivos</b> </a>
+                                <li class="lipaddi disabled_link3 <?= $array_imagenes_archivos->active ?>">
+                                    <a class="lista" disabled="disabled" href="<?= $array_imagenes_archivos->url_disabled ?>">&nbsp;&nbsp;
+                                        <i class="fa fa-folder"></i>&nbsp;&nbsp; <b>administrador de Ficheros</b> </a>
                                 </li>
 
                                 <li class="lipaddi <?= $array_citas_asociadas->active ?>">

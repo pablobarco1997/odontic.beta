@@ -100,21 +100,19 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $id = GETPOST('id');
 
             if(!empty($id)){
-
                 $resp = $paciente->fectch_pacientes($id);
-
                 if(count($resp) == 0)
                 {
                     $error = 'Ocurrio un error No se Encontraron datos de este paciente, Consulte con soporte';
                 }else{
-
                     $data = $resp[0];
-                    if(file_exists(DOL_DOCUMENT.'/logos_icon/icon_logos_'.$conf->EMPRESA->ENTIDAD.'/'.$data->icon)){
-                        $img64 = base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/icon_logos_'.$conf->EMPRESA->ENTIDAD.'/'.$data->icon));
-                        $data->img_logo = 'data:image/png; base64, '.$img64;
+                    if($data->icon!=""){
+                        if(file_exists(DOL_DOCUMENT.'/logos_icon/icon_logos_'.$conf->EMPRESA->ENTIDAD.'/'.$data->icon)){
+                            $img64 = base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/icon_logos_'.$conf->EMPRESA->ENTIDAD.'/'.$data->icon));
+                            $data->img_logo = 'data:image/png; base64, '.$img64;
+                        }
                     }
                 }
-
             }else{
                 $error = 'Ocurrio un error no se pudo obtener los datos - no se encuentra el id';
             }
@@ -448,25 +446,31 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $subaccion   = GETPOST('subaccion');
             $iddocSesion = $_SESSION['id_user'];
 
-            if($subaccion == "agregar") //cuando se ingresa un comentario
-            {
+            //cuando se ingresa un comentario
+            if($subaccion == "agregar") {
                 $sql = "INSERT INTO tab_comentarios_odontologos (`fk_odontologos`, `comentario`, `fk_paciente`) VALUES ($iddocSesion, '$text', $idPaciente);";
                 $rs = $db->query($sql);
-
-                if($rs)
-                {
+                if($rs) {
                     $sql1   = "SELECT c.tms as date, c.rowid, (select concat(o.nombre_doc , ' ' , o.apellido_doc) FROM tab_odontologos o where o.rowid = c.fk_odontologos) doc , 
                                   (select icon FROM tab_odontologos o where o.rowid = c.fk_odontologos) as icon ,
                                   c.comentario
                                   FROM tab_comentarios_odontologos c WHERE c.fk_paciente = $idPaciente order by  c.rowid asc ";
                     $acce   = $db->query($sql1);
+                    if($acce->rowCount() > 0) {
+                        while ($obj = $acce->fetchObject()) {
+                            $imgbase64="";
+                            if(file_exists(DOL_HTTP.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$obj->icon)){
+                                $url = DOL_HTTP.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$obj->icon;
+                                $imgbase64 = base64_encode(file_get_contents($url));
+                                $imgbase64 = 'data:image/png; base64, '.$imgbase64;
+                            }else{
+                                $url = DOL_HTTP.'/logos_icon/logo_default/avatar_none.ico';
+                                $imgbase64 = base64_encode(file_get_contents($url));
+                                $imgbase64 = 'data:image/png; base64, '.$imgbase64;
+                            }
 
-                    if($acce->rowCount() > 0)
-                    {
-                        while ($obj = $acce->fetchObject())
-                        {
                             $data[] = array(
-                                "icon"   => DOL_HTTP.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$obj->icon,
+                                "icon"   => $imgbase64,
                                 "doctor" => $obj->doc,
                                 "text"   => ($obj->comentario == "") ? "" : $obj->comentario,
                                 "fecha"  => $obj->date
@@ -490,13 +494,22 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                                   c.comentario
                                   FROM tab_comentarios_odontologos c WHERE c.fk_paciente = $idPaciente order by  c.rowid asc ";
                 $acce   = $db->query($sql1);
+                if($acce->rowCount() > 0) {
+                    while ($obj = $acce->fetchObject()) {
 
-                if($acce->rowCount() > 0)
-                {
-                    while ($obj = $acce->fetchObject())
-                    {
+                        $imgbase64="";
+                        if(file_exists(DOL_HTTP.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$obj->icon)){
+                            $url = DOL_HTTP.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$obj->icon;
+                            $imgbase64 = base64_encode(file_get_contents($url));
+                            $imgbase64 = 'data:image/png; base64, '.$imgbase64;
+                        }else{
+                            $url = DOL_HTTP.'/logos_icon/logo_default/avatar_none.ico';
+                            $imgbase64 = base64_encode(file_get_contents($url));
+                            $imgbase64 = 'data:image/png; base64, '.$imgbase64;
+                        }
+
                         $data[] = array(
-                            "icon"       => DOL_HTTP.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$obj->icon,
+                            "icon"       => $imgbase64,
                             "doctor"     => $obj->doc,
                             "text"       => ($obj->comentario == "") ? "" : $obj->comentario,
                             "ultimo_id"  => $obj->rowid,
@@ -1528,6 +1541,9 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             $data = array();
 
+            $start  = $_POST['start'];
+            $length = $_POST['length'];
+
             $idtratamiento = GETPOST("idtratamiento");
 
             # lista de estado pertenesientes a ese tratamiento
@@ -1544,7 +1560,16 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             if(!empty($idtratamiento)){
                 $sql .= " and  d.fk_tratamiento = $idtratamiento ";
             }
+
             $sql .= " order by d.rowid desc";
+
+            $Total = $db->query($sql)->rowCount();
+
+            if($start || $length){
+                $sql.=" LIMIT $start,$length;";
+            }
+
+
             $rs = $db->query($sql);
             if($rs->rowCount() > 0){
 
@@ -1577,8 +1602,13 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 }
             }
 
+            $resultado['datos'] = $data;
+            $resultado['total'] = $Total;
+
             $output = [
-                'data' => $data
+                "data"            => $resultado['datos'],
+                "recordsTotal"    => $resultado['total'],
+                "recordsFiltered" => $resultado['total']
             ];
 
             echo json_encode($output);

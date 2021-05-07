@@ -1,24 +1,26 @@
 
 $(window).on('load', function () {
 
-    setTimeout(function () {
-        $(document)
-            .ajaxStart(function () {
-                var ElemmentoContentload = $("#tableAgenda");
-                boxTableLoad(ElemmentoContentload, true);
-            })
-            .ajaxStop(function () {
-                var ElemmentoContentload = $("#tableAgenda");
-                boxTableLoad(ElemmentoContentload, false);
-            });
-    },1500);
+    // setTimeout(function () {
+    //     $(document)
+    //         .ajaxStart(function () {
+    //             var ElemmentoContentload = $("#tableAgenda");
+    //             boxTableLoad(ElemmentoContentload, true);
+    //         })
+    //         .ajaxStop(function () {
+    //             var ElemmentoContentload = $("#tableAgenda");
+    //             boxTableLoad(ElemmentoContentload, false);
+    //         });
+    // },1500);
 
 });
 
 
-function loadtableAgenda()
-{
+function loadtableAgenda() {
+
      var ElemmentoContentload = $("#tableAgenda");
+
+     boxTableLoad(ElemmentoContentload, true);
 
      var table = $('#tableAgenda').DataTable({
         searching: false,
@@ -26,8 +28,9 @@ function loadtableAgenda()
         "serverSide": true,
         // responsive: true,
         // destroy:true,
-        // scrollX: true,
+        scrollX: false,
         // scrollY: 700,
+        lengthChange: false,
         fixedHeader: true,
         paging:true,
         processing: true,
@@ -47,7 +50,7 @@ function loadtableAgenda()
             },
             "dataType":'json',
             "complete": function(xhr, status) {
-                // boxTableLoad(ElemmentoContentload, false);
+                boxTableLoad(ElemmentoContentload, false);
             }
         },
         'createdRow':function(row, data, index){
@@ -110,7 +113,11 @@ function loadtableAgenda()
         // ajax:{
         //
         // },
-    });
+    }).on( 'length.dt', function ( e, settings, len ) { // cambiar
+         boxTableLoad(ElemmentoContentload, true);
+     }).on( 'page.dt', function ( e, settings, len ) { // cambiar
+         boxTableLoad(ElemmentoContentload, true);
+     });
     // new $.fn.dataTable.FixedHeader( table );
     new $.fn.dataTable.FixedHeader( table,
         {
@@ -123,6 +130,10 @@ function loadtableAgenda()
 
 function filtrarAgenda(validStatus="") {
 
+
+    var ElemmentoContentload = $("#tableAgenda");
+
+    boxTableLoad(ElemmentoContentload, true);
 
     var  table      = $("#tableAgenda").DataTable();
     var  accion     = "listCitas";
@@ -649,7 +660,36 @@ function limpiarInpust(){
     $("#n_citasPacientes").val(null);
 }
 
-var ImprimirCitasAgendadas = function(){
+var ImprimirCitasAgendadas = function(filter=false){
+
+    //busqueda de
+    if(filter==true){
+
+        var odonto     = $("#filtro_doctor").select2('data').map(function (arr) {
+            return arr.id;
+        });
+        var estados    = $("#filtroEstados").select2('data').map(function (arr) {
+            return arr.id;
+        });
+        var bxpaciente = $("#buscarxPaciente").select2('data').map(function (arr) {
+            return arr.id;
+        });
+
+        var fecha = $("#startDate").val();
+        var n_citasPacientes = $("#n_citasPacientes").val();
+
+        var parametros = "&fecha="+fecha;
+        parametros += "&odontologo="+odonto.toString();
+        parametros += "&estados="+estados.toString();
+        parametros += "&pacientes="+bxpaciente.toString();
+        parametros += "&n_cita="+n_citasPacientes;
+        var urlprint = $DOCUMENTO_URL_HTTP + '/application/system/agenda/export/export_pdf_citas_agendadas.php?accion_exportar=pdf_filter'+parametros;
+        window.open(urlprint, '_blank');
+
+        return true;
+    }
+
+    //busqueda por checked citas selecionadas
     if( $("[name='checkedCitas']:checked").length == 0 )
         notificacion('Debe selecionar al menos una o varias Citas Agendadas', 'question');
     else{
@@ -721,8 +761,6 @@ $(document).ready(function() {
         $(this).parent().find('input').click();
     });
 
-    loadtableAgenda();
-
     NOTIFICACION_CITAS_NUMEROS();
 
 });
@@ -757,5 +795,6 @@ $(window).on("load", function() {
         language:'es',
     });
 
+    setTimeout(()=>{loadtableAgenda();},1000);
 
 });

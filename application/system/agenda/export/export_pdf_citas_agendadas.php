@@ -35,6 +35,25 @@ $idagend = GETPOST('idagend');
 
 $objectCitasAgendadas = array();
 
+$doctor="";
+$estado="";
+$fechaInicio="";
+$fechaFin="";
+$fechaFin="";
+$paciente="";
+$n_citas="";
+
+if(GETPOST('accion_exportar')=='pdf_filter'){
+    $doctor     = GETPOST('odontologo');
+    $estado     = GETPOST('estados');
+    $fechaInicio= str_replace('/', '-', (explode('-', GETPOST('fecha'))[0]));
+    $fechaFin   = str_replace('/', '-', (explode('-', GETPOST('fecha'))[1]));
+    $paciente   = GETPOST('pacientes');
+    $n_citas    = GETPOST('n_cita');
+
+}
+
+
 $sql = "SELECT 
             date_format(d.fecha_cita, '%Y/%m/%d')  as fecha_cita,         
             d.hora_inicio , 
@@ -106,8 +125,11 @@ if ($colum_ord == 3) {
     $sql .= " order by d.fecha_cita desc ";
 }*/
 
+//busqueda por id otro tipo de filtro
+if(!empty($idagend)){
+    $sql .= " and d.rowid in(".$idagend.")";
+}
 
-$sql .= " and d.rowid in(".$idagend.")";
 $sql .= " order by d.fecha_cita desc ";
 
 $pdf .= '<style>

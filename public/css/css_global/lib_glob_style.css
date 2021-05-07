@@ -1,4 +1,8 @@
 
+h2.swal2-title{
+   font-family: 'Open Sans', sans-serif !important;
+}
+
 /*diseño table > head*/
 table.table > thead tr th{
     box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);

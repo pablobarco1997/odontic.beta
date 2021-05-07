@@ -185,6 +185,7 @@ if($accionOdontograma == 'form_odont')
             searching: false,
             ordering:false,
             destroy: true,
+            serverSide: true,
             // scrollY:    "200px",
             // paging:false,
             // scrollCollapse: true,

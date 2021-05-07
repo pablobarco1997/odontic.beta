@@ -100,9 +100,9 @@ $(window).on("load", function() {
 
     ajax_load_comment_time(null, "consultar");
 
-    setInterval(function() {
-        ajax_load_comment_time(null, "consultar");
-    },3500);
+    // setInterval(function() {
+    //     ajax_load_comment_time(null, "consultar");
+    // },3500);
 
     boxloading($boxContentViewAdminPaciente ,false, 1000);
 });

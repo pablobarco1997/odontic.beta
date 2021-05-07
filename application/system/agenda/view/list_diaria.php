@@ -97,10 +97,11 @@
     <div class="form-group col-md-12 col-xs-12"  style="background-color: #f4f4f4; padding: 25px">
         <h3 class="no-margin"><span>Filtrar Citas</span></h3>
         <div class="row">
-            <div class="form-group col-md-3 col-sm-12 col-xs-12">
+
+            <div class="form-group col-md-2 col-sm-12 col-xs-12">
                 <label for="">Fecha</label>
                 <div class="input-group form-group rango" style="margin: 0">
-                    <input type="text" class="form-control filtroFecha  " readonly id="startDate" value="">
+                    <input type="text" class="form-control filtroFecha  " readonly id="startDate" value="" style="font-size: small">
                     <span class="input-group-addon" style="border-radius: 0"><i class="fa fa-calendar"></i></span>
                 </div>
             </div>
@@ -108,23 +109,20 @@
             <div class="form-group col-md-4 col-sm-12 col-xs-12">
                 <label for="">Doctor (Odontolog@)</label>
                 <select name="filtro_doctor" id="filtro_doctor" style="width: 100%" multiple class="filtrar_doctor form-control   " >
-
                     <?php
-                    $sql = "SELECT rowid , nombre_doc , apellido_doc , if(estado = 'A' , 'Activo' , 'Inactivo') as iestado FROM tab_odontologos where estado in('A' , 'E') ;";
-                    $rs = $db->query($sql);
-                    if($rs->rowCount() > 0)
-                    {
-                        while ($obj = $rs->fetchObject())
-                        {
-                            $nombOdontologos = $obj->nombre_doc ."  ". $obj->apellido_doc;
-                            print "<option value='$obj->rowid'> ".(strtoupper($nombOdontologos))."  &nbsp;&nbsp;&nbsp;&nbsp;  ( <small> ".(strtolower($obj->iestado))."</small>  ) </option>";
+                        $sql = "SELECT rowid , nombre_doc , apellido_doc , if(estado = 'A' , 'Activo' , 'Inactivo') as iestado FROM tab_odontologos where estado in('A' , 'E') ;";
+                        $rs = $db->query($sql);
+                        if($rs->rowCount() > 0){
+                            while ($obj = $rs->fetchObject()){
+                                $nombOdontologos = $obj->nombre_doc ."  ". $obj->apellido_doc;
+                                print "<option value='$obj->rowid'> ".(strtoupper($nombOdontologos))."  &nbsp;&nbsp;&nbsp;&nbsp;  ( <small> ".(strtolower($obj->iestado))."</small>  ) </option>";
+                            }
                         }
-                    }
                     ?>
                 </select>
             </div>
 
-            <div class="form-group col-md-3 col-sm-12 col-xs-12">
+            <div class="form-group col-md-4 col-sm-12 col-xs-12">
                 <label for="">Estado de citas</label>
                 <select name="" id="filtroEstados"  style="width: 100%" class="form-control  filtrar_estados " multiple>
 
@@ -157,8 +155,12 @@
                 </ul>
                 <select name="buscarxPaciente" id="buscarxPaciente" style="width: 100%" multiple class="form-control  buscarxPaciente "></select>
             </div>
+        </div>
+
+        <div class="row">
             <div class="form-group col-md-12 ">
                 <ul class="list-inline pull-right">
+                    <li>  <button class="btn   btn-block  btn-default" onclick="ImprimirCitasAgendadas(true)" style="float: right; padding: 10px" > &nbsp; &nbsp; <small style="font-weight: bold"> Imprimir por rango de Filtro <i class="fa fa-print"></i> </small> &nbsp; &nbsp;</button> </li>
                     <li>  <button class="limpiar btn   btn-block  btn-default" style="float: right; padding: 10px" > &nbsp; &nbsp; Limpiar &nbsp; &nbsp;</button> </li>
                     <li>  <button class="aplicar btn   btn-block  btn-success" style="float: right; padding: 10px" > &nbsp;  &nbsp;Aplicar busqueda &nbsp;</button> </li>
                 </ul>
@@ -169,38 +171,27 @@
 </div>
 
 <style>
-   .table-responsive{
-       position: relative; !important;
-   }
-   table.tableAgenda{
-       text-align: left;
-       border-collapse: collapse;
-   }
-   .boxTH {
-       box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
-       /*position: -webkit-sticky !important;*/
-       /*position: sticky !important;*/
-   }
+
     .fixedHeader-floating{
         top: -4px!important;
     }
 </style>
 
 <div class="form-group col-md-12 col-xs-12 col-sm-12 col-lg-12" >
-    <div class="table-responsive" style="width: 100%">
-        <table class="table table-striped  tableAgenda compact" id="tableAgenda" width="100%" >
-            <thead  style="background-color: #f4f4f4; width: 100%; border-bottom: 1px solid #333333" id="headAgendaDiaria">
+    <div class="table-responsive" style="width: 100%; ">
+        <table class="table tableAgenda compact" id="tableAgenda" width="100%" >
+            <thead  style="background-color: #f4f4f4; border-bottom: 1px solid #333333" id="headAgendaDiaria">
                 <tr id="cabezeraListAgenda" class="cabezeraListAgenda " >
-                    <th class="text-left boxTH" width="3%">
+                    <th class="text-left " width="3%">
                         <input type="checkbox" id="checkeAllCitas" >
                         <label for="checkeAllCitas"></label>
                     </th>
-                    <th class="text-center boxTH" width="8%">N.- Citas</th>
-                    <th class="text-center boxTH" width="10%">Hora</th>
-                    <th class="text-center boxTH" width="23%">Paciente</th>
-                    <th class="text-center boxTH" width="23%">Doctor(a)</th>
-                    <th class="text-center boxTH" width="15%">Estado de Citas</th>
-                    <th class="text-center boxTH" width="10%">Situación</th>
+                    <th class="text-center " width="8%">N.- Citas</th>
+                    <th class="text-center " width="10%">Hora</th>
+                    <th class="text-center " width="23%">Paciente</th>
+                    <th class="text-center " width="23%">Doctor(a)</th>
+                    <th class="text-center " width="15%">Estado de Citas</th>
+                    <th class="text-center " width="10%">Situación</th>
                 </tr>
             </thead>
         </table>
