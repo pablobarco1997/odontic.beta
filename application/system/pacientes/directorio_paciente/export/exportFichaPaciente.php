@@ -216,12 +216,12 @@ $mpdf->bleedMargin = 4;
 $mpdf->SetDirectionality('ltr');
 $mpdf->showImageErrors = 'true';
 $mpdf->SetDisplayMode('fullpage');
-$mpdf->SetTitle('Ficha datos Persoles (Paciente)' );
+$mpdf->SetTitle('Ficha datos Personales (Paciente)' );
 
 $mpdf->WriteHTML($body.$pdf);
 
 
-$mpdf->Output('Ficha datos Persoles (Paciente).pdf', 'I');
+$mpdf->Output('Ficha Datos Personales (Paciente).pdf', 'I');
 //print_r($mpdf); die();
 //exit;
 

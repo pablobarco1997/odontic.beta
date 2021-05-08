@@ -2,7 +2,7 @@
 
 <div class="form-group col-md-12 col-xs-12">
     <label for="">LISTA DE COMPORTAMIENTOS</label>
-    <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px">
+    <ul class="list-inline" style="background-color: #f0f0f0;border-bottom: 0.6px solid #333333; padding: 3px">
         <li> <a data-toggle="collapse" data-target="#contentFilter" class="btnhover btn btn-sm collapsed" style="color: #333333" aria-expanded="false"> <b>   ▼  Filtrar  </b>  </a> </li>
         <li> <a class="btnhover btn btn-sm " style="color: #333333" onclick="Programar()" > <b> <i class="fa fa-clock-o"></i> Programar  </b>  </a> </li>
     </ul>

@@ -169,13 +169,21 @@
                             $labelSatus="Correo Anulado"; $color="red";
                         }
 
+                        //valido el size de caracteres asignado en la celda 140
+                        $substring = $value['message'];
+                        if(strlen($substring)>140){
+                            $substring = substr($substring,0,140);
+                            $substring .= " ...";
+                        }
+
+
                         $row = [];
                         $row[] = date('Y/d/m', strtotime($value['date_cc']));
                         $row[] = $value['destinario'];
                         $row[] = $value['asunto'];
-                        $row[] = "<p class='trunc' title='".$value['message']."'>".$value['message']."</p>"." ".(implode(" ", $File));
+                        $row[] = "<p class='' title='".$value['message']."'>".$substring."</p>"." ".(implode(" ", $File));
                         $row[] = ($value['date_program']!="")? date('Y/d/m', strtotime($value['date_program'])):"";
-                        $row[] = "<small style='font-weight: bolder; color: $color'>".$labelSatus."</small>";
+                        $row[] = "<small style='font-weight: bolder; color: $color' title='$labelSatus'>".$labelSatus."</small>";
                         $row[] = "";
                         $row['dataCorreo'] = base64_encode(json_encode($value));
                         $row['idcorreo']      = $value['rowid'];

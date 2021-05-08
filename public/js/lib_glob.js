@@ -763,9 +763,9 @@ function ToLocalDateSpanish(date = "") {
 
 if($('#perf_cedula').length>0 && $('#especialidadPerfil').length>0){
     $('#perf_cedula').mask("000000000-0",{placeholder:"_________-_"});
-    $('#especialidadPerfil').select2({
-        placeholder:'Selecione opcion',
-        allowClear: false,
-        language:'es'
-    });
+    // $('#especialidadPerfil').select2({
+    //     placeholder:'Selecione opcion',
+    //     allowClear: false,
+    //     language:'es'
+    // });
 }

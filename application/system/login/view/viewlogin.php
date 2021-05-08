@@ -28,7 +28,15 @@
 
             <br>
 
-            <img  width="35%" id="iconLoginPrincipal" class="img-rounded center-block" src="<?php echo DOL_HTTP .'/application/system/login/img/dental_icon.png'?>" alt="">
+            <?php
+
+                $url = DOL_DOCUMENT.'/application/system/login/img/dental_icon.png';
+                $base64 = base64_encode(file_get_contents($url));
+                $imgbase64 = "data:image/*; base64, ".$base64;
+
+            ?>
+
+            <img  width="35%" id="iconLoginPrincipal" class="img-rounded center-block" src="<?= $imgbase64; ?>" alt="">
 
             <div class="form-group">
                 <div class="col-3">

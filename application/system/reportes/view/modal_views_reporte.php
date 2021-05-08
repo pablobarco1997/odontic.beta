@@ -11,7 +11,7 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-12 col-xs-12" style="margin-bottom: 15px">
-                       <h4 id="labelRegistroxDate" style="border-bottom: 1px solid #e9edf2; display: block; margin-bottom: 10px"><span>1 de enero de 2021 hasta 31 de diciembre de 2021</span></h4>
+                       <h4 id="labelRegistroxDate" style="background-color: #f0f0f0; padding: 3px;border-bottom: 1px solid #e9edf2; display: block; margin-bottom: 10px"><span>1 de enero de 2021 hasta 31 de diciembre de 2021</span></h4>
                     </div>
                     <div class="col-md-12 col-xs-12">
                         <div class="table-responsive">

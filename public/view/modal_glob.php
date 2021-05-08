@@ -143,6 +143,7 @@
                                <input type="text" class="form-control" id="perf_celular" >
                                <br>
                            </div>
+
                            <label for="" class="control-label control-label col-sm-4 col-md-4 col-xs-12">especialidad</label>
                            <div class="col-sm-6 col-md-8 col-xs-12">
                                <select  id="especialidadPerfil" class="form-control " style="width: 100%" onchange="FormValidationPerfilGlobal()">
@@ -161,6 +162,7 @@
                                </select>
                                <br>
                            </div>
+
                        </div>
                    </div>
                </div>

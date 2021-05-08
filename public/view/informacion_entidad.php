@@ -31,8 +31,8 @@
                             ?>
 
                             <div class="form-group">
-                                <div class="col-md-3 col-centered">
-                                    <div class="col-md-3 col-centered" style="width: 60%;display: block; overflow: hidden">
+                                <div class="col-md-4 col-centered">
+                                    <div class="col-md-4 col-centered" style="width: 60%;display: block; overflow: hidden">
                                         <img src=" <?= !empty($conf->EMPRESA->INFORMACION->logo) ? $infoModsrc :  $infoModsrc ?>" style="width: 100%" alt="" id="imgLogo">
 
                                         <table width="100%" style="margin-top: 10px">
@@ -112,11 +112,8 @@
                             </div>
 
                         </div>
-
                     </div>
-
                 </form>
-
             </div>
         </div>
     </div>

@@ -1,7 +1,7 @@
 
 <div class="form-group col-md-12 col-xs-12">
     <label for="">LISTA DE COMPORTAMIENTOS</label>
-    <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px">
+    <ul class="list-inline" style="background-color: #f0f0f0;border-bottom: 0.6px solid #333333; padding: 3px">
         <li> <a class="btnhover btn btn-sm " style="color: #333333" onclick="Programar()" > <b> <i class="fa fa-clock-o"></i> Programar  </b>  </a> </li>
     </ul>
 </div>
@@ -47,17 +47,17 @@
             <table style=" table-layout: auto;" >
                 <tr>
                     <td style="padding-right: 5px">
-                        <button class="btn  " id="EnviarCorreoGuardar" style="background-color: #1a73e8; color: #ffffff"><b>  Guardar</b></button>
+                        <button class="btn  " id="EnviarCorreoGuardar" style="font-weight: lighter;background-color: #1a73e8; color: #ffffff">Guardar</button>
                     </td>
                     <td style="padding-right: 5px">
-                        <button class="btn  " id="EnviarCorreoNow" style="background-color: #1a73e8; color: #ffffff"><b>  Enviar Mensaje</b></button>
+                        <button class="btn  " id="EnviarCorreoNow" style="font-weight: lighter;background-color: #1a73e8; color: #ffffff">   Enviar Mensaje </button>
                     </td>
                     <td style="padding-right: 5px">
-                        <button class="btn  " id="EnviarCorreoProgramar" style="background-color: #00a65a; color: #ffffff"><b> <i class="fa fa-clock-o"></i> &nbsp; Programar Mensaje</b></button>
+                        <button class="btn  " id="EnviarCorreoProgramar" style="font-weight: lighter;background-color: #00a65a; color: #ffffff"><i class="fa fa-clock-o"></i> &nbsp; Programar Mensaje</button>
                     </td>
-                    <td style="padding-right: 5px">
-                        <label for="fileAdjuntar" class="btn btn-default"> <b><i class="fa fa-paperclip"></i> &nbsp;  Adjuntar Archivo</b></label>
-                        <input type="file" class="hidden" id="fileAdjuntar">
+                    <td style="padding-right: 5px" class="disabled disabled_link3">
+                        <label for="fileAdjuntar" disabled class="disabled_link3 btn btn-default"> <b><i class="fa fa-paperclip"></i> &nbsp;  Adjuntar Archivo</b></label>
+                        <input type="file" class="hidden" disabled id="fileAdjuntar">
                     </td>
                 </tr>
             </table>
@@ -189,6 +189,14 @@
     };
     
     var AdjuntarFile = function (event) {
+
+        //opcion deshabilitada
+        notificacion('Funcionalidad deshabilitada', 'question');
+        return false;
+        //end
+
+
+
 
         var li   = document.createElement('li');
 
