@@ -7,7 +7,27 @@
 
     <title>Odontic</title>
 
-    <link rel="shortcut icon" href="<?= !empty($conf->EMPRESA->INFORMACION->logo) ? DOL_HTTP.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$conf->EMPRESA->INFORMACION->logo :  DOL_HTTP .'/logos_icon/logo_default/icon_software_dental.png'?>" type = "image/x-icon">
+    <?php
+
+        if(!empty($conf->EMPRESA->INFORMACION->logo)){
+            if(file_exists(DOL_DOCUMENT.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$conf->EMPRESA->INFORMACION->logo)){
+                $url = DOL_DOCUMENT.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$conf->EMPRESA->INFORMACION->logo;
+                $base64 = base64_encode(file_get_contents($url));
+                $icon_64_entity = "data:image/*; base64, ".$base64;
+            }else{
+                $url = DOL_DOCUMENT.'/application/system/login/img/dental_icon.png';
+                $base64 = base64_encode(file_get_contents($url));
+                $icon_64_entity = "data:image/*; base64, ".$base64;
+            }
+        }else{
+            $url = DOL_DOCUMENT.'/application/system/login/img/dental_icon.png';
+            $base64 = base64_encode(file_get_contents($url));
+            $icon_64_entity = "data:image/*; base64, ".$base64;
+        }
+
+    ?>
+
+    <link rel="shortcut icon" href="<?= $icon_64_entity ?>" type = "image/x-icon">
     <!-- Tell the browser to be responsive to screen width -->
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <!--    bootstrap-->
