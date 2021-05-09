@@ -22,6 +22,7 @@ function fetchClinicas(){
     return $fetchClinicas;
 }
 
+//El proceso que ejecutara el email
 function ProccessCronSendEmail(){
 
     $dbconectar       = new db_and_procesos();

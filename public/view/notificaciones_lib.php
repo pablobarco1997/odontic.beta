@@ -5,7 +5,7 @@
 
 <li class="dropdown messages-menu" >
     <!-- Menu toggle button -->
-    <a href="#"  class="dropdown-toggle" data-toggle="dropdown" onclick="Notify_odontic()">
+    <a href="#"  class="dropdown-toggle" data-toggle="dropdown" onclick="Notify_odontic(true)">
         <i class="fa fa-bell-o"></i>
         <span class="label label-warning" id="N_noti"></span>
     </a>

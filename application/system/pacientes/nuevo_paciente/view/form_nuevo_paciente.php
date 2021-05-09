@@ -14,7 +14,7 @@
                                     <div class="form-group col-xs-12 col-md-12">
                                         <div class="form-group">
                                             <label for="">LISTA DE COMPORTAMIENTOS</label>
-                                            <ul class="list-inline pull-right col-md-12 col-xs-12" style="border-bottom: 0.6px solid #333333; padding: 3px">
+                                            <ul class="list-inline pull-right col-md-12 col-xs-12" style="background-color: #f4f4f4;border-bottom: 0.6px solid #333333; padding: 3px">
                                                 <li>
                                                     <a class="btnhover btn btn-sm " id="carga_masv_pasiente" style="color: #333333" title="carga. Subida Masiva de Pacientes (excel)">
                                                         <b><img src="<?= DOL_HTTP.'/logos_icon/logo_default/Excel_2013_23480.png' ?>" width="15px" height="15px"> Cargar Paciente Masivo</b>

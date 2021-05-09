@@ -72,9 +72,6 @@ function Actulizar_notificacion_citas(idcita)
 
 // Consultar Tiempo Real
 
-setTimeout(function() {
-    Notify_odontic();
-},1000);
 
 // interval_notification = setInterval(function () {
 //
@@ -111,6 +108,23 @@ $( window ).on("load", function() {
     //     clearInterval( interval_notification );
     // });
 
+    var CloseVal = 0;
+    var Interval = setInterval(()=>{
+        Notify_odontic();
+        CloseVal++;
+        if(CloseVal==10){
+            clearInterval(Interval);
+            vuelvoEmpezarNotifyOdontic();
+        }
+    },10000);
+
+    function vuelvoEmpezarNotifyOdontic() {
+        setTimeout(function() {
+            Interval
+        },5000);
+    }
+
+    Notify_odontic(true);
 
 });
 
@@ -139,13 +153,39 @@ if( $('#nuevoGuardarCitas').length > 0){
 }
 
 
-function Notify_odontic() {
-    $.get(url, paramt , function(data) {
-        var HTML = $.parseJSON(data);
-        if(HTML['error'] == ""){
-            Htmlnotificacion( HTML.data, HTML.N_noti );
+function Notify_odontic(tiempoReal=false) {
+
+    var parametros = {
+        'ajaxSend'  : 'ajaxSend',
+        'accion'    : 'notification_',
+        'validTime' : (tiempoReal==true)?1:0,
+    };
+
+    $.ajax({
+        url: url,
+        type:'POST',
+        data: parametros,
+        dataType:'json',
+        cache:false,
+        complete: function (xhr, status) {
+            console.log(xhr);
+        },
+        success: function (response) {
+
+            var push_html   = response['data'];
+            var numero_push = response['N_noti'];
+
+            Htmlnotificacion( push_html, numero_push );
         }
     });
+
+    // $.get(url, paramt , function(data) {
+    //     var HTML = $.parseJSON(data);
+    //     if(HTML['error'] == ""){
+    //         Htmlnotificacion( HTML.data, HTML.N_noti );
+    //     }
+    // });
+
 }
 
 //Filtrar x Fecha

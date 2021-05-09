@@ -67,9 +67,10 @@
         function ObtnerNoficaciones($db, $puedoAxu)
         {
 
+                $fecha_time_db=[]; //obtengo el tiempo y la fecha de cada notificacion que entra
                 $GlobNotificacion = array();
 
-                #ESTA VARIABLE CAPTURAR EL NUMERO DE NOTIFICACIONES QUE EXTIS
+                #Esta variable captura el numero de citas que existe
                 $numeroNotificaciones = 0;
 
                 $ConsultarCitas = "
@@ -81,24 +82,14 @@
                             CONCAT(d.hora_inicio, ' A ', d.hora_fin) AS cita_desde,
                             CONCAT(p.nombre, ' ', p.apellido) AS nombre,
                             c.comentario,
-                            (SELECT 
-                                    CONCAT(o.nombre_doc, ' ', o.apellido_doc)
-                                FROM
-                                    tab_odontologos o
-                                WHERE
-                                    o.rowid = d.fk_doc) AS doctor_cargo,
+                            (SELECT CONCAT(o.nombre_doc, ' ', o.apellido_doc) FROM tab_odontologos o WHERE o.rowid = d.fk_doc) AS doctor_cargo,
                             s.text,
                             p.rowid AS idpaciente,
                             d.fk_doc AS iddoctorcargo,
                             p.fk_convenio AS convenio,
-                            IFNULL((SELECT 
-                                            cv.nombre_conv
-                                        FROM
-                                            tab_conf_convenio_desc cv
-                                        WHERE
-                                            cv.rowid = p.fk_convenio),
-                                    'sin convenio') AS nomconvenio ,
-                            p.icon
+                            IFNULL((SELECT  cv.nombre_conv FROM tab_conf_convenio_desc cv WHERE cv.rowid = p.fk_convenio),'sin convenio') AS nomconvenio ,
+                            p.icon,
+                            c.tms
                         FROM
                             tab_pacientes_citas_cab c,
                             tab_pacientes_citas_det d,
@@ -109,84 +100,81 @@
                                 AND c.rowid = d.fk_pacient_cita_cab
                                 AND d.fk_estado_paciente_cita = s.rowid 
                                 
-                        -- ALERTA LA NOTIFICACION DE LA CITA CON FECHA HASTA LA HORA FIN 
+                        -- alerta la notificacion de la cita con fecha hasta la hora fin 
                         AND date_format(d.fecha_cita , '%Y-%m-%d') = date_format( now() , '%Y-%m-%d') 
                         AND TRIM(SUBSTRING(NOW(), 11, 17)) <= TRIM(d.hora_fin) 
-                        -- SOLO LAS CITAS QUE ESTEN NO CONFIRMADAS
+                        -- Solo las citas que estan confirmadas
                         AND s.rowid not in(9,7,6,7) ";
 
-                #NOTIFICACIONES DE CITAS
+                #Notificacion de citas - cada vez que se agenda una nueva cita
                 $rsConsultCitas = $db->query($ConsultarCitas);
-                if($rsConsultCitas->rowCount() > 0)
-                {
-                    while ( $CitasConsult = $rsConsultCitas->fetchObject() )
-                    {
+                if($rsConsultCitas->rowCount() > 0){
+                    while ( $CitasConsult = $rsConsultCitas->fetchObject() ){
 
+                        //Fecha Time de citas
+                        $fecha_time_db[base64_encode($CitasConsult->tms)] = $CitasConsult->tms;
+
+                        //Notificaiones object Global de citas
                         $this->NOTIFICACIONES->Glob_Notificaciones[] = (object)array(
-
-                            'tipo_notificacion'     => 'NOTIFICAIONES_CITAS_PACIENTES' ,
-
-                            'fecha'                 => date('Y-m-d', strtotime( str_replace('-', '/', $CitasConsult->fecha_create))),
+                            'tipo_notificacion'     =>  'NOTIFICAIONES_CITAS_PACIENTES' ,
+                            'fecha'                 =>  date('Y-m-d', strtotime( str_replace('-', '/', $CitasConsult->fecha_create))),
                             'horaIni'               =>  $CitasConsult->hora_inicio,
                             'horafin'               =>  $CitasConsult->hora_fin ,
-
                             'nombe_paciente'        =>  $CitasConsult->nombre,
                             'comment'               =>  $CitasConsult->comentario,
                             'doctor_cargo'          =>  $CitasConsult->doctor_cargo,
                             'icon'                  =>  $CitasConsult->icon,
-
                             'id_detalle_cita'       =>  $CitasConsult->id_detalle_cita,
                             'idpaciente'            =>  $CitasConsult->idpaciente,
                             'iddoctorcargo'         =>  $CitasConsult->iddoctorcargo,
                         );
 
+                        //Arreglo de retornar (Notificacion de Citas)
                         $GlobNotificacion[] = (object)array(
-
                             'tipo_notificacion'     => 'NOTIFICAIONES_CITAS_PACIENTES' ,
-
-                            'fecha'                 => date('Y-m-d', strtotime( str_replace('-', '/', $CitasConsult->fecha_create))),
+                            'fecha'                 =>  date('Y-m-d', strtotime( str_replace('-', '/', $CitasConsult->fecha_create))),
                             'horaIni'               =>  $CitasConsult->hora_inicio,
                             'horafin'               =>  $CitasConsult->hora_fin ,
-
                             'nombe_paciente'        =>  $CitasConsult->nombre,
                             'comment'               =>  $CitasConsult->comentario,
                             'doctor_cargo'          =>  $CitasConsult->doctor_cargo,
                             'icon'                  =>  $CitasConsult->icon,
-
                             'id_detalle_cita'       =>  $CitasConsult->id_detalle_cita,
                             'idpaciente'            =>  $CitasConsult->idpaciente,
                             'iddoctorcargo'         =>  $CitasConsult->iddoctorcargo,
                         );
-
                         $numeroNotificaciones++;
                     }
                 }
 
-                #CONFIRMAR NITIFICACIONES POR PACIENTES
+                #Confirmacion de citas x paciente via email
                 $ConsultarCitasConfirmadas = "SELECT 
                                                 (select concat( p.nombre , ' ' , p.apellido)  from tab_admin_pacientes p where p.rowid = e.fk_paciente) as paciente  , 
                                                 (select p.icon  from tab_admin_pacientes p where p.rowid = e.fk_paciente) as icon_paciente , 
                                                 e.action ,
                                                 e.noti_aceptar ,
                                                 e.date_confirm , 
-                                                e.rowid
+                                                e.rowid,
+                                                e.date_confirm as tms
                                             FROM tab_noti_confirmacion_cita_email e  , tab_pacientes_citas_det d WHERE e.fk_cita = d.rowid and e.action != '' and e.noti_aceptar = 0 
                                             AND  now() <= cast(e.fecha_cita as datetime)";
                 $rsCitasConfirmadas        = $db->query($ConsultarCitasConfirmadas);
-                if($rsCitasConfirmadas && $rsCitasConfirmadas->rowCount() > 0)
-                {
-                    while ( $NotiConfirmPacientes = $rsCitasConfirmadas->fetchObject() )
-                    {
+                if($rsCitasConfirmadas && $rsCitasConfirmadas->rowCount() > 0){
+                    while ( $NotiConfirmPacientes = $rsCitasConfirmadas->fetchObject() ){
+
+                        //Fecha Time de citas x paciente via email
+                        $fecha_time_db[base64_encode($NotiConfirmPacientes->tms)] = $NotiConfirmPacientes->tms;
+
                         $confirmacion = "Consultando";
                         $EstadoConfirmado = "";
 
                         if($NotiConfirmPacientes->action == 'ASISTIR'){
-                            $confirmacion = 'Este paciente confirmo el e-mail';
-                            $EstadoConfirmado = 'El paciente confirmó que si asistirá a la consulta';
+                            $confirmacion       = 'Este paciente confirmo el e-mail';
+                            $EstadoConfirmado   = 'El paciente confirmó que si asistirá a la consulta';
                         }
                         if($NotiConfirmPacientes->action == 'NO_ASISTIR'){
-                            $confirmacion = 'Este paciente confirmo el e-mail';
-                            $EstadoConfirmado = 'El paciente confirmó que no asistirá a la consulta';
+                            $confirmacion       = 'Este paciente confirmo el e-mail';
+                            $EstadoConfirmado   = 'El paciente confirmó que no asistirá a la consulta';
                         }
 
                         $this->NOTIFICACIONES->Glob_Notificaciones[] = (object)array(
@@ -215,14 +203,18 @@
 
                 #NUMERO DE NOTIFICACIONES
                 $this->NOTIFICACIONES->Numero = (object)array(
-
                     'NumeroNotificaciones'      => $numeroNotificaciones
-
                 );
 
 //                $GlobNotificacion = (object)array('NumeroNotificaciones' => $numeroNotificaciones);
 
-                return array('data' => $GlobNotificacion , 'numero' => $numeroNotificaciones);
+                $output = array(
+                    'data'          => $GlobNotificacion ,
+                    'numero'        => $numeroNotificaciones,
+                    'fecha_time_db' => $fecha_time_db
+                );
+
+                return $output;
 
 
         }

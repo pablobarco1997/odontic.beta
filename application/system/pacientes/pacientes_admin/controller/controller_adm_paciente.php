@@ -2063,6 +2063,38 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             echo json_encode($output);
             break;
 
+        case 'filtrarPlantratamientoSearchSelect2':
+
+            $data=[];
+            $paciente_id=GETPOST('paciente_id');
+            $search = GETPOST('search');
+
+            $sql = "SELECT 
+                        c.rowid , 
+                        ifnull(c.edit_name, concat('Plan de Tratamiento ', 'N. ', c.numero)) plantram ,
+                        concat('Doc(a) ', ' ', ifnull( (select concat( od.nombre_doc , ' ', od.apellido_doc ) as nomb from tab_odontologos od where od.rowid = c.fk_doc), 'No asignado')) as encargado ,
+                        replace(concat( ifnull(c.edit_name, concat('Plan de Tratamiento ', 'N. ', c.numero , ' ', concat('Doc(a) ', ' ', ifnull( (select concat( od.nombre_doc , ' ', od.apellido_doc ) as nomb from tab_odontologos od where od.rowid = c.fk_doc), 'No asignado'))) )),' ','') as label
+                    FROM tab_plan_tratamiento_cab c where c.fk_paciente = $paciente_id 
+                    ";
+            if(!empty($search)){
+                $sql .= " and replace(concat( ifnull(c.edit_name, concat('Plan de Tratamiento ', 'N. ', c.numero , ' ', concat('Doc(a) ', ' ', ifnull( (select concat( od.nombre_doc , ' ', od.apellido_doc ) as nomb from tab_odontologos od where od.rowid = c.fk_doc), 'No asignado'))) )),' ','') like '%".(str_replace(' ','', $search))."%' ";
+            }
+
+            $sql .= " limit 5";
+
+            $results = $db->query($sql);
+            if($results && $results->rowCount()>0){
+                $results = $results->fetchAll(PDO::FETCH_ASSOC);
+                foreach ($results as $value){
+                    $data[] = array('id' => $value['rowid'], 'text' => $value['plantram'].' '.$value['encargado']);
+                }
+            }
+
+            $output=[
+                'results' => $data
+            ];
+            echo json_encode($output);
+            break;
 
 
     }

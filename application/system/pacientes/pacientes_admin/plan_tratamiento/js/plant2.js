@@ -222,21 +222,21 @@ if($accion == 'addplan')
 
             html += "<td>  " +
                 "   <div class='form-group col-md-12 col-xs-12'>" +
-                "     <p class='' style='margin: 0px; font-size: 1.5rem'>  <b class=''>" + realizacion + "</b> </p> " +
+                "     <br>" + realizacion + "  " +
                 "   </div>  " +
                 " </td>";
 
-        html += "<td>  " +
-                    "   <div class='form-group col-md-12 col-xs-12'>" +
-                    "     <p class='descConvenio' style='margin: 0px; font-size: 1.5rem'>  <b class='descAdicional'>" + descAdicional + " </b> %</p> " +
-                    "   </div>  " +
-               " </td>";
+            html += "<td>  " +
+                        "   <div class='form-group col-md-12 col-xs-12'>" +
+                        "     <p class='descConvenio' style='margin: 0px; font-size: 1.5rem'>  <b class='descAdicional'>" + descAdicional + " </b> %</p> " +
+                        "   </div>  " +
+                   " </td>";
 
-        html += "<td>  " +
-                    "   <div class='form-group col-md-12 col-xs-12'>" +
-                    "     <p class='' style='margin: 0px; font-size: 1.5rem'> $ <b class='total'>" + redondear(total1, 2) + " </b> </p> " +
-                    "   </div>  " +
-               " </td>";
+            html += "<td>  " +
+                        "   <div class='form-group col-md-12 col-xs-12'>" +
+                        "     <p class='' style='margin: 0px; font-size: 1.5rem'> $ <b class='total'>" + redondear(total1, 2) + " </b> </p> " +
+                        "   </div>  " +
+                   " </td>";
 
         //estado pagado
         /*
@@ -907,3 +907,4 @@ function ArrayPeizas(){
 
     return objPieza;
 }
+

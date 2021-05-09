@@ -34,7 +34,7 @@ if(isset($_SESSION['is_open']))
 <!--    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">-->
     <link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2&display=swap" rel="stylesheet">
 
-    <link rel="shortcut icon" href=" <?= DOL_HTTP .'/application/system/login/img/dental_icon.png' ?>" type="image/x-icon" >
+    <link rel="shortcut icon" href="<?=DOL_HTTP.'/application/system/login/img/odontic_ico.png';?>" type="image/x-icon" >
 
     <script src="../../../public/bower_components/jquery/dist/jquery.js"></script>
     <script src="../../../public/bower_components/bootstrap/dist/js/bootstrap.js"></script>

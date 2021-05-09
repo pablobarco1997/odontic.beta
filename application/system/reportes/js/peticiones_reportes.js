@@ -138,15 +138,15 @@ var cargarRecursosInfo = function(){
     consultarAcciones();
 };
 
-$(document)
-    .ajaxStart(function () {
-        //ajax request went so show the loading image
-        boxloading($boxHomeInicio ,true);
-    })
-    .ajaxStop(function () {
-        //got response so hide the loading image
-        boxloading($boxHomeInicio ,true,1000);
-    });
+// $(document)
+//     .ajaxStart(function () {
+//         //ajax request went so show the loading image
+//         boxloading($boxHomeInicio ,true);
+//     })
+//     .ajaxStop(function () {
+//         //got response so hide the loading image
+//         boxloading($boxHomeInicio ,true,1000);
+//     });
 
 $(document).ready(function () {
 

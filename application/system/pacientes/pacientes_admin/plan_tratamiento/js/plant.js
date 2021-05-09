@@ -332,7 +332,26 @@ if($accion == "principal")
     $('#filtrPlantram').select2({
         placeholder: 'Seleccione una opcion',
         allowClear:true,
-        language: 'es'
+        language: 'es',
+        ajax:{
+            url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
+            type: "POST",
+            dataType: 'json',
+            async:false,
+            data:function (params) {
+                var query = {
+                    accion: 'filtrarPlantratamientoSearchSelect2',
+                    ajaxSend:'ajaxSend',
+                    paciente_id: $id_paciente,
+                    search: params.term,
+                };
+                return query;
+            },
+            delay: 250,
+            processResults:function (data) {
+                return data;
+            }
+        }
     });
 
     /*buscar x plan tramiento*/

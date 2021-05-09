@@ -30,13 +30,13 @@
 
             <?php
 
-                $url = DOL_DOCUMENT.'/application/system/login/img/dental_icon.png';
+                $url = DOL_DOCUMENT.'/application/system/login/img/odontic.beta_sistema_odontologico_online.png';
                 $base64 = base64_encode(file_get_contents($url));
                 $imgbase64 = "data:image/*; base64, ".$base64;
 
             ?>
 
-            <img  width="35%" id="iconLoginPrincipal" class="img-rounded center-block" src="<?= $imgbase64; ?>" alt="">
+            <img  width="100%" id="iconLoginPrincipal" class="img-rounded center-block" src="<?= $imgbase64; ?>" alt="">
 
             <div class="form-group">
                 <div class="col-3">

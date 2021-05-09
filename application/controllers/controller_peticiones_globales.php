@@ -234,21 +234,28 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
         case 'notification_':
 
+            $info           = [];
+            $notification   = [];
+            $validTime      = GETPOST('validTime');
+            if($validTime == 0 ){
+                set_time_limit(0); //se establese el numero de segundo que se permite la ejecucion de un script
+                usleep(3000000);
+            }
+            clearstatcache();
             $error = "";
-
             if( isset($_SESSION['is_open']) ){
 
-                $notification = $conf->ObtnerNoficaciones($db, false);
-                $info = info_noti( $notification );
+                $fecha_time     = GETPOST('fecha_time');
+                $fecha_php      = !empty(GETPOST('fecha_time'))?GETPOST('fecha_time'):date("Y-m-d H:m:s");
+
+                $notification   = $conf->ObtnerNoficaciones($db, false);
+                $fechadb        = $notification['fecha_time_db'];
+                $info           = info_noti( $notification );
 
             }else{
-
-                $info           = [];
-                $notification   = [];
                 $error          = "Ocurrio un error";
             }
 
-//            echo '<pre>';print_r($info);die();
             $output = [
               'data'   => ($info!="")?$info:array(),
               'N_noti' => $notification['numero'],
@@ -436,15 +443,11 @@ function info_noti( $data = array() )
 {
 
     global $conf;
-
     $HTML = "";
-
-    foreach ($data['data'] as $key => $v)
-    {
+    foreach ($data['data'] as $key => $v){
 
         #notificaciones de citas
-        if( $v->tipo_notificacion == 'NOTIFICAIONES_CITAS_PACIENTES' )
-        {
+        if( $v->tipo_notificacion == 'NOTIFICAIONES_CITAS_PACIENTES' ){
 
             $ico = "data: image/*; base64, ".base64_encode(file_get_contents(DOL_HTTP."/logos_icon/logo_default/cita-medica.ico"));
             $hora_desde_A = substr($v->horaIni, 0, 5 ) ." A " . substr($v->horafin, 0, 5 ); //Corto
@@ -479,13 +482,10 @@ function info_noti( $data = array() )
                 ";
 
             $HTML .= $HTML_CITAS_PACIENTES;
-
         }
 
-
         #notificaiones x pacientes - confirmaciones de pacientes via email
-        if( $v->tipo_notificacion == 'NOTIFICACION_CONFIRMAR_PACIENTE' )
-        {
+        if( $v->tipo_notificacion == 'NOTIFICACION_CONFIRMAR_PACIENTE' ){
             $icon2 = "";
             if(!empty($v->icon_paciente) && file_exists(DOL_DOCUMENT."/logos_icon/".$conf->NAME_DIRECTORIO."/".$v->icon_paciente)){
                 $icon2 = "data: image/*; base64, ".base64_encode(file_get_contents(DOL_HTTP."/logos_icon/".$conf->NAME_DIRECTORIO."/".$v->icon_paciente));
@@ -517,8 +517,6 @@ function info_noti( $data = array() )
 
             $HTML .= $HTML_NOTIFICACION_X_PACIENTES_EMAIL;
         }
-
-
     }
 
     return $HTML;
