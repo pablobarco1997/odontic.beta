@@ -112,11 +112,11 @@ $( window ).on("load", function() {
     var Interval = setInterval(()=>{
         Notify_odontic();
         CloseVal++;
-        if(CloseVal==10){
-            clearInterval(Interval);
-            vuelvoEmpezarNotifyOdontic();
-        }
-    },10000);
+        // if(CloseVal==10){
+        //     clearInterval(Interval);
+        //     vuelvoEmpezarNotifyOdontic();
+        // }
+    },15000);
 
     function vuelvoEmpezarNotifyOdontic() {
         setTimeout(function() {
