@@ -293,24 +293,13 @@ function ConfirmacionEmailHTML($token)
 
     $buttonToken = '';
     $buttonToken .= '
-            
-    <div style=\'width: 100%\'>
             <a href='. $Url_ConfirmCita .' style="
-                position: relative;
-                padding: 10px 40px;
-                margin: 0px 10px 10px 0px;
-                border-radius: 3px;
-                /*font-family: \'Lato\', sans-serif;*/
-                font-size: 1.4rem;
-                color: #FFF;
-                text-decoration: none; 
-                
-                background-color: #3498db;
-                border-bottom: 5px solid #2980B9;
-                text-shadow: 0px -2px #2980B9;
-                cursor: pointer;
-            ">CONFIRMAR CITA &nbsp;&nbsp;  </a>
-    </div>';
+                 background-color: #28a745; 
+                 padding: 15px; 
+                 color: #f0f0f0;
+                 border-radius: 5px;
+                 padding:10px 40px;margin:0px 10px 10px 0px;border-radius:3px;font-size:1.4rem;color:#fff;text-decoration:none;border-bottom:5px solid #28a745"> 
+             <b>C O N F I R M A R</b> </a>';
 
     return $buttonToken;
 }

@@ -435,31 +435,26 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
 
 
-            $token = tokenSecurityId(json_encode($create_token_confirm_citas));
+            $token              = tokenSecurityId(json_encode($create_token_confirm_citas));
             $buttonConfirmacion = ConfirmacionEmailHTML( $token );
 
 
+            //obtengo los datos para enviar
             $datos = (object)array(
-               'idpaciente' =>   !empty($idpaciente) ? $idpaciente : 0,
-               'idcita'    => !empty($idcita) ? $idcita : 0,
-               'asunto' =>   $asunto,
-               'from' =>   $from,
-               'to' =>   $to,
-               'subject' =>   $subject,
-               'message' =>   $message,
-
+                'idpaciente' => !empty($idpaciente) ? $idpaciente : 0,
+                'idcita'     => !empty($idcita) ? $idcita : 0,
+                'asunto'     => $asunto,
+                'from'       => $from,
+                'to'         => $to,
+                'subject'    => $subject,
+                'message'    => $message,
                 'feche_cita' => $rowCitasObject->fecha_cita ,
                 'horaInicio' => $rowCitasObject->hora_inicio ,
-
-                /*INFORMACION DE LA CLINICA*/
-
-                'email'        => $conf->EMPRESA->INFORMACION->email             ,
-                'direccion'    => $conf->EMPRESA->INFORMACION->direccion         ,
-                'celular'      => $conf->EMPRESA->INFORMACION->celular           ,
+                #Informacion de la clinica
+                'email'     => $conf->EMPRESA->INFORMACION->email,
+                'direccion' => $conf->EMPRESA->INFORMACION->direccion,
+                'celular'   => $conf->EMPRESA->INFORMACION->celular,
             );
-
-//            echo '<pre>';
-//            print_r($datos); die();
 
             $error = notificarCitaEmail($datos, $buttonConfirmacion);
 
@@ -1176,57 +1171,17 @@ function notificarCitaEmail($datos, $token_confirmacion)
         $messabody = "<br><b>Mensaje:</b>&nbsp; ". utf8_decode($message) ." <br>";
     }
 
-
+    $spanishxDate = GET_DATE_SPANISH(date('Y-m-d', strtotime($datos->feche_cita))) ." - hora ".$datos->horaInicio;
     $src_logo = !empty($conf->EMPRESA->INFORMACION->logo) ? DOL_HTTP.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$conf->EMPRESA->INFORMACION->logo :  DOL_HTTP .'/logos_icon/logo_default/icon_software_dental.png';
 
-    $card = "
-    <table style=\"border-collapse: collapse; width: 100%; border: 1px;\" width=\"100%\">
-                <tr style=\"background-color: #2980b9;\">
-                    <td  style=\"width: 10%; \">
-                        <p style=\"margin: 0px; \">
-                            <img src='".$src_logo."' style=\"height: 100px;\" alt=\"\">
-                        </p>
-                    </td>
-                    <td  style=\"width: 100%; text-align: center; font-weight: bolder;\"> <h2 style=\"font-weight: bolder; color: azure; margin: 0px; font-size: 50px; \">Dental Diente Felix</h2> </td>
-                </tr>
-                <tr style=\"box-shadow: inset 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23); background-color: #7fb3d5;\">
-                    <td style=\"padding: 30px; text-align: center;\" colspan=\"2\">
-                        
-                        <table style=\"width: 100%;\">
-                            <tr>
-                                <td style=\"padding: 10px; font-size: 20px \">
-                                    Le recordamos que tiene una cita agendada para la fecha - <b>". GET_DATE_SPANISH(date('Y-m-d', strtotime($datos->feche_cita))) ." - hora ". $datos->horaInicio . "</b>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style=\"padding: 10px; font-size: 15px\">".$messabody."</td>
-                            </tr>
-                            <tr>
-                                <td style=\"width: 100%; \">
-                                    <br>
-                                    ".$token_confirmacion."
-                                </td>
-                            </tr>
-                        </table>
+    $datosEmail['mess']         = (!empty($message))?utf8_decode($message):"";
+    $datosEmail['name_clinica'] = $conf->EMPRESA->INFORMACION->nombre;
+    $datosEmail['recordatorio'] = $spanishxDate;
+    $datosEmail['token']        = $token_confirmacion;
+    $datosEmail['telefono']     = $datos->celular;
+    $datosEmail['direccion']    = $datos->direccion;
 
-                    </td>
-                </tr>
-
-                <tr style=\"background-color: #2980b9;\">
-                    <td style=\"padding: 20px; width: 100%;\" colspan=\"2\">
-                        <table>
-                            <tr>
-                                <td style='font-size: 15px'><b>".utf8_decode('Teléfono:')."</b> <b>".$datos->celular."</b></td>
-                            </tr>
-                            <tr>
-                                <td style='font-size: 15px'><b>".utf8_decode('Dirección:')."</b> <b>".$datos->direccion."</b> </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-            </table>
-    ";
-
+    $card = boxsizingMenssaje($datosEmail);
 
     $htmlSend = "<br><div style='font-size: 18px'> <b>Estimado/a:</b>&nbsp;$labelPaciente  <br><br> </div>";
 
@@ -1282,9 +1237,7 @@ function notificarCitaEmail($datos, $token_confirmacion)
 
 
         #SI EL $error = 1 -- EL EMAIL SE ENVIO CORRECTAMENTE
-        if($error == 1 )
-        {
-
+        if($error == 1 ) {
 
             $sql = "INSERT INTO `tab_notificacion_email` (`asunto`, `from`, `to`, `subject`, `message`, `estado`, `fk_paciente`, `fk_cita`, `fecha`) ";
             $sql .= "VALUES (";
@@ -1298,11 +1251,10 @@ function notificarCitaEmail($datos, $token_confirmacion)
             $sql .= "'$datos->idcita' ,";
             $sql .= " now() ";
             $sql .= ");";
-            
             $rs = $db->query($sql);
 
             if(!$rs){
-                $error_insert_notific_email = 'Ocurrio un error, el sistema no logro registrar el correo enviado';
+                $error_insert_notific_email = 'Ocurrio un error  <b style="color: green">E-mail enviado</b> pero no se registro la confirmación <br>Consulte con soporte';
             }
 
             if($rs) {
@@ -1347,6 +1299,99 @@ function notificarCitaEmail($datos, $token_confirmacion)
 //    print_r($Ouput);
 //    die();
     return $Ouput;
+
+}
+
+
+//html contenedor del mensaje de confirmacion del email
+function boxsizingMenssaje( $datosEmail = array() ){
+
+    $Mensaje        = $datosEmail['mess'];
+    $name_clinica   = $datosEmail['name_clinica'];
+    $recordatorio   = $datosEmail['recordatorio'];
+    $token          = $datosEmail['token'];
+    $telefono       = $datosEmail['telefono'];
+    $direccion      = $datosEmail['direccion'];
+
+
+    $url_noti_icon = DOL_HTTP.'/logos_icon/logo_default/dental_noti_.png';
+
+    $box = '<div style="width: 100%; padding: 20px">
+      <table align="center" style="border: 1px solid #d2d6de; width: 500px; padding: 30px; ">
+        <tr>
+          <td align="center" colspan="2">
+            <p>
+              <img
+                src="'.$url_noti_icon.'"
+                alt=""
+                width="90px"
+                height="90px"
+              />
+            </p>
+            <br>
+          </td>
+        </tr>
+        <tr>
+          <td align="center" colspan="2"><h3 style="border: 1px solid #0078d7; padding: 2px;border-radius: 5px; color:#0078d7;">'.($name_clinica).'</h3></td>
+        </tr>
+
+
+        <tr style="padding-bottom: 15px;">
+            <td colspan="2" style="border-bottom: 1px solid #d2d6de;" ></td>
+        </tr>
+        <tr >
+            <td align="center" colspan="2" style="padding-bottom: 15px;color: #6a737d;">
+                 Le recordamos que tiene una cita agendada para la fecha asignada<br> '.($recordatorio).'
+            </td>
+        </tr>
+
+        <tr>
+            <td colspan="2" style="border-bottom: 1px solid #d2d6de; padding-bottom: 15px;"></td>
+        </tr>
+        <tr>
+            <td align="center" colspan="2" style="padding-bottom: 15px;color: #6a737d;">
+                    Recuerde que es importante que acuda a su cita con el tiempo establecido de anticipación, si por 
+                    cualquier motivo no va a asistir por favor comuníquese <b>'.($telefono).'</b>
+            </td>
+        </tr>';
+
+        if(!empty($Mensaje)){
+            $box .= '
+                 <tr>
+                    <td colspan="2" style="border-bottom: 1px solid #d2d6de; padding-bottom: 15px;"></td>
+                 </tr>
+                 <tr>
+                    <td align="center" colspan="2" style="padding-bottom: 15px; color: #6a737d;">
+                        <small><b>'.($Mensaje).'</b></small>
+                    </td>
+                 </tr>
+            ';
+        }
+
+       $box .= '
+        <tr>
+            <td colspan="2" style="border-bottom: 1px solid #d2d6de; padding-bottom: 15px;"></td>
+        </tr>
+        <tr> 
+            <td align="right"> <br> <small style="border: 1px solid #0078d7; padding: 2px;border-radius: 5px; color:#0078d7; font-weight: bolder;">Teléfono:  '.($telefono).'</small></td>
+        </tr>
+        <tr> 
+            <td align="right"> <br> <small style="border: 1px solid #0078d7; padding: 2px;border-radius: 5px; color:#0078d7;font-weight: bolder;">Dirección: '.($direccion).'</small></td>
+        </tr>
+
+        <tr>
+            <td colspan="2" align="center">
+                <br>
+                '.($token).'
+            </td>
+        </tr>
+        <tr> <td></td> </tr>
+
+      </table>
+    </div>';
+
+//    print_r($box); die();
+    return $box;
 
 }
 

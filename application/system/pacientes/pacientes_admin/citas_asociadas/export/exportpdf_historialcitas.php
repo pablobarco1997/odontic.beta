@@ -190,8 +190,8 @@ $pdf .= "<table class='tables' width='100%'>";
             $pdf .= "<td class='tables' width='8%' style='vertical-align: top'> 
                         <table>
                             <tr>
-                                <td> <img src='".DOL_HTTP."/logos_icon/logo_default/cita-medica-pdf.png' width='20px'   > </td>
-                                <td> - ". str_pad($item->id_cita_det, 6, "0", STR_PAD_LEFT) ." </td>
+                                <td>  </td>
+                                <td> C_". str_pad($item->id_cita_det, 6, "0", STR_PAD_LEFT) ." </td>
                             </tr>
                         </table>
                      </td>";

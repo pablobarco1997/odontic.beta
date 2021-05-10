@@ -191,8 +191,8 @@ $pdf .= "<table class='tables' style='width: 100%'>";
                 $pdf .= "<td class='tables'  style='vertical-align: top' >";
                     $pdf .= "<table>
                                 <tr>
-                                    <td> <img src='".DOL_HTTP."/logos_icon/logo_default/cita-medica-pdf.png' width='15px'   > </td>
-                                    <td> - ". str_pad($object->id_cita_det, 6, "0", STR_PAD_LEFT) ." </td>
+                                    <td>  </td>
+                                    <td> C_ ". str_pad($object->id_cita_det, 6, "0", STR_PAD_LEFT) ." </td>
                                 </tr>
                               </table>";
                 $pdf .= "</td>";

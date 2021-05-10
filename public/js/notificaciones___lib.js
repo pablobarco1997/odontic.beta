@@ -116,7 +116,7 @@ $( window ).on("load", function() {
         //     clearInterval(Interval);
         //     vuelvoEmpezarNotifyOdontic();
         // }
-    },15000);
+    },25000);
 
     function vuelvoEmpezarNotifyOdontic() {
         setTimeout(function() {

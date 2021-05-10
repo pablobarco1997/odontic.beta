@@ -238,8 +238,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $notification   = [];
             $validTime      = GETPOST('validTime');
             if($validTime == 0 ){
-                set_time_limit(0); //se establese el numero de segundo que se permite la ejecucion de un script
-                usleep(3000000);
+//                set_time_limit(0); //se establese el numero de segundo que se permite la ejecucion de un script
+//                usleep(3000000);
             }
             clearstatcache();
             $error = "";

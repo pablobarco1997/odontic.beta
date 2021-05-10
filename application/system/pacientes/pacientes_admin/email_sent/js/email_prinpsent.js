@@ -1,9 +1,14 @@
 
 function list_mail_sent(){
 
+    var table_style = $('#mailSentTable');
+
+    table_style.addClass('disabled_link3');
+
     $('#mailSentTable').DataTable({
         searching: false,
         ordering:false,
+        processing:true,
         serverSide:true,
         ajax:{
             url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/email_sent/controller/controller_emailsent.php',
@@ -13,7 +18,11 @@ function list_mail_sent(){
                 'accion'     : 'list_mail_sent',
                 'idpaciente' : $id_paciente,
             },
-
+            complete: function(xhr, status){
+                setTimeout(()=>{
+                    table_style.removeClass('disabled_link3');
+                },500);
+            },
             dataType:'json',
         },
         'createdRow':function(row, data, index){

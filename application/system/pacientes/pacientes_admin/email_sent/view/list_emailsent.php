@@ -17,14 +17,14 @@
             <div class="form-group col-md-12 col-xs-12 col-lg-12">
                 <h3 class="no-margin"><span>Filtrar E-mail Enviados</span></h3>
             </div>
-            <div class="form-group col-md-7 col-xs-12">
+            <div class="form-group col-md-3 col-xs-12">
                 <label for="">Fecha</label>
                 <div class="input-group form-group rango" style="margin: 0">
                     <input type="text" class="form-control filtroFecha  " readonly="" id="startDate" value="">
                     <span class="input-group-addon" style="border-radius: 0"><i class="fa fa-calendar"></i></span>
                 </div>
             </div>
-            <div class="form-group col-md-5 col-xs-12">
+            <div class="form-group col-md-4 col-xs-12">
                 <label for="">Estado</label>
                 <select name="estadoEmailConfPaci" id="estadoEmailConfPaci" class="form-control" style="width: 100%;">
                     <option value=""></option>
@@ -33,7 +33,7 @@
                     <option value="NoConfirmado">No Confirmado</option>
                 </select>
             </div>
-            <div class="form-group col-md-3 col-xs-12">
+            <div class="form-group col-md-4 col-xs-12">
                 <label for="">buscar N. Cita</label>
                 <input type="text" class="form-control" id="busqN_Cita" name="busqN_Cita">
             </div>
