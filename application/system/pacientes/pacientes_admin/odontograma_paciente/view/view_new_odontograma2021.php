@@ -77,7 +77,7 @@
     }.distal:hover{
         background-color: #17855b;
     }.palatino:hover{
-        background-color: #fddcf3;
+        background-color: #0a8ee8;
     }.mesial:hover{
         background-color: #a82f4a;
     }.lingual:hover{
@@ -91,7 +91,7 @@
     }.distalActivar{
         background-color: #17855b;
     }.palatinoActivar{
-        background-color: #fddcf3;
+        background-color: #0a8ee8;
     }.mesialActivar{
         background-color: #a82f4a;
     }.lingualActivar{
@@ -246,15 +246,15 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
                                 $imgbase64=base64_encode(file_get_contents($url));
                                 $imgbase64_2=base64_encode(file_get_contents($url2));
 
-                                $dataImg='data:image/png; base64, '.$imgbase64;
-                                $dataImg_2='data:image/png; base64, '.$imgbase64_2;
+                                $dataImg_odontog='data:image/png; base64, '.$imgbase64;
+                                $dataImg_2_odontog='data:image/png; base64, '.$imgbase64_2;
 
                                 print '
-                                <tr style="cursor: pointer" data-id="'.($value['rowid']).'" data-img="'.$dataImg.'" data-title="'.$value['descripcion'].'">
+                                <tr style="cursor: pointer" data-id="'.($value['rowid']).'" data-img="'.$dataImg_odontog.'" data-title="'.$value['descripcion'].'">
                                     <td>
                                         <div style="position: relative; ;width: 30px; height: 35px;">
-                                            <img src="'.$dataImg.'" class="" alt="" id="imgStados" title="" width="30px" height="35px" style="position: absolute; z-index: +1;">
-                                            <img src="'.$dataImg_2.'" alt="" width="30px" height="35px">
+                                            <img src="'.$dataImg_odontog.'" class="" alt="" id="imgStados" title="" width="30px" height="35px" style="position: absolute; z-index: +1;">
+                                            <img src="'.$dataImg_2_odontog.'" alt="" width="30px" height="35px">
                                         </div>
                                     </td>
                                     <td> '.strtoupper($value['descripcion']).' </td>
@@ -378,8 +378,15 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
 
     //selected tr estado
     $("#selectedEstadosPieza tbody tr").click(function () {
-        $("#selectedEstadosPieza tbody").children().removeClass('SelectedTableEstado');
 
+        var noActive = ($(this).find('td').find('textarea').attr('id')=='observacionUpdateStado')?true:false;
+
+        //no activar
+        if(noActive==true){
+            return false;
+        }
+
+        $("#selectedEstadosPieza tbody").children().removeClass('SelectedTableEstado');
         if($(".SelectedTableEstado").length==0){
             $(this).addClass('SelectedTableEstado');
         }
@@ -519,6 +526,9 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
         return error;
     }
     function updateOdontograma(datosPiezas){
+
+        boxloading($boxContentViewAdminPaciente ,true);
+
         var $parametros = {
             'accion': 'odontograma_update',
             'ajaxSend': 'ajaxSend',
@@ -533,18 +543,27 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
             data: $parametros ,
             dataType:'json',
             async:false,
+            complete:function(xhr, status){
+                boxloading($boxContentViewAdminPaciente ,true,1000);
+            },
             success:function(resp){
                 if(resp.error != ''){
                     notificacion('Ocurrió un error con la Operación , Odontograma Update, Consulte con soperte Técnico');
                 }else{
+                    $("#CambiarStadoPieza").modal('hide');
                     fetchOdontograma();
                     detallesOdontogramasEstados();
-                    notificacion("Información Actualizada", "success");
+                    setTimeout(()=>{ notificacion("Información Actualizada", "success"); },800);
+                    boxloading($boxContentViewAdminPaciente ,true,1000);
                 }
             }
         });
     }
 
+    //cuando el modal se oculta
+    $("#CambiarStadoPieza").on("hidden.bs.modal", function () {
+        $("#observacionUpdateStado").val(null);
+    });
 
     $(window).on('load', function () {
 

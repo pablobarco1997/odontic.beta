@@ -93,15 +93,15 @@
     ?>
 
         <script>
-            $(document)
-                .ajaxStart(function () {
-                    //ajax request went so show the loading image
-                    boxloading($boxContentViewAdminPaciente ,true);
-                })
-                .ajaxStop(function () {
-                    //got response so hide the loading image
-                    boxloading($boxContentViewAdminPaciente ,true,1000);
-                });
+            // $(document)
+            //     .ajaxStart(function () {
+            //         //ajax request went so show the loading image
+            //         boxloading($boxContentViewAdminPaciente ,true);
+            //     })
+            //     .ajaxStop(function () {
+            //         //got response so hide the loading image
+            //         boxloading($boxContentViewAdminPaciente ,true,1000);
+            //     });
         </script>
 
         <div class="form-group col-md-6 col-xs-12 col-lg-6 pull-left">

@@ -45,8 +45,8 @@ $ImagenLogoClinica = "<img src='".$iconClinica."' style='width:40px; height: 40p
 
 //numero de dientes asignados
 $dataNumeroDientes   = array();
-$dataNumeroDientes[] = [18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28];
-$dataNumeroDientes[] = [48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38];
+$dataNumeroDientes[] = [18,17,16,15,14,13,12,11,21,22,23,24,25,26,27,28]; //arriba
+$dataNumeroDientes[] = [48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38]; //abajo
 
 $dataEstadosDiente = [];
 
@@ -133,68 +133,114 @@ $pdf .= '<style>
                     border: 1px solid black;
                     padding: 4.5px;
                 }
-                .colorRed{
-                    background-color: #9f191f; 
-                    color: #9f191f;
+               
+               
+                .vestibular{
+                    background-color: #5474b5;
+                }.distal{
+                    background-color: #17855b;
+                }.palatino{
+                    background-color: #0a8ee8;
+                }.oclusal{
+                    background-color: #fddcf3;
+                }.mesial{
+                    background-color: #a82f4a;
+                }.lingual{
+                    background-color: #ffff00;
                 }
             </style>';
 
 
 $pdf .= "
-    <table  width='100%'>
+    <table  width='100%' style='border-collapse: collapse'>
         <tr  style='width: 100%'>
-            <td style='text-align: center'> <h2> ODONTOGRAMA </h2> </td>
+            <td style='text-align: center'> <h2> ODONTOGRAMA </h2>  </td>
         </tr>
-        <tr> <td>&nbsp;</td> </tr>
-        <tr> <td width='50%'> <H3>ESTADOS ASIGNADOS</H3> </td> </tr>
+        <tr>
+            <td><br></td>
+        </tr>
     </table>    
         ";
 
+//estados de las piezas asignadas
+$estados_de_pieza_caras="";
+$queryStatus = "select descripcion, image_status from tab_odontograma_estados_piezas";
+$result = $db->query($queryStatus);
+if($result && $result->rowCount()>0){
+    while ($object = $result->fetchObject()){
+        $estados_de_pieza_caras .= "<tr> 
+                                <td width='10%' class='fonttml'> <img src='".DOL_HTTP.'/application/system/pacientes/pacientes_admin/odontograma_paciente/export/img_status_odontograma/'.$object->image_status."' style='width: 20px; height: 25px' alt=''> </td> 
+                                <td align='left' style=' vertical-align: center; font-size: 13px!important;'>".$object->descripcion."</td>  
+                              ";
+        $estados_de_pieza_caras .= "</tr>";
+    }
+}
+
 $pdf .= "<table width='100%' style='border-collapse: collapse'>";
-    $pdf .= "<tr><td></td></tr>";
-    $pdf .= "<tr> <td width='50%' class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/ausente.png' alt='' width='22px'>         Ausente</td> </tr>";
-    $pdf .= "<tr> <td width='50%' class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/caries.png' alt='' width='22px'>          Caries</td> </tr>";
-    $pdf .= "<tr> <td width='50%' class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/corona.png' alt='' width='22px'>          Corona</td> </tr>";
-    $pdf .= "<tr> <td width='50%' class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/endodoncia.png' alt='' width='22px'>      Endodoncia</td> </tr>";
-    $pdf .= "<tr> <td width='50%' class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/fractura.png' alt='' width='22px'>        Fractura</td> </tr>";
-    $pdf .= "<tr> <td width='50%' class='fonttml'>  <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/implante.png' alt='' width='22px'>        Implante</td> </tr>";
-    $pdf .= "<tr> <td width='50%' class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/indicacion_extraccion.png' alt='' width='22px'> Indicacion extraccion</td> </tr>";
-    $pdf .= "<tr> <td width='50%' class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/infeccion_pulpar.png' alt='' width='22px'>     Infeccion pulpar</td> </tr>";
-    $pdf .= "<tr> <td width='50%' class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/perno_punon.png' alt='' width='22px'>          Perno muñon</td> </tr>";
-    $pdf .= "<tr> <td width='50%' class='fonttml'> <img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/estados_dientes/restauracion.png' alt='' width='22px'>         Restauracion</td> </tr>";
+$pdf .= "<tbody>";
+    $pdf .= "<tr>";
+        $pdf .= "<td width='50%' >";
+                $pdf .= "<table width='100%'>";
+                    $pdf .= "<thead>";
+                    $pdf .= "<tr> <th align='left' colspan='2'><H3>ESTADOS ASIGNADOS</H3></th> </tr>";
+                    $pdf .= "</thead>";
+                    $pdf .= "<tbody>";
+                    $pdf .= $estados_de_pieza_caras;
+                    $pdf .= "</tbody>";
+                $pdf .= "</table> ";
+        $pdf .= "</td>";
 
-    $pdf .= "
-    </table> 
-    
-<br>";
+        $pdf .= "<td width='50%' style='vertical-align: top' >";
+
+                $pdf .= "<table width='100%'>";
+                $pdf .= "<thead>";
+                $pdf .= "<tr> <th align='left' colspan='2'><H3>ASIGNACIÓN DE CARAS</H3></th> </tr>";
+                $pdf .= "</thead>";
+                $pdf .= "<tbody>";
+                    $pdf .= "<tr> <td width='5%'> <div style=' height: 5px;border: 1px solid black' class='vestibular'>&nbsp;</div> </td> 
+                                <td  style='font-size: 13px'>vestibular</td> 
+                    </tr>";
+                    $pdf .= "<tr> <td> <div style=' height: 5px;border: 1px solid black' class='distal'>&nbsp;</div> </td> 
+                                <td style='font-size: 13px'>distal</td> 
+                    </tr>";
+                    $pdf .= "<tr> <td> <div style=' height: 5px;border: 1px solid black' class='palatino'>&nbsp;</div> </td> 
+                                <td style='font-size: 13px'>palatino</td
+                    > </tr>";
+                    $pdf .= "<tr> <td> <div style=' height: 5px;border: 1px solid black' class='oclusal'>&nbsp;</div> </td> 
+                                <td style='font-size: 13px'>oclusal</td>
+                     </tr>";
+                    $pdf .= "<tr> <td> <div style=' height: 5px;border: 1px solid black' class='mesial'>&nbsp;</div> </td> 
+                                <td style='font-size: 13px'>mesial</td> 
+                    </tr>";
+                    $pdf .= "<tr> <td> <div style=' height: 5px;border: 1px solid black' class='lingual'>&nbsp;</div> </td> 
+                                <td style='font-size: 13px'>lingual</td>
+                     </tr>";
+                $pdf .= "</tbody>";
+                $pdf .= "</table>";
+
+        $pdf .= "</td>";
+    $pdf .= "<tr>";
+$pdf .= "</tbody>";
+$pdf .= "</table>";
 
 
-
-$pdf .= "<table width='100%' >";
-
+$pdf .= " <hr>
+<table width='100%' >";
     $arrayStatus = array();
-    for($u = 0; $u <= 1; $u++)
-    {
-        for($i = 0; $i <= count($dataNumeroDientes[$u]) -1; $i++)
-        {
+    for($u = 0; $u <= 1; $u++){
+        for($i = 0; $i <= count($dataNumeroDientes[$u]) -1; $i++){
             $pieza_id = $dataNumeroDientes[$u][$i];
-
             $rs = $db->query("select * from tab_odontograma_update where fk_tratamiento = $idplantramiento and fk_paciente = $idpaciente and fk_diente = $pieza_id");
 
-            while ($obpk = $rs->fetchObject())
-            {
-
-                if($pieza_id == $obpk->fk_diente)
-                {
-                    $obstatus = $db->query("select rowid , descripcion from tab_odontograma_estados_piezas where rowid = $obpk->fk_estado_pieza")->fetchObject();
-
-                    $arrayStatus[] = array('img' => (obtenerImgDienteStatus($obpk->fk_diente, $obpk->fk_estado_pieza)) , 'status' => $obstatus->descripcion, 'jcaras' => json_decode($obpk->json_caras) , 'n_diente' => $obpk->fk_diente);
+            while ($obpk = $rs->fetchObject()){
+                if($pieza_id == $obpk->fk_diente){
+                    $obstatus = $db->query("select rowid , descripcion, image_status from tab_odontograma_estados_piezas where rowid = $obpk->fk_estado_pieza")->fetchObject();
+                    $arrayStatus[] = array('img' => (obtenerImgDienteStatus($obpk->fk_diente, $obstatus->image_status)) , 'status' => $obstatus->descripcion, 'jcaras' => json_decode($obpk->json_caras) , 'n_diente' => $obpk->fk_diente);
                 }
             }
         }
     }
 
-    //se pinta el img de los dientes  ----------------------------------------------------------------------------------
     // parte dearriba
     $pdf .= "<tr>";
         for ($c = 0; $c <= 15; $c++ )
@@ -253,35 +299,45 @@ $pdf .= "</table>";
 
 function obtenerImgDienteStatus($pieza, $idestado )
 {
-    $width = "width='28px;'";
-    if($pieza==18||$pieza==17||$pieza==16){
-        $width = "width='29.5px;'";
-    }
-    if($idestado!=0)
-    {
-        return "<img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/numeros_dientes/dropwdon-menu-pieza".$pieza."/".$idestado.".png' $width >";
+
+//    HEMIARCADA  INFERIOR DERECHA
+    $position = [48,47,46,45,44,43,42,41,31,32,33,34,35,36,37,38]; //busco la posicion
+
+    if($idestado!=""){
+        $urlStatus = DOL_HTTP.'/application/system/pacientes/pacientes_admin/odontograma_paciente/export/img_status_odontograma/'.$idestado;
     }else{
-        return "<img src='".DOL_HTTP."/logos_icon/logo_default/odontograma/numeros_dientes/dropwdon-menu-pieza".$pieza."/pieza".$pieza."-ai.png' $width >";
+        $urlStatus = DOL_HTTP.'/application/system/pacientes/pacientes_admin/odontograma_paciente/export/img_status_odontograma/normal';
     }
+
+
+//    echo '<pre>'; print_r($position[array_search($pieza, $position)]);
+//        die();
+
+    $url_img_status  =  $urlStatus;
+    $view =  "<div style='width: 28px; height: 35px'>";
+    if($position[array_search($pieza, $position)]==$pieza){
+        $view .=  "<img  src='".$url_img_status."'  style='width: 28px; height: 35px; transform:rotate(540deg);' >"; //abajo
+    }else{
+        $view .=  "<img  src='".$url_img_status."'  style='width: 28px; height: 35px'>"; //arriba
+    }
+    $view .= "</div>";
+//    print_r($view); die();
+
+    return $view;
 }
+//die();
 
 function anatomiaCarasView( $arr_caras , $n_diente )
 {
 //    $color = " style='background-color: #9f191f;'  ";
 
     $caras      = "";
-    $vestibular = (($arr_caras->vestibular=='true') ?'colorRed':'no');
-    $distal     = (($arr_caras->distal=='true')     ?'colorRed':'');
-    $palatino   = (($arr_caras->palatino=='true')   ?'colorRed':'');
-    $oclusal    = (($arr_caras->oclusal=='true')    ?'colorRed':'');
-    $mesial     = (($arr_caras->mesial=='true')     ?'colorRed':'');
-    $lingual    = (($arr_caras->lingual=='true')    ?'colorRed':'');
-
-//    echo '<pre>'; print_r($vestibular);
-//    echo '<pre>'; print_r($distal);
-//    echo '<pre>'; print_r($palatino);
-//    echo '<pre>'; print_r($oclusal);
-//    echo '<pre>'; print_r($mesial);
+    $vestibular = (($arr_caras->vestibular=='true') ?'vestibular':'');
+    $distal     = (($arr_caras->distal=='true')     ?'distal':'');
+    $palatino   = (($arr_caras->palatino=='true')   ?'palatino':'');
+    $oclusal    = (($arr_caras->oclusal=='true')    ?'oclusal':'');
+    $mesial     = (($arr_caras->mesial=='true')     ?'mesial':'');
+    $lingual    = (($arr_caras->lingual=='true')    ?'lingual':'');
 
     if(count($arr_caras)>0)
     {
@@ -418,7 +474,7 @@ ob_end_clean();
 $mpdf=new mPDF('c','LETTER','12px','',
     12, //left
     12, // right
-    40, //top
+    35, //top
     10, //bottom
     3, //header top
     3 //footer botoom

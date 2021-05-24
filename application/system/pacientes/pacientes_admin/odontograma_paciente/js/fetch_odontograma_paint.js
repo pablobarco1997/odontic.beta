@@ -181,11 +181,16 @@ if($accionOdontograma == 'form_odont')
 //lista de estados por fecha comentario y hermiarcada pieza
     function  detallesOdontogramasEstados()
     {
+        var table = $("#detalles_estados_odontograma");
+
+        boxTableLoad(table, true);
+
         $("#detalles_estados_odontograma").DataTable({
             searching: false,
             ordering:false,
             destroy: true,
             serverSide: true,
+            lengthChange: false,
             // scrollY:    "200px",
             // paging:false,
             // scrollCollapse: true,
@@ -194,6 +199,9 @@ if($accionOdontograma == 'form_odont')
                 type:'POST',
                 data:{'ajaxSend':'ajaxSend', 'accion':'list_detalles_odont_estados', 'idtratamiento': Get_jquery_odontogramPlantram(), 'idpaciente': $id_paciente },
                 dataType:'json',
+                complete:function (xhr, status) {
+                    boxTableLoad(table, false);
+                }
             },
 
             language:{
@@ -222,6 +230,10 @@ if($accionOdontograma == 'form_odont')
                 }
 
             },
+        }).on( 'length.dt', function ( e, settings, len ) { // cambiar
+            boxTableLoad(table, true);
+        }).on( 'page.dt', function ( e, settings, len ) { // cambiar
+            boxTableLoad(table, true);
         });
     }
 
@@ -534,6 +546,10 @@ if($accionOdontograma == 'form_odont')
     function anular_estado_update(id)
     {
 
+        var table = $("#detalles_estados_odontograma").DataTable();
+        var tablebox = $("#detalles_estados_odontograma");
+        boxTableLoad(tablebox, true);
+
         if(id != ""){
             $.ajax({
                 url: $DOCUMENTO_URL_HTTP +'/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
@@ -550,12 +566,14 @@ if($accionOdontograma == 'form_odont')
                     if(resp.error != ''){
                         notificacion(resp.error , 'error');
                     }else{
-                        detallesOdontogramasEstados();
+                        // detallesOdontogramasEstados();
+                        table.ajax.reload(null, false);
                     }
                 }
             });
         }else{
             notificacion('error, no se pudo obtener los paramtros para la anulación consulte con soporte técnico', 'error');
+            boxTableLoad(tablebox, false);
         }
     }
 
