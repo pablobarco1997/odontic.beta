@@ -42,12 +42,13 @@ if(isset($_SESSION['is_open']))
     <!--javascript global-->
     <script src="<?php echo DOL_HTTP .'/public/js/lib_glob.js' ?>"></script>
 
-    <title>login</title>
+    <title>Odontic</title>
 
 </head>
 <style>
 
     *{
+        font-size: small !important;
         font-family: 'Baloo Da 2', cursive;
     }
     body{
@@ -70,7 +71,6 @@ if(isset($_SESSION['is_open']))
         box-shadow: 10px 10px 5px -9px rgba(0,0,0,0.75);
         border-bottom-left-radius: 30px;
         border-top-right-radius: 30px ;
-
 
     }
 
