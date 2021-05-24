@@ -218,6 +218,12 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="form-group col-xs-12 col-md-12">
+                        <span style=" color: #eb9627; font-weight: bold">
+                             <i class="fa fa-info-circle"></i>
+                            Si requiere la creación de Estado con comportamientos adicionales Consulte con soporte para más información
+                        </span>
+                    </div>
+                    <div class="form-group col-xs-12 col-md-12">
                         <label for="">Ingrese un nombre para el Estado de la Cita</label>
                         <input type="text" class="form-control" id="new_estados_citas">
                     </div>
@@ -231,7 +237,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-toggle="modal" data-target="#listStatusModal" data-dismiss="modal" >Mostrar Estados Agregados</button>
+                <button type="button" class="btn btn-default"  data-dismiss="modal" id="showModalEstados" >Mostrar Estados Agregados</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
                 <button type="button" class="btn btn-success" id="nuevoStatus">Guardar</button>
             </div>
@@ -253,7 +259,7 @@
                     <div class="form-group col-xs-12 col-md-12">
                         <span style=" color: #eb9627">
                         <i class="fa fa-info-circle"></i>
-                            Tener en cuenta que solo puede <b>Eliminar el Estado</b> si este no está Asociado a una cita
+                            Tener en cuenta que solo puede <b>Eliminar el Estado</b> si este no está Asociado a una cita Agendada
                         </span>
                     </div>
                     <div class="form-group col-xs-12 col-md-12">
@@ -262,7 +268,7 @@
                                 <thead>
                                     <tr>
                                         <th>name</th>
-                                        <th>comment</th>
+<!--                                        <th>comment</th>-->
                                         <th>color</th>
                                         <th>&nbsp;</th>
                                     </tr>
@@ -275,6 +281,12 @@
         </div>
     </div>
 </div>
+
+
+<!--modales en la vista principal lista de agenda ( LISTA DIARIA )-->
+<?php
+    include_once DOL_DOCUMENT .'/application/system/agenda/view/status_modal.php';
+?>
 
 <script>
     //color picker with addon
@@ -372,6 +384,10 @@
                 },
                 "dataType":'json',
             },
+            "createdRow": function ( row, data, dataIndex ) {
+
+                $(row).find('td:eq(1)').attr('align','center');
+            },
             "language": {
                 "sProcessing":     "Procesando...",
                 "sLengthMenu":     "Mostrar _MENU_ registros",
@@ -424,6 +440,64 @@
         fetchSatatus();
         $("#new_estados_citas").val(null).trigger("keyup");
         $("#new_estados_citas_color").val(null).trigger("keyup");
+    });
+
+
+    //funcionalidad  Programar Email (opcional)
+    $("#emailConfirmacion_programar").change(function () {
+
+        if($('#emailConfirmacion_programar').is(':checked')) {
+            notificacion('<b>Programar email de confirmación del Paciente</b><br> Este sera enviado dependiendo de la fecha seleccionada <br> Puede ver el estado del e-mail programado en el módulo <b>E-mail Asociados</b> a dicho paciente ', 'question');
+            $("#date_programa_email_confirm").removeClass('disabled_link3').text(null).parent('div').removeClass('disabled_link3').attr('disabled', false);
+
+            var Dateadd = new Date();
+            var DateElement =  $("#date_programa_email_confirm").daterangepicker({
+                drops: 'top',
+                minDate : new Date(Dateadd.getFullYear(), Dateadd.getMonth(), Dateadd.getDate() + 1),
+                locale: {
+                    format: 'YYYY/MM/DD' ,
+                    daysOfWeek: [
+                        "Dom",
+                        "Lun",
+                        "Mar",
+                        "Mie",
+                        "Jue",
+                        "Vie",
+                        "Sáb"
+                    ],
+                    monthNames: [
+                        "Enero",
+                        "Febrero",
+                        "Marzo",
+                        "Abril",
+                        "Mayo",
+                        "Junio",
+                        "Julio",
+                        "Agosto",
+                        "Septiembre",
+                        "Octubre",
+                        "Noviembre",
+                        "Diciembre"
+                    ],
+                },
+                singleDatePicker: true,
+                showDropdowns: true,
+                autoclose: true,
+                pickerPosition: "bottom-left"
+            });
+
+        }else{
+            $("#date_programa_email_confirm").val(null).parent('div').addClass('disabled_link3').attr('disabled', true);
+        }
+    });
+
+    //Mostrar list Data de estados de citas agendadas
+    $("#showModalEstados").click('click', function () {
+        $("#addStatusCitas").on('hide.bs.modal', function () {
+            setTimeout(function () {
+                $("#listStatusModal").modal("show");
+            },700);
+        });
     });
 
     window.addEventListener('load', function() {

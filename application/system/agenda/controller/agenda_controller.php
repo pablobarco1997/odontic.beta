@@ -80,6 +80,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             /*Esta funcion se usa globalmente para actualizar el estado de la citas */
         case 'EstadoslistCitas':
 
+            $output = [ 'resp' => '', 'errmsg' => '' ];
 
             $idestado   = GETPOST('idestado'); //ID ESTADO
             $idcita_det = GETPOST('idcita'); // ID DE LA CITA
@@ -87,6 +88,20 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             $error = "";
             $errmsg = "";
+
+            //Consulto el estado para validar si se encuentra en estado E-mail de confirmacion Programdo
+            //Si esta en estado E-mail de confirmacion programado para poder cambiar de estado tendra que librar la cita de dicho estado ubicarse en el modulo E-mail Asociado y eliminar dicho email progrmado
+            $consultarStatus = "select fk_estado_paciente_cita as estado_id from tab_pacientes_citas_det where (rowid = $idcita_det)";
+            $result = $db->query($consultarStatus);
+            if($result && $result->rowCount()>0){
+                $estadoCurrentCita = $result->fetchObject()->estado_id;
+                //id 11 E-mail de confirmación Programado
+                if($estadoCurrentCita==11){
+                    $output['errmsg']  = "No puede actualizar esta cita, se encuentra en estado <b>E-mail de confirmacion programado</b>  
+                                                <br> <small style='font-weight: bold'> Verifique la información antes de actualizar para continuar y liberar la cita agendada diríjase al modulo E-mail Asociados del paciente para desactivar el registro E-mail Programado </small>";
+                }
+            }
+
 
             $sqlUpdateEstado = "UPDATE `tab_pacientes_citas_det` SET `fk_estado_paciente_cita` = $idestado WHERE (`rowid` = $idcita_det);";
             $rs = $db->query($sqlUpdateEstado);
@@ -408,55 +423,93 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             $error = '';
 
-            $idpaciente     = GETPOST("idpaciente");
-            $idcita         = GETPOST('idcita');  #id de la cita detalle
-            $asunto         = GETPOST("asunto");
-            $from           = GETPOST("from");
-            $to             = GETPOST("to");
-            $subject        = GETPOST("subject");
-            $message        = GETPOST("message");
+            $idpaciente            = GETPOST("idpaciente");
+            $idcita                = GETPOST('idcita');  #id de la cita detalle
+            $asunto                = GETPOST("asunto");
+            $from                  = GETPOST("from");
+            $to                    = GETPOST("to");
+            $subject               = GETPOST("subject");
+            $message               = GETPOST("message");
 
+            $programar_email       = json_decode(GETPOST('programar_email'));
 
-            $sqlCitadet     = "SELECT * FROM tab_pacientes_citas_det WHERE rowid = $idcita limit 1";
-            $rsuCita = $db->query($sqlCitadet)->fetchObject();
+            $EmailProgramConfirmar = $programar_email->confirmar;
+            $dateProgram           = date('Y-m-d', strtotime(str_replace('/','-',$programar_email->date_program)));
+
 
             #Obtengo el objeto conpleto de la cita
+            $sqlCitadet     = "SELECT * FROM tab_pacientes_citas_det WHERE rowid = $idcita limit 1";
+            $rsuCita = $db->query($sqlCitadet)->fetchObject();
             $rowCitasObject = $rsuCita;
 
             #GENERAR TOKEN E INFORMACION DE LA CLINICA
 
             /*
-            'name_db'      => $conf->EMPRESA->INFORMACION->nombre_db_entity  , 0
-            'entity'       => $conf->EMPRESA->INFORMACION->numero_entity        , 1
-            'name_clinica' => $conf->EMPRESA->INFORMACION->nombre            , 2
-            'logo'         => $conf->EMPRESA->INFORMACION->logo              , 3*/
+                'id_cita'      => id de la cita                                     , 0
+                'name_db'      => $conf->EMPRESA->INFORMACION->nombre_db_entity     , 1
+                'entity'       => $conf->EMPRESA->INFORMACION->numero_entity        , 2
+                'name_clinica' => $conf->EMPRESA->INFORMACION->nombre               , 3
+                'logo'         => $conf->EMPRESA->INFORMACION->logo                 , 4
+                'token'        => Token para validar los formularios                , 5
+            */
 
-            $create_token_confirm_citas = [$idcita,$conf->EMPRESA->INFORMACION->nombre_db_entity,$conf->EMPRESA->INFORMACION->numero_entity,$conf->EMPRESA->INFORMACION->nombre,$conf->EMPRESA->INFORMACION->logo];
 
+            //se utiliza para validar los formularios que se envian
 
+            //elimino todos los token asociados a esta citas para volver a recrearlos
+            $db->query("DELETE FROM `tab_noti_token_confirmacion` WHERE `fk_cita_agendada`= $idcita; ");
+
+            $idToken =  $db->query("INSERT INTO `tab_noti_token_confirmacion` (`fk_cita_agendada`, `token`) VALUES ($idcita, 'NULL') ");
+            if($idToken){
+                $idToken = $db->lastInsertId("tab_noti_token_confirmacion");
+                $create_token_confirm_citas = [$idcita,md5($conf->EMPRESA->INFORMACION->nombre_db_entity),md5($conf->EMPRESA->INFORMACION->numero_entity),$conf->EMPRESA->INFORMACION->nombre,$conf->EMPRESA->INFORMACION->logo, $idToken];
+                $result  =  $db->query("UPDATE `tab_noti_token_confirmacion` SET `token`= '".((tokenSecurityId(json_encode($create_token_confirm_citas))))."'  WHERE `rowid`= $idToken;");
+            }else{
+                $result=false;
+            }
 
             $token              = tokenSecurityId(json_encode($create_token_confirm_citas));
             $buttonConfirmacion = ConfirmacionEmailHTML( $token );
 
+            //verifico que el token no este repetido
+            $resultToken = $db->query("select count(*) as token_count from tab_noti_token_confirmacion where token = '".(tokenSecurityId(json_encode($create_token_confirm_citas)))."' ")->fetchObject()->token_count;
 
-            //obtengo los datos para enviar
-            $datos = (object)array(
-                'idpaciente' => !empty($idpaciente) ? $idpaciente : 0,
-                'idcita'     => !empty($idcita) ? $idcita : 0,
-                'asunto'     => $asunto,
-                'from'       => $from,
-                'to'         => $to,
-                'subject'    => $subject,
-                'message'    => $message,
-                'feche_cita' => $rowCitasObject->fecha_cita ,
-                'horaInicio' => $rowCitasObject->hora_inicio ,
-                #Informacion de la clinica
-                'email'     => $conf->EMPRESA->INFORMACION->email,
-                'direccion' => $conf->EMPRESA->INFORMACION->direccion,
-                'celular'   => $conf->EMPRESA->INFORMACION->celular,
-            );
+            if($result && $resultToken == 1){
 
-            $error = notificarCitaEmail($datos, $buttonConfirmacion);
+                //obtengo los datos para enviar
+                $odontologo         = $db->query("select concat(nombre_doc,' ',apellido_doc) as odontolo  from tab_odontologos where rowid =".$rowCitasObject->fk_doc)->fetchObject()->odontolo;
+                $datos = (object)array(
+                    'idpaciente' => !empty($idpaciente) ? $idpaciente : 0,
+                    'idcita'     => !empty($idcita) ? $idcita : 0,
+                    'asunto'     => $asunto,
+                    'from'       => $from,
+                    'to'         => $to,
+                    'subject'    => $subject,
+                    'message'    => $message,
+                    'feche_cita' => $rowCitasObject->fecha_cita  ,
+                    'horaInicio' => $rowCitasObject->hora_inicio ,
+                    'odontolog'  => $odontologo ,
+
+                    //Informacion de la clinica
+                    'email'     => $conf->EMPRESA->INFORMACION->email,
+                    'direccion' => $conf->EMPRESA->INFORMACION->direccion,
+                    'celular'   => $conf->EMPRESA->INFORMACION->celular,
+                );
+
+                if($EmailProgramConfirmar==1){
+                    $error = Email_confirmacion_programDate($datos, $dateProgram, $idcita);
+                }else{
+                    $error = notificarCitaEmail($datos, $buttonConfirmacion);
+                }
+            }else{
+
+                $Ouput = [
+                    'registrar'   => 'Ocurrio un error al Generar el Token de confirmación <br> <b>Consulte con soporte</b>   ',
+                    "error_email" => ""
+                ];
+
+                $error = $Ouput;
+            }
 
             echo json_encode($error);
 
@@ -546,7 +599,6 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                                 ),
                                 
                             '') AS cita_atrazada
-                        
                     FROM 
                     tab_pacientes_citas_cab c , 
                     tab_pacientes_citas_det d
@@ -556,15 +608,11 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
 //            echo '<pre>'; print_r($sqlcitaAtrzada); die();
             $rsatrzada = $db->query($sqlcitaAtrzada);
-            if($rsatrzada)
-            {
+            if($rsatrzada){
                 $ob = $rsatrzada->fetchObject();
-
-                if( $ob->cita_atrazada != "" )
-                {
+                if( $ob->cita_atrazada != "" ){
                     $result = "atrazada";
                 }
-
             }
 
             echo json_encode(array( 'result' => $result ));
@@ -655,8 +703,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 foreach ($result_arr as $key => $arr){
                     $row = array();
                     $row[] = $arr['text'];
-                    $row[] = $arr['comment'];
-                    $row[] = "<div  style='background-color: ".$arr['color']."; border-radius: 50%; width: 10px; height: 10px'></div>";
+//                    $row[] = $arr['comment'];
+                    $row[] = "<div  class='text-center' style='background-color: ".$arr['color']."; width: 40px; height: 10px'></div>";
                     $row[] = "<a href='#' onclick='EliminarStatus(".$arr['rowid'].")' title='Eliminar Estado'> <i class='fa fa-trash-o' style='color: darkred'></i> </a>";
                     $row['idstatus'] = $arr['rowid'];
                     $data[] = $row;
@@ -744,7 +792,7 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
              -- validaciones
              -- citas atrazados con estado no confirmado
              IF( now() > CAST(d.fecha_cita AS DATETIME)  
-                        && d.fk_estado_paciente_cita in(2,1,3,4,7,8,9,10,5)  , 
+                        && d.fk_estado_paciente_cita in(2,1,3,4,7,8,9,10,11,5,  (select statusc.rowid from tab_pacientes_estado_citas statusc where statusc.system=0) )  , 
                             concat('Atrasada ', (select concat(s.text) from tab_pacientes_estado_citas s where s.rowid = d.fk_estado_paciente_cita) , 
                                     '<br> Fecha : ' , date_format(d.fecha_cita, '%Y/%m/%d') , '<br>Hora: ' , d.hora_inicio ,' a ' , d.hora_fin) , ''
                                     ) as cita_atrazada
@@ -934,26 +982,25 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
             $html5 .= "</div>";
             $row[] = $html5;
 
-            #DROPDOWN -------------------------------------------------------------------------------------------------
+            #DROPDOWN  ESTADOS DE CITAS AGENDADAS-------------------------------------------------------------------------------------------------
             $html3 = "";
             $html3 .= "<div class='form-group col-md-12 col-xs-12'>
                         <div class='col-xs-12 col-ms-10 col-md-10 no-padding'> 
-                            <label class='text-justify' title='$acced->estado' >$acced->estado</label> 
+                            <label class='' title='$acced->estado' >$acced->estado</label> 
                         </div>";
 
             $html3 .= "<div class='col-xs-12 col-ms-2 col-md-2 no-padding no-margin'>
                             <div class='dropdown pull-right' >";
-//            onclick='menuDropdownCita($(this), 0)'
+
                 $html3 .= "    <button class='btn btnhover  dropdown-toggle btn-xs ' id='estadoDropw' type='button' data-toggle='dropdown' style='height: 100%'> <i class='fa fa-ellipsis-v'></i> </button>";
                         $html3 .= " <ul class='dropdown-menu pull-right' style='position: absolute!important;'>";
 
-                        $sqlMenuDrowpdown = "SELECT rowid,text,comment,system,color FROM tab_pacientes_estado_citas";
+                        $sqlMenuDrowpdown = "SELECT rowid,text,comment,system,color FROM tab_pacientes_estado_citas where rowid not in(11)";
                         $rsdrown = $db->query($sqlMenuDrowpdown);
 
-                        if($rs->rowCount() > 0)
-                        {
-                            while ($rowxs = $rsdrown->fetchObject())
-                            {
+                        if($rs->rowCount() > 0) {
+                            while ($rowxs = $rsdrown->fetchObject()) {
+
                                 $todosdata = "";
                                 $dataTelefono = "";
                                 $dataEmailPaciente = "";
@@ -991,7 +1038,7 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
                                 }
                             }
                         }
-                            $html3 .= "<li> <a href='#addStatusCitas' data-toggle='modal'  style='cursor: pointer;color: blue;background-color: #dddddd' title='Agregar nuevo Estado al Sistema'><b>Add Nuevo Estado</b></a> </li>";
+                            $html3 .= "<li> <a href='#addStatusCitas' data-toggle='modal'  style='cursor: pointer;color: grey; ' title='Agregar un nuevo estado '><b>Agrega Nuevo Estado</b></a> </li>";
                         $html3 .= " </ul>"; #dropdown end
                 $html3 .= "</div>";
             $html3 .= "</div> 
@@ -1180,6 +1227,7 @@ function notificarCitaEmail($datos, $token_confirmacion)
     $datosEmail['token']        = $token_confirmacion;
     $datosEmail['telefono']     = $datos->celular;
     $datosEmail['direccion']    = $datos->direccion;
+    $datosEmail['odontolog']    = $datos->odontolog;
 
     $card = boxsizingMenssaje($datosEmail);
 
@@ -1229,7 +1277,7 @@ function notificarCitaEmail($datos, $token_confirmacion)
     if($conf->EMPRESA->INFORMACION->conf_email != ""){
 
         if(!$mail->send()){
-            #Correo no enviado
+            //Correo no enviado
             $error = 'Ocurrio un problema con el servidor no pudo enviar el correo, intentelo de nuevo o consulte con soporte  Tecnico' .'<br> <b> '. $mail->ErrorInfo .' </b>';
         }else{
             $error = 1; #Correo enviado
@@ -1296,9 +1344,96 @@ function notificarCitaEmail($datos, $token_confirmacion)
 
     ];
 
-//    print_r($Ouput);
-//    die();
     return $Ouput;
+
+}
+
+//confirmacion de email programado por fecha
+function Email_confirmacion_programDate($datos=array(), $fecha_programa, $id_cita){
+
+    global $db;
+
+    $error="";
+
+    $result = $db->query("select cast(fecha_cita as date) fecha_cita from tab_pacientes_citas_det where rowid = $id_cita")->fetchObject();
+
+    if(date('Y-m-d', strtotime($result->fecha_cita)) <= date('Y-m-d', strtotime($fecha_programa)) ){
+        $error = "La fecha programada no puede ser menor a la fecha de la cita agendada";
+        $ouput = [
+            'registrar'   => $error,
+            "error_email" => ""
+        ];
+
+        return $ouput;
+    }
+
+    $asunto     = $datos->asunto;
+    $from       = $datos->from;
+    $to         = $datos->to;
+    $message    = $datos->message;
+    $subject    = $datos->subject;
+    $odontolog  = $datos->odontolog;
+
+    //los email de citas de confirmacion programados no pueden estar duplicadas
+    //se realiza una validacion para eliminar los email programados y crea uno nuevo
+
+    //P email Programado
+    $result = $db->query("select count(*) as count from tab_notificacion_email where fk_cita = '".$datos->idcita."' and program=1 and estado='P' and program_date!='' ")->fetchObject()->count;
+    if($result>0){
+        $db->query("DELETE FROM `tab_notificacion_email` WHERE `fk_cita`='".$datos->idcita."';");
+    }
+
+    $id_notificacion_email = 0;
+
+    $sql = "INSERT INTO `tab_notificacion_email` (`asunto`, `from`, `to`, `subject`, `message`, `estado`, `fk_paciente`, `fk_cita`, `fecha`, `program`, `program_date`) ";
+    $sql .= "VALUES (";
+    $sql .= " '$asunto' ,";
+    $sql .= " '$from' ,";
+    $sql .= " '$to' ,";
+    $sql .= " '$subject' ,";
+    $sql .= " '$message' ,";
+    $sql .= " 'P' ,";
+    $sql .= " '$datos->idpaciente' ,";
+    $sql .= " '$datos->idcita' ,";
+    $sql .= " now() ,";
+    $sql .= " 1 ,";
+    $sql .= " '$fecha_programa' ";
+    $sql .= ");";
+
+    $result = $db->query($sql);
+    if(!$result){
+        $error = 'Ocurrio un error con la Operación. Consulte con soporte <br> <small><b>operación Programar Confirmación e-mail</b></small>';
+    }else{
+        $id_notificacion_email = $db->lastInsertId("tab_notificacion_email");
+    }
+
+    if($datos->idcita!=0){
+
+        $queryNoti  = " INSERT INTO `tab_noti_confirmacion_cita_email` (`fk_paciente`, `fk_cita`, `estado` , `fk_noti_email`) ";
+        $queryNoti .= " VALUES(";
+        $queryNoti .= " $datos->idpaciente ,";
+        $queryNoti .= " $datos->idcita ,";
+        $queryNoti .= " 1 ,"; #estado de la cita ==> notificar x email
+        $queryNoti .= " $id_notificacion_email ";
+        $queryNoti .= " )";
+        $db->query($queryNoti);
+        $idnotiConfirmacion = $db->lastInsertId('tab_noti_confirmacion_cita_email'); #id de la notificaion de insert confirmacion
+
+        if(!empty($idnotiConfirmacion) )
+        {
+            $Update = " UPDATE `tab_pacientes_citas_det` SET `fk_cita_email_noti` = $idnotiConfirmacion WHERE `rowid` = '$datos->idcita' ";
+            $db->query($Update);
+        }
+
+        $db->query("UPDATE `tab_pacientes_citas_det` SET `fk_estado_paciente_cita`= 11, fk_cita_email_noti = $idnotiConfirmacion WHERE `rowid`='".$datos->idcita."'; ");
+    }
+
+    $ouput = [
+        'registrar'   => $error,
+        "error_email" => ""
+    ];
+
+    return $ouput;
 
 }
 
@@ -1312,6 +1447,7 @@ function boxsizingMenssaje( $datosEmail = array() ){
     $token          = $datosEmail['token'];
     $telefono       = $datosEmail['telefono'];
     $direccion      = $datosEmail['direccion'];
+    $odontolog      = $datosEmail['odontolog'];
 
 
     $url_noti_icon = DOL_HTTP.'/logos_icon/logo_default/dental_noti_.png';
@@ -1342,6 +1478,8 @@ function boxsizingMenssaje( $datosEmail = array() ){
         <tr >
             <td align="center" colspan="2" style="padding-bottom: 15px;color: #6a737d;">
                  Le recordamos que tiene una cita agendada para la fecha asignada<br> '.($recordatorio).'
+                 <br>
+                 <b>Odontólogo/a:</b> &nbsp; '.$odontolog.' 
             </td>
         </tr>
 

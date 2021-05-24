@@ -61,10 +61,3 @@
 
 </div>
 
-
-
-
-<!--modales-->
-<?php
-    include_once DOL_DOCUMENT .'/application/system/agenda/view/status_modal.php';
-?>

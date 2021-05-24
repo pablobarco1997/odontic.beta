@@ -113,7 +113,7 @@ function loadtableAgenda() {
         // ajax:{
         //
         // },
-    }).on( 'length.dt', function ( e, settings, len ) { // cambiar
+     }).on( 'length.dt', function ( e, settings, len ) { // cambiar
          boxTableLoad(ElemmentoContentload, true);
      }).on( 'page.dt', function ( e, settings, len ) { // cambiar
          boxTableLoad(ElemmentoContentload, true);
@@ -208,7 +208,8 @@ function EstadosCitas(idestado, idcita, html, idpaciente) //Comprotamientos de l
         case 1: //notificar por email
 
             $('#notificar_email-modal').modal('show');
-            notificacion('El sistema no se responsabiliza por correo electrónico mal ingresado', 'question');
+
+            setTimeout(()=>{ notificacion('El sistema no se responsabiliza por correo electrónico mal ingresado', 'question'); },800);
             $('#para_email').val( $.trim( html.data('email') ) ); //email destinario
             $("#enviarEmail").attr('onclick', 'notificaionEmail('+idpaciente+','+idcita+','+idestado+','+idcita+')');
             $("#para_email").keyup();
@@ -232,21 +233,25 @@ function EstadosCitas(idestado, idcita, html, idpaciente) //Comprotamientos de l
 
         case 5: // Atendiendose
 
-            UpdateEstadoCita(idestado, idcita, html, textEstado );
+            $.get($DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php" , {'ajaxSend':'ajaxSend', 'accion':'consultar_estado_cita_atrazada', 'idcita':idcita } , function(data) {
+                var dato = $.parseJSON(data);
+                if(dato.result == 'atrazada'){
+                    notificacion('Esta cita se encuentra atrasada no puede cambiar a estado <b>Atendiendose</b>', 'question');
+                }else{
+                    UpdateEstadoCita(idestado, idcita, html, textEstado );
+                }
+            });
             break;
 
         case 6: // Atendido
 
             $.get($DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php" , {'ajaxSend':'ajaxSend', 'accion':'consultar_estado_cita_atrazada', 'idcita':idcita } , function(data) {
-
                 var dato = $.parseJSON(data);
-
                 if(dato.result == 'atrazada'){
                     notificacion('Esta cita se encuentra atrasada no puede cambiar a estado <b>Atendido</b>', 'question');
                 }else{
                     UpdateEstadoCita(idestado, idcita, html, textEstado );
                 }
-
             });
 
             break;
@@ -309,7 +314,7 @@ function notificaionEmail($idPaciente, $idcita, idestado, idcita )
 {
 
 
-    $('#emailEspere').text('Enviando mensaje espere ...');
+    // $('#emailEspere').text('Enviando mensaje espere ...');
 
     // $(document).
     // bind("ajaxStart", function(){
@@ -325,6 +330,11 @@ function notificaionEmail($idPaciente, $idcita, idestado, idcita )
 
     var error = '';
     var error_registrar_email_ = '';
+
+    var programarEmail = {
+        'confirmar'    : ($("#emailConfirmacion_programar").is(':checked')?1:0),
+        'date_program' : $("#date_programa_email_confirm").val(),
+    };
 
     setTimeout(function() {
 
@@ -343,6 +353,7 @@ function notificaionEmail($idPaciente, $idcita, idestado, idcita )
                 'to': $('#para_email').val(),
                 'subject': ($('#titulo_email').val()).replace(/(["'])(.*?)\1/g,' '),
                 'message': ($('#messge_email').val()).replace(/(["'])(.*?)\1/g,' '),
+                'programar_email': JSON.stringify(programarEmail),
             },
             dataType:'json',
             async: false,
@@ -385,7 +396,19 @@ function notificaionEmail($idPaciente, $idcita, idestado, idcita )
                     $('#messge_email').val();
 
                     $('#notificar_email-modal').modal('hide');
-                    UpdateEstadoCita(idestado, idcita, '', '' );
+
+                    //si es diferente a email programado
+                    if(!$("#emailConfirmacion_programar").is(':checked')){
+                        setTimeout(()=>{
+                            UpdateEstadoCita(idestado, idcita, '', '' );
+                        },800);
+                    }else{
+                        setTimeout(()=>{
+                            notificacion('Información Actualizada', 'success');
+                        },800);
+                        var table =  $('#tableAgenda').DataTable();
+                        table.ajax.reload(null, false);
+                    }
                     $('#emailEspere').text(null);
 
                 }else{
@@ -768,6 +791,15 @@ $(document).ready(function() {
 $('#modal_coment_adicional').on('show.bs.modal', function() {
     $("#comment_adicional").val(null);
 });
+
+//modal email confirmacion
+$('#notificar_email-modal').on('show.bs.modal', function() {
+    $("#messge_email").val(null);
+    $("#emailConfirmacion_programar").prop('checked', false).trigger('change');
+    $("#date_programa_email_confirm").val(null);
+});
+
+
 
 window.onload =  boxloading($boxContent, true);
 
