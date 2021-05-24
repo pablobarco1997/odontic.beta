@@ -801,23 +801,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     tc.fk_paciente,
                     CONCAT(ap.nombre, ' ', ap.apellido) nombre,
                     tc.fk_convenio,
-                    
-                    IFNULL((SELECT 
-                                    cf.nombre_conv
-                                FROM
-                                    tab_conf_convenio_desc cf
-                                WHERE
-                                    cf.rowid = tc.fk_convenio),
-                            'convenio no asignado') convenio,
-                            
-                    IFNULL((SELECT 
-                                    cf.valor
-                                FROM
-                                    tab_conf_convenio_desc cf
-                                WHERE
-                                    cf.rowid = tc.fk_convenio),
-                            0) valorConvenio ,
-                            
+                    IFNULL((SELECT cf.nombre_conv FROM tab_conf_convenio_desc cf WHERE cf.rowid = tc.fk_convenio), 'convenio no asignado') convenio,
+                    IFNULL((SELECT cf.valor FROM tab_conf_convenio_desc cf WHERE cf.rowid = tc.fk_convenio),0) valorConvenio ,
                     tc.edit_name as edit_name , 
                     
                     -- ABONADO
@@ -876,7 +861,6 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             if($rsd->rowCount() > 0 ){
                 while ($obdet = $rsd->fetchObject()){
-
                     $objetoDet[] = $obdet;
                 }
 
@@ -885,9 +869,12 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             }
 
             $output = [
-              'error'      => $error,
-              'objetoCab'  => $objetoCab,
-              'objetoDet'  => $objetoDet,
+              'error'         => $error,
+              'objetoCab'     => $objetoCab,
+              'objetoDet'     => $objetoDet,
+              'ico_diente'    => "data: image/*; base64, ".base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/diente.png')),
+              'ico_checked_1' => "data: image/*; base64, ".base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/checked-checkbox.png')),
+              'ico_checked_2' => "data: image/*; base64, ".base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/unchecked-checkbox.png')),
 
             ];
 
@@ -986,8 +973,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                    ";
             $sql .= " and tc.fk_paciente = ".$idpaciente." ";
 
-            if(!empty($estadotram) || !empty($estadoMostrarFinalizados))
-            {
+            if(!empty($estadotram) || !empty($estadoMostrarFinalizados)) {
                 if( $estadotram == 'si'){
                     $sql .= " and tc.estados_tratamiento = 'E' "; #anulado
                 }
@@ -1000,13 +986,11 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 $sql .= " and tc.estados_tratamiento in('A', 'S')"; #tratamientos con saldos y Activos
             }
 
-            if(!empty($idplantmiento))
-            {
+            if(!empty($idplantmiento)){
                 $sql .= " and tc.rowid = $idplantmiento";
             }
 
-            if($fecha_range!="")
-            {
+            if($fecha_range!=""){
                 $fechaIni = trim( str_replace('/', '-', $fecha_range[0] ) );
                 $fechaFin = trim( str_replace('/', '-', $fecha_range[1] ) );
                 $sql .= " and cast(tc.fecha_create as date) between cast('$fechaIni' as date) and cast('$fechaFin' as date) ";
@@ -1022,34 +1006,28 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             }
 
             $Total = $db->query($sqlTotal)->rowCount();
-
             $rul = $db->query($sql);
 
             if($rul->rowCount()>0){
-
                 while ($ob = $rul->fetchObject()){
 
                     $row = array();
                     $estado = "";
-
                     if($ob->estados_tratamiento == 'A'){
                         $estado = 'Activo';
                     }else{
                         $estado = 'Inactivo';
                     }
-
                     $nombre_tratamiento = null;
-
                     if($ob->edit_name != ""){
                         $nombre_tratamiento = $ob->edit_name;
                     }else{
                         $nombre_tratamiento = "Plan de Tratamiento: # $ob->numero ";
                     }
 
-
                     $url_planform = DOL_HTTP .'/application/system/pacientes/pacientes_admin/?view=plantram&key='.KEY_GLOB.'&id='.tokenSecurityId($ob->idpaciente).'&v=planform&idplan='.tokenSecurityId($ob->rowid);
 
-                    $row[] = "<a  href='$url_planform' style='font-weight: bold; font-size: 1.6rem;' class='text-center btn btnhover'>  $nombre_tratamiento  </a>"; #descripcion o numero de tratamiento
+                    $row[] = "<a  href='$url_planform' style='font-weight: bold; font-size: 1.6rem; ' class='text-center btn btnhover'>  $nombre_tratamiento  </a>"; #descripcion o numero de tratamiento
 //                    $row[] = "<a  href='".DOL_HTTP."/application/system/pacientes/admin_paciente/?view=form_plan_tratamiento&id=".$ob->fk_paciente."&ope=mod&idtratam=".$ob->rowid."' style='font-weight: bold; font-size: 1.6rem' class='text-center btn btnhover'>  $nombre_tratamiento  </a>"; #descripcion o numero de tratamiento
                     $row[] = $ob->nombre_doc;  #nombre Doctor
                     $row[] = $estado;
@@ -1064,6 +1042,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     $row[] = $ob->estados_tratamiento; #estado plan de tratamiento
                     $row[] = str_pad($ob->idCitas, 6, "0", STR_PAD_LEFT); #cita asociada numero
                     $row['saldoAbonado'] = $ob->saldo_abonado;
+                    $row['img_ico_cita'] = "data: image/*; base64, ".base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/cita-medica.ico'));
 
                     $dataprincipal[] = $row;
 
@@ -1281,25 +1260,23 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         and cb.fk_paciente = $idpaciente
                         limit 1 ";
 
-//            echo '<pre>'; print_r($sql); die();
-            $rsDel = $db->query($sql);
-            if($rsDel && $rsDel->rowCount() > 0)
-            {
-                $obj = $rsDel->fetchObject();
+//            print_r($sql); die();
+            $result = $db->query($sql);
+            if($result && $result->rowCount() > 0){
+
+                $obj = $result->fetchObject();
 
                 #COMPRUEBO EL ESTADO PAGADO DE LA PRESTACION
                 if( $obj->estado_pay == 'PA'){
                     $error = 'No puede Eliminar esta prestación <br><b>' .$obj->prestacion .'</b><br> se encuentra <i class="fa fa-dollar"></i> pagada';
                 }
-
                 #COMPRUEBO EL ESTADO EN ESTA PRESTACION TIENE SALDO - O  ABONADO
                 if( $obj->estado_pay == 'PS'){
                     $error = 'No puede Eliminar esta prestación <br><b>' .$obj->prestacion .'</b><br> tiene <i class="fa fa-dollar"></i> saldo asociado comprueba en el modulo de pagos de este plan de tratamiento ';
                 }
-
                 #SALDO ASOCIADO
                 if( (double)$obj->cancelado_cobro > 0){
-                    $error = 'Se encuentra saldo asociado '. '<span style="color: green">$ '.$obj->cancelado_cobro.'</span>';
+                    $error = 'No puede Eliminar <br> <b> se encuentra saldo asociado '. '<span style="color: green">$ '.$obj->cancelado_cobro.'</span> </b>';
                 }
 
                 #REALIZADA
@@ -1316,8 +1293,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     #Estado de estadodet
                     # A PRESTACION ACTIVA
                     # R PRESTACION REALIZADA
-                    if( ($obj->estadodet == 'A' || $obj->estadodet == 'R' ) && $obj->estado_pay  == 'PE'){
-                        $sqldelUp = "DELETE FROM tab_plan_tratamiento_det WHERE rowid ='$iddetplant' and fk_plantratam_cab = $idCabplant;";
+                    if( ($obj->estadodet == 'A' || $obj->estadodet == 'R' || $obj->estado_pay  == 'PE')  ){
+                         $sqldelUp = "DELETE FROM tab_plan_tratamiento_det WHERE rowid ='$iddetplant' and fk_plantratam_cab = $idCabplant;";
                          $rsDelUp  = $db->query($sqldelUp);
 
                     }else{
@@ -1973,9 +1950,11 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             $idpaciente = GETPOST('idpaciente');
             $idplantram = GETPOST('idplant');
+            $date       = GETPOST('date');
 
             $datos['idpaciente'] = $idpaciente;
             $datos['idplan']     = $idplantram;
+            $datos['date']       = $date;
 
             $respuesta = evoluc_listprincpl($datos);
 
@@ -2445,6 +2424,11 @@ function evoluc_listprincpl($datos)
     if( !empty( $datos['idplan'] ) ){
         $sqlevolucprip .= " and ev.fk_plantram_cab =  " . $datos['idplan'] . "  ";
     }
+    if( !empty( $datos['date']  ) ){
+        $datex1 = str_replace('/','-', explode('-',$datos['date'])[0]);
+        $datex2 = str_replace('/','-', explode('-',$datos['date'])[1]);
+        $sqlevolucprip .= " and cast(ev.fecha_create as date) between '".$datex1."' and '".$datex2."' ";
+    }
 
     $sqlevolucprip .= " order by ev.rowid desc";
 
@@ -2454,12 +2438,15 @@ function evoluc_listprincpl($datos)
         $sqlevolucprip.=" LIMIT $start,$length;";
 
 
+
+//    print_r($sqlevolucprip); die();
     $resultTotal = $db->query($sqlTotal);
     $Total = $resultTotal->rowCount();
 
     $rsevol = $db->query($sqlevolucprip);
     if( $rsevol && $rsevol->rowCount() > 0){
         while ( $objevol =   $rsevol->fetchObject() ) {
+
             $cadena_caras = array();
             $caras = json_decode($objevol->json_caras);
 
@@ -2470,13 +2457,13 @@ function evoluc_listprincpl($datos)
             $cadena_caras[] = ($caras->lingual=="true") ? "lingual" : "";
 
             $row   = array();
-            $row[] = date('Y/d/m', strtotime( $objevol->fechaevul ) );
+            $row[] = date('Y/m/d', strtotime($objevol->fechaevul) ).'<br>'.date('h:m:s', strtotime($objevol->fechaevul));
             $row[] = $objevol->plantram;
             $row[] = $objevol->presstacion;
             $row[] = ($objevol->diente!=0)?$objevol->diente:'No asignado';
             $row[] = $objevol->estadodiente;
             $row[] = $objevol->doct;
-            $row[] = $objevol->observacion;
+            $row[] = "<p title='".$objevol->observacion."'>".((strlen($objevol->observacion)>50)?substr($objevol->observacion,0,50)." ...":$objevol->observacion)."</p>";
             $row[] = "". (implode(',', array_filter( $cadena_caras ))) ; #lista de caras
 
             $data[] = $row;
