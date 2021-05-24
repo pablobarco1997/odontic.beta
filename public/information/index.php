@@ -39,11 +39,13 @@ require_once 'conneccion/connection_info.php';
     <link rel="stylesheet" href=" <?php echo DOL_HTTP .'/public/lib/sweetalert2/sweetalert2.css'?> ">
     <script src="<?php echo DOL_HTTP .'/public/lib/sweetalert2/sweetalert2.all.js'?>" ></script>
 
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2&display=swap" rel="stylesheet">
 
 </head>
 <style>
     *{
-        font-family: 'Hind', sans-serif;
+        font-family: 'Baloo Da 2', cursive;
     }
 
 </style>
@@ -59,9 +61,7 @@ require_once 'conneccion/connection_info.php';
                 switch ($view){
 
                     case 'confirm_cita':
-
                         include_once DOL_DOCUMENT .'/public/information/view/confirmar_cita.php';
-
                         break;
                 }
 

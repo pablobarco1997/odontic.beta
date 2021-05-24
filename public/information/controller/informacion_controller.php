@@ -6,11 +6,19 @@ if(isset($_POST['dbname']))
     require_once '../../../application/config/lib.global.php';
     include_once DOL_DOCUMENT .'/public/information/conneccion/connection_info.php';
     require_once DOL_DOCUMENT .'/application/controllers/controller.php';
+    require_once DOL_DOCUMENT .'/application/config/conneccion_entidad.php'; //connecion a todas las entidades
 
     global  $db;
 
-    $db = connection( trim(decomposeSecurityTokenId($_POST['dbname'])) );
+    $dbtoken  = trim(decomposeSecurityTokenId($_POST['dbname']));
+    $dbentity = $_POST['dbentity'];
 
+    $QUERY   = "select nombre_db_entity, numero_entity from tab_entidades_dental where md5(nombre_db_entity) = '$dbtoken' and md5(numero_entity)='$dbentity' ";
+    $RESULT  = CONECCION_ENTIDAD::CONNECT_ENTITY()->query($QUERY)->fetchObject();
+
+    $db = connection( trim($RESULT->nombre_db_entity) );
+
+//    print_r($db);  die();
     if(isset($_POST['ajaxSend']) || isset($_GET['ajaxSend']))
     {
 
@@ -28,14 +36,31 @@ if(isset($_POST['dbname']))
                 $error = '';
                 $iddetcita      = GETPOST('idcita'); #id de la cita detalle
                 $action_cita    = GETPOST('action_cita');
+                $Token_id       = GETPOST('token_id');
 
+                //se valida el formulario antes de validar el proceso
+                $Token_valid = $db->query("SELECT count(*) as validcount  FROM tab_noti_token_confirmacion where token = '$Token_id' and  fk_cita_agendada = $iddetcita ")->fetch_object()->validcount;
+                if($Token_valid!=1){
+                    $error = 'Formulario de confirmación expirado';
+                }
 
-                if($iddetcita != '' && $iddetcita > 0)
+                if($iddetcita != '' && $iddetcita > 0 && empty($error))
                 {
                     $data_citas = [];
                     $errores = [];
 
-                    $obtenerCita = "SELECT d.rowid , d.fecha_cita, d.fk_estado_paciente_cita , c.fk_paciente FROM tab_pacientes_citas_det d , tab_pacientes_citas_cab c where d.fk_pacient_cita_cab = c.rowid and d.rowid = $iddetcita limit 1";
+                    $obtenerCita = "SELECT 
+                                    d.rowid,
+                                    d.fecha_cita,
+                                    d.fk_estado_paciente_cita,
+                                    c.fk_paciente,
+                                    d.fk_cita_email_noti
+                                FROM
+                                    tab_pacientes_citas_det d,
+                                    tab_pacientes_citas_cab c
+                                WHERE
+                                    d.fk_pacient_cita_cab = c.rowid
+                                    and d.rowid = $iddetcita limit 1";
                     $rsCita      = $db->query($obtenerCita);
                     if($rsCita && $rsCita->num_rows>0)
                     {
@@ -45,7 +70,10 @@ if(isset($_POST['dbname']))
                         #FECHAS ASIGNADAS FECHA DE LA CITA ACTUAL
                         $FechaCitas  = $obcita->fecha_cita;
                         $FechaActual = $DateNow;
+                        $noti_confirmacion_email = $obcita->fk_cita_email_noti;
 
+                        $puedoConfirmar = false;
+                        $sql = "";
 
                         #en esta validacion de fecha toma encuenta FECHA Y HORA
                         if( $FechaActual <= $FechaCitas  )

@@ -53,7 +53,7 @@
     <link rel="stylesheet" href="<?php echo DOL_HTTP .'/public/css/AdminLTE.min.css'?>">
     <link rel="stylesheet" href="<?php echo DOL_HTTP .'/public/css/skins/skin-blue.min.css'?>">
     <!--Datepicker js-->
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <link rel="stylesheet" type="text/css" href="<?php echo  DOL_HTTP.'/public/bower_components/daterangepicker-master/daterangepicker.css' ?>" />
     <!--font google para breadcrumb-->
     <link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2&display=swap" rel="stylesheet">
     <!-- css globales -->
@@ -86,8 +86,9 @@
     <!--javascript global-->
     <script src="<?php echo DOL_HTTP .'/public/js/lib_glob.js' ?>"></script>
     <!--daterangepicker-->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script src="<?php echo  DOL_HTTP.'/public/bower_components/daterangepicker-master/moment.min.js' ?>"></script>
+    <script src="<?php echo  DOL_HTTP.'/public/bower_components/daterangepicker-master/daterangepicker.js' ?>"></script>
+
     <!--Notificaiones lib-->
     <script src="<?php echo DOL_HTTP .'/public/js/notificaciones___lib.js' ?>"></script>
     <!--color picker-->

@@ -686,7 +686,6 @@ function boxloading(box = false, load = false , Timer = 0 ){
 //esta funcion se usa para el load de cada table
 function  boxTableLoad(Element = false, load=false) {
 
-    // alert(Element.height());
 
     if(Element!=false){
 
