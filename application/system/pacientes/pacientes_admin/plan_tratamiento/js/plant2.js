@@ -38,8 +38,7 @@ if($accion == 'addplan')
             async: false,
             success:function(respuesta) {
 
-                if(respuesta.error == '')
-                {
+                if(respuesta.error == "") {
 
                     var cabezera             = respuesta.objetoCab[0];
 
@@ -72,12 +71,17 @@ if($accion == 'addplan')
                     /*view header plan de tratamiento*/
                     print_html_cabezera_viewPrincipal(profecional,convenio, Nomb_tratam);
 
+                    console.log(respuesta['objetoDet']);
                     /*Se comprueba si hay prestaciones agregadas*/
-                    if(respuesta.objetoDet.length > 0)
-                    {
+                    if(respuesta.objetoDet.length > 0){
+
+                        var icoCheckedTrue  = respuesta['ico_checked_1'];
+                        var icoCheckedFalse = respuesta['ico_checked_2'];
+
+                        var icoDiente = respuesta['ico_diente'];
                         /*So hay prestacion se pinta el detalle */
-                        var detalle = respuesta.objetoDet;
-                        print_html_detalle_viewPrincipal(detalle);
+                        var detalle = respuesta['objetoDet'];
+                        print_html_detalle_viewPrincipal(detalle, icoDiente, icoCheckedTrue, icoCheckedFalse);
                     }else{
                         $('#detalle-body').empty();
                     }
@@ -94,37 +98,38 @@ if($accion == 'addplan')
 
 
     //PINTA LAS PRESTACIONES GUARDAS EN EL FORMULARIO
-    function print_html_detalle_viewPrincipal(tratramientodet)
+    function print_html_detalle_viewPrincipal(tratramientodet, icoDiente, icoCheckedTrue, icoCheckedFalse)
     {
 
         var html               = "";
         var i = 0;
-        while(i <= tratramientodet.length -1)
-        {
+        while(i <= tratramientodet.length -1){
 
             //id de la prestacion detalle
+            var detalleTratamiento        = tratramientodet[i];
             var rowiddetalle              = tratramientodet[i]['rowid'];
             var usuarioCreatePrestacion   = tratramientodet[i]['usuario_creator']; //usuario quien creo la prestacion
             var usuarioRealizarPrestacion = tratramientodet[i]['usuario_realizado']; //usuario quien realizo la prestacion
 
             var LaboratorioPrestacion   =  tratramientodet[i]['laboratorio']; //prestacion creada desde un laboratorio
-            var iddiente           = tratramientodet[i]['diente'];
-            var prestacion         = tratramientodet[i]['prestacion'];
-            var fk_prestacion      = tratramientodet[i]['fk_prestacion'];
-            var subtotal           = tratramientodet[i]['subtotal'];
-            var descAdicional      = tratramientodet[i]['descadicional'];
-            var statusdet          = tratramientodet[i]['estadodet']; //estado de la prestacion
-            var total1             = tratramientodet[i]['total'];
+            var iddiente                = tratramientodet[i]['diente'];
+            var prestacion              = tratramientodet[i]['prestacion'];
+            var fk_prestacion           = tratramientodet[i]['fk_prestacion'];
+            var subtotal                = tratramientodet[i]['subtotal'];
+            var descAdicional           = tratramientodet[i]['descadicional'];
+            var statusdet               = tratramientodet[i]['estadodet']; //estado de la prestacion
+            var total1                  = tratramientodet[i]['total'];
 
-            var realizacion        = "";  //estado realizado , procesos o pendiente
+            var realizacion             = "";  //estado realizado , procesos o pendiente
+            var estado_pago             = tratramientodet[i]['estado_pago'];
+            var labelestadoPago         = "";
 
-            var estado_pago        = tratramientodet[i]['estado_pago'];
-
-            var estadoPago = "";
-            if(estado_pago == 'PA')
-            { estadoPago = '<i class="fa fa-dollar"></i> &nbsp;Pagado'; }
-            if(estado_pago == 'PS')
-            { estadoPago = '<i class="fa fa-dollar"></i> &nbsp;Saldo'; }
+            if(estado_pago == 'PA'){
+                labelestadoPago = '<i class="fa fa-dollar"></i> &nbsp;Pagado';
+            }
+            if(estado_pago == 'PS'){
+                labelestadoPago = '<i class="fa fa-dollar"></i> &nbsp;Saldo';
+            }
 
             //Estado detalle
             if(statusdet=='A') //Pendiente
@@ -135,11 +140,11 @@ if($accion == 'addplan')
             { realizacion = '<label class="label" style="background-color: #D5F5E3; color: green; font-weight: bolder;font-size: 0.8em">REALIZADO</label>' }
 
             //comportamiento realizar prestacion
-            var ImgRealizadoChecked = $DOCUMENTO_URL_HTTP+"/logos_icon/logo_default/unchecked-checkbox.png"; //No realizado
-            var onclickRealizadoModal = " data-toggle='modal' onclick='realizarPrestacionModal($(this))' title='Realizar esta prestación' "; //Click para realizar la prestacion
+            var ImgRealizadoChecked   = " <i class='fa fa-square'></i> Realizar ? "; //No realizado
+            var onclickRealizadoModal = " href='#modal_prestacion_realizada' data-toggle='modal' onclick='realizarPrestacionModal($(this))' title='Realizar esta prestación' "; //Click para realizar la prestacion
 
             if(tratramientodet[i]['estadodet'] == 'R'){
-                ImgRealizadoChecked = $DOCUMENTO_URL_HTTP+"/logos_icon/logo_default/checked-checkbox.png";
+                var ImgRealizadoChecked = "<i class='fa fa-check'></i> Realizado  ";
                 onclickRealizadoModal = " title='Prestación Realizada' ";
             }
             //end comportamiento realizar
@@ -157,13 +162,13 @@ if($accion == 'addplan')
             valor2 =  parseFloat(valor1) - ((parseFloat(valor1) * parseFloat(descAdicional)) /100);
             total = redondear(valor2, 2, false); //rendondear a los decimales del segundo parametro a 6 o a 2
 
-            var smallUsuarioxCreate =  ""; //informativo muestra el usuario que creo o agrego esta prestacion al plan de trtam
+            var smallUsuarioxCreate     =  ""; //informativo muestra el usuario que creo o agrego esta prestacion al plan de trtam
             if(usuarioCreatePrestacion!="") {
-                smallUsuarioxCreate = "<small  style='display: block;font-weight: bolder'>Creado x Usuario: " + usuarioCreatePrestacion + " </small>";
+                smallUsuarioxCreate     = "<small  style='display: block;font-weight: bolder'>Creado x Usuario: " + usuarioCreatePrestacion + " </small>";
             }
-            var smallUsuarioxRealizado = "";
+            var smallUsuarioxRealizado  = "";
             if(usuarioRealizarPrestacion!=""){
-                smallUsuarioxRealizado = "<small  style='display: block;font-weight: bolder'>Realizado x Odontol@: " + usuarioRealizarPrestacion + " </small>";
+                smallUsuarioxRealizado  = "<small  style='display: block;font-weight: bolder'>Realizado x Odontol@: " + usuarioRealizarPrestacion + " </small>";
             }
 
 
@@ -173,39 +178,38 @@ if($accion == 'addplan')
             // R = PRESTACION REALIZADA
             // P = EN PROCESO
             html += "<tr class='detalleListaInsert'>";
-            html += "" +
 
-            "<td class='dientePieza' data-iddiente='"+iddiente+"'>  " +
-
-            "   <div class='form-group col-md-12 col-xs-12 no-padding' style='padding: 0px !important;'>" +
-
-                "     <div class='form-group col-xs-12 col-sm-12 no-padding' >  " +
-                    "      <a  href='#modal_prestacion_realizada' style='font-size: 2rem; cursor:pointer;color: #9f191f'  class='terminarEstaPrestacionOpcion1' " + onclickRealizadoModal + " > " +
-                    "           <img id='realizadoImg-"+i+"' class='checkedRealizado' src='"+ImgRealizadoChecked+"' width='20px' height='20px'>        " +  //Checkear prestacion
-                    "       </a>" +
-                "     </div>" +
-                "     <div class='form-group col-sm-11 col-xs-12 no-padding no-margin' >" +
-                "        <p class='' style='margin: 0px; font-size: 1.5rem' data-id='"+ fk_prestacion +"'> <b> "+ prestacion +" </b> &nbsp; <i class='fa fa-flag statusdet' data-estadodet='"+statusdet+"' data-iddet='"+rowiddetalle+"' ></i> </p>  ";
+                html += "<td class='dientePieza' data-iddiente='"+iddiente+"' style='padding-left: 15px'>  " +
+                        "<div class='form-group col-md-12 col-xs-12 no-padding no-margin' style='padding: 0px !important;'>" +
+                        // "  <div class='form-group col-xs-12 col-sm-12 no-padding' >  " +
+                        //     "      <a   style='font-size: 2rem; cursor:pointer;color: #9f191f'  class='terminarEstaPrestacionOpcion1' " + onclickRealizadoModal + " > " +
+                        //     "           <img id='realizadoImg-"+i+"' class='checkedRealizado'  width='20px' height='20px'>        " +  //Checkear prestacion
+                        //     "       </a>" +
+                        // "  </div>" +
+                        "<div class='form-group col-sm-11 col-xs-12 no-padding no-margin' >" +
+                        "<p class='' style='margin: 0px; font-size: 1.5rem' data-id='"+ fk_prestacion +"'> <b> "+ prestacion +" </b> &nbsp; <i class='fa fa-flag statusdet' data-estadodet='"+statusdet+"' data-iddet='"+rowiddetalle+"' ></i> </p>  ";
 
             //Si en caso la prestacion esta relacionada an laboratorio
             if(LaboratorioPrestacion != ''){
                 html += "<p class='text-bold' style='margin: 0px' data-diente='"+iddiente+"' title='Laboratorio: "+LaboratorioPrestacion+"'> <i class='fa fa-flask'></i>  &nbsp;&nbsp; "+LaboratorioPrestacion+"  </p>";
             }
 
-            //muetra el diente asociado a esta prestacion
+            //Muestra el diente asociado a esta prestacion
             if(iddiente != 0){
-
-                html += "  <p class='text-bold' style='margin: 0px' data-diente='"+iddiente+"' > Pieza: "+iddiente+" &nbsp;&nbsp; " +
-                        "     <img src='"+$DOCUMENTO_URL_HTTP+"/logos_icon/logo_default/diente.png' width='17px' height='17px' alt=''> " +
-                        "  </p>";
+                html += "<p class='text-bold' data-diente='"+iddiente+"' > Pieza: "+iddiente+" &nbsp;&nbsp; " +
+                        "     <img src='"+icoDiente+"' width='14px' height='14px' alt=''> " +
+                        "</p>";
             }
 
 
-            html +=  "          <a class='btn btn-xs text-bold btnhover'  style='cursor:pointer;color: #9f191f' onclick='UpdateDeletePrestacionAsignada($(this))' > <i class='fa fa-trash'></i> Eliminar  </a>" +
-                "               <a style='cursor: pointer' data-toggle='collapse' data-target='#masInformacion-"+i+"' class='btn btn-xs text-bold btnhover'> <i class='fa fa-info-circle'></i> Mas información</a>" +
-                "               <a href='#detdienteplantram' data-toggle='modal' class='btn btn-xs text-bold btnhover hide'  style='cursor: pointer'  > <i class='fa fa-edit'></i> Modificar</a>" +
-                "               <a class='btn btn-xs text-bold btnhover "+((estadoPago=='')?'hidden':'')+"'  style='cursor: pointer'> "+ estadoPago +" </a>" +
-                "               <a class='btn btn-xs text-bold btnhover'  style='cursor: pointer' onclick='UpdateDeletePrestacionAsignada($(this), \"P\")' > "+ ((statusdet=='A')?"En Proceso":"") +" </a>" +
+            html +=  "<div style='padding: 3px;  background-color: rgba(221,221,221, 0.3); '>" +
+                        " <a class='btn btn-xs text-bold btnhover'  style='cursor:pointer;' "+onclickRealizadoModal+" > "+ImgRealizadoChecked+"  </a>" +
+                        " <a class='btn btn-xs text-bold btnhover'  style='cursor:pointer;color: #9f191f' onclick='UpdateDeletePrestacionAsignada($(this))' > <i class='fa fa-trash'></i> Eliminar  </a>" +
+                        " <a style='cursor: pointer' data-toggle='collapse' data-target='#masInformacion-"+i+"' class='btn btn-xs text-bold btnhover'> <i class='fa fa-info-circle'></i> Mas información</a>" +
+                        " <a href='#detdienteplantram' data-toggle='modal' class='btn btn-xs text-bold btnhover hide'  style='cursor: pointer'  > <i class='fa fa-edit'></i> Modificar</a>" +
+                        " <a class='btn btn-xs text-bold btnhover "+((labelestadoPago=='')?'hidden':'')+"'  style='cursor: pointer'> "+ labelestadoPago +" </a>" +
+                        " <a class='btn btn-xs text-bold btnhover'  style='cursor: pointer' onclick='UpdateDeletePrestacionAsignada($(this), \"P\")' > "+ ((statusdet=='A')?"En Proceso":"") +" </a>" +
+                     "</div>" +
 
                 "       <div class='masInformacion col-xs-12 col-md-12 collapse' id='masInformacion-"+i+"'>" +
                 "           <p class='text-justify no-margin'> " +
@@ -221,20 +225,33 @@ if($accion == 'addplan')
             " </td>";
 
             html += "<td>  " +
-                "   <div class='form-group col-md-12 col-xs-12'>" +
-                "     <br>" + realizacion + "  " +
-                "   </div>  " +
-                " </td>";
+                    "   <div class='form-group col-md-12 col-xs-12' style='margin-top: 15%'>" +
+                    "     " + realizacion + "  " +
+                    "   </div>  " +
+                    " </td>";
 
+            //descuento adicional
             html += "<td>  " +
-                        "   <div class='form-group col-md-12 col-xs-12'>" +
+                        "   <div class='form-group col-md-12 col-xs-12' style='margin-top: 10%'>" +
                         "     <p class='descConvenio' style='margin: 0px; font-size: 1.5rem'>  <b class='descAdicional'>" + descAdicional + " </b> %</p> " +
                         "   </div>  " +
                    " </td>";
 
             html += "<td>  " +
-                        "   <div class='form-group col-md-12 col-xs-12'>" +
-                        "     <p class='' style='margin: 0px; font-size: 1.5rem'> $ <b class='total'>" + redondear(total1, 2) + " </b> </p> " +
+                    "   <div class='form-group col-md-12 col-xs-12' style='margin-top: 10%'>" +
+                    "     <p class='qty' style='margin: 0px; font-size: 1.5rem'>  <b class='qty'>" + (parseFloat(detalleTratamiento['subtotal']).toFixed(2)) + " </b> </p> " +
+                    "   </div>  " +
+                    "</td>";
+
+            html += "<td>  " +
+                    "   <div class='form-group col-md-12 col-xs-12' style='margin-top: 10%'>" +
+                    "     <p class='qty' style='margin: 0px; font-size: 1.5rem'>  <b class='qty'>" + (parseFloat(detalleTratamiento['cantidad']).toFixed(2)) + " </b> </p> " +
+                    "   </div>  " +
+                    "</td>";
+
+            html += "<td>  " +
+                        "   <div class='form-group col-md-12 col-xs-12' style='margin-top: 10%'>" +
+                        "     <p class='' style='margin: 0px; font-size: 1.5rem'> $ <b class='total'>" + (parseFloat(total1).toFixed(2)) + " </b> </p> " +
                         "   </div>  " +
                    " </td>";
 
@@ -252,6 +269,7 @@ if($accion == 'addplan')
             html += "</tr>";
 
             i++;
+
         }
 
         document.getElementById('detalle-body').innerHTML = html;
@@ -307,6 +325,7 @@ if($accion == 'addplan')
         if( objPiezas.length > 0){
             var io = 0;
             while(io < objPiezas.length) {
+
                 // if( invalicErrorPrestacionDiente(idprestacion, detalleDiente.diente, 'diente') == 0 ) { }
                 var detalleDiente = objPiezas[io];
                 $formatoIndexPrestacion++;
@@ -314,23 +333,24 @@ if($accion == 'addplan')
 
                 htmlpress += "" +
                     "<tr  data-idprestacion='" + idprestacion + "'  data-iddiente='" + detalleDiente.pieza + "' name='detalleRow["+$formatoIndexPrestacion+"].detalle' class='detallePrincipalPrestacion' data-caras='"+JSON.stringify(detalleDiente.carasActivas)+"' >" +
-                        "<td> <a class='btn btn-xs text-bold btnhover' style='cursor:pointer;color: #9f191f' id='del-row' onclick='delete_row($(this))'> <i class='fa fa-trash'></i> Eliminar </a> </td>" +
+                        "<td style='width: 500px'> <a class='btn btn-xs text-bold btnhover' style='cursor:pointer;color: #9f191f' id='del-row' onclick='delete_row($(this))'> <i class='fa fa-trash'></i> Eliminar </a> </td>" +
                         //PRESTACION
                         "<td name='Prestacion[" + $formatoIndexPrestacion + "].detalle' class='prestacion' data-idprestacion='" + idprestacion + "'  data-iddiente='" + detalleDiente.pieza + "'>" +
                             "<p style='margin: 0px'>" + objectPresst.descripcion + "</p>" +
                             "<small title='Diente: " + detalleDiente.pieza + "'>Pieza: &nbsp; " + detalleDiente.pieza + " <i class='fa fa-tooth'></i> <img src='"+$iconDienteGlob+"' width='15px' height='15px' > </small>" +
                         "</td>" +
                         //subtotal
-                        "<td name='subtotalPresst[" + $formatoIndexPrestacion + "].detalle' class='subtotal' >" + objectPresst.valor + "</td>" +
+                        "<td style='width: 160px' name='subtotalPresst[" + $formatoIndexPrestacion + "].detalle' class='subtotal' >" + objectPresst.valor + "</td>" +
                         //desc de prestacion
-                        "<td name='convenioPresst["+$formatoIndexPrestacion+"].detalle' class='convenioSubtotal'>"+ objectPresst.convenio_valor +"</td>" +
+                        "<td style='width: 160px' name='convenioPresst["+$formatoIndexPrestacion+"].detalle' class='convenioSubtotal'>"+ objectPresst.convenio_valor +"</td>" +
                         //cantidad
-                        "<td> <input name='cantPresst["+$formatoIndexPrestacion+"].detalle' type='number' class='cantidadPrest input-sm' style='width: 150px;' value='1'> </td> "+
+                        "<td style='width: 160px'> <input name='cantPresst["+$formatoIndexPrestacion+"].detalle' type='text' class='cantidadPrest input-sm' style='width: 150px;' value='1'> </td> "+
                         //desc adicional
-                        "<td> <input name='descAdicional["+$formatoIndexPrestacion+"].detalle' type='text' class='adicional input-sm' style='width: 150px;'> </td>" +
+                        "<td style='width: 160px'> <input name='descAdicional["+$formatoIndexPrestacion+"].detalle' type='text' class='adicional input-sm' style='width: 150px;'> </td>" +
                         //total
-                        "<td name='totalPrestacion["+$formatoIndexPrestacion+"].detalle' class='totalprestacion'>"+ total +"</td>" +
+                        "<td style='width: 160px' name='totalPrestacion["+$formatoIndexPrestacion+"].detalle' class='totalprestacion'>"+ total +"</td>" +
                     "</tr>";
+
                 io++;
             }
 
@@ -340,6 +360,19 @@ if($accion == 'addplan')
         clearModalDetalle('soloActivas');
 
         $('#detalle-prestacionesPlantram').append(htmlpress);
+
+        $(".cantidadPrest").maskMoney({precision:0, thousands:'', decimal:'.',allowZero:true,allowNegative:true, defaultZero:true,allowEmpty: true});
+
+        $(".adicional").maskMoney({precision:2, thousands:'', decimal:'.',allowZero:true,allowNegative:true, defaultZero:true,allowEmpty: true})
+            .keyup(function () {
+                if($(this).val()<=100){
+
+                }else{
+                    //remove elemento
+                    $(this).parent().find(".invalic_descuento").remove();
+                    $(this).parent().append('<small style="display: block; color: red" class="invalic_descuento">descuento Invalido</small>');
+                }
+            });
 
         // CANTIDAD ONKEYUP
         $(".cantidadPrest").keyup(function() {
@@ -352,7 +385,6 @@ if($accion == 'addplan')
 
 
     }
-
 
 
 
@@ -563,16 +595,16 @@ if($accion == 'addplan')
         var TOTAL_ABONADO = Total_Abonado;
 
         $('#Presu_totalPresu')
-            .text( TOTAL_TO );
+            .text( parseFloat(TOTAL_TO).toFixed(2) );
 
         $('#Presu_Abonado')
-            .text( TOTAL_ABONADO );
+            .text( parseFloat(TOTAL_ABONADO).toFixed(2) );
 
         $('#Presu_Realizado')
-            .text( TOTAL_TO_REALIZADO );
+            .text( parseFloat(TOTAL_TO_REALIZADO).toFixed(2) );
 
         $('#Presu_Saldo')
-            .text( TOTAL_SALDO );
+            .text( parseFloat(TOTAL_SALDO).toFixed(2) );
 
         $('#saldoPagado')
             .text( (parseFloat(TOTAL_SALDO)).toFixed(2) );
@@ -587,6 +619,11 @@ if($accion == 'addplan')
     //GUARDAR LA INFORMACIO DE LAS PRESTACIONES
     //GUARDAR LA PRESTACION AGREGADA AL DETALLE NUEVO PLAN DE TRATAMIENTO DETALLE
     $('#guardarPrestacionPLantram').click(function(){
+
+        if($(".invalic_descuento").length>0){
+            notificacion("Descuento Invalido", "error");
+            return false;
+        }
 
         var objInformacion = fetch_objectPrestacionDetalle();
 
@@ -668,16 +705,21 @@ if($accion == 'addplan')
     //AGREGAR DETALLE PRESTACIONES ASOCIADAS A ESTE PLAN DE TRATAMIENTO
     $("#addprestacionPlantram").click(function() {
 
-        if( $("#prestacion_planform").find(':selected').val() != "" )
-        {
+        if( $("#prestacion_planform").find(':selected').val() != "" ){
+
+            $(".CaraDiv").each(function (index, Element){
+                var Elementdiv = $(Element);
+                    for (var i = 0;i<=$arr_caras.length-1; i++){
+                        Elementdiv.find('.selectCell').removeClass($arr_caras[i]+'Activar');
+                    }
+            });
+
             var idprestacion = $("#prestacion_planform").find(':selected').val();
             if(idprestacion > 0){
-
                 var objetoPrestacion = fetch_prestaciones(idprestacion);
                 //Se pinta las prestaciones en el modal
                 print_html_detallePrestacion(objetoPrestacion, idprestacion);
             }
-
         }else{
             notificacion('Debe seleccionar una prestación', 'error');
         }
@@ -692,10 +734,22 @@ if($accion == 'addplan')
         row.remove();
     }
 
+    //refresco las caras activadas de las piezas
+    $("#detdienteplantram").on("show.bs.modal", function () {
+        $(".CaraDiv").each(function (index, Element){
+            var Elementdiv = $(Element);
+            for (var i = 0;i<=$arr_caras.length-1; i++){
+                Elementdiv.find('.selectCell').removeClass($arr_caras[i]+'Activar');
+            }
+        });
+    });
+
+    // $(".cantidadPrest").maskMoney({precision:1,thousands:'', decimal:'.',allowZero:true,allowNegative:false, defaultZero:true,allowEmpty: true});
+
 }
 
 
-
+// ---------------------------------------------------------------------------------------------------------------------
 
 
 

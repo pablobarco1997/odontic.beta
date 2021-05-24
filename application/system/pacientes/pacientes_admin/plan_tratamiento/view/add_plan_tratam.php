@@ -39,28 +39,31 @@
     <div class="form-group col-xs-12 col-md-12">
 
         <div class="table-responsive">
-            <table class="table table-striped" width="100%" id="detalles_plantram">
+            <table class="table " width="100%" id="detalles_plantram">
                 <thead id="headplantram">
                     <tr>
                         <th width="40%">
-                            <label  style="float: left">Prestación</label>
-
-                            <a href="#detdienteplantram" id="asociarPrestacion" data-toggle="modal" onclick="clearModalDetalle('todo')" class="btnhover" style="color: #00a157; font-size: 1.4rem; cursor: pointer; float: right; padding-top: 2.5px">
-                                    <i class="fa fa-plus-circle"></i> Cargar Prestaciones</a>
-
+                            <label  style="float: left;  padding-top: 5px" class="control-label" >Prestación</label>
+                            <a href="#detdienteplantram" id="asociarPrestacion" data-toggle="modal" onclick="clearModalDetalle('todo')" class="btnhover btn-sm btn" style="color: #00a157; cursor: pointer; float: right; font-weight: bold "> Cargar Prestaciones</a>
                         </th>
                         <th width="10%">
                             <label for="">Realización</label>
                         </th>
-                        <th width="15%">
+                        <th width="10%">
                             <label for="">Dcto Adicional</label>
                         </th>
-                        <th width="15%">
+                        <th width="10%">
+                            <label for="">Sub. Total</label>
+                        </th>
+                        <th width="10%">
+                            <label for="">Qty</label>
+                        </th>
+                        <th width="10%">
                             <label for="">Total</label>
                         </th>
                     </tr>
                 <tr>
-                    <th colspan="5" style="font-size: 1.4rem; cursor: pointer">Acciones Clinicas</th>
+                    <th colspan="6" style="font-size: 1.4rem; cursor: pointer">Acciones Clinicas</th>
                 </tr>
                 </thead>
 
@@ -77,19 +80,19 @@
             <table class="table">
                 <tr>
                     <td>TOTAL PRESUPUESTO</td>
-                    <td id="Presu_totalPresu">0.00</td>
+                    <td id="Presu_totalPresu" style="font-weight: bold">0.00</td>
                 </tr>
                 <tr>
                     <td id="label_abonadoPagado">ABONADO</td>
-                    <td id="Presu_Abonado">0.00</td>
+                    <td id="Presu_Abonado" style="font-weight: bold">0.00</td>
                 </tr>
                 <tr>
                     <td>REALIZADO</td>
-                    <td id="Presu_Realizado">0.00</td>
+                    <td id="Presu_Realizado" style="font-weight: bold">0.00</td>
                 </tr>
                 <tr>
                     <td>SALDO</td>
-                    <td id="Presu_Saldo">0.00</td>
+                    <td id="Presu_Saldo" style="font-weight: bold">0.00</td>
                 </tr>
             </table>
     </div>

@@ -82,7 +82,7 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
     }.distal:hover{
          background-color: #17855b;
     }.palatino:hover{
-          background-color: #fddcf3;
+          background-color: #0a8ee8;
     }.mesial:hover{
            background-color: #a82f4a;
     }.lingual:hover{
@@ -96,7 +96,7 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
     }.distalActivar{
          background-color: #17855b;
     }.palatinoActivar{
-          background-color: #fddcf3;
+          background-color: #0a8ee8;
     }.mesialActivar{
            background-color: #a82f4a;
     }.lingualActivar{

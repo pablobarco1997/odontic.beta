@@ -67,15 +67,12 @@ function RealizarPrestacionDetallePLantram(idcabplantram, iddetplantram, iddient
             async: false,
             success: function(resp) {
 
-                console.log(resp);
-
                 if(resp.error == ""){
-
-                    notificacion('Información Actualizada' + resp.tieneOdontograma  , 'success');
-                    fetch_plantratamiento('consultar'); //Obtengo lso datos plan de tratamiento
-
                     $('#modal_prestacion_realizada').modal('hide');
-
+                    setTimeout(function () {
+                        notificacion('Información Actualizada' + resp.tieneOdontograma  , 'success');
+                        fetch_plantratamiento('consultar'); //Obtengo lso datos plan de tratamiento
+                    },800);
                 }else{
 
                 }

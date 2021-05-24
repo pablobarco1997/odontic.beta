@@ -95,7 +95,7 @@ function  listplaneTratamiento(){
 
                     if(full[7] != 0){ //cuando ya esta asociada a una cita se disabled
                         disablelinkCitasAsocid = 'disabled_link3';
-                        linkCitaAsociada = "<table> <tr><td><img src='"+$DOCUMENTO_URL_HTTP+"/logos_icon/logo_default/cita-medica.ico' WIDTH='20PX' HEIGHT='20px'></td> <td>"+full[11]+"</td> </tr> </table> ";
+                        linkCitaAsociada = "<table> <tr><td><img src='"+full['img_ico_cita']+"' WIDTH='20px' HEIGHT='20px'></td> <td>"+full[11]+"</td> </tr> </table> ";
                     }
 
                     if(estadoPlanTram == 'F'){
@@ -120,59 +120,49 @@ function  listplaneTratamiento(){
 
                  html += "<div id='boxtratamiento' class='box-ptratamiento row_list_plantram form-group col-lg-12 col-xs-12 col-md-12  ' style=' padding: 7px' >";
                         html += "<div class='form-group col-md-12 col-xs-12 col-lg-12'> " +
+                                    " <div class='col-md-11 col-sm-9 col-xs-12'>" +
+                                    "       <ul class='list-inline'>" +
+                                    "           <li style='font-weight: bold '  >" +numeroPlantratamiento+ "</li>" +
+                                    "           <li>" +
+                                    // DROPDOWN MENU ACCIONES PLAN TRATAMIENTO
+                                    "             &nbsp;&nbsp;&nbsp;&nbsp;" +
+                                    "             <div class='dropdown'>" +
+                                    "               <button class=\"btn btn-xs dropdown-toggle "+disabledFinalizado+" "+ estadoanulado +"   \" type=\"button\" data-toggle=\"dropdown\"> <i class='fa fa-ellipsis-v'></i> </button>" +
+                                    "               "+ listaOpciones +"    " +
+                                    "             </div> " +
 
-                                        " <div class='col-md-11 col-sm-9 col-xs-12'>" +
-                                        "       <ul class='list-inline'>" +
-                                        "           <li class=''  >" +numeroPlantratamiento+ "</li>" +
-                                        "           <li>" +
-                                        // DROPDOWN MENU ACCIONES PLAN TRATAMIENTO
-                                        "             &nbsp;&nbsp;&nbsp;&nbsp;" +
-                                        "             <div class='dropdown'>" +
-                                        "               <button class=\"btn btn-xs dropdown-toggle "+disabledFinalizado+" "+ estadoanulado +"   \" type=\"button\" data-toggle=\"dropdown\"> <i class='fa fa-ellipsis-v'></i> </button>" +
-                                        "               "+ listaOpciones +"    " +
-                                        "             </div> " +
-
-                                        "           </li>" +
-                                        "       </ul>   " +
-                                        " </div>" +
-
+                                    "           </li>" +
+                                    "       </ul>   " +
+                                    " </div>" +
                                 "</div>";
 
                   html +=     " <div class='form-group col-md-12 col-xs-12 col-lg-12'>" +
                                         "<div class='col-sm-12 col-md-3 col-xs-12'>" +
                                                 "<small style='color: #85929E; font-weight: bold'>PROFESIONAL</small>" +
                                                 "<br>" +
-                                                "<br>" +
-                                                  "<small style='font-weight: bold; width: 100%; display: block; cursor: pointer' class='trunc' "+modalProfecional+" data-idtratamiento='"+idplantratamiento+"' onclick='cambiar_attr_id_tratamiento($(this), \"#PlantTratamientoAsociOdont\")' > <i class='fa fa-user-md'></i> &nbsp; " + profecionalCargo + " </small>" +
-                                                "<br>" +
+                                                  "<small style='font-weight: bold; width: 100%; display: block; cursor: pointer' class='trunc' "+modalProfecional+" data-idtratamiento='"+idplantratamiento+"' onclick='cambiar_attr_id_tratamiento($(this), \"#PlantTratamientoAsociOdont\")' > <i class='fa fa-user-md'></i> &nbsp; " + (profecionalCargo.toUpperCase()) + " </small>" +
                                         "</div>" +
 
                                         "<div class='col-sm-12 col-md-3 col-xs-12'>" +
                                             "<small style='color: #85929E; font-weight: bold'>ÚLTIMA CITA</small>" +
                                             "<br>" +
-                                            "<br>" +
                                                 "<small style='font-weight: bold; width: 100%; display: block' class='trunc' title='Ultima cita fecha: "+ultimaCitaFecha+" - Hora: "+ultimaCitaHora+" '> " +
-                                                "<i class='fa fa-calendar'></i> &nbsp; " + ultimaCitaFecha + "  " +
-                                                "<i class='fa fa-clock-o'></i>  &nbsp; " + ultimaCitaHora + " " +
+                                                    "<i class='fa fa-calendar'></i> &nbsp; " + ultimaCitaFecha + "  " +
+                                                    "<i class='fa fa-clock-o'></i>  &nbsp; " + ultimaCitaHora + " " +
                                                 "</small>" +
-                                            "<br>" +
                                         "</div>" +
 
                                         "<div class='col-sm-12 col-md-3 col-xs-12'>" +
                                             "<small style='color: #85929E; font-weight: bold; '>ESTADO FINANCIERO</small>" +
                                             "<br>" +
-                                            "<br>" +
                                                 "<small style='font-weight: bold; width: 100%; display: block' class='trunc fontsize'> "+ situacion +"  </small>" +
-                                            "<br>" +
                                         "</div>" +
 
                                         "<div class='col-sm-12 col-md-2 col-xs-12'>" +
-                                            "<small style='color: #85929E; font-weight: bold; '>ASOCIAR A CITA</small>" +
+                                            "<small style='color: #85929E; font-weight: bold; '>CITA ASOCIADA</small>" +
                                             "<br>" +
-                                            "<br>" +
-                                                "<a href='#modal_plantrem_citas' onclick='attrChangAsociarCitas("+idplantratamiento+")' data-toggle='modal' style='font-weight: bold; width:80px; font-size: 1.1rem; color: #000;' class='trunc fontsize btn btn-xs btnhover "+estadoanulado+"  "+disablelinkCitasAsocid+"  "+disabledFinalizado+" '> " +
-                                                "<i class='fa fa-list-ul'></i> &nbsp; C I T A S </a>" + " " + linkCitaAsociada +
-                                            "<br>" +
+                                                "<a href='#modal_plantrem_citas' onclick='attrChangAsociarCitas("+idplantratamiento+")' data-toggle='modal' style='font-weight: bold; font-size: 1.1rem; color: #000;' class=' fontsize btn btn-xs btnhover "+estadoanulado+"  "+disablelinkCitasAsocid+"  "+disabledFinalizado+" '> " +
+                                                "<i class='fa fa-list-ul'></i> &nbsp; CITAS AGENDADAS ASOCIADAS </a>" + " " + linkCitaAsociada +
                                         "</div>" +
                                 "   </div>";
                     html += "</div>";
