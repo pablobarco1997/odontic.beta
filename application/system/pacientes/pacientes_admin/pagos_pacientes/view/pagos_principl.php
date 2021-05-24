@@ -6,15 +6,11 @@ $accionPag = "";
 if(isset($_GET['v'])){
 
     if($_GET['v'] == 'paym'){
-
         $accionPag = "pagos_independientes";
-
     }
 
     if($_GET['v'] == 'paym_pay'){
-
         $accionPag = "cobros_independientes";
-
     }
 
 }
@@ -47,21 +43,17 @@ if(isset($_GET['v'])){
     if(isset($_GET['v']))
     {
         #Maneja dos vista lista de las prestaciones realizadas de ese planes de tratamientos => paym_pay
-        if($_GET['v'] == 'paym' || $_GET['v'] == 'paym_pay')
-        {
-
+        if($_GET['v'] == 'paym' || $_GET['v'] == 'paym_pay'){
             include_once 'pagos_independientes.php';
         }
 
 #        ----------   o  -------------
 
-        if($_GET['v'] == 'paym_financier'  )
-        {
+        if($_GET['v'] == 'paym_financier'  ){
             include_once 'pagos_financieros.php';
         }
 
-        if( $_GET['v'] != 'paym' && $_GET['v'] != 'paym_financier' && $_GET['v'] != 'paym_pay')
-        {
+        if( $_GET['v'] != 'paym' && $_GET['v'] != 'paym_financier' && $_GET['v'] != 'paym_pay'){
             echo '<h1 style="color: red">Ocurrio un error no se encontro la vista a consultar - <b>NO TIENE ACCESO A ESTA VISTA</b></h1>';
             die();
         }

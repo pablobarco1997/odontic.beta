@@ -1,14 +1,13 @@
 <?php
 
-session_start();
-
-include_once '../../../../../config/lib.global.php';
-require_once DOL_DOCUMENT .'/application/config/main.php';
-
-global  $db , $conf, $user, $messErr;
-
 if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 {
+    session_start();
+
+    include_once '../../../../../config/lib.global.php';
+    require_once DOL_DOCUMENT .'/application/config/main.php';
+
+    global  $db , $conf, $user, $messErr;
 
     $accion = GETPOST('accion');
 
@@ -428,6 +427,9 @@ function list_pagos_independientes($idpaciente = 0)
 
     $data = array();
 
+    $imgbase64 = "data: image/*; base64, ".base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/ahorrar-dinero.png'));
+    $imgbase64ico = "data: image/*; base64, ".base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/cita-medica.ico'));
+
     $sqlpagos = "SELECT 
                     cast(ct.fecha_create as date) fecha_create,       
                     ct.rowid  as idplantratamiento, 
@@ -459,35 +461,39 @@ function list_pagos_independientes($idpaciente = 0)
 //    echo '<pre>';print_r($sqlpagos); die();
 
     $rspagos = $db->query($sqlpagos);
+    if( $rspagos && $rspagos->rowCount() > 0 ){
+        while( $objpagos = $rspagos->fetchObject() ){
 
-    if( $rspagos && $rspagos->rowCount() > 0 )
-    {
-        while( $objpagos = $rspagos->fetchObject() )
-        {
             $row = array();
-
             $pay_dom = ""; 
-            if(1 == 1)
-            {
+            if(1 == 1){
                 $pay_dom = "<div class='form-group col-md-12 col-xs-12'> 
-                                <a href='". DOL_HTTP ."/application/system/pacientes/pacientes_admin/?view=pagospaci&key=". KEY_GLOB ."&id=". tokenSecurityId($idpaciente) ."&v=paym_pay&idplantram=". $objpagos->idplantratamiento ." ' class='btn btnhover'> <img src='". DOL_HTTP ."/logos_icon/logo_default/ahorrar-dinero.png' class='img-sm img-rounded' alt=''> </a>
+                                <a href='". DOL_HTTP ."/application/system/pacientes/pacientes_admin/?view=pagospaci&key=". KEY_GLOB ."&id=". tokenSecurityId($idpaciente) ."&v=paym_pay&idplantram=". $objpagos->idplantratamiento ." ' class='btn btnhover'> <img src='". $imgbase64 ."' class='img-sm img-rounded' alt=''> </a>
                             </div>";
-
             }
+
+            $CitasNum = "<table>
+                            <tbody>
+                                <tr>
+                                    <td><img  src='". $imgbase64ico. "' class=' img-rounded' style='width: 25px; height: 25px' ></td>
+                                    <td>-</td>
+                                    <td>".((($objpagos->cita == 0) ? "No asignada" : str_pad($objpagos->cita,5,'0',STR_PAD_LEFT)))."</td>
+                                </tr>
+                            </tbody>
+                        </table>";
 
             $row[] = $pay_dom;
             $row[] = date('d/m/Y', strtotime($objpagos->fecha_create));
             $row[] = $objpagos->name_tratamm;
-            $row[] = "<img  src='". DOL_HTTP. "/logos_icon/logo_default/cita-medica.ico' class='img-sm img-rounded'  > - " . (($objpagos->cita == 0) ? "No asignada" : str_pad($objpagos->cita,5,'0',STR_PAD_LEFT));
+            $row[] = $CitasNum;
             $row[] = "<span class='' style='padding: 1px 2px; border-radius: 5px; font-weight: bolder; background-color: #66CA86'>$ $objpagos->totalprestaciones </span>  ";
             $row[] = "<span class='' style='padding: 1px 2px; border-radius: 5px; font-weight: bolder; background-color: #ffcc00'>$ $objpagos->totalprestaciones_realizadas </span>  ";
 
             #pago o saldo ++
             $row[] = "<span class='' style='padding: 1px 2px; border-radius: 5px; font-weight: bolder; background-color: #66CA86'>$ ". (($objpagos->totalpresta_pagadasSaldo==null) ? "0.00" : $objpagos->totalpresta_pagadasSaldo) ." </span>  ";
-
             $row[] = "";
-
             $data[] = $row;
+
         }
     }
 
