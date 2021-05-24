@@ -2,7 +2,12 @@
 
 function evoluciones_principal()
 {
-    $('#list_evoluprinpl').DataTable({
+
+    var ElemmentoContentload = $("#list_evoluprinpl");
+
+    boxTableLoad(ElemmentoContentload, true);
+
+    var table = $('#list_evoluprinpl').DataTable({
         searching: false,
         processing:true,
         ordering:false,
@@ -18,6 +23,9 @@ function evoluciones_principal()
                 'idplant'   : $('#filt_plantram').find(':selected').val()
             },
             dataType:'json',
+            complete: function(xhr, status) {
+                boxTableLoad(ElemmentoContentload, false);
+            }
         },
 
         language: {
@@ -45,7 +53,17 @@ function evoluciones_principal()
             }
         },
 
+    }).on( 'length.dt', function ( e, settings, len ) { // cambiar
+        boxTableLoad(ElemmentoContentload, true);
+    }).on( 'page.dt', function ( e, settings, len ) { // cambiar
+        boxTableLoad(ElemmentoContentload, true);
     });
+    // new $.fn.dataTable.FixedHeader( table );
+    new $.fn.dataTable.FixedHeader( table,
+        {
+            // headerOffset: 50
+        }
+    );
 }
 
 
@@ -59,7 +77,8 @@ function FiltrarEvolucion(){
         'accion='+accion+
         '&ajaxSend='+ajaxSend+
         '&idpaciente='+$id_paciente+
-        '&idplant='+$('#filt_plantram').find(':selected').val();
+        '&idplant='+$('#filt_plantram').find(':selected').val()+
+        '&date='+$('#startDateEvoluciones').val();
 
     table.ajax.url(newUrl).load();
 
@@ -68,7 +87,7 @@ function FiltrarEvolucion(){
 function AppExporPrint(){
 
     var exporturl = $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/evoluciones/export/export_pdf_evoluciones.php?idpaciente='+$id_paciente;
-    exporturl += '&idplant='+$('#filt_plantram').find(':selected').val();
+    exporturl += '&idplant='+$('#filt_plantram').find(':selected').val()+'&date='+$("#startDateEvoluciones").val();
 
     window.open(exporturl, '_blank');
 }
@@ -80,10 +99,28 @@ $(document).ready(function() {
         $('#filt_plantram').select2({
             placeholder: 'Seleccione una opción',
             allowClear: true,
-            language:'es'
-        });
+            language:'es',
+            ajax:{
+                url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
+                type: "POST",
+                dataType: 'json',
+                async:false,
+                data:function (params) {
+                    var query = {
+                        accion: 'filtrarPlantratamientoSearchSelect2',
+                        ajaxSend:'ajaxSend',
+                        paciente_id: $id_paciente,
+                        search: params.term,
+                    };
+                    return query;
+                },
+                delay: 250,
+                processResults:function (data) {
+                    return data;
+                }
+            }
 
-        evoluciones_principal();
+        });
 
         $('#filtrar_evoluc').click(function() {
             FiltrarEvolucion();
@@ -93,6 +130,52 @@ $(document).ready(function() {
             $('#filt_plantram').val(null).trigger('change');
             FiltrarEvolucion();
         });
+
+        $('#startDateEvoluciones').daterangepicker({
+
+            locale: {
+                format: 'YYYY/MM/DD' ,
+                daysOfWeek: [
+                    "Dom",
+                    "Lun",
+                    "Mar",
+                    "Mie",
+                    "Jue",
+                    "Vie",
+                    "Sáb"
+                ],
+                monthNames: [
+                    "Enero",
+                    "Febrero",
+                    "Marzo",
+                    "Abril",
+                    "Mayo",
+                    "Junio",
+                    "Julio",
+                    "Agosto",
+                    "Septiembre",
+                    "Octubre",
+                    "Noviembre",
+                    "Diciembre"
+                ],
+            },
+
+            startDate: moment().startOf('month'),
+            endDate: moment(),
+            ranges: {
+                'Hoy': [moment(), moment()],
+                'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Últimos 7 Dias': [moment().subtract(6, 'days'), moment()],
+                'Últimos 30 Dias': [moment().subtract(29, 'days'), moment()],
+                'Mes Actual': [moment().startOf('month'), moment().endOf('month')],
+                'Mes Pasado': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                'Año Actual': [moment().startOf('year'), moment().endOf('year')],
+                'Año Pasado': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
+            }
+        });
+
+        evoluciones_principal();
+
     }
 
 });

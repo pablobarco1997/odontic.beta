@@ -47,8 +47,9 @@ $InformacionEntity = (object)array(
 );
 
 
-$datos['idplan'] = GETPOST('idplant');
+$datos['idplan']     = GETPOST('idplant');
 $datos['idpaciente'] = GETPOST('idpaciente');
+$datos['date']       = GETPOST('date');
 
 $NombrePaciente = null;
 
@@ -76,7 +77,12 @@ WHERE
 if( !empty( $datos['idplan'] ) ){
     $sqlEvul .= " and ev.fk_plantram_cab =  " . $datos['idplan'] . "  ";
 }
-
+if( !empty( $datos['date']  ) ){
+    $datex1 = str_replace('/','-', explode('-',$datos['date'])[0]);
+    $datex2 = str_replace('/','-', explode('-',$datos['date'])[1]);
+    $sqlEvul .= " and cast(ev.fecha_create as date) between '".$datex1."' and '".$datex2."' ";
+}
+//print_r($sqlEvul); die();
 $rsevol = $db->query($sqlEvul);
 if( $rsevol && $rsevol->rowCount() > 0){
     while ( $objevol =   $rsevol->fetchObject() ) {

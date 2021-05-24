@@ -65,7 +65,7 @@
         <div class="table-responsive">
             <div class="table-responsive">
                 <br>
-                <table class="table table-striped" width="100%" id="list_citasAsociadas">
+                <table class="table table-condensed" width="100%" id="list_citasAsociadas">
                     <thead>
                         <tr>
                             <th width="15%">Fecha y Hora</th>

@@ -3,9 +3,15 @@
 //Lista principal
 function list_citas_Asociadas()
 {
-    $('#list_citasAsociadas').DataTable({
+    var ElemmentoContentload = $("#list_citasAsociadas");
+
+    boxTableLoad(ElemmentoContentload, true);
+
+    var table = $('#list_citasAsociadas').DataTable({
+        destroy:true,
         searching: false,
         ordering:false,
+        processing:true,
         serverSide: true,
         ajax:{
             url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
@@ -16,6 +22,9 @@ function list_citas_Asociadas()
                 'idpaciente': $id_paciente ,
                 'fecha'     : $("#startDate").val(),
                 'n_cita'    : $("#filtra_citas").val()
+            },
+            complete:function(xhr, status){
+                boxTableLoad(ElemmentoContentload, false);
             },
             dataType:'json',
         },
@@ -57,7 +66,18 @@ function list_citas_Asociadas()
             }
 
         },
+    }).on( 'length.dt', function ( e, settings, len ) { // cambiar
+        boxTableLoad(ElemmentoContentload, true);
+    }).on( 'page.dt', function ( e, settings, len ) { // cambiar
+        boxTableLoad(ElemmentoContentload, true);
     });
+
+    new $.fn.dataTable.FixedHeader( table,
+        {
+            // headerOffset: 50
+        }
+    );
+
 }
 
 function AplicarFiltro() {
@@ -81,6 +101,10 @@ function AplicarFiltro() {
 }
 
 function aplicarExportPdf(){
+
+    var ElemmentoContentload = $("#list_citasAsociadas");
+
+    boxTableLoad(ElemmentoContentload, true);
 
     var listEstados  = ($('#filtrar_estados').val().length>0)?($('#filtrar_estados').val()).toString():'';
 

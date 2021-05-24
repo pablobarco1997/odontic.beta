@@ -395,11 +395,10 @@
     function ToRegistroEmailProgram($datos = array(), $nameFiles = array()){
 
         /*
-         *   P     PENDIENTE          (correo creado sin nimguna accion)
+         *   P     PENDIENTE          (correo creado sin ninguna accion)
          *   C     PROGRAMADO         (correo programado para una fecha especifica)
          *   A     ENVIADO EXECUTADO  (correo enviado o procesado)
-         *
-         * */
+         */
 
         global $db;
 
@@ -422,13 +421,13 @@
         $sql .= "VALUES (";
         $sql .= " now() ,";
         $sql .= " ".$datos['idpaciente']." , ";
-        $sql .= " '".$datos['email_destinario']."' , ";
-        $sql .= " '".$datos['asunto']."' , ";
+        $sql .= " '".(($db->quote($datos['email_destinario'])))."' , ";
+        $sql .= " '".(($db->quote($datos['asunto'])))."' , ";
         $sql .= " ".(($db->quote($datos['mensage_mail'])))." , ";
         $sql .= " ".(count($nameFiles))." ";
 
         if($datos['DateProgramCorreo']!=""){ //date program   :  el correo queda programado para un envio con una fecha determinada
-            $sql .= " , '".$datos['DateProgramCorreo']."'  ";
+            $sql .= " , '".(($db->quote($datos['DateProgramCorreo'])))."'  ";
         }
         $sql .= " , '".$datos['estado']."' ";
         $sql .= ")";

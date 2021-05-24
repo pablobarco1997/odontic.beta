@@ -1,12 +1,16 @@
 
 function list_mail_sent(){
 
-    var table_style = $('#mailSentTable');
+    var fecha        = $("#startDate").val();
+    var status       = $("#estadoEmailConfPaci").find(':selected').val();
+    var n_citas      = $("#busqN_Cita").val();
 
-    table_style.addClass('disabled_link3');
+    var ElemmentoContentload = $("#mailSentTable");
+    boxTableLoad(ElemmentoContentload, true);
 
-    $('#mailSentTable').DataTable({
+    var table = $('#mailSentTable').DataTable({
         searching: false,
+        // destroy:true,
         ordering:false,
         processing:true,
         serverSide:true,
@@ -14,14 +18,15 @@ function list_mail_sent(){
             url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/email_sent/controller/controller_emailsent.php',
             type:'POST',
             data: {
-                'ajaxSend'   : 'ajaxSend',
-                'accion'     : 'list_mail_sent',
-                'idpaciente' : $id_paciente,
+                'ajaxSend'   :  'ajaxSend',
+                'accion'     :  'list_mail_sent',
+                'idpaciente' :  $id_paciente,
+                'fecha'      :  fecha,
+                'status'     :  status,
+                'n_citas'    :  n_citas,
             },
             complete: function(xhr, status){
-                setTimeout(()=>{
-                    table_style.removeClass('disabled_link3');
-                },500);
+                boxTableLoad(ElemmentoContentload, false);
             },
             dataType:'json',
         },
@@ -63,11 +68,24 @@ function list_mail_sent(){
 
         },
 
+    }).on( 'length.dt', function ( e, settings, len ) { // cambiar
+        boxTableLoad(ElemmentoContentload, true);
+    }).on( 'page.dt', function ( e, settings, len ) { // cambiar
+        boxTableLoad(ElemmentoContentload, true);
     });
+
+    new $.fn.dataTable.FixedHeader( table,
+        {
+            // headerOffset: 50
+        }
+    );
 
 }
 
 function AplicarBusqueda(){
+
+    var ElemmentoContentload = $("#mailSentTable");
+    boxTableLoad(ElemmentoContentload, true);
 
     var table        = $("#mailSentTable").DataTable();
     var fecha        = $("#startDate").val();

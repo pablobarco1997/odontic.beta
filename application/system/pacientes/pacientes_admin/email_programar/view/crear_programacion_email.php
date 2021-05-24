@@ -3,6 +3,7 @@
     <label for="">LISTA DE COMPORTAMIENTOS</label>
     <ul class="list-inline" style="background-color: #f0f0f0;border-bottom: 0.6px solid #333333; padding: 3px">
         <li> <a class="btnhover btn btn-sm " style="color: #333333" onclick="Programar()" > <b> <i class="fa fa-clock-o"></i> Programar  </b>  </a> </li>
+        <li> <a class="btnhover btn btn-sm " style="color: #333333" > <b> Programar Email de confirmación </b>  </a> </li>
     </ul>
 </div>
 
@@ -74,13 +75,14 @@
         <div class="modal-content">
             <div class="modal-header modal-diseng">
                 <button type="button" class="close" data-dismiss="modal">×</button>
-                <h4 class="modal-title" id="iddet-comment" data-iddet="163"><span>Programar Correo</span></h4>
+                <h4 class="modal-title"><span>Programar Correo</span></h4>
             </div>
             <div class="modal-body">
                 <div class="row">
                     <div class="col-xs-12 col-md-12">
                         <div class="date2">
                             <span><b>Establecer una fecha para el envio de correo</b></span>
+                            <span></span>
                             <div class="input-group date" data-provide="datepicker">
                                 <input type="text" class="form-control fechaIni"  id="inputFecha" readonly="">
                                 <div class="input-group-addon">
@@ -99,6 +101,8 @@
 
     </div>
 </div>
+
+
 
 
 

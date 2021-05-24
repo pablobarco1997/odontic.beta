@@ -64,6 +64,8 @@ function obtenerCitasSendNoti( $idPaciente, $Fecha, $Status, $n_citas ){
                 n.message,
                 n.estado,
                 n.fk_cita ,
+                n.program_date,
+                if(program=1 && estado='P', if(cast(now() as date) > cast(program_date as date),'Caducado','Pendiente'),'') as DateProgramEmail,
                 (select count(*) from tab_noti_confirmacion_cita_email nc where nc.fk_noti_email = n.rowid) as noti_confirma , 
                 ifnull((select nc.action from tab_noti_confirmacion_cita_email nc where nc.fk_noti_email = n.rowid  limit 1),'') as noti_confirm_status
             FROM tab_notificacion_email n where n.fk_paciente = $idPaciente";
@@ -108,8 +110,12 @@ function obtenerCitasSendNoti( $idPaciente, $Fecha, $Status, $n_citas ){
 
                 if($obj->noti_confirm_status=='ASISTIR')
                     $confipaciente = "<span class='label text-sm' style='background-color: rgba(30, 132, 73 , 0.9)' >Confirmado por Paciente <b>(Asistir)</b>  </span>";
+
                 if($obj->noti_confirm_status=='NO_ASISTIR')
                     $confipaciente = "<span class='label text-sm' style='background-color: rgba(192, 57, 43, 0.9)' >Confirmado por Paciente <b>(No Asistir)</b>  </span>";
+
+            }else if($obj->estado == 'P' && $obj->DateProgramEmail == 'Pendiente'){ //si esta programada
+                $confipaciente= "<span class='label text-sm' style='background-color: rgba(218, 98, 74, 0.8)' >Pendiente Programado</span>";
 
             }else{
                 $confipaciente= "<span class='label text-sm' style='background-color: rgba(212, 172, 13, 0.9)' >No confirmado </span>";
