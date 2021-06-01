@@ -37,11 +37,12 @@
         <div class="form-group col-md-5 col-lg-5 col-sm-8 col-xs-12 col-centered">
 <!--            <label for="">Filtro x Fecha</label>-->
             <input type="text" class="form-control filtroFecha  " id="startDate" value="" readonly>
-            <h4 class="text-center" style="" id="labelSpanishSatrDtae" ><span style="margin-top: 10px; font-size: 1.3rem!important; font-weight:bold ">1 de enero de 2021 hasta 1 de enero de 2022</span></h4>
+            <h4 class="text-center" style="padding: 7px" id="labelSpanishSatrDtae" ><span style="margin-top: 10px; font-size: 1.3rem!important; font-weight:bold ">1 de enero de 2021 hasta 1 de enero de 2022</span></h4>
         </div>
     </div>
 
     <div class="form-group col-xs-12 col-md-12">
+
         <div class="col-lg-3 col-xs-6">
             <div class="small-box bg-blue-active">
                 <div class="inner">
@@ -51,7 +52,7 @@
                 <div class="icon" style="top: 5px;">
                     <i class="ion ion-person-add iconShadow" style="font-size:100px !important;"></i>
                 </div>
-                <a href="#" class="small-box-footer" id="reportes_pacientes_anulados">Mas Información <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="#" class="small-box-footer MasInformation" id="reportes_pacientes_registrados_r"><span class="textInformacionbox">Más Información</span> <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
 
@@ -64,7 +65,7 @@
                 <div class="icon" style="top: 5px;">
                     <i class="fa fa-calendar-times-o iconShadow" style="font-size:90px !important;"></i>
                 </div>
-                <a href="#" class="small-box-footer">Mas Información <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="#" class="small-box-footer MasInformation" id="reportes_citas_canceladas"><span class="textInformacionbox">Más Información</span> <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
 
@@ -77,7 +78,7 @@
                 <div class="icon" style="top: 5px;">
                     <i class="ion ion-stats-bars iconShadow" style="font-size:100px !important;"></i>
                 </div>
-                <a href="#" class="small-box-footer">Mas Información <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="#" class="small-box-footer MasInformation"  id="reportes_tratamientos_actv_finalizados"><span class="textInformacionbox">Más Información</span> <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
 
@@ -90,7 +91,7 @@
                 <div class="icon" style="top: 5px;">
                     <i class="fa fa-calendar-check-o" style="font-size:90px !important;"></i>
                 </div>
-                <a href="#" class="small-box-footer">Mas Información <i class="fa fa-arrow-circle-right"></i></a>
+                <a href="#" class="small-box-footer MasInformation" id="reportes_citas_atendidas"><span class="textInformacionbox">Más Información</span> <i class="fa fa-arrow-circle-right"></i></a>
             </div>
         </div>
 

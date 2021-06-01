@@ -138,11 +138,11 @@ function CargarConsultasReportes($date){
 
     //planes de tratamiento activos y abonados
     $fecha_tratamiento = " and fecha_create between '$dateInicio' and '$dateFin' ";
-    $planesTratamientoActivos = $db->query("select count(*) as count from tab_plan_tratamiento_cab where estados_tratamiento in('A','S')  $fecha_tratamiento ")->fetchObject()->count;
+    $planesTratamientoActivos = $db->query("select count(*) as count from tab_plan_tratamiento_cab where estados_tratamiento in('A','S','F')  $fecha_tratamiento ")->fetchObject()->count;
     $object->n_tratamientos = $planesTratamientoActivos;
 
     //Citas canceladas o anuladas
-    $citas = $db->query("select count(*) as count from tab_pacientes_citas_det where fk_estado_paciente_cita in(9) and cast(fecha_cita as date) between '$dateInicio' and '$dateFin' ")->fetchObject()->count;
+    $citas = $db->query("select count(*) as count from tab_pacientes_citas_det where fk_estado_paciente_cita in(9,7) and cast(fecha_cita as date) between '$dateInicio' and '$dateFin' ")->fetchObject()->count;
     $object->citas_canceladas = $citas;
 
     //atendido

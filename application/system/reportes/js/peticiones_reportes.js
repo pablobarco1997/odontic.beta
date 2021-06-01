@@ -33,6 +33,12 @@ $tableLanguaje = {
 
 function consultarAcciones(){
 
+    //loadding box
+    var boxInformation = $(".MasInformation");
+
+    boxInformation.find(".textInformacionbox").text("Cargando...");
+    boxInformation.parents(".small-box").addClass("disabled_link3");
+
     var date = $('#startDate').val();
 
     var parametros = {
@@ -48,6 +54,10 @@ function consultarAcciones(){
         dataType:'json',
         async: false,
         cache:false,
+        complete:function(xhr, status){
+            boxInformation.find(".textInformacionbox").text("Más Información");
+            boxInformation.parents(".small-box").removeClass("disabled_link3");
+        },
         success:function (respuesta) {
             console.log(respuesta);
 
@@ -92,7 +102,8 @@ $("#startDate").on("change", function() {
 });
 
 
-$("#reportes_pacientes_anulados").click(function() {
+//pacientes registrados
+$("#reportes_pacientes_registrados_r").click(function() {
 
     var textDate = $("#labelRegistroxDate");
     var arrDate  = ($("#startDate").val()).split("-");
@@ -104,18 +115,22 @@ $("#reportes_pacientes_anulados").click(function() {
 
     $('#pacientes_registrados_').modal('show');
 
+
     $('#reporte_pacientes_registrados').DataTable({
         "processing": true,
         "serverSide": true,
         destroy:true,
         searching:false,
         ordering:false,
+        lengthChange: false,
         lengthMenu: [10],
+        // oPaginate:false,
         ajax:{
             url:$DOCUMENTO_URL_HTTP + '/application/controllers/controller_peticiones_globales.php',
             type:'POST',
             data:{
-                'accion':'pacientesxDate','ajaxSend':'ajaxSend',
+                'accion':'pacientesxDate',
+                'ajaxSend':'ajaxSend',
                 'date': $('#startDate').val(), 'object': 1
             },
             dataType:'json',
@@ -132,7 +147,159 @@ $("#reportes_pacientes_anulados").click(function() {
         "language": $tableLanguaje
     });
 
+
 });
+
+//citas canceladas
+$("#reportes_citas_canceladas").click(function() {
+
+    console.log($(this));
+
+    var textDate = $(".labelRegistroxDate");
+    var arrDate  = ($("#startDate").val()).split("-");
+    var startDateOne = ToLocalDateSpanish(arrDate[0]);
+    var startDateTwo = ToLocalDateSpanish(arrDate[1]);
+    textDate.find('span').html(
+        startDateOne+' <b>hasta</b> '+startDateTwo
+    );
+
+    $('#citas_canceladas_xdate').find(".modal-title").find("span").text("Citas Canceladas");
+    $('#citas_canceladas_xdate').modal('show');
+
+
+    $('#reporte_citas_canceladas').DataTable({
+        "processing": true,
+        "serverSide": true,
+        destroy:true,
+        searching:false,
+        ordering:false,
+        lengthChange: false,
+        lengthMenu: [10],
+        // oPaginate:false,
+        ajax:{
+            url:$DOCUMENTO_URL_HTTP + '/application/controllers/controller_peticiones_globales.php',
+            type:'POST',
+            data:{
+                'accion'  :'citasCanceladaxDate',
+                'ajaxSend':'ajaxSend',
+                'date'    : $('#startDate').val(), 'object': 1
+            },
+            dataType:'json',
+            complete:function () {
+                // boxloading(idmodal ,false , 1500);
+            },
+        },
+        // createdRow:function (row, data, dataIndex) {
+        // },
+        "language": $tableLanguaje
+    });
+
+
+});
+
+//tratamientos Activos y finalizados
+$("#reportes_tratamientos_actv_finalizados").click(function() {
+
+    var textDate = $(".labelRegistroxDate");
+    var arrDate  = ($("#startDate").val()).split("-");
+    var startDateOne = ToLocalDateSpanish(arrDate[0]);
+    var startDateTwo = ToLocalDateSpanish(arrDate[1]);
+    textDate.find('span').html(
+        startDateOne+' <b>hasta</b> '+startDateTwo
+    );
+
+    $('#tratamientos_activos_finalizados').modal('show');
+
+
+    $('#reporte_tratamientosActivFinalizado').DataTable({
+        "processing": true,
+        "serverSide": true,
+        destroy:true,
+        searching:false,
+        ordering:false,
+        lengthChange: false,
+        lengthMenu: [10],
+        // oPaginate:false,
+        ajax:{
+            url:$DOCUMENTO_URL_HTTP + '/application/controllers/controller_peticiones_globales.php',
+            type:'POST',
+            data:{
+                'accion'  :'tratamientosActivosyFinalizados',
+                'ajaxSend':'ajaxSend',
+                'date'    : $('#startDate').val(), 'object': 1
+            },
+            dataType:'json',
+            complete:function () {
+                // boxloading(idmodal ,false , 1500);
+            },
+        },
+        columnDefs:[
+            {
+                targets:1,
+                render: function(data, type, full, meta) {
+                    console.log(full);
+                    return "<a href='"+$DOCUMENTO_URL_HTTP+"/application/system/pacientes/pacientes_admin/?view=plantram&key="+$keyGlobal+"&id="+full['paciente_id']+"&v=planform&idplan="+full['tratamiento_id']+"'>"+full[1]+"</a>";
+
+                }
+
+            }
+        ],
+        // createdRow:function (row, data, dataIndex) {
+        // },
+        "language": $tableLanguaje
+    });
+
+
+});
+
+//citas atendidas - se usa el mismo modal de citas canceladas
+$("#reportes_citas_atendidas").click(function() {
+
+    var textDate = $(".labelRegistroxDate");
+    var arrDate  = ($("#startDate").val()).split("-");
+    var startDateOne = ToLocalDateSpanish(arrDate[0]);
+    var startDateTwo = ToLocalDateSpanish(arrDate[1]);
+    textDate.find('span').html(
+        startDateOne+' <b>hasta</b> '+startDateTwo
+    );
+
+    $('#citas_canceladas_xdate').modal('show');
+    $('#citas_canceladas_xdate').find(".modal-title").find("span").text("Citas Atendidas");
+
+
+    $('#reporte_citas_canceladas').DataTable({
+        "processing": true,
+        "serverSide": true,
+        destroy:true,
+        searching:false,
+        ordering:false,
+        lengthChange: false,
+        lengthMenu: [10],
+        // oPaginate:false,
+        ajax:{
+            url:$DOCUMENTO_URL_HTTP + '/application/controllers/controller_peticiones_globales.php',
+            type:'POST',
+            data:{
+                'accion'  :'citasCanceladaxDate',
+                'ajaxSend':'ajaxSend',
+                'date'    : $('#startDate').val(),
+                'citas_atendidas' : 1,
+                'object'  : 1
+            },
+            dataType:'json',
+            complete:function () {
+                // boxloading(idmodal ,false , 1500);
+            },
+        },
+        // createdRow:function (row, data, dataIndex) {
+        // },
+        "language": $tableLanguaje
+    });
+
+
+});
+
+
 
 var cargarRecursosInfo = function(){
     consultarAcciones();
