@@ -65,6 +65,40 @@ class db_and_procesos{
         }
     }
 
+    function fetchClinicas($db){
+
+        $fetchClinicas=[];
+        $sql = "SELECT 
+            nombre_db_entity AS db_name, numero_entity AS entity
+        FROM
+            tab_entidades_dental;";
+        $result = $db->query($sql);
+        if($result && $result->rowCount()>0){
+            $fetchClinicas = $result->fetchAll(PDO::FETCH_ASSOC);
+        }
+
+        return $fetchClinicas;
+    }
+
+    function obtener_clinica($name_db){
+
+        $data = [];
+        $db = $this->Connection();
+
+        $name  = md5($name_db);
+        $query  = "SELECT nombre, ciudad, telefono, celular, logo FROM tab_entidades_dental where md5(nombre_db_entity) = '$name' ";
+        $result = $db->query($query);
+
+        if($result){
+            if($result->rowCount() > 0){
+                $data = $result->fetchObject();
+            }
+        }
+
+        return $data;
+
+    }
+
 }
 
 
