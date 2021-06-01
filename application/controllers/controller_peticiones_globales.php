@@ -136,24 +136,24 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         $sql .=" LIMIT $start,$length;";
                     }
 
-//                    print_r($sql); die();
                     $resul  = $db->query($sql)->fetchAll(PDO::FETCH_ASSOC);
                     if (count($resul) > 0 )
                     {
                         foreach ($resul as $k => $arr){
 
-                            $contactos = "";
+                            $telefono  = "";
+                            $email     = $arr['email'];
+
                             if($arr['telefono_movil']!=""){
-                                $contactos = '
-                                            <span>'.$arr['email'].'</span> <br> 
-                                            <span> <i class="fa fa-phone-square"></i> '.$arr['telefono_movil'].' </span>';
+                                $telefono = $arr['telefono_movil'];
                             }
 
                             $row = array();
                             $row[] = $arr['nombre'].' '.$arr['apellido'];
                             $row[] = $arr['direccion'];
                             $row[] = $arr['ruc_ced'];
-                            $row[] = $contactos;
+                            $row[] = $email;
+                            $row[] = ' <i class="fa fa-phone-square"></i> '.$telefono;
 
                             $data[] = $row;
                         }
@@ -170,6 +170,197 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 $output = $out;
 
                 echo json_encode($output);
+                break;
+
+
+            case 'citasCanceladaxDate':
+
+                $arr=[];
+
+                $table      = GETPOST("citas_atendidas");
+                $date       = GETPOST("date");
+                $arr_date   = explode('-', $date);
+                $dateInicio = str_replace('/','-',$arr_date[0]);
+                $dateFin    = str_replace('/','-',$arr_date[1]);
+
+                $sqltotal = "SELECT count(*) count_cita
+                     FROM 
+                        tab_pacientes_citas_cab c , 
+                        tab_pacientes_citas_det d ,
+                        tab_admin_pacientes p
+                        where 
+                        c.rowid = d.fk_pacient_cita_cab
+                        and p.rowid = c.fk_paciente
+                        and cast(d.fecha_cita as date) between '$dateInicio' and '$dateFin'
+                        ";
+                if($table==1){
+                    $sqltotal .= " and d.fk_estado_paciente_cita in(6) ";
+                }else{
+                    $sqltotal .= " and d.fk_estado_paciente_cita in(7,9) ";
+                }
+                $sqltotal .= " order by d.rowid desc";
+                $Total = $db->query($sqltotal)->fetchObject()->count_cita;
+
+                $sql = "SELECT 
+                        concat('', lpad('0',(5-length(d.rowid)),'0'),d.rowid) as numberCitas,	
+                        d.fecha_cita  as fecha_cita,         
+                        d.hora_inicio , 
+                        d.hora_fin ,
+                        p.nombre as paciente,
+                        (select concat(o.nombre_doc,' ', o.apellido_doc) from tab_odontologos o where o.rowid = d.fk_doc) as doct ,
+                        (select concat(s.text) from tab_pacientes_estado_citas s where s.rowid = d.fk_estado_paciente_cita) as estado,
+                        d.fk_estado_paciente_cita , 
+                        c.comentario ,
+                        ifnull((select es.nombre_especialidad FROM tab_especialidades_doc es where es.rowid = d.fk_especialidad),'General') as especialidad,
+                        c.fk_paciente as idpaciente  ,
+                         -- validaciones
+                         -- citas atrazados con estado no confirmado
+                         IF( now() > CAST(d.fecha_cita AS DATETIME)  
+                                    && d.fk_estado_paciente_cita in(2,1,3,4,7,8,9,10,11,5,  (select statusc.rowid from tab_pacientes_estado_citas statusc where statusc.system=0) )  , 
+                                        concat('Atrasada ', (select concat(s.text) from tab_pacientes_estado_citas s where s.rowid = d.fk_estado_paciente_cita) , 
+                                                '<br> Fecha : ' , date_format(d.fecha_cita, '%Y/%m/%d') , '<br>Hora: ' , d.hora_inicio ,' a ' , d.hora_fin) , ''
+                                                ) as cita_atrazada   
+                     FROM 
+                        tab_pacientes_citas_cab c , 
+                        tab_pacientes_citas_det d ,
+                        tab_admin_pacientes p
+                        where 
+                        c.rowid = d.fk_pacient_cita_cab
+                        and p.rowid = c.fk_paciente
+                        and cast(d.fecha_cita as date) between '$dateInicio' and '$dateFin'
+                        ";
+
+                if($table==1){
+                    $sql .= " and d.fk_estado_paciente_cita in(6) ";
+                }else{
+                    $sql .= " and d.fk_estado_paciente_cita in(7,9) ";
+                }
+                $sqltotal .= " order by d.rowid desc";
+
+                $start          = $_POST["start"];
+                $length         = $_POST["length"];
+
+                if($start || $length){
+                    $sql .= " limit $start,$length";
+                }
+
+//                print_r($sql); die();
+                $iconcita = "data: image/png; base64, ".base64_encode(file_get_contents(DOL_HTTP.'/logos_icon/logo_default/cita-medica.ico'));
+
+                $result = $db->query($sql);
+                if($result && $result->rowCount()>0){
+                    while ($object = $result->fetchObject()){
+                        $row = [];
+                        $row[] = "<img src='$iconcita' width='15.5px' height='15.5px'>".'-'.$object->numberCitas;
+                        $row[] = date("Y/m/d", strtotime($object->fecha_cita));
+                        $row[] = $object->hora_inicio.' h '.$object->hora_fin;
+                        $row[] = $object->paciente;
+                        $row[] = $object->doct;
+                        $row[] = $object->estado;
+
+                        $arr[] = $row;
+                    }
+                }
+
+                $output = [
+                    "data" => $arr,
+                    "recordsTotal"    => $Total,
+                    "recordsFiltered" => $Total
+                ];
+
+                echo  json_encode($output);
+                break;
+
+            case 'tratamientosActivosyFinalizados':
+                $arr=[];
+
+                $date       = GETPOST("date");
+                $arr_date   = explode('-', $date);
+                $dateInicio = str_replace('/','-',$arr_date[0]);
+                $dateFin    = str_replace('/','-',$arr_date[1]);
+
+                $sqltotal = "SELECT 
+                        count(*) tratam_num
+                    FROM tab_plan_tratamiento_cab tc , tab_admin_pacientes ap
+                        where 
+                        tc.fk_paciente = ap.rowid 
+						and tc.estados_tratamiento in('A', 'S', 'F') 
+                        and cast(tc.fecha_create as date) between '$dateInicio' and '$dateFin'
+                        order by tc.rowid desc";
+                $Total = $db->query($sqltotal)->fetchObject()->tratam_num;
+
+                $sql = "SELECT 
+                        tc.rowid,
+                        tc.numero,
+                        tc.fk_paciente,
+                        CONCAT(ap.nombre, ' ', ap.apellido) nombre,
+                        tc.fk_paciente,
+                        tc.fk_doc fkdoc,
+                        IFNULL((SELECT CONCAT(od.nombre_doc, ' ', od.apellido_doc) FROM tab_odontologos od WHERE od.rowid = tc.fk_doc),'No asignado') AS nombre_doc,
+                        tc.estados_tratamiento,
+                        tc.ultima_cita,
+                        tc.situacion,
+                        tc.edit_name AS edit_name,
+                        tc.fk_paciente AS idpaciente,
+                        tc.fk_cita AS idCitas,
+                        cast(tc.fecha_create as date) as fecha_create , 
+                        ifnull((select round(sum(pd.amount),2) as saldoAbonado from tab_pagos_independ_pacientes_det pd where pd.fk_plantram_cab = tc.rowid),0) as saldo_abonado
+                        
+                    FROM 
+                      tab_plan_tratamiento_cab tc , 
+                      tab_admin_pacientes ap
+                        where 
+                        tc.fk_paciente = ap.rowid 
+						and tc.estados_tratamiento in('A', 'S', 'F') 
+						and cast(tc.fecha_create as date) between '$dateInicio' and '$dateFin'
+                        order by tc.rowid desc";
+
+                $start          = $_POST["start"];
+                $length         = $_POST["length"];
+
+                if($start || $length){
+                    $sql .= " limit $start,$length";
+                }
+
+                $result = $db->query($sql);
+                if($result && $result->rowCount()>0){
+                    while ($object = $result->fetchObject()){
+                        $edit_name = "Plan de Tratamiento: #".$object->numero;
+                        if($object->edit_name!=''){
+                            $edit_name = $object->edit_name;
+                        }
+
+
+
+                        $row = [];
+                        $row[] = date('Y/m/d', strtotime($object->fecha_create));
+                        $row[] = $edit_name;
+                        $row[] = date('Y/m/d H:m:s', strtotime($object->ultima_cita));
+                        $row[] = $object->nombre; //paciente
+                        $row[] = 'Doctor(a) '.$object->nombre_doc; // encargado
+//                        $row[] = $object->situacion;
+
+                        if($object->estados_tratamiento=='S')
+                            $row[] = '<span style="font-weight: bold">SALDO ASOCIADO <small class="no-margin" style="color: green">$'.number_format($object->saldo_abonado,2,'.','').'</small></span>';
+                        if($object->estados_tratamiento=='A')
+                            $row[] = '<span style="font-weight: bold">DIAGNÓSTICO</span>';
+                        if($object->estados_tratamiento=='F')
+                            $row[] = '<span style="font-weight: bold" >FINALIZADO <i class="fa fa-flag"></i></span>';
+
+
+                        $row['paciente_id']     = tokenSecurityId($object->idpaciente);
+                        $row['tratamiento_id']  = tokenSecurityId($object->rowid);
+
+                        $arr[] = $row;
+                    }
+                }
+
+                $output = [
+                    "data" => $arr,
+                    "recordsTotal"    => $Total,
+                    "recordsFiltered" => $Total
+                ];
+                echo  json_encode($output);
                 break;
 
             case 'CitasAnuladaxDate_Atendidos':

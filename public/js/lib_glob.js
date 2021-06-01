@@ -1,4 +1,29 @@
 
+var languageEs =  {
+    inputTooShort: function(args) {
+        return "Por favor, introduzca 1 caracter.";
+    },
+    inputTooLong: function(args) {
+        return "introduzca mas datos";
+    },
+    errorLoading: function() {
+        return "Error al cargar resultados";
+    },
+    loadingMore: function() {
+        return "Cargando más resultados";
+    },
+    noResults: function() {
+        return "No se encontró resultados";
+    },
+    searching: function() {
+        return "Buscando...";
+    },
+    maximumSelected: function(args) {
+        return "Error al cargar resultados";
+    }
+};
+
+
 var FormValidationPerfilGlobal = function(el){
 
     var Errores = [];

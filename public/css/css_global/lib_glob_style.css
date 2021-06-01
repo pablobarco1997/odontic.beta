@@ -1,4 +1,12 @@
 
+/*dataTables_paginate*/
+.dataTables_paginate .pagination .paginate_button a{
+    padding: 10px;
+    font-weight: bolder;
+}
+
+
+
 h2.swal2-title{
    font-family: 'Open Sans', sans-serif !important;
 }

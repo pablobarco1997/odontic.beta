@@ -362,15 +362,17 @@ function Breadcrumbs_Mod( $titulo, $url, $module )
     {
 
 
-        $Breadcrumbs .= '<ul class="breadcrumb3 " >';
+        $Breadcrumbs .= '<ul style="list-style: none; " class="list-inline" >';
+
+                    $Breadcrumbs .= '<li><a href="'.DOL_HTTP.'/index.php?view=inicio" style="font-size: small; font-weight: lighter;  color: #212f3d" title="inicio"  > <i class="fa fa-home"></i> </a></li>';
         for( $i = 0; $i <= $CountBread; $i++ )
         {
             if(isset($Breadcrumbs_Mod[$i])) //verifico si existe o hay valores
             {
                 if($i==0){
-                    $Breadcrumbs .= '<li><a href=" '. $Breadcrumbs_Mod[$i]['url'] .'" style="font-size: x-small; font-weight: lighter;" title="'. $Breadcrumbs_Mod[$i]['titulo'] .'"  > '. $Breadcrumbs_Mod[$i]['titulo'] .' &nbsp;</a></li>';
+                    $Breadcrumbs .= '<li><a href=" '. $Breadcrumbs_Mod[$i]['url'] .'" style="font-size: small; font-weight: lighter;  color: #212f3d" title="'. $Breadcrumbs_Mod[$i]['titulo'] .'"  > '. $Breadcrumbs_Mod[$i]['titulo'] .' </a></li>';
                 }else{
-                    $Breadcrumbs .= '<li><a href=" '. $Breadcrumbs_Mod[$i]['url'] .'" style="font-size: x-small; font-weight: lighter;" title="'. $Breadcrumbs_Mod[$i]['titulo'] .'"  >  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; '. $Breadcrumbs_Mod[$i]['titulo'] .' &nbsp;</a></li>';
+                    $Breadcrumbs .= '<li><a href=" '. $Breadcrumbs_Mod[$i]['url'] .'" style="font-size: small; font-weight: lighter;  color: #212f3d" title="'. $Breadcrumbs_Mod[$i]['titulo'] .'"  > / &nbsp;&nbsp;'. $Breadcrumbs_Mod[$i]['titulo'] .' &nbsp;</a></li>';
 
                 }
             }
