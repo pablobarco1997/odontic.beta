@@ -6,7 +6,7 @@
             <i class="fa fa-calendar" style="margin-top: 20px"></i>
         </div>
         <div class="info-box-content">
-            <span class=""><span class="trunc"> <b>Citas para Hoy </b></span></span>
+            <span class=""><span class="trunc"> <b>Citas Agendadas para Hoy </b></span></span>
             <span class="info-box-number" style="font-size: 2em" id="numCitas">0</span>
             <span> <b><?= date("Y/m/d")?></b> </span>
         </div>
@@ -191,7 +191,7 @@
                     <th class="text-center " width="23%">Paciente</th>
                     <th class="text-center " width="23%">Doctor(a)</th>
                     <th class="text-center " width="15%">Estado de Citas</th>
-                    <th class="text-center " width="10%">Situación</th>
+<!--                    <th class="text-center " width="10%">Situación</th>-->
                 </tr>
             </thead>
         </table>

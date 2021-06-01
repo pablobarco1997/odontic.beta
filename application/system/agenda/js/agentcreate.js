@@ -292,9 +292,10 @@ function invalic_puedoGuardar()
         //     puedoGuardar++;
         // }
 
+        //citas agendadas dentro del mismo rango de fecha para el mismo odontologo
         if(citas_MismaFechas > 0){
             puedoGuardar++;
-            notificacion('Ya se encuentra agendada una cita con esta fecha y hora, asignados a un Odontólog@ específico compruebe la información antes de agregar', 'error');
+            notificacion('Se detectó cita agendada con la fecha '+$("#inputFecha").val()+' Doctor(a): <b>'+$('select[name="odont[0].det"]').find('option:selected').text() + '</b>  <br><b><small>Compruebe la información antes de guardar</small></b>', "question");
         }
 
         if($('#agndar_paciente').find(':selected').val()==''){

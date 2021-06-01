@@ -126,14 +126,14 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             $resp = true;
 
-            $fecha = "";
-            $duracion = "";
-            $hora = "";
-            $fk_doc = "";
-            $fechaFin = "";
+            $fecha       = "";
+            $duracion    = "";
+            $hora        = "";
+            $fk_doc      = "";
+            $fechaFin    = "";
             $fechaInicio = "";
-            $horaFin = "";
-            $horaInicio = "";
+            $horaFin     = "";
+            $horaInicio  = "";
 
             $fecha     = date("Y-m-d", strtotime(str_replace('/','-', GETPOST("fecha"))));
             $hora      = GETPOST("hora");
@@ -232,43 +232,59 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             #ASOCIAR CITA A UN PLAN DE TRATAMIENTO
             #CUANDO LA CITA SEA
-            $idcita                = ( GETPOST('idcitadet') == "") ? 0: GETPOST('idcitadet'); #EL ID DE LA CITA PUEDE SER 0 O MAYOR A 0
-            $iddoctor              = GETPOST('iddoct');
-            $idplantramAsociarCita = GETPOST('idplantramAsociar');  #PARA ASOCIAR CITA DE UN PLAN DE TRATAMIENTO YA REALIZADO
+            $idcita         = ( GETPOST('idcitadet') == "") ? 0: GETPOST('idcitadet'); #EL ID DE LA CITA PUEDE SER 0 O MAYOR A 0
+            if($idcita!=0){
+                $iddoctor   = $db->query("select fk_doc from tab_pacientes_citas_det where rowid = ".$idcita)->fetchObject()->fk_doc;
+            }else{
+                $iddoctor=0;
+            }
 
-            $subaccion = GETPOST('subaccion');
+            $idplantramAsociarCita  = GETPOST('idplantramAsociar');  #PARA ASOCIAR CITA DE UN PLAN DE TRATAMIENTO YA REALIZADO
+            $subaccion              = GETPOST('subaccion');
 
+            //die();
             #SE VALIDA LA CITA EN CASO DE REPETIR LA ASOCIACION AL PLAN DE TRATAMIENTO
-            if($idcita != 0)
+            if($idcita!=0 && $subaccion!="CREATE")
             {
                 # 0 NO ESTA ASOCIADA A NINGUN PLAN DE TRATAMIENTO
-                # SI LA CITA ES MAYOR A 0 ESTA ASOCIADA A PLAN DE TRATAMIENTO
+                # VALIDA SI LA CITA YA SE ENCUENTRA ASOCIADA AL PLAN DE TRATAMIENTO
                 $list_plantramAsociados = [];
-                $sqlCitaAsociada = "SELECT * FROM tab_plan_tratamiento_cab where fk_cita = $idcita";
+
+                $sqlCitaAsociada = "SELECT fk_cita , fk_tratamiento , fk_paciente 
+                              FROM tab_plan_asoc_tramt_citas where fk_cita = $idcita and fk_tratamiento = $idplantramAsociarCita and fk_paciente = $idpaciente";
+
                 $rslCita = $db->query($sqlCitaAsociada);
-                if($rslCita->rowCount() > 0)
-                {
-                    while($objtram = $rslCita->fetchObject())
-                    {
-                        $label = "";
-                        if( $objtram->edit_name != "" ){
-                            $label = $objtram->edit_name.  "\n";
-                        }else{
-                            $label = "Plan de Tratamiento ". $objtram->numero. "\n";
-                        }
-                        $list_plantramAsociados[] = $label;
-                    }
-                    $error = "<p> Esta Cita ya se encuentra asociada con el plan de tratamiento  numero : <b>" . implode(',', $list_plantramAsociados) ."</b> </p>";
+                if($rslCita->rowCount() > 0) {
+//                    while($objtram = $rslCita->fetchObject()) {
+//
+//                        $label = "";
+//                        if( $objtram->edit_name != "" ){
+//                            $label = $objtram->edit_name.  "\n";
+//                        }else{
+//                            $label = "Plan de Tratamiento ". $objtram->numero. "\n";
+//                        }
+//                        $list_plantramAsociados[] = $label;
+//                    }
+
+                    $error = "<p> Documento Asociado </p>";
                 }
             }
 
-            if($subaccion == 'ASOCIAR_CITAS' && empty($error))
+            //se asocia la citas al plan de tratamiento
+            if($subaccion == "ASOCIAR_CITAS" && empty($error))
             {
-                $sqlP = "UPDATE `tab_plan_tratamiento_cab` SET `fk_doc`= $iddoctor, `fk_cita`= $idcita WHERE `rowid`= $idplantramAsociarCita;";
+                $sql = "INSERT INTO `tab_plan_asoc_tramt_citas` (`fk_paciente`, `fk_cita`, `fk_tratamiento`) VALUES ($idpaciente, $idcita, $idplantramAsociarCita);";
+                $result = $db->query($sql);
+                if(!$result){
+                    $error = 'Ocurrio un error no se pudo asociar la cita a este plan de tratamiento';
+                }
+
+                /*$sqlP = "UPDATE `tab_plan_tratamiento_cab` SET `fk_doc`= $iddoctor, `fk_cita`= $idcita WHERE `rowid`= $idplantramAsociarCita;";
                 $rsP = $db->query($sqlP);
                 if(!$rsP){
                     $error = 'Ocurrio un error no se pudo asociar la cita a este plan de tratamiento';
-                }
+                }*/
+
             }
 
             #CREA EL PLAN DE TRATAMIENTO SEA CON UNA CITA ASOCIADA O INDEPENDIENTE
@@ -284,25 +300,39 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                     $numero = str_pad($rs->numero, 6, "0", STR_PAD_LEFT);
 
-                    $agenda->tratam_numero  = $numero;
-                    $agenda->tratam_fk_doc  = ( $iddoctor == 0 ) ? 0 : $iddoctor;
-                    $agenda->tratam_fk_cita = ( $idcita == 0 ) ? 0 : $idcita; #CITA ID
-                    $agenda->tratam_fk_paciente = $idpaciente;
-                    $agenda->tratam_fk_convenio = $obj1->fk_convenio;
-                    $agenda->tratam_ultimacita = "now()"; //FECHA DE CREACION DE LA CITA POR EL MOMENTO
-                    $agenda->tratam_detencion = '';
-                    $agenda->tratam_estado_tratamiento = 'A'; #ESTADO DEL TRATAMIENTO ACTIVO O INACTIVO
-                    $agenda->tratam_situaccion = 'DIAGNÓSTICO';
+                    $agenda->tratam_numero              = $numero;
+                    $agenda->tratam_fk_doc              = ( $iddoctor == 0 ) ? 0 : $iddoctor;
+                    $agenda->tratam_fk_cita             = ( $idcita == 0 ) ? 0 : $idcita; #CITA ID
+                    $agenda->tratam_fk_paciente         = $idpaciente;
+                    $agenda->tratam_fk_convenio         = $obj1->fk_convenio;
+                    $agenda->tratam_ultimacita          = "now()"; //FECHA DE CREACION DE LA CITA POR EL MOMENTO
+                    $agenda->tratam_detencion           = '';
+                    $agenda->tratam_estado_tratamiento  = 'A'; #ESTADO DEL TRATAMIENTO ACTIVO O INACTIVO
+                    $agenda->tratam_situaccion          = 'DIAGNÓSTICO';
 
                     $error = $agenda->create_plantratamientocab();
 
-                    if($error == ''){
+                    //retorna un entero el id del plan de tratamiento
+                    if((int)$error && is_int($error)){
+                        if((int)$error>0){
+//                            $idtratamiento = $db->lastInsertId('tab_plan_tratamiento_cab');
+                            $idtratamiento         = (int)$error;
+                            $idplantramAsociarCita = $idtratamiento;
+                        }
 
-                        $idtratamiento = $db->lastInsertId('tab_plan_tratamiento_cab');
+                        $sql = "INSERT INTO `tab_plan_asoc_tramt_citas` (`fk_paciente`, `fk_cita`, `fk_tratamiento`) VALUES ($idpaciente, $idcita, $idtratamiento);";
+                        $result = $db->query($sql);
+                        if(!$result){
+                            $error = 'Ocurrio un error no se pudo asociar la cita a este plan de tratamiento';
+                        }else{
+                            $error = '';
+                        }
 
                     }
 
                 }
+
+
             }
 
 
@@ -313,13 +343,12 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
 
             $output = [
-                'error'         => $error,
-                'idtratamiento' => tokenSecurityId(($idplantramAsociarCita == 0) ? $idtratamiento : $idplantramAsociarCita), #convert id token plan de tratamiento
+                'error'           => $error,
+                'idtratamiento'   => tokenSecurityId(($idplantramAsociarCita == 0) ? $idtratamiento : $idplantramAsociarCita), #convert id token plan de tratamiento
                 'idpacientetoken' => tokenSecurityId($idpaciente)
             ];
 
-//            print_r($output);
-//            die();
+//            print_r($output); die();
 
             echo json_encode($output);
             break;
@@ -843,11 +872,12 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
     }*/
 
 
-    $sql .= " order by d.fecha_cita desc ";
+    $sql .= " order by d.rowid desc ";
     $sqlTotal = $sql;
 
-    if($start || $length)
+    if($start || $length){
         $sql.=" LIMIT $start,$length;";
+    }
 
 
     #echo '<pre>';print_r($sql); die();
@@ -1048,11 +1078,11 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
             $row[] = $html3;
 
             #DIAGNOSTICO O OTROS ESTADOS
-            $html6 = "<div class='col-md-12 col-xs-12'>
-                        <p class='text-bold'  style='text-align: center !important; color: #333333; font-size: 1.4rem; background-color: #E5E7E9; padding: 3px; border-radius: 3px'> Diagnostico </p>
-                    </div>";
-
-            $row[] = $html6;
+//            $html6 = "<div class='col-md-12 col-xs-12'>
+//                        <p class='text-bold'  style='text-align: center !important; color: #333333; font-size: 1.4rem; background-color: #E5E7E9; padding: 3px; border-radius: 3px'> Diagnostico </p>
+//                    </div>";
+//
+//            $row[] = $html6;
 
             #estado id
             $row[] = $acced->fk_estado_paciente_cita;
@@ -1358,7 +1388,7 @@ function Email_confirmacion_programDate($datos=array(), $fecha_programa, $id_cit
     $result = $db->query("select cast(fecha_cita as date) fecha_cita from tab_pacientes_citas_det where rowid = $id_cita")->fetchObject();
 
     if(date('Y-m-d', strtotime($result->fecha_cita)) <= date('Y-m-d', strtotime($fecha_programa)) ){
-        $error = "La fecha programada no puede ser menor a la fecha de la cita agendada";
+        $error = "La fecha programada no puede ser mayor o igual a la fecha de la cita agendada";
         $ouput = [
             'registrar'   => $error,
             "error_email" => ""

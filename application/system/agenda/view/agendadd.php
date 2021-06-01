@@ -134,7 +134,7 @@ if(isset($_GET['view']) && $_GET['view'] == 'agendadd'){
                 </div>
             </div>
             <div class="form-group">
-                <label class="control-label col-sm-3" >Doctor (odontolog@):</label>
+                <label class="control-label col-sm-3" >Doctor(a):</label>
                 <div class="col-sm-9">
                     <select id="" name="odont[0].det" class="form-control optionSelect2 select2_max_ancho opcionOdont" style="width: 100%">
                         <option value=""></option>

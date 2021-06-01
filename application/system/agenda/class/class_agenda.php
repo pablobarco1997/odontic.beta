@@ -143,12 +143,9 @@ class admin_agenda{
         $sql .= " now() ";
 
         $sql .= ");";
-
-//        print_r($sql); die();
-
         $rs = $this->db->query($sql);
         if($rs){
-            $error = '';
+            $error = (int)$this->db->lastInsertId("tab_plan_tratamiento_cab");
         }else{
             $error = 'Ocurrio un error al crear el Plan de tratamiento , Consulte con soporte Tecnico';
         }
