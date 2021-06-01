@@ -12,6 +12,8 @@ function evoluciones_principal()
         processing:true,
         ordering:false,
         destroy:false,
+        lengthChange:false,
+        lengthMenu:[10],
         serverSide:true,
         ajax:{
             url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
@@ -99,7 +101,8 @@ $(document).ready(function() {
         $('#filt_plantram').select2({
             placeholder: 'Seleccione una opción',
             allowClear: true,
-            language:'es',
+            language: languageEs,
+            minimumInputLength:1,
             ajax:{
                 url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
                 type: "POST",

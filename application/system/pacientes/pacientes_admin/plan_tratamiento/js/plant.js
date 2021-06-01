@@ -10,13 +10,20 @@ $ID_PLAN_TRATAMIENTO
 //LISTA DE PLAN DE TRATAMIENTO
 function  listplaneTratamiento(){
 
-    $('#listtratamientotable').DataTable({
+    var ElemmentoContentload = $("#listtratamientotable");
 
+    boxTableLoad(ElemmentoContentload, true);
+
+    var table = $('#listtratamientotable').DataTable({
         searching: false,
         ordering:false,
         destroy:true,
         paging: true,
         serverSide: true,
+        lengthChange:false,
+        lengthMenu:[ 10 ],
+        fixedHeader: true,
+        processing:true,
         // scrollX: true,
 
         ajax:{
@@ -34,6 +41,9 @@ function  listplaneTratamiento(){
 
             } ,
             dataType:'json',
+            complete: function (xhr, status) {
+                boxTableLoad(ElemmentoContentload, false);
+            }
         },
 
         columnDefs:[
@@ -161,8 +171,9 @@ function  listplaneTratamiento(){
                                         "<div class='col-sm-12 col-md-2 col-xs-12'>" +
                                             "<small style='color: #85929E; font-weight: bold; '>CITA ASOCIADA</small>" +
                                             "<br>" +
-                                                "<a href='#modal_plantrem_citas' onclick='attrChangAsociarCitas("+idplantratamiento+")' data-toggle='modal' style='font-weight: bold; font-size: 1.1rem; color: #000;' class=' fontsize btn btn-xs btnhover "+estadoanulado+"  "+disablelinkCitasAsocid+"  "+disabledFinalizado+" '> " +
-                                                "<i class='fa fa-list-ul'></i> &nbsp; CITAS AGENDADAS ASOCIADAS </a>" + " " + linkCitaAsociada +
+                                                "<a href='#modal_plantrem_citas' onclick='attrChangAsociarCitas("+idplantratamiento+")' data-toggle='modal' style='font-weight: bold; font-size: 1.1rem; color: #000;' class=' fontsize btn btn-xs btnhover "+estadoanulado+"  "+disabledFinalizado+" '> " +
+                                                "<i class='fa fa-list-ul'></i> &nbsp; CITAS AGENDADAS ASOCIADAS </a>" + " " +
+                                                // " " + linkCitaAsociada +
                                         "</div>" +
                                 "   </div>";
                     html += "</div>";
@@ -200,7 +211,18 @@ function  listplaneTratamiento(){
             }
         },
 
+    }).on( 'length.dt', function ( e, settings, len ) { // cambiar
+        boxTableLoad(ElemmentoContentload, true);
+    }).on( 'page.dt', function ( e, settings, len ) { // cambiar
+        boxTableLoad(ElemmentoContentload, true);
     });
+    // new $.fn.dataTable.FixedHeader( table );
+    new $.fn.dataTable.FixedHeader( table,
+        {
+            // headerOffset: 50
+        }
+    );
+
 }
 
 
@@ -213,14 +235,13 @@ if($accion == "principal")
     $('#createPlanTratamientoCab').click(function() {
 
         attrChangAsociarCitas(null);
-        CrearPlanTratamientoIndependienteDependiente(null);
+        CrearPlanTratamientoIndependienteDependiente(null, true);
     });
 
-    //Crear Plan de tratamiento desde una Cita
+    //Se puede asociar varias citas a un plan de tratamiento
     $('#CrearPlanTratamientoPlantram').click(function() {
 
-        if($('#citasPaciente').find(':selected').val() > 0)
-        {
+        if($('#citasPaciente').find('option:selected').val() > 0){
             CrearPlanTratamientoIndependienteDependiente(null);
         }else{
 
@@ -236,12 +257,73 @@ if($accion == "principal")
     {
         var id = ($idPlanTratamiento==null) ? 0 : $idPlanTratamiento;
         $('#nuPlanTratamiento').attr('data-id', id);
+
+        if(id!=0){
+
+            var table = $("#listTramnCitasAsoc").DataTable({
+                    destroy:true,
+                    searching:false,
+                    serverSide: true,
+                    ordering:false,
+                    lengthChange: false,
+                    fixedHeader: true,
+                    paging:true,
+                    processing: true,
+                    lengthMenu:[ 10 ],
+                    ajax:{
+                        url : $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
+                        type:'POST',
+                        data:{
+                            ajaxSend       :'ajaxSend',
+                            accion         :'listTramnCitasAsoc',
+                            tratamiento_id : id
+                        }
+                    },
+                    // createdRow: function (row, data, index) {
+                    //     // console.log($(row).find('td'));
+                    //     // $(row).find('td').css('vertical-align','center');
+                    //     $(row).find('td').eq(3).css('vertical-align','center');
+                    //     $(row).find('td').eq(4).css('vertical-align','center');
+                    //     $(row).find('td').eq(5).css('vertical-align','center');
+                    // },
+                    "language": {
+                        "sProcessing":     "Procesando...",
+                        "sLengthMenu":     "Mostrar _MENU_ registros",
+                        "sZeroRecords":    "No se encontraron resultados",
+                        "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                        "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                        "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                        "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                        "sInfoPostFix":    "",
+                        "sSearch":         "Buscar:",
+                        "sUrl":            "",
+                        "sInfoThousands":  ",",
+                        "oPaginate": {
+                            "sFirst":    "Primero",
+                            "sLast":     "Último",
+                            "sNext":     "Siguiente",
+                            "sPrevious": "Anterior"
+                        },
+                        "oAria": {
+                            "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                            "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                        }
+                    },
+            });
+        }
     }
 
     //CREAR PLAN DE TRATAMIENTO CABEZERA INDEPENDIENTE ---------------------
-    function CrearPlanTratamientoIndependienteDependiente(subaccion)
+    function CrearPlanTratamientoIndependienteDependiente(subaccion, redirecionar=false)
     {
-        var CitasPacientes = $('#citasPaciente').find(':selected');
+        var CitasPacientes = $('#citasPaciente').find(':selected').val();
+
+        if($('#nuPlanTratamiento').prop('dataset').id == "" && $('#nuPlanTratamiento').prop('dataset').id != 0){
+                 notificacion('Ocurrio un error consulte con soporte <br> <b>No se detecto el plan de tratamiento seleccionado</b> ', 'question');
+            return false;
+        }
+
+        var subaccion = ($('#nuPlanTratamiento').data('id') == 0) ? "CREATE" : "ASOCIAR_CITAS";
 
         //EL CREAR PLAN DE TRATAMIENTO
         //AGENDA CONTROLLER
@@ -252,9 +334,9 @@ if($accion == "principal")
                 'ajaxSend':'ajaxSend',
                 'accion': 'nuevoUpdatePlantratamiento',
                 'idpaciente': $id_paciente,
-                'idcitadet' : (CitasPacientes.data('idcita') == "") ? 0 : CitasPacientes.data('idcita'),
-                'iddoct': ( CitasPacientes.data('iddoct') == "" ) ? 0 : CitasPacientes.data('iddoct') ,
-                'idplantramAsociar' : $('#nuPlanTratamiento').data('id') ,
+                'idcitadet' : (CitasPacientes == "") ? 0 : CitasPacientes,
+                // 'iddoct': ( CitasPacientes.data('iddoct') == "" ) ? 0 : CitasPacientes.data('iddoct') ,
+                'idplantramAsociar' : $('#nuPlanTratamiento').prop('dataset').id ,
                 'subaccion' : ($('#nuPlanTratamiento').data('id') == 0) ? "CREATE" : "ASOCIAR_CITAS"
             },
             dataType:'json',
@@ -264,47 +346,47 @@ if($accion == "principal")
                 var idpacienteToken = resp.idpacientetoken;
 
                 if(resp.error == ''){
-
-                    notificacion('Plan de Tratamiento Creado - cargando...', 'success');
-
+                    if(subaccion=="CREATE"){
+                        notificacion('Plan de Tratamiento Creado - cargando...', 'success');
+                    }if(subaccion=="ASOCIAR_CITAS"){
+                        notificacion('Información Actualizada', 'success');
+                    }
                 }else {
-
                     //Error esta cita ya esta asociada a un plan de tratamiento
                     $('#error_asociarCitas').html(resp.error) ;
-
-                    setTimeout(function() {
-
-                        $('#error_asociarCitas').text(null);
-                    },7000)
+                        setTimeout(function() {
+                            $('#error_asociarCitas').text(null);
+                        },7000);
                 }
 
 
-                if( resp.error == '')
-                {
-
+                if(resp.error == '' && subaccion=="ASOCIAR_CITAS"){
                     var $tener = 0;
                     var $idtratamiento = 0;
-
                     if( resp.idtratamiento > 0){
                         $idtratamiento = resp.idtratamiento;
                         $tener++;
                     }
-
-                    if( subaccion == null){
-
+                    if( subaccion == "ASOCIAR_CITAS"){
                         if($tener > 0){
-
                             if($idtratamiento > 0){
-                                // alert(idpacienteToken);
-
                                 setTimeout(function() {
                                     window.location = $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/?view=plantram&key=' + $keyGlobal + '&id=' + idpacienteToken + '&v=planform&idplan=' + $idtratamiento;
                                 }, 1500);
                             }
                         }
                     }
-
                 }
+
+                if(redirecionar==true){
+                    console.log(resp);
+                    $idtratamiento = resp.idtratamiento;
+                    setTimeout(function() {
+                        window.location = $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/?view=plantram&key=' + $keyGlobal + '&id=' + idpacienteToken + '&v=planform&idplan=' + $idtratamiento;
+                    }, 1500);
+                }
+
+
 
             }
 
@@ -314,15 +396,37 @@ if($accion == "principal")
 
 
     $('#citasPaciente').select2({
-        placeholder: 'Seleccione una opcion',
+        placeholder: 'Mostrar citas asociadas a este paciente',
         allowClear:true,
-        language: 'es'
+        language: languageEs,
+        minimumInputLength:1,
+        ajax:{
+            url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
+            type: "POST",
+            dataType: 'json',
+            async:false,
+            data:function (params) {
+                var query = {
+                    accion: 'CitasAgendadasSearchSelect2',
+                    ajaxSend:'ajaxSend',
+                    paciente_id: $id_paciente,
+                    search: params.term,
+                };
+                return query;
+            },
+            delay: 250,
+            processResults:function (data) {
+                return data;
+            }
+        }
+
     });
 
     $('#filtrPlantram').select2({
         placeholder: 'Seleccione una opcion',
         allowClear:true,
-        language: 'es',
+        language: languageEs,
+        minimumInputLength:1,
         ajax:{
             url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
             type: "POST",
@@ -495,7 +599,7 @@ if($accion == 'addplan')
     // $('#prestacion_planform').select2({
     //      placeholder:'Seleccione una prestación',
     //      allowClear: true,
-    //      language:'es',
+    //      language: languageEs,
     //      // dropdownParent: $(".modal-backdrop"),
     //
     // });
@@ -507,13 +611,13 @@ if($accion == 'addplan')
     $('#evolucionDoct').select2({
         placeholder:'Seleccione un doctor',
         allowClear: true,
-        language:'es'
+        language: languageEs,
     });
 
     $('#actualizarOdontogramaPlantform').select2({
         placeholder:'Seleccione un estado del odontograma',
         allowClear: true,
-        language:'es'
+        language: languageEs,
     })
 
 

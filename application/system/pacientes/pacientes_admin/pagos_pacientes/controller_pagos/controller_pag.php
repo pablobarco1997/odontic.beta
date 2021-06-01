@@ -458,8 +458,6 @@ function list_pagos_independientes($idpaciente = 0)
                 FROM
                 tab_plan_tratamiento_cab ct where  ct.estados_tratamiento in('A', 'S')  and ct.fk_paciente = $idpaciente  ";
 
-//    echo '<pre>';print_r($sqlpagos); die();
-
     $rspagos = $db->query($sqlpagos);
     if( $rspagos && $rspagos->rowCount() > 0 ){
         while( $objpagos = $rspagos->fetchObject() ){
@@ -468,10 +466,13 @@ function list_pagos_independientes($idpaciente = 0)
             $pay_dom = ""; 
             if(1 == 1){
                 $pay_dom = "<div class='form-group col-md-12 col-xs-12'> 
-                                <a href='". DOL_HTTP ."/application/system/pacientes/pacientes_admin/?view=pagospaci&key=". KEY_GLOB ."&id=". tokenSecurityId($idpaciente) ."&v=paym_pay&idplantram=". $objpagos->idplantratamiento ." ' class='btn btnhover'> <img src='". $imgbase64 ."' class='img-sm img-rounded' alt=''> </a>
+                                <a href='". DOL_HTTP ."/application/system/pacientes/pacientes_admin/?view=pagospaci&key=". KEY_GLOB ."&id=". tokenSecurityId($idpaciente) ."&v=paym_pay&idplantram=". $objpagos->idplantratamiento ." ' class='btn btnhover' style='color: green; background-color: #e9edf2'> 
+                                    <i class='fa fa-dollar'></i> 
+                                </a>
                             </div>";
             }
 
+            /*
             $CitasNum = "<table>
                             <tbody>
                                 <tr>
@@ -480,12 +481,12 @@ function list_pagos_independientes($idpaciente = 0)
                                     <td>".((($objpagos->cita == 0) ? "No asignada" : str_pad($objpagos->cita,5,'0',STR_PAD_LEFT)))."</td>
                                 </tr>
                             </tbody>
-                        </table>";
+                        </table>";*/
 
             $row[] = $pay_dom;
             $row[] = date('d/m/Y', strtotime($objpagos->fecha_create));
             $row[] = $objpagos->name_tratamm;
-            $row[] = $CitasNum;
+//            $row[] = $CitasNum;
             $row[] = "<span class='' style='padding: 1px 2px; border-radius: 5px; font-weight: bolder; background-color: #66CA86'>$ $objpagos->totalprestaciones </span>  ";
             $row[] = "<span class='' style='padding: 1px 2px; border-radius: 5px; font-weight: bolder; background-color: #ffcc00'>$ $objpagos->totalprestaciones_realizadas </span>  ";
 
@@ -562,11 +563,11 @@ function listPrestacionesApagar($idpaciente, $idplantram)
 //    echo '<pre>'; print_r($sql); die();
     $resul = $db->query($sql);
 
+    $icoPieza = "data:image/*; base64,".base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/diente.png'));
     if($resul && $resul->rowCount() > 0)
     {
         $i = 0;
-        while($objPrest =   $resul->fetchObject() )
-        {
+        while($objPrest =   $resul->fetchObject() ){
 
             $row = array();
 
@@ -592,7 +593,7 @@ function listPrestacionesApagar($idpaciente, $idplantram)
                 $estadoDetPresta = '<label class="label" style="background-color: #F6E944; color: #B88B1C; font-weight: bolder;font-size: 0.8em">PENDIENTE</label>';
             }
 
-            $apagar = '<span class="" style="padding: 1px; border-radius: 5px; font-weight: bolder; background-color: #66CA86">    
+            $apagar = '<span class="" style="font-weight: bolder; ">    
                             $ <a style="color: #333333 !important;" class="total_apagar">'. $objPrest->totalprestacion .' </a> 
                        </span>
                             ';
@@ -603,8 +604,9 @@ function listPrestacionesApagar($idpaciente, $idplantram)
                       </span> ';
 
 
+
             $row[] = "<p class='prestaciones_det' data-idprest='$objPrest->fk_prestacion' data-iddetplantram='$objPrest->iddetplantram' data-idcabplantram='$objPrest->idcabplantram' data-status='$objPrest->estado_pay' > $objPrest->prestacion 
-                            &nbsp;&nbsp;&nbsp; ".(($objPrest->diente==0)?"":"<img src='".DOL_HTTP."/logos_icon/logo_default/diente.png' width='17px' height='17px'> $objPrest->diente")." 
+                            &nbsp;&nbsp;&nbsp; ".(($objPrest->diente==0)?"":"<img src='".$icoPieza."' width='14px' height='14px'> $objPrest->diente")." 
                             <small style='display: block; color: #2c4ea4' title='$objPrest->nom_laboratorio'> ".((!empty($objPrest->nom_laboratorio))?"<i class='fa fa-flask'></i> $objPrest->nom_laboratorio":"")."</small>".
                         ((!empty($StatusPagado))?"<small style='display: block; color: green'> <b>Recaudación Completa</b> <i class='fa fa-money'></i></small>":"").
                       "</p>";

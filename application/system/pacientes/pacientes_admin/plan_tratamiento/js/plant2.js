@@ -321,8 +321,10 @@ if($accion == 'addplan')
         var total = 0;
         total = (parseFloat(objectPresst.valor) - (( parseFloat(objectPresst.valor) * parseFloat(objectPresst.convenio_valor) ) / 100)).toFixed(2) ;
 
+
         //ciclo por diente seleccionados
         if( objPiezas.length > 0){
+
             var io = 0;
             while(io < objPiezas.length) {
 
@@ -366,7 +368,7 @@ if($accion == 'addplan')
         $(".adicional").maskMoney({precision:2, thousands:'', decimal:'.',allowZero:true,allowNegative:true, defaultZero:true,allowEmpty: true})
             .keyup(function () {
                 if($(this).val()<=100){
-
+                    $(this).parent().find(".invalic_descuento").remove();
                 }else{
                     //remove elemento
                     $(this).parent().find(".invalic_descuento").remove();
@@ -687,11 +689,13 @@ if($accion == 'addplan')
                         notificacion(resp.error , 'error');
 
                     }else{
-                        notificacion('Información Actualizada' , 'success');
-
                         clearModalDetalle('todo');
                         $('#detdienteplantram').modal('hide');
                         fetch_plantratamiento(); //reload lista de plantram form
+
+                        setTimeout(function () {
+                            notificacion('Información Actualizada' , 'success');
+                        },700);
                     }
                 }
             });
@@ -707,18 +711,20 @@ if($accion == 'addplan')
 
         if( $("#prestacion_planform").find(':selected').val() != "" ){
 
-            $(".CaraDiv").each(function (index, Element){
-                var Elementdiv = $(Element);
-                    for (var i = 0;i<=$arr_caras.length-1; i++){
-                        Elementdiv.find('.selectCell').removeClass($arr_caras[i]+'Activar');
-                    }
-            });
-
             var idprestacion = $("#prestacion_planform").find(':selected').val();
             if(idprestacion > 0){
                 var objetoPrestacion = fetch_prestaciones(idprestacion);
+
                 //Se pinta las prestaciones en el modal
                 print_html_detallePrestacion(objetoPrestacion, idprestacion);
+
+                $(".CaraDiv").each(function (index, Element){
+                    var Elementdiv = $(Element);
+                    $(Element).parents('td').removeClass('PiezaActiva');
+                    for (var i = 0;i<=$arr_caras.length-1; i++){
+                        Elementdiv.find('.selectCell').removeClass($arr_caras[i]+'Activar');
+                    }
+                });
             }
         }else{
             notificacion('Debe seleccionar una prestación', 'error');
@@ -738,6 +744,7 @@ if($accion == 'addplan')
     $("#detdienteplantram").on("show.bs.modal", function () {
         $(".CaraDiv").each(function (index, Element){
             var Elementdiv = $(Element);
+            $(Element).parents('td').removeClass('PiezaActiva');
             for (var i = 0;i<=$arr_caras.length-1; i++){
                 Elementdiv.find('.selectCell').removeClass($arr_caras[i]+'Activar');
             }
@@ -932,8 +939,9 @@ function Get_jquery_URL(Getparam)
 function ArrayPeizas(){
     var objPieza  = [];
     $(".PiezaActiva").each(function (i,item) {
+
         objPieza.push({
-            'pieza':$(item).attr("id"),
+            'pieza': $(item).attr("id"),
             'carasActivas': {
                 'vestibular': ($(item).find(".vestibularActivar").length>0)?true:false,
                 'distal':($(item).find('.distalActivar').length>0)?true:false,
@@ -961,4 +969,30 @@ function ArrayPeizas(){
 
     return objPieza;
 }
+
+$("#prestacion_planform").select2({
+    placeholder: 'Buscar prestaciones',
+    allowClear:true,
+    language: languageEs,
+    minimumInputLength:1,
+    ajax:{
+        url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
+        type: "POST",
+        dataType: 'json',
+        async:false,
+        data:function (params) {
+            var query = {
+                accion: 'prestacionesSearchSelect2',
+                ajaxSend:'ajaxSend',
+                paciente_id: $id_paciente,
+                search: params.term,
+            };
+            return query;
+        },
+        delay: 250,
+        processResults:function (data) {
+            return data;
+        }
+    }
+});
 

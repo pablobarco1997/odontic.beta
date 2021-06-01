@@ -104,13 +104,13 @@
                 </li>
 
                 <li>
-                    <a href="#modal_plantrem_citas" style="color: #333333" data-toggle="modal" class="btnhover btn btn-sm " onclick="attrChangAsociarCitas(null)"> <b>  <i class="fa fa-clone"></i>  Crear Plan de tratamiento desde cita de paciente  </b> </a>
+                    <a href="#modal_plantrem_citas" style="color: #333333" data-toggle="modal" class="btnhover btn btn-sm hidden" onclick="attrChangAsociarCitas(null)"> <b>  <i class="fa fa-clone"></i>  Crear Plan de tratamiento desde cita de paciente  </b> </a>
                 </li>
 
                 <li>
                     <div class="checkbox btn btnhover no-margin btn-sm">
                         <label for="mostrarAnuladosPlantram">
-                            <b><input type="checkbox" id="mostrarAnuladosPlantram">
+                            <b><input type="checkbox" id="mostrarAnuladosPlantram" style="margin-top: 2px !important;">
                                 <i  class="fa fa-trash-o"></i>
                                 Mostrar Planes de tratamiento Anulados</b>
                         </label>
@@ -120,7 +120,7 @@
                 <li>
                     <div class="checkbox btn btnhover no-margin btn-sm">
                         <label for="mostaraFinalizados">
-                            <b><input type="checkbox" id="mostaraFinalizados">
+                            <b><input type="checkbox" id="mostaraFinalizados" style="margin-top: 2px !important;">
                                 <i  class="fa fa-flag"></i>
                                 Mostrar Planes de tratamiento Finalizados</b>
                         </label>
@@ -171,7 +171,7 @@
                 <table class="table" id="listtratamientotable" width="100%">
                     <thead>
                         <tr>
-                            <th>PLANES DE TRATAMIENTO</th>
+                            <th style="background-color: #f4f4f4">PLANES DE TRATAMIENTO</th>
                         </tr>
                     </thead>
                 </table>
@@ -183,7 +183,7 @@
 
         <!--    MODAL CREAR PLAN DE TRATAMIENTO ASOCIADO A UNA CITA  -------------------------------------------------------->
         <div id="modal_plantrem_citas" class="modal fade" role="dialog">
-            <div class="modal-dialog modal-lg" >
+            <div class="modal-dialog " >
 
                 <!-- Modal content-->
                 <div class="modal-content">
@@ -194,64 +194,49 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="form-group col-xs-12">
-                                <div class="form-group col-xs-6 col-md-6 col-sm-6 no-margin">
-                                    <p class="text-left">SELECCIONE UNA CITA</p>
-                                </div>
+
                                 <div class="form-group col-xs-6 col-md-6 col-sm-6 no-margin">
                                     <p class="text-right" id="nuPlanTratamiento" data-id="0"></p>
                                 </div>
-                                <div class="form-group col-xs-12">
-                                    <p>Seleccione una cita - Esta cita se asociara con el Plan de Tratamiento</p>
+
+                                <div class="form-group col-xs-12 col-md-12 col-sm-12 no-margin">
+                                   <span style=" color: #eb9627">
+                                        <i class="fa fa-info-circle"></i>
+                                            Ud. puede asociar varias citas agendadas a un plan de tratamiento
+                                    </span>
                                 </div>
+
                                 <br>
+
                                 <div class="form-group col-xs-12 col-md-12 col-sm-12 no-margin">
                                     <select name="" id="citasPaciente" class="form-control" style="width: 100%">
                                         <option value=""></option>
                                         <?php
 
-                                        $sqlListCitas = "SELECT 
-                                                                d.fk_especialidad,
-                                                                
-                                                                IFNULL((SELECT 
-                                                                        s.nombre_especialidad
-                                                                    FROM
-                                                                        tab_especialidades_doc s
-                                                                    WHERE
-                                                                        s.rowid = d.fk_especialidad), 'General') AS especialidad,
-                                                                d.fk_doc,
-                                                                
-                                                                (SELECT 
-                                                                        CONCAT(o.nombre_doc, ' ', o.apellido_doc)
-                                                                    FROM
-                                                                        tab_odontologos o
-                                                                    WHERE
-                                                                        o.rowid = d.fk_doc) AS odontologo,
-                                                                        
-                                                                d.rowid AS id_cita_det
-                                                            FROM
-                                                                tab_pacientes_citas_det d,
-                                                                tab_pacientes_citas_cab c
-                                                            WHERE
-                                                                d.fk_pacient_cita_cab = c.rowid
-                                                                    AND c.fk_paciente = $idPaciente";
-
-                                        $resul = $db->query($sqlListCitas);
-
-                                        if($resul->rowCount()>0){
-
-                                            while ($obv = $resul->fetchObject()){
-
-                                                $numero = str_pad($obv->id_cita_det, 6, "0", STR_PAD_LEFT);
-                                                echo "<option value='$obv->id_cita_det' data-idcita='$obv->id_cita_det' data-iddoct='$obv->fk_doc'> CITA - $numero  &nbsp; Doc(a) $obv->odontologo &nbsp; ESPACIALIDAD: $obv->especialidad</option>";
-
-                                            }
-                                        }
-
                                         ?>
-
                                     </select>
                                     <small id="error_asociarCitas" style="color: red;"></small>
                                 </div>
+
+                                <div class="form-group col-xs-12 col-md-12 col-sm-12 ">
+                                    <br>
+                                    <div class="table-responsive">
+                                        <table id="listTramnCitasAsoc" class="table table-condensed" width="100%" style="border-collapse: collapse; ">
+                                            <thead style="background-color: #f4f4f4;">
+                                                <tr>
+                                                    <th colspan="4">Lista de Citas Agendadas para este Plan de Tratamiento</th>
+                                                </tr>
+                                                <tr>
+                                                    <th>Citas Agendadas</th>
+                                                    <th>Especialidad</th>
+                                                    <th>Emitido</th>
+                                                    <th>Estado</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                </div>
+
                             </div>
                             <div class="form-group col-md-5 no-margin" style="float: right" >
                                 <a href="#" class="btn btnhover " style="font-weight: bolder; color: green; float: right" id="CrearPlanTratamientoPlantram">Guardar</a>

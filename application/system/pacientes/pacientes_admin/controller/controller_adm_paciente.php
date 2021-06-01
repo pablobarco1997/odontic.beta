@@ -997,7 +997,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             }
 
             $sql .= " order by tc.rowid desc";
-            #echo '<pre>';print_r($sql);die();
+//            echo '<pre>';print_r($sql);die();
 
             $sqlTotal = $sql;
 
@@ -1561,7 +1561,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     if($obj->estado_anulado == 'A'){
                         $row[] = date("Y/m/d", strtotime($obj->fecha));
                         $row[] = $obj->fk_diente;
-                        $row[] = $obj->list_caras  ;
+                        $row[] = str_replace(',',' , ', $obj->list_caras)  ;
                         $row[] = $obj->estado .''.$observacion;
                         $row[] = "<a class='btn btn-xs' style='padding: 4px 8px; background-color: #a55759; color:#ffffff ' onclick='anular_estado_update($obj->rowid)'  >Anular</a>";
                     }
@@ -1569,7 +1569,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     if($obj->estado_anulado == 'E'){
                         $row[] = "<strike>".date("Y/m/d", strtotime($obj->fecha))."</strike>";
                         $row[] = "<strike> ".$obj->fk_diente." </strike>";
-                        $row[] = "<strike>".$obj->list_caras."</strike>"  ;
+                        $row[] = "<strike>".str_replace(',',' , ', $obj->list_caras)."</strike>"  ;
                         $row[] = "<strike>".$obj->estado ." ".$observacion."</strike>";
                         $row[] = "<a class='btn btn-xs disabled_link3' style='padding: 4px 8px; background-color: #a55759; color:#ffffff '  >Anular</a>";
                     }
@@ -2076,6 +2076,143 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             break;
 
 
+        case 'CitasAgendadasSearchSelect2':
+
+            $data=[];
+            $paciente_id = GETPOST('paciente_id');
+
+            if($paciente_id!=0){
+                $sql = "SELECT 
+                    d.fk_especialidad,
+                    d.fk_doc,
+                    d.rowid AS id_cita_det,
+                    (concat('C_', lpad('0',(5-length(d.rowid)),'0' ),d.rowid, '  Doc(a): ' , 
+			                    concat(o.nombre_doc, ' ', o.apellido_doc), ' Especialidad : ', IFNULL((SELECT s.nombre_especialidad FROM tab_especialidades_doc s WHERE s.rowid = d.fk_especialidad), 'General') )) as label_cita
+                FROM
+                    tab_pacientes_citas_det d,
+                    tab_pacientes_citas_cab c,
+                    tab_odontologos o 
+                WHERE
+                    d.fk_pacient_cita_cab = c.rowid
+                    and o.rowid = d.fk_doc
+                    and c.fk_paciente = $paciente_id
+                    ";
+                if(GETPOST('search')!=""){
+                    $search = GETPOST('search');
+                    $sql   .= " and (concat('C_', lpad('0',(5-length(d.rowid)),'0' ),d.rowid, '  Doc(a): ' , 
+			                    concat(o.nombre_doc, ' ', o.apellido_doc), ' Especialidad: ', IFNULL((SELECT s.nombre_especialidad FROM tab_especialidades_doc s WHERE s.rowid = d.fk_especialidad), 'General') )) like '%$search%' ";
+                }
+                $sql .= " limit 4 ";
+                $result = $db->query($sql);
+                while ($object = $result->fetchObject()){
+                    $data[] = array('id' => $object->id_cita_det, 'text' => $object->label_cita);
+                }
+
+            }else{
+                $data=[];
+            }
+
+            $output=[
+                'results' => $data
+            ];
+            echo json_encode($output);
+            break;
+
+
+        case 'listTramnCitasAsoc':
+
+            $data=[];
+            $tratamiento_id = GETPOST("tratamiento_id");
+            $start  = $_POST['start'];
+            $length = $_POST['length'];
+
+//            die();
+            $total = $db->query("SELECT  count(*) as num_rows FROM 
+                                tab_pacientes_citas_cab c , 
+                                tab_pacientes_citas_det d , 
+                                tab_plan_asoc_tramt_citas asoc  
+                                where c.rowid = d.fk_pacient_cita_cab
+                                and asoc.fk_cita = d.rowid
+                                and asoc.fk_tratamiento = $tratamiento_id")->fetchObject()->num_rows;
+
+
+            $sql = "SELECT 
+                        concat('', lpad('0',(5-length(d.rowid)),'0'),d.rowid) as numberCitas ,
+                        d.fecha_cita  as fecha_cita,         
+                        d.hora_inicio , 
+                        d.hora_fin ,
+                        d.rowid  as id_cita_det,
+                        (select concat(o.nombre_doc,' ', o.apellido_doc) from tab_odontologos o where o.rowid = d.fk_doc) as doct ,
+                        (select concat(s.text) from tab_pacientes_estado_citas s where s.rowid = d.fk_estado_paciente_cita) as estado,
+                        (select s.color from tab_pacientes_estado_citas s where s.rowid = d.fk_estado_paciente_cita) as color,
+                        d.fk_estado_paciente_cita , 
+                        c.comentario ,
+                        ifnull((select es.nombre_especialidad FROM tab_especialidades_doc es where es.rowid = d.fk_especialidad),'General') as especialidad,
+                        d.fk_doc as iddoctor , 
+                        d.comentario_adicional as comentario_adicional,
+                        c.fk_paciente as idpaciente  ,
+                         -- validaciones
+                         -- citas atrazados con estado no confirmado
+                         IF( now() > CAST(d.fecha_cita AS DATETIME)  
+                                    && d.fk_estado_paciente_cita in(2,1,3,4,7,8,9,10,11,5,  (select statusc.rowid from tab_pacientes_estado_citas statusc where statusc.system=0) )  , 
+                                        concat('Atrasada ', (select concat(s.text) from tab_pacientes_estado_citas s where s.rowid = d.fk_estado_paciente_cita) , 
+                                                '<br> Fecha : ' , date_format(d.fecha_cita, '%Y/%m/%d') , '<br>Hora: ' , d.hora_inicio ,' a ' , d.hora_fin) , ''
+                                                ) as cita_atrazada   
+                     FROM 
+                        tab_pacientes_citas_cab c , 
+                        tab_pacientes_citas_det d , 
+                        tab_plan_asoc_tramt_citas asoc  
+                        where c.rowid = d.fk_pacient_cita_cab
+                        and asoc.fk_cita = d.rowid
+                        and asoc.fk_tratamiento = ".$tratamiento_id;
+
+            if($start || $length){
+                $sql .= " limit $start, $length";
+            }
+
+            $ico_cita = "<img src='"."data: image/png; base64, ".base64_encode(file_get_contents(DOL_HTTP.'/logos_icon/logo_default/cita-medica.ico'))."' style='width: 25px; height: 25px'>";
+
+            $result = $db->query($sql);
+            if($result){
+                if($result->rowCount()>0){
+                    while ($object = $result->fetchObject()){
+
+                        $row = [];
+                        $row[] = "<table><tr><td>$ico_cita</td> <td> - $object->numberCitas</td> </tr></table>";
+                        $row[] = $object->especialidad;
+                        $row[] = date("Y-m-d", strtotime($object->fecha_cita))."  H  ".$object->hora_inicio;
+                        $row[] = "<span style='font-weight: bold; background-color: $object->color '>".$object->estado."</span>";
+
+                        $data[] = $row;
+                    }
+                }
+            }
+
+            $output=[
+                "draw" => $_POST["draw"],
+                "data" => $data,
+                "recordsTotal"    => $total,
+                "recordsFiltered" => $total
+
+            ];
+            echo json_encode($output);
+            break;
+
+
+        case 'prestacionesSearchSelect2':
+
+
+            $search = $_POST['search'];
+
+            $result = fetchPrestacionGroupLab(null, $search);
+
+            $output=[
+                "results" => $result
+            ];
+            echo json_encode($output);
+            break;
+
+
     }
 }
 
@@ -2464,7 +2601,7 @@ function evoluc_listprincpl($datos)
             $row[] = $objevol->estadodiente;
             $row[] = $objevol->doct;
             $row[] = "<p title='".$objevol->observacion."'>".((strlen($objevol->observacion)>50)?substr($objevol->observacion,0,50)." ...":$objevol->observacion)."</p>";
-            $row[] = "". (implode(',', array_filter( $cadena_caras ))) ; #lista de caras
+            $row[] = "". (implode(', ', array_filter( $cadena_caras ))) ; #lista de caras
 
             $data[] = $row;
 
@@ -2482,7 +2619,7 @@ function evoluc_listprincpl($datos)
 }
 
 
-function fetchPrestacionGroupLab($id = "", $name = ""){
+function fetchPrestacionGroupLab($id = null, $name = ""){
 
     global $db;
 
@@ -2493,20 +2630,20 @@ function fetchPrestacionGroupLab($id = "", $name = ""){
         return '';
 
 
-    if($name==true)
-        return '';
+//    if($name==true)
+//        return '';
 
 
 
-    $Arr_prestacion  = array();
+    $arr_prestacion  = array();
     $Arr_laboratorio = array();
 
-    $Arr_laboratorio['0'] = array('id' => 0, 'name' => 'General');
-    $quelab   = $db->query("select rowid , name  from tab_conf_laboratorios_clinicos where estado = 'A' ");
-    $fetchlab = $quelab->fetchAll();
-    foreach ($fetchlab as $key => $value){
-        $Arr_laboratorio[$value['rowid']] = array('id' => $value['rowid'], 'name' => $value['name']);
-    }
+//    $Arr_laboratorio['0'] = array('id' => 0, 'name' => 'General');
+//    $quelab   = $db->query("select rowid , name  from tab_conf_laboratorios_clinicos where estado = 'A' ");
+//    $fetchlab = $quelab->fetchAll();
+//    foreach ($fetchlab as $key => $value){
+//        $Arr_laboratorio[$value['rowid']] = array('id' => $value['rowid'], 'name' => $value['name']);
+//    }
 
     #echo '<pre>';  print_r($Arr_laboratorio); die();
     $sqlprestacion = "SELECT 
@@ -2519,25 +2656,34 @@ function fetchPrestacionGroupLab($id = "", $name = ""){
                         tab_conf_prestaciones p
                     WHERE
                         p.estado = 'A' ";
+
+    if($name!=""){
+        $sqlprestacion .= " and p.descripcion like '%$name%'";
+    }
+
+    $sqlprestacion .= " limit 5";
     $result  =  $db->query($sqlprestacion);
 
     if($result->rowCount() > 0) {
         while ($obj = $result->fetchObject()) {
-            $lab = "LAB(". (($obj->lab!='')?$obj->lab:'') .")";
-            if($obj->lab=='')
+//            $lab = "LAB(". (($obj->lab!='')?$obj->lab:'') .")";
+            $lab = " -  Asociado a Laboratorio ";
+            if($obj->lab==''){
                 $lab='';
+            }
+
             $label = $obj->prestacion." "."$lab";
-            $Arr_prestacion[$obj->fk_laboratorio][] = array('text' => $label, 'id' => $obj->id);
+            $arr_prestacion[] = array('id' => $obj->id , 'text' => $label);
         }
     }
 
-    foreach ($Arr_laboratorio as $key => $value){
-        $data[$value['name']] =  $Arr_prestacion[$key];
-    }
+//    foreach ($Arr_laboratorio as $key => $value){
+//        $data[$value['name']] =  $Arr_prestacion[$key];
+//    }
 
 //    echo '<pre>'; print_r($data); die();
 
-    return $data;
+    return $arr_prestacion;
 
 }
 

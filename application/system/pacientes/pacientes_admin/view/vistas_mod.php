@@ -61,7 +61,7 @@ switch($VISTAS)
         $VIEW_GLOB_ADMIN_PACIENTES   = "pagos_principl";                    #view Pagos Principal
         $DIRECTORIO_ADMIN            = "pagos_pacientes";                   #directorio
         $_JS_DOCMENT                 = "indexpagos";                        #doc javascript
-        $NAME_MODULO                 = "RECAUDACIONES";
+        $NAME_MODULO                 = "RECAUDACIONES DE PACIENTE";
         break;
 
     case "evoluc":                                                         #EVOLUCIONES DE PACIENTE

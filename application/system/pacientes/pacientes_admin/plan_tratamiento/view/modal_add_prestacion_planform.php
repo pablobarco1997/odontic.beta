@@ -2,8 +2,8 @@
 
 <?php
 
-    $prestacion = '<option></option>';
-    $objectServicios =   fetchPrestacionGroupLab();
+    //$prestacion = '<option></option>';
+    /*$objectServicios =   fetchPrestacionGroupLab();
 
 
     foreach ($objectServicios as $key => $value){
@@ -12,7 +12,7 @@
             $prestacion .= '<option value="'.$val['id'].'">'.$val['text'].'</option>';
         }
         $prestacion .= '</optgroup>';
-    }
+    }*/
 
 ?>
 
@@ -77,8 +77,6 @@
                     <div class="form-group col-md-9 col-xs-12" style="padding-left: 30px">
                         <div class="box_prestaciones">
                             <select id="prestacion_planform" class="form-control " style="width: 100%">
-                                <option value="" selected disabled>Selecione un Prestación</option>
-                                <?= $prestacion;  ?>
                             </select>
                         </div>
                     </div>

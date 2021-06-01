@@ -178,11 +178,11 @@
 
 
                         $row = [];
-                        $row[] = date('Y/d/m', strtotime($value['date_cc']));
+                        $row[] = date('Y/m/d', strtotime($value['date_cc']));
                         $row[] = $value['destinario'];
                         $row[] = $value['asunto'];
                         $row[] = "<p class='' title='".$value['message']."'>".$substring."</p>"." ".(implode(" ", $File));
-                        $row[] = ($value['date_program']!="")? date('Y/d/m', strtotime($value['date_program'])):"";
+                        $row[] = ($value['date_program']!="")? date('Y/m/d', strtotime($value['date_program'])):"";
                         $row[] = "<small style='font-weight: bolder; color: $color' title='$labelSatus'>".$labelSatus."</small>";
                         $row[] = "";
                         $row['dataCorreo'] = base64_encode(json_encode($value));
@@ -402,6 +402,10 @@
 
         global $db;
 
+        $emailprogramado = $db->quote($datos['email_destinario']);
+        $asunto = $db->quote($datos['asunto']);
+        $mensage_mail = $db->quote($datos['mensage_mail']);
+
         $err = "";
 
         $sql = "INSERT INTO `tab_send_email_programa`";
@@ -421,16 +425,18 @@
         $sql .= "VALUES (";
         $sql .= " now() ,";
         $sql .= " ".$datos['idpaciente']." , ";
-        $sql .= " '".(($db->quote($datos['email_destinario'])))."' , ";
-        $sql .= " '".(($db->quote($datos['asunto'])))."' , ";
-        $sql .= " ".(($db->quote($datos['mensage_mail'])))." , ";
+        $sql .= " ".($emailprogramado)." , ";
+        $sql .= " $asunto , ";
+        $sql .= " $mensage_mail , ";
         $sql .= " ".(count($nameFiles))." ";
 
         if($datos['DateProgramCorreo']!=""){ //date program   :  el correo queda programado para un envio con una fecha determinada
-            $sql .= " , '".(($db->quote($datos['DateProgramCorreo'])))."'  ";
+            $sql .= " , '".(str_replace('/','-', $datos['DateProgramCorreo']))."'  ";
         }
         $sql .= " , '".$datos['estado']."' ";
         $sql .= ")";
+
+        print_r($sql); die();
 
         $idsendProgram = 0;
         $result = $db->query($sql);

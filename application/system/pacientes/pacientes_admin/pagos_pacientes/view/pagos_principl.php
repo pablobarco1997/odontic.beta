@@ -26,7 +26,7 @@ if(isset($_GET['v'])){
 
     <div class="form-group col-md-12 col-xs-12">
         <label for="">LISTA DE COMPORTAMIENTOS</label>
-        <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px">
+        <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px; background-color: #f4f4f4">
             <li>
                 <a href="<?= DOL_HTTP .'/application/system/pacientes/pacientes_admin/?view=pagospaci&key='.KEY_GLOB.'&id='. tokenSecurityId($idPaciente) .'&v=paym' ?>" style="color: #333333" class="btnhover btn btn-sm " id=""> <b>  <i class="fa fa-dollar"></i> &nbsp; Pagos </b> </a>
             </li>
@@ -47,7 +47,6 @@ if(isset($_GET['v'])){
             include_once 'pagos_independientes.php';
         }
 
-#        ----------   o  -------------
 
         if($_GET['v'] == 'paym_financier'  ){
             include_once 'pagos_financieros.php';

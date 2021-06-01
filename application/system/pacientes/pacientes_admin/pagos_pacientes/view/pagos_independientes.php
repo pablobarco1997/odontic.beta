@@ -76,44 +76,45 @@ if($showCaja!=1){
 }
 
 
+//LISTA PRINCIPAL DE PAGOS DE PACIENTES
 if(isset($_GET['v']) && $_GET['v'] == 'paym')
 {
 
 
 ?>
 
-<script>
-    $(window).on("load", function () {
-        if("<?= $showCaja ?>" != "1"){
-            notificacion("<?= $showCaja ?>", "question");
-        }
-    });
-</script>
+        <script>
+            $(window).on("load", function () {
+                if("<?= $showCaja ?>" != "1"){
+                    notificacion("<?= $showCaja ?>", "question");
+                }
+            });
+        </script>
 
-<div class="form-group col-xs-12 col-md-12">
-    <div class="row">
-        <div class="col-md-12 col-xs-12">
-            <div class="table-responsive">
-                <table class="table table-striped" id="pagos_planestratamiento_list" width="100%">
-                    <thead>
-                    <tr>
-                        <th colspan="3">PAGOS POR PLANES DE TRATAMIENTO DE PACIENTES</th>
-                    </tr>
-                    <tr>
-                        <th width="5%">Cobrar</th>
-                        <th width="8%">Fecha</th>
-                        <th width="25%">Plan de Tratamiento</th>
-                        <th width="15%">Cita Asociada</th>
-                        <th width="15%">$&nbsp;Total</th>
-                        <th width="15%">$&nbsp;Realizado</th>
-                        <th width="15%">$&nbsp;Abono de Paciente</th>
-                    </tr>
-                    </thead>
-                </table>
+        <div class="form-group col-xs-12 col-md-12">
+            <div class="row">
+                <div class="col-md-12 col-xs-12">
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="pagos_planestratamiento_list" width="100%">
+                            <thead>
+                            <tr>
+                                <th colspan="6" style="background-color: #f4f4f4 ">PAGOS POR PLANES DE TRATAMIENTO DE PACIENTES</th>
+                            </tr>
+                            <tr>
+                                <th width="5%">Cobrar</th>
+                                <th width="8%">Fecha</th>
+                                <th width="25%">Plan de Tratamiento</th>
+        <!--                        <th width="15%">Cita Asociada</th>-->
+                                <th width="15%">$&nbsp;Total</th>
+                                <th width="15%">$&nbsp;Realizado</th>
+                                <th width="15%">$&nbsp;Abono de Paciente</th>
+                            </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
 <?php
 
@@ -132,7 +133,7 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
  if(isset($_GET['v']) && $_GET['v'] == 'paym_pay')
  {
 
-     $query = "Select if(edit_name!=''|| edit_name!='NULL', edit_name , concat('Plan de Tratamiento No ', numero) ) as numplantram 
+     $query = "Select if(edit_name!=''|| edit_name!='NULL', edit_name , concat('Plan de Tratamiento N. ', numero) ) as numplantram 
                From tab_plan_tratamiento_cab where rowid =". ((isset($_GET['idplantram']))?$_GET['idplantram']:0) ."   ";
      $n_plantram = $db->query($query)->fetchObject()->numplantram;
 
@@ -142,20 +143,20 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
 
      <div class="form-group col-xs-12 col-md-12 col-sm-12">
          <div class="table-responsive">
-             <table class="table-striped table" id="ApagarlistPlantratmm" width="100%">
+             <table class="table-condensed table" id="ApagarlistPlantratmm" width="100%">
 
                  <thead>
                      <tr>
-                         <th colspan="3">LISTA DE PRESTACIONES N. <?= $n_plantram ?> </th>
+                         <th colspan="3">LISTA DE PRESTACIONES  <span> <?= strtoupper($n_plantram) ?> </span> </th>
                      </tr>
                      <tr>
                          <th width="5%">
-                             <span class="custom-checkbox-myStyle">
+                             <span class="custom-checkbox-myStyle hide">
 								<input type="checkbox" id="checkeAllCitas">
 								<label for="checkeAllCitas"></label>
 							</span>
                          </th>
-                         <th width="35%">Prestación</th>
+                         <th width="35%">Prestaciones</th>
                          <th width="10%">Total</th>
                          <th width="10%">Abonado</th>
                          <th width="10%">Pendiente</th>
@@ -179,8 +180,8 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
      </div>
 
      <div class="form-group col-xs-12 col-md-12">
-         <div class="col-sm-12 col-xs-12 col-md-9 col-centered" >
-             <h3><span>Recaudación</span></h3>
+         <div class="col-sm-12 col-xs-12 col-md-9 col-centered" style="background-color:#f9f9f9 ">
+<!--             <h2 style="margin-top:0px ">DETALLE</h2>-->
              <br>
              <div class="form-horizontal">
 

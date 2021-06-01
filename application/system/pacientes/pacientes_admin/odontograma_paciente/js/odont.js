@@ -71,7 +71,27 @@ function inputs_runn() {
     $('#tratamientoSeled').select2({
         placeholder: 'seleccione una opcion',
         allowClear: true,
-        language:'es'
+        language:languageEs,
+        minimumInputLength:1,
+        ajax:{
+            url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
+            type: "POST",
+            dataType: 'json',
+            async:false,
+            data:function (params) {
+                var query = {
+                    accion: 'filtrarPlantratamientoSearchSelect2',
+                    ajaxSend:'ajaxSend',
+                    paciente_id: $id_paciente,
+                    search: params.term,
+                };
+                return query;
+            },
+            delay: 250,
+            processResults:function (data) {
+                return data;
+            }
+        }
     });
 
 

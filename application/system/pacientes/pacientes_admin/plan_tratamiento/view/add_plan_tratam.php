@@ -47,7 +47,7 @@
                             <a href="#detdienteplantram" id="asociarPrestacion" data-toggle="modal" onclick="clearModalDetalle('todo')" class="btnhover btn-sm btn" style="color: #00a157; cursor: pointer; float: right; font-weight: bold "> Cargar Prestaciones</a>
                         </th>
                         <th width="10%">
-                            <label for="">Realización</label>
+                            <label for="">Estado</label>
                         </th>
                         <th width="10%">
                             <label for="">Dcto Adicional</label>
