@@ -86,7 +86,7 @@ class db_and_procesos{
         $db = $this->Connection();
 
         $name  = md5($name_db);
-        $query  = "SELECT nombre, ciudad, telefono, celular, logo FROM tab_entidades_dental where md5(nombre_db_entity) = '$name' ";
+        $query  = "SELECT nombre_db_entity, numero_entity, nombre, ciudad, telefono, celular, logo, email FROM tab_entidades_dental where md5(nombre_db_entity) = '$name' limit 1";
         $result = $db->query($query);
 
         if($result){

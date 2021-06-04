@@ -61,7 +61,7 @@ function ProccessCronSendEmail(){
 
             //email Asociado programados
             $query = "SELECT 
-                        e.rowid as id_noti, 
+                        e.rowid AS id_noti,
                         CONCAT(p.nombre, ' ', p.apellido) AS nom,
                         CAST(e.fecha AS DATE) emitido,
                         e.asunto,
@@ -72,8 +72,13 @@ function ProccessCronSendEmail(){
                         e.estado,
                         e.fk_paciente,
                         e.fk_cita,
-                        CAST(e.program_date AS DATE) AS program_date,
-                        CAST(cita.fecha_cita AS DATE) AS fecha_cita
+                        CAST(CONCAT(CAST(e.program_date AS DATE),' 23:00:00') AS DATETIME) AS program_date,
+                        CAST(cita.fecha_cita AS DATETIME) AS fecha_cita,
+                        
+                        cita.fk_doc as id_odontologo,
+                        (select concat(o.nombre_doc,' ',o.apellido_doc) from tab_odontologos o where o.rowid = cita.fk_doc) as odontol, 
+                        cast(concat(cast(cita.fecha_cita AS DATE),' ',cita.hora_inicio) as datetime) AS fecha_cita_ini
+                        
                     FROM
                         tab_notificacion_email e
                             INNER JOIN
@@ -81,9 +86,10 @@ function ProccessCronSendEmail(){
                             INNER JOIN
                         tab_admin_pacientes p ON p.rowid = e.fk_paciente
                     WHERE
-                        e.program = 1 
-                        AND e.estado = 'P'
-                        AND CAST(e.program_date AS DATE) = cast(now() as date)
+                            e.program = 1 
+                            AND e.estado = 'P'
+                            AND CAST(e.program_date AS DATE) = CAST(NOW() AS DATE)
+                            AND CAST(CONCAT(CAST(e.program_date AS DATE),' 23:00:00') AS DATETIME) <= CAST(cita.fecha_cita AS DATETIME)
                     ORDER BY e.rowid asc";
             $result = $db->query($query);
             if($result){
@@ -98,7 +104,10 @@ function ProccessCronSendEmail(){
         }
     }
 
-    echo '<pre>'; print_r($ArraySendProgram);  die();
+
+//    echo '<pre>'; print_r($ArraySendProgram);  die();
+
+    return $ArraySendProgram;
 }
 
 
