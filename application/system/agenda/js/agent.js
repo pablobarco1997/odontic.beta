@@ -598,54 +598,30 @@ function UpdateCitasCommentAdicional(iddetcita)
     }
 }
 
-$('#pacientes_habilitados , #pacientes_desabilitados').change(function() {
-
-    var dataPacientes = [];
-
-    var url = $DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php";
-
-    var pamarts = { 'accion':'pacientes_activodesact', 'ajaxSend':'ajaxSend', 'habilitado': $('#pacientes_habilitados').prop('checked') , 'desabilitado':$('#pacientes_desabilitados').prop('checked') };
-
-    var puede = 0;
-
-    if( $('#pacientes_habilitados').prop('checked') ){
-        puede++;
+//buscar pacientes habilitados o desabilitados
+$('#buscarxPaciente').select2({
+    placeholder: 'buscar pacientes' ,
+    language: languageEs,
+    ajax:{
+        url: $DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php",
+        dataType: "json",
+        data: function (params) {
+            var query = {
+                search: params.term,
+                ajaxSend:'ajaxSend',
+                accion:'pacientes_activodesact'
+            };
+            return query;
+        },
+        processResults: function (data) {
+            return {
+                results: data.items
+            };
+        }
     }
-    if( $('#pacientes_desabilitados').prop('checked') ){
-        puede++;
-    }
-
-
-    if( puede > 0){
-
-        var option = "";
-        $.get(url , pamarts ,  function (data) {
-
-            dataPacientes = $.parseJSON(data);
-
-            // $('#buscarxPaciente').empty();
-
-            option += '<option value=""></option>';
-            $.each(dataPacientes, function(i, item) {
-                console.log(item);
-                option += '<option value="'+item.id+'">'+item.text+'</option>';
-            });
-
-            $('.buscarxPaciente').html( option );
-
-            $('#buscarxPaciente').select2({
-                placeholder:'buscar pacientes' ,
-                // language:'es'
-            });
-
-        });
-
-    }else{
-
-        $('#buscarxPaciente').empty();
-    }
-
 });
+
+
 
 
 //APLICAR FILTRO DE BUSQUEDA O LIMPIAR
@@ -820,11 +796,6 @@ $(window).on("load", function() {
         placeholder:'Seleccione estados cita',
         // allowClear:true,
         language:'es'
-    });
-    $('#buscarxPaciente').select2({
-        placeholder:'buscar pacientes',
-        // allowClear:true,
-        language:'es',
     });
 
     setTimeout(()=>{loadtableAgenda();},1000);

@@ -324,7 +324,7 @@ function Breadcrumbs_Mod( $titulo, $url, $module )
     }else{
 
         #cuando sea varios modulos
-        if(is_array($_SESSION['breadcrumbs']) && count($_SESSION['breadcrumbs']) > 0){
+        if(isset($_SESSION['breadcrumbs']) && is_array($_SESSION['breadcrumbs']) && count($_SESSION['breadcrumbs']) > 0){
 
             foreach ($_SESSION['breadcrumbs'] as $key => $value)
             {
@@ -341,11 +341,15 @@ function Breadcrumbs_Mod( $titulo, $url, $module )
 
         }else{
 
-            foreach ($_SESSION['breadcrumbs'] as $key => $value)
-            {
-                if($value['titulo'] == $titulo){
-                    unset($_SESSION['breadcrumbs'][$key]);
+            if( isset($_SESSION['breadcrumbs']) && isset($_SESSION['breadcrumbs']) ){
+                foreach ($_SESSION['breadcrumbs'] as $key => $value)
+                {
+                    if($value['titulo'] == $titulo){
+                        unset($_SESSION['breadcrumbs'][$key]);
+                    }
                 }
+            }else{
+                $_SESSION['breadcrumbsAcu'] = 0;
             }
 
             $_SESSION['breadcrumbs'][] = array( 'url' => $url , 'titulo' => $titulo );
@@ -354,9 +358,10 @@ function Breadcrumbs_Mod( $titulo, $url, $module )
             $CountBread = $_SESSION['breadcrumbsAcu'];
 
         }
+//        echo '<pre>'; print_r($_SESSION['breadcrumbs']); die();
+
     }
 
-//    echo '<pre>'; print_r($_SESSION['breadcrumbs']); die();
 
     if(!empty($titulo) )
     {

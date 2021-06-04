@@ -568,35 +568,43 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             #busca los pacientes habilitados y desavilitados
         case 'pacientes_activodesact':
 
-            $hablitados    = GETPOST('habilitado');
-            $desabilitado  = GETPOST('desabilitado');
+//            $hablitados    = GETPOST('habilitado');
+//            $desabilitado  = GETPOST('desabilitado');
+
+            $search = GETPOST('search');
 
             $result = [];
-            $sqlpaciente = "SELECT rowid , concat(nombre,' ',apellido) as nom FROM tab_admin_pacientes estado where rowid  > 0";
-            if($hablitados=="true"||$desabilitado=="true")
-            {
-                if($hablitados=="true"){
-                    $sqlpaciente .= " and estado = 'A' ";
-                }
-                if($desabilitado=="true"){
-                    $sqlpaciente .= " and estado = 'E' ";
-                }
-            }else{
-                $sqlpaciente .= " and rowid = 0";
+            $sqlpaciente = "SELECT rowid , concat(nombre,' ',apellido) as nom FROM tab_admin_pacientes estado where rowid  > 0 ";
+            if($search!=""){
+                $sqlpaciente .= " and concat(nombre,' ',apellido) like '%$search%' ";
             }
+            $sqlpaciente .= " limit 10";
 
+//            if($hablitados=="true"||$desabilitado=="true")
+//            {
+//                if($hablitados=="true"){
+//                    $sqlpaciente .= " and estado = 'A' ";
+//                }
+//                if($desabilitado=="true"){
+//                    $sqlpaciente .= " and estado = 'E' ";
+//                }
+//            }else{
+//                $sqlpaciente .= " and rowid = 0";
+//            }
 //            print_r($sqlpaciente);
             $rs = $db->query($sqlpaciente);
-            if($rs && $rs->rowCount()>0)
-            {
-                while ($obj = $rs->fetchObject() )
-                {
+            if($rs && $rs->rowCount()>0){
+                while ($obj = $rs->fetchObject() ){
                     $result[] = array( 'id' => $obj->rowid , 'text' => $obj->nom );
                 }
             }
 
+            $output = [
+                'items' => $result
+            ];
 //            print_r($result); die();
-            echo json_encode($result);
+
+            echo json_encode($output);
             break;
 
         case 'consultar_estado_cita_atrazada':
@@ -657,7 +665,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $DateHour = str_replace("/","-", $Fecha)." ".$Hours;
 
             $Date = "SELECT 
-                    DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i') now_,
+                    DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i:%s') Now,
                     DATE_FORMAT('".$DateHour."', '%Y-%m-%d %H:%i') AS dateadd,
                     IF(DATE_FORMAT('".$DateHour."', '%Y-%m-%d %H:%i') < DATE_FORMAT(NOW(), '%Y-%m-%d %H:%i'),
                     'Fecha Menor a la Actual',
@@ -665,9 +673,18 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     LIMIT 1";
             $result = $db->query($Date);
 
-            #echo '<pre>'; print_r($Date); die();
+//            echo '<pre>'; print_r($Date); die();
             if($result){
+
                 $object  = $result->fetchObject();
+
+                $date_cita = strtotime($DateHour);
+                $now_date  = strtotime($object->Now);
+
+//                $date_cita = new DateTime(date("Y-m-d H:m:s", strtotime($DateHour)));
+//                $now_date  = new DateTime(date("Y-m-d H:m:s", strtotime($object->Now)));
+
+
                 if($object->valid_dateadd != ""){
                     $error  = "La Fecha Agregada no puede ser menor a la Fecha Actual <br>  ";
                     $error .= " <b>Fecha Actual: </b>".(date('Y/m/d H:m', strtotime($object->now_)))."<br>";
@@ -1385,17 +1402,43 @@ function Email_confirmacion_programDate($datos=array(), $fecha_programa, $id_cit
 
     $error="";
 
-    $result = $db->query("select cast(fecha_cita as date) fecha_cita from tab_pacientes_citas_det where rowid = $id_cita")->fetchObject();
+    $fecha_programa .= " 22:00:00";
 
-    if(date('Y-m-d', strtotime($result->fecha_cita)) <= date('Y-m-d', strtotime($fecha_programa)) ){
-        $error = "La fecha programada no puede ser mayor o igual a la fecha de la cita agendada";
+    $query = "select 
+                  cast(concat(cast(fecha_cita as date),' ',hora_inicio) as datetime) as fecha_cita_datetime,
+                  cast(fecha_cita as date) as fecha_cita , 
+                  (hour(now())) as NowTime ,
+                  now() as NowDateTime
+              from tab_pacientes_citas_det 
+              where rowid = $id_cita";
+    $result = $db->query($query)->fetchObject();
+
+    //solo puede realizar esta operacion si la hora actual es menor a las 22horas
+    //solo en caso si la fecha programada es para el mismo dia
+    if(date("Y-m-d", strtotime($result->NowDateTime)) == date('Y-m-d', strtotime($fecha_programa)) ){
+        if(($result->NowTime >= 22)){
+            $ouput = [
+                "registrar"   => "No puede realizar esta Operación <br> Esta funcionalidad solo esta disponible hasta las 22horas <br> <small> <b>Para más información consulte con soporte</b> </small>",
+                "error_email" => ""
+            ];
+            return $ouput;
+        }
+    }
+
+    if( date('Y-m-d H:m:s', strtotime($result->fecha_cita_datetime)) < date('Y-m-d H:m:s', strtotime($fecha_programa)) ){
+        $error = "Fecha de programación Invalidad";
         $ouput = [
-            'registrar'   => $error,
+            "registrar"   => $error,
             "error_email" => ""
         ];
-
         return $ouput;
     }
+
+//    die();
+//    print_r(date('Y-m-d H:m:s', strtotime($result->fecha_cita_datetime)));
+//    echo '<br>';
+//    print_r(date('Y-m-d H:m:s', strtotime($fecha_programa)));
+//    die();
 
     $asunto     = $datos->asunto;
     $from       = $datos->from;

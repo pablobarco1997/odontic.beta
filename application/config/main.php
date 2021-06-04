@@ -65,7 +65,7 @@
         "INFORMACION"   => $entity::INFORMACION_EMPRESA_GLOB($_SESSION["id_Entidad"], $dbConectar) #INFORMACION DE LA ENTIDAD GLOB
     );
 
-    $conf->ObtnerNoficaciones($db, false);
+//    $conf->ObtnerNoficaciones($db, false);
 
     /**ruta de la carpeta donde se guardan ficheros de la clinicla - global del directorio x defaul del sistema*/
     $conf->DIRECTORIO = DOL_DOCUMENT.'/logos_icon/icon_logos_'.$_SESSION['entidad']; #url de los ficheros que upload clinica dental especifica

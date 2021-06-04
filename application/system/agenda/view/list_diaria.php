@@ -98,7 +98,7 @@
         <h3 class="no-margin"><span>Filtrar Citas</span></h3>
         <div class="row">
 
-            <div class="form-group col-md-2 col-sm-12 col-xs-12">
+            <div class="form-group col-md-3 col-sm-12 col-xs-12">
                 <label for="">Fecha</label>
                 <div class="input-group form-group rango" style="margin: 0">
                     <input type="text" class="form-control filtroFecha  " readonly id="startDate" value="" style="font-size: small">
@@ -106,8 +106,8 @@
                 </div>
             </div>
 
-            <div class="form-group col-md-4 col-sm-12 col-xs-12">
-                <label for="">Doctor (Odontolog@)</label>
+            <div class="form-group col-md-3 col-sm-12 col-xs-12">
+                <label for="">Doctor(a)</label>
                 <select name="filtro_doctor" id="filtro_doctor" style="width: 100%" multiple class="filtrar_doctor form-control   " >
                     <?php
                         $sql = "SELECT rowid , nombre_doc , apellido_doc , if(estado = 'A' , 'Activo' , 'Inactivo') as iestado FROM tab_odontologos where estado in('A' , 'E') ;";
@@ -125,17 +125,14 @@
             <div class="form-group col-md-4 col-sm-12 col-xs-12">
                 <label for="">Estado de citas</label>
                 <select name="" id="filtroEstados"  style="width: 100%" class="form-control  filtrar_estados " multiple>
-
                     <?php
-                    $sql = "SELECT * FROM tab_pacientes_estado_citas;";
-                    $rs = $db->query($sql);
-                    if($rs->rowCount() > 0)
-                    {
-                        while ($obj = $rs->fetchObject())
-                        {
-                            echo "<option value='$obj->rowid' >$obj->text</option>";
+                        $sql = "SELECT * FROM tab_pacientes_estado_citas;";
+                        $rs = $db->query($sql);
+                        if($rs->rowCount() > 0){
+                            while ($obj = $rs->fetchObject()){
+                                echo "<option value='$obj->rowid' >$obj->text</option>";
+                            }
                         }
-                    }
                     ?>
                 </select>
             </div>
@@ -149,10 +146,6 @@
         <div class="row">
             <div class=" form-group col-md-6 col-xs-12 ">
                 <label for="">buscar Pacientes</label>
-                <ul class="list-inline">
-                    <li><input type="radio" name="pacientesOption" id="pacientes_habilitados" >  Pacientes habilitados</li>
-                    <li><input type="radio" name="pacientesOption" id="pacientes_desabilitados">  Pacientes desabilitados</li>
-                </ul>
                 <select name="buscarxPaciente" id="buscarxPaciente" style="width: 100%" multiple class="form-control  buscarxPaciente "></select>
             </div>
         </div>
@@ -453,7 +446,7 @@
             var Dateadd = new Date();
             var DateElement =  $("#date_programa_email_confirm").daterangepicker({
                 drops: 'top',
-                minDate : new Date(Dateadd.getFullYear(), Dateadd.getMonth(), Dateadd.getDate() + 1),
+                minDate : new Date(Dateadd.getFullYear(), Dateadd.getMonth(), Dateadd.getDate() ),
                 locale: {
                     format: 'YYYY/MM/DD' ,
                     daysOfWeek: [
