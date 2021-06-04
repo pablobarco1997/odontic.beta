@@ -52,14 +52,15 @@
 
     <div class="form-group col-md-12 col-xs-12">
         <div class="table-responsive">
-            <table class="table table-striped" id="mailSentTable" width="100%">
+            <table class="table table-condensed" id="mailSentTable" width="100%">
                 <thead>
-                    <th> Fecha de Envio </th>
+                    <th> Emitido </th>
                     <th> Confirmación x Paciente </th>
                     <th> Desde </th>
                     <th> Para </th>
                     <th> Mensaje </th>
                     <th> N. Cita </th>
+                    <th></th>
                 </thead>
             </table>
         </div>

@@ -2368,7 +2368,7 @@ function listcitas_admin($idPaciente, $fechaInicio, $fechafin, $n_citas, $Estado
             $row[]  = $numero_cita_asociada;
             $row[]  =  "" . (($obj->comentario == "") ? "" : $obj->comentario) . "" .$citas_atrazadas;
             $row[]  = ($obj->plantratamiento == "") ? "No Asignado" : $obj->plantratamiento;
-            $row[]  = "<label class='control-label' style='background-color: $obj->color !important; font-size: 1.5rem; color: #333333; margin-top: 3%; padding: 5px; border-radius: 5px'> $obj->estado </label>";
+            $row[]  = "<label class='control-label' style='background-color: $obj->color !important;  color: #333333; margin-top: 3%; padding: 5px;'> $obj->estado </label>";
             $row[]  = "";
             $data[] = $row;
         }

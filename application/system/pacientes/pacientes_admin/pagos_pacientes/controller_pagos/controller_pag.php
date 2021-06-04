@@ -484,7 +484,7 @@ function list_pagos_independientes($idpaciente = 0)
                         </table>";*/
 
             $row[] = $pay_dom;
-            $row[] = date('d/m/Y', strtotime($objpagos->fecha_create));
+            $row[] = date('Y/m/d', strtotime($objpagos->fecha_create));
             $row[] = $objpagos->name_tratamm;
 //            $row[] = $CitasNum;
             $row[] = "<span class='' style='padding: 1px 2px; border-radius: 5px; font-weight: bolder; background-color: #66CA86'>$ $objpagos->totalprestaciones </span>  ";

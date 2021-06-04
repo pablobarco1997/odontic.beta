@@ -14,6 +14,8 @@ function list_mail_sent(){
         ordering:false,
         processing:true,
         serverSide:true,
+        lengthChange:false,
+        lengthMenu:[ 10 ],
         ajax:{
             url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/email_sent/controller/controller_emailsent.php',
             type:'POST',
@@ -30,6 +32,36 @@ function list_mail_sent(){
             },
             dataType:'json',
         },
+        columnDefs:[
+            {
+                'targets'   : 6,
+                'searchable':false,
+                'orderable' :false,
+                'className' : 'dt-body-center',
+                'render'    : function (data, type, full, meta){
+
+                    menu= "";
+
+                    if(full['program']==1 && full['estado']=='P'){
+                        var menu = "<div class='col-xs-2 col-md-2 no-padding pull-right ' style='position: relative'>";
+                            menu += "<div class='dropdown pull-right '>";
+                                menu += "<button class='btn btnhover  btn-xs dropdown-toggle' type='button' data-toggle='dropdown' style='height: 100%' >";
+                                menu += " <i class=\"fa fa-ellipsis-v\"></i>";
+                                menu += "</button>";
+
+                                menu += "<ul class='dropdown-menu' style='z-index: +2000'>";
+                                   menu += "<li> <a href='#' data-id='"+btoa(full['id_noti'])+"'> Anular </a> </li>";
+                                menu += "</ul>";
+
+                            menu += "</div>";
+                        menu += "</div>";
+                    }
+
+                    return menu;
+                },
+
+            }
+        ],
         'createdRow':function(row, data, index){
 
             /** Aplicar el ancho */
@@ -39,6 +71,7 @@ function list_mail_sent(){
             $(row).children().eq(3).css('width','15%');
             $(row).children().eq(4).css('width','30%');
             $(row).children().eq(5).css('width','5%');
+            $(row).children().eq(6).css('width','2%');
 
         },
         language:{
