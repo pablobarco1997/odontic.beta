@@ -45,7 +45,7 @@ class send_email_program{
         $odontolog      = $datosEmail['odontolog'];
 
 
-        $url_noti_icon = 'https://adminnube.com/logos_icon/logo_default/dental_noti_.png';
+        $url_noti_icon = 'https://adminnube.com/odontic.beta/logos_icon/logo_default/dental_noti_.png';
 
         $box = '<div style="width: 100%; padding: 20px">
               <table align="center" style="border: 1px solid #d2d6de; width: 500px; padding: 30px; ">
@@ -151,7 +151,7 @@ class send_email_program{
         }else{
 
             $token              = tokenSecurityId(json_encode($create_token_confirm_citas));
-            $buttonConfirmacion = ConfirmacionEmailHTML( $token );
+            $buttonConfirmacion = ConfirmacionEmailHTML( $token, true );
 
             return $buttonConfirmacion;
         }
