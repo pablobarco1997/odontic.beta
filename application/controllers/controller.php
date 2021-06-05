@@ -287,9 +287,14 @@ function decomposeSecurityTokenId($token){
 }
 
 
-function ConfirmacionEmailHTML($token)
+function ConfirmacionEmailHTML($token, $cron=false)
 {
-    $Url_ConfirmCita = DOL_HTTP .'/public/information/index.php?v=confirm_cita&token='.$token;
+    if($cron==true){
+        $Url_ConfirmCita = 'https://adminnube.com/odontic.beta/public/information/index.php?v=confirm_cita&token='.$token;
+    }else{
+        $Url_ConfirmCita = DOL_HTTP .'/public/information/index.php?v=confirm_cita&token='.$token;
+    }
+
 
     $buttonToken = '';
     $buttonToken .= '

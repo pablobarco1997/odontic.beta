@@ -36,8 +36,6 @@ class send_email_program{
 
     private function btnEmailToken( $datosEmail = array() ){
 
-        require_once  '../application/config/lib.global.php';
-
         $Mensaje        = $datosEmail['mess'];
         $name_clinica   = $datosEmail['name_clinica'];
         $recordatorio   = $datosEmail['recordatorio'];
@@ -47,7 +45,7 @@ class send_email_program{
         $odontolog      = $datosEmail['odontolog'];
 
 
-        $url_noti_icon = DOL_HTTP.'/logos_icon/logo_default/dental_noti_.png';
+        $url_noti_icon = 'https://adminnube.com/logos_icon/logo_default/dental_noti_.png';
 
         $box = '<div style="width: 100%; padding: 20px">
               <table align="center" style="border: 1px solid #d2d6de; width: 500px; padding: 30px; ">
@@ -162,11 +160,10 @@ class send_email_program{
 
     public function send_confirmacion(){
 
-        $Update=""; 
+        $Update="";
 
-        require_once  '../application/config/lib.global.php';
-        require_once  DOL_DOCUMENT .'/application/controllers/controller.php';
-        require_once  DOL_DOCUMENT .'/public/lib/PHPMailer/PHPMailerAutoload.php';
+        require_once  '../application/controllers/controller.php';
+        require_once  '../public/lib/PHPMailer/PHPMailerAutoload.php';
 
 
         //obtengo la fecha spanish
