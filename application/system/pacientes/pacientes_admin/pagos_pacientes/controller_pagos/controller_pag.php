@@ -514,27 +514,19 @@ function listPrestacionesApagar($idpaciente, $idplantram)
                 dt.fk_prestacion , 
                 ct.fk_paciente as paciente,  
                 dt.fk_diente as diente,           
-                
                 dt.estado_pay , 
                 
                 -- PRESTACION
                 cp.descripcion prestacion ,  
                 
                 dt.estadodet , 
-                
-                IF(dt.estadodet = 'R',
-                    'Realizada',
-                    'Pendiente') AS estadoprestacion,
+                IF(dt.estadodet = 'R', 'Realizada', 'Pendiente') AS estadoprestacion,
                 
                 -- TOTAL    
                 ROUND(dt.total, 2) AS totalprestacion , 
                 
                  -- ABONADO
-                 (select ifnull(round(sum(pd.amount),2),0) from tab_pagos_independ_pacientes_det pd 
-                      where 
-                    pd.fk_plantram_cab = ct.rowid and 
-                    pd.fk_plantram_det = dt.rowid
-                 ) as abonado 
+                 (select ifnull(round(sum(pd.amount),2),0) from tab_pagos_independ_pacientes_det pd where pd.fk_plantram_cab = ct.rowid and pd.fk_plantram_det = dt.rowid) as abonado 
                  
                 ,ifnull((select lb.name from tab_conf_laboratorios_clinicos lb where lb.rowid = cp.fk_laboratorio),'') as nom_laboratorio
                 
@@ -548,24 +540,21 @@ function listPrestacionesApagar($idpaciente, $idplantram)
             
                 ct.rowid = dt.fk_plantratam_cab
                 AND cp.rowid = dt.fk_prestacion
-                
-                    AND ct.fk_paciente = $idpaciente
-                    
-                    AND ct.rowid = $idplantram 
-                    
-                    -- Muestro 
-                    -- PA RECAUDADO COMPLETO (SE REALIZO EL PAGO COMPLETO )
-                    -- PE RECAUDADO PENDIENTE (NO HAY PAGOS)
-                    -- PS ABONADO (SOLO HAY ABONADO)
-                    AND dt.estado_pay IN('PE', 'PS', 'PA') 
+                AND ct.fk_paciente = $idpaciente
+                AND ct.rowid = $idplantram     
+                -- Muestro 
+                -- PA RECAUDADO COMPLETO (SE REALIZO EL PAGO COMPLETO )
+                -- PE RECAUDADO PENDIENTE (NO HAY PAGOS)
+                -- PS ABONADO (SOLO HAY ABONADO)
+                AND dt.estado_pay IN('PE', 'PS', 'PA') 
                     order by dt.rowid desc";
 
 //    echo '<pre>'; print_r($sql); die();
     $resul = $db->query($sql);
 
     $icoPieza = "data:image/*; base64,".base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/diente.png'));
-    if($resul && $resul->rowCount() > 0)
-    {
+
+    if($resul && $resul->rowCount() > 0){
         $i = 0;
         while($objPrest =   $resul->fetchObject() ){
 
@@ -580,17 +569,17 @@ function listPrestacionesApagar($idpaciente, $idplantram)
             }
             #R => REALIZADO
             if($objPrest->estadodet == 'R'){
-                $estadoDetPresta = '<label class="label" style="background-color: #D5F5E3; color: green; font-weight: bolder;font-size: 0.8em">REALIZADO</label>';
+                $estadoDetPresta = '<label class="" style="background-color: #D5F5E3; color: green; font-weight: bolder;font-size: 0.8em; margin-top: 1px; padding: 5px; border-radius: 1px " title="REALIZADO">REALIZADO</label>';
             }
 
             #P => EN PROCESO
             if($objPrest->estadodet == 'P'){
-                $estadoDetPresta = '<label class="label" style="background-color: #7BA5E1; color: #114DA4; font-weight: bolder;font-size: 0.8em">EN PROCESO</label>';
+                $estadoDetPresta = '<label class="" style="background-color: #7BA5E1; color: #114DA4; font-weight: bolder;font-size: 0.8em; margin-top: 1px; padding: 5px; border-radius: 1px" title="EN PROCESO">EN PROCESO</label>';
             }
 
             #A => PENDIENTE
             if($objPrest->estadodet == 'A'){
-                $estadoDetPresta = '<label class="label" style="background-color: #F6E944; color: #B88B1C; font-weight: bolder;font-size: 0.8em">PENDIENTE</label>';
+                $estadoDetPresta = '<label class="" style="background-color: #F6E944; color: #B88B1C; font-weight: bolder;font-size: 0.8em; margin-top: 1px; padding: 5px; border-radius: 1px" title="PENDIENTE">PENDIENTE</label>';
             }
 
             $apagar = '<span class="" style="font-weight: bolder; ">    

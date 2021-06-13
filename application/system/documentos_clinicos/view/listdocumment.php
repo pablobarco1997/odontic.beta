@@ -34,7 +34,7 @@ $modulo = true;
     <div  class="form-group col-md-12 col-xs-12">
         <?= Breadcrumbs_Mod($titulo, $url_breadcrumbs, $modulo); ?>
         <label for="">LISTA DE COMPORTAMIENTOS</label>
-        <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px">
+        <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px; background-color: #f4f4f4">
             <li> <a href="#ContenFiltroDocumentos" data-toggle="collapse" style="color: #333333" class="btnhover btn btn-sm " id="fitrar_document"> <b>  ▼ &nbsp;Filtrar <i ></i> </b> </a> </li>
             <li> <a href="#addnewdocument" data-toggle="modal" style="color: #333333" class="btnhover hidden btn btn-sm " id="create_document" > <b> <i class="fa fa-file-text"></i> &nbsp; nuevo documento clinico <i ></i> </b> </a> </li>
             <li> <a href="<?= (!PermitsModule(4,2))?'':DOL_HTTP.'/application/system/documentos_clinicos/index.php?view=createform_regist'; ?>" style="color: #333333" class="btnhover btn btn-sm <?= (!PermitsModule(4,2))?"disabled_link3":""; ?> " > <b> <i class="fa fa-file"></i> &nbsp; crear nuevo formulario clinico <i ></i> </b> </a> </li>
@@ -88,9 +88,9 @@ $modulo = true;
         <table class="table" WIDTH="100%" id="list_docum_clini">
             <thead>
                 <tr>
-                    <th width="15%">Fecha</th>
-                    <th width="30%">Documento Clinico</th>
-                    <th width="60%">Descripción (opcional)</th>
+                    <th width="20%">Emitido</th>
+                    <th width="40%">Documento Clinico</th>
+                    <th width="50%">Descripción (opcional)</th>
                     <th>&nbsp;</th>
                 </tr>
             </thead>

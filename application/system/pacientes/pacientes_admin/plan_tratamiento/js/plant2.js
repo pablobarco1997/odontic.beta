@@ -179,7 +179,7 @@ if($accion == 'addplan')
             // P = EN PROCESO
             html += "<tr class='detalleListaInsert'>";
 
-                html += "<td class='dientePieza' data-iddiente='"+iddiente+"' style='padding-left: 15px'>  " +
+            html += "<td class='dientePieza' data-iddiente='"+iddiente+"' style='padding-left: 15px'>  " +
                         "<div class='form-group col-md-12 col-xs-12 no-padding no-margin' style='padding: 0px !important;'>" +
                         // "  <div class='form-group col-xs-12 col-sm-12 no-padding' >  " +
                         //     "      <a   style='font-size: 2rem; cursor:pointer;color: #9f191f'  class='terminarEstaPrestacionOpcion1' " + onclickRealizadoModal + " > " +
@@ -187,6 +187,7 @@ if($accion == 'addplan')
                         //     "       </a>" +
                         // "  </div>" +
                         "<div class='form-group col-sm-11 col-xs-12 no-padding no-margin' >" +
+
                         "<p class='' style='margin: 0px; font-size: 1.5rem' data-id='"+ fk_prestacion +"'> <b> "+ prestacion +" </b> &nbsp; <i class='fa fa-flag statusdet' data-estadodet='"+statusdet+"' data-iddet='"+rowiddetalle+"' ></i> </p>  ";
 
             //Si en caso la prestacion esta relacionada an laboratorio
@@ -202,27 +203,27 @@ if($accion == 'addplan')
             }
 
 
-            html +=  "<div style='padding: 3px;  background-color: rgba(221,221,221, 0.3); '>" +
-                        " <a class='btn btn-xs text-bold btnhover'  style='cursor:pointer;' "+onclickRealizadoModal+" > "+ImgRealizadoChecked+"  </a>" +
-                        " <a class='btn btn-xs text-bold btnhover'  style='cursor:pointer;color: #9f191f' onclick='UpdateDeletePrestacionAsignada($(this))' > <i class='fa fa-trash'></i> Eliminar  </a>" +
-                        " <a style='cursor: pointer' data-toggle='collapse' data-target='#masInformacion-"+i+"' class='btn btn-xs text-bold btnhover'> <i class='fa fa-info-circle'></i> Mas información</a>" +
-                        " <a href='#detdienteplantram' data-toggle='modal' class='btn btn-xs text-bold btnhover hide'  style='cursor: pointer'  > <i class='fa fa-edit'></i> Modificar</a>" +
-                        " <a class='btn btn-xs text-bold btnhover "+((labelestadoPago=='')?'hidden':'')+"'  style='cursor: pointer'> "+ labelestadoPago +" </a>" +
-                        " <a class='btn btn-xs text-bold btnhover'  style='cursor: pointer' onclick='UpdateDeletePrestacionAsignada($(this), \"P\")' > "+ ((statusdet=='A')?"En Proceso":"") +" </a>" +
-                     "</div>" +
+                    html +=  "<div style='padding: 3px;  background-color: rgba(221,221,221, 0.3); '>" +
+                                " <a class='btn btn-xs text-bold btnhover'  style='cursor:pointer;' "+onclickRealizadoModal+" > "+ImgRealizadoChecked+"  </a>" +
+                                " <a class='btn btn-xs text-bold btnhover'  style='cursor:pointer;color: #9f191f' onclick='UpdateDeletePrestacionAsignada($(this))' > <i class='fa fa-trash'></i> Eliminar  </a>" +
+                                " <a style='cursor: pointer' data-toggle='collapse' data-target='#masInformacion-"+i+"' class='btn btn-xs text-bold btnhover'> <i class='fa fa-info-circle'></i> Mas información</a>" +
+                                " <a href='#detdienteplantram' data-toggle='modal' class='btn btn-xs text-bold btnhover hide'  style='cursor: pointer'  > <i class='fa fa-edit'></i> Modificar</a>" +
+                                " <a href='#modPagosxPacientes' data-toggle='modal' class='btn btn-xs text-bold btnhover "+((labelestadoPago=='')?'hidden':'')+"'  style='cursor: pointer' data-iddet='"+rowiddetalle+"' > "+ labelestadoPago +" </a>" +
+                                " <a class='btn btn-xs text-bold btnhover'  style='cursor: pointer' onclick='UpdateDeletePrestacionAsignada($(this), \"P\")' > "+ ((statusdet=='A')?"En Proceso":"") +" </a>" +
+                             "</div>" +
 
-                "       <div class='masInformacion col-xs-12 col-md-12 collapse' id='masInformacion-"+i+"'>" +
-                "           <p class='text-justify no-margin'> " +
-                "              <p class='no-margin' > " +
-                "                 "+smallUsuarioxCreate+"       " +
-                "                 "+smallUsuarioxRealizado+"    " +
-                "               </p>  " +
-                "           </p>" +
-                "       </div>"+
+                                "       <div class='masInformacion col-xs-12 col-md-12 collapse' id='masInformacion-"+i+"'>" +
+                                "           <p class='text-justify no-margin'> " +
+                                "              <p class='no-margin' > " +
+                                "                 "+smallUsuarioxCreate+"       " +
+                                "                 "+smallUsuarioxRealizado+"    " +
+                                "               </p>  " +
+                                "           </p>" +
+                                "       </div>"+
 
-                "     </div> " +
-            "   </div>  " +
-            " </td>";
+                        "</div> " +
+                "   </div>  " +
+                " </td>";
 
             html += "<td>  " +
                     "   <div class='form-group col-md-12 col-xs-12' style='margin-top: 15%'>" +
@@ -995,4 +996,69 @@ $("#prestacion_planform").select2({
         }
     }
 });
+
+
+$("#modPagosxPacientes").on('show.bs.modal', function (e) {
+
+
+    var iddetalle = $(e.relatedTarget).prop('dataset').iddet;
+
+    if(iddetalle != ""){
+        if(iddetalle != 0){
+
+            var table3 = $("#pagosxpacientes_prestaciones").DataTable({
+                searching: false,
+                destroy: true,
+                "ordering":false,
+                "serverSide": true,
+                lengthChange: false,
+                fixedHeader: true,
+                paging:true,
+                processing: true,
+                lengthMenu:[ 10 ],
+                "ajax":{
+                    "url": $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
+                    "type":'POST',
+                    "data": {
+                        'ajaxSend'             : 'ajaxSend',
+                        'accion'               : 'pagosxpacientes_prestaciones',
+                        'iddetalle'            :  iddetalle ,
+                        'idpaciente'           :  $id_paciente,
+                        'idtratamiento'        :  $ID_PLAN_TRATAMIENTO,
+                    },
+                    "dataType":'json',
+                    "complete": function(xhr, status) {
+
+                    }
+                },
+                language: {
+                    "sProcessing":     "Procesando...",
+                    "sLengthMenu":     "Mostrar _MENU_ registros",
+                    "sZeroRecords":    "No se encontraron resultados",
+                    "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                    "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                    "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                    "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                    "sInfoPostFix":    "",
+                    "sSearch":         "Buscar:",
+                    "sUrl":            "",
+                    "sInfoThousands":  ",",
+                    "oPaginate": {
+                        "sFirst":    "Primero",
+                        "sLast":     "Último",
+                        "sNext":     "Siguiente",
+                        "sPrevious": "Anterior"
+                    },
+                    "oAria": {
+                        "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                    }
+                },
+            });
+        }
+    }
+
+    console.log($(e.relatedTarget).prop('dataset').iddet);
+});
+
 

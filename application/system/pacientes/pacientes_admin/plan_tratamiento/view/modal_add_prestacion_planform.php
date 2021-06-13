@@ -111,7 +111,7 @@
                                         <th title="TOTAL">Total</th>
                                     </tr>
                                 </thead>
-                                <tbody id="detalle-prestacionesPlantram" style="height: 1232px; overflow-y: auto">
+                                <tbody id="detalle-prestacionesPlantram" style="">
                                     <tr rowspan="5">
                                         <td class="text-center" colspan="6">NO HAY DETALLE</td>
                                     </tr>

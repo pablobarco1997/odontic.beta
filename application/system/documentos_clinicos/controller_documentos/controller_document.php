@@ -53,7 +53,7 @@ if( (isset($_POST['ajaxSend']) && isset($_POST['accion'])) || (isset($_GET['ajax
 
                             if($object->id_table_form_document != null || $object->id_table_form_document != ""){
                                 $rows = array();
-                                $rows[] = date("Y/m/d", strtotime($object->datecreate))."<br>".date("H:m:s", strtotime($object->datecreate));
+                                $rows[] = date("Y/m/d", strtotime($object->datecreate));
                                 $rows[] = $object->nombre_documento;
                                 $rows[] = $object->Descripcion;
                                 $rows[] = "";

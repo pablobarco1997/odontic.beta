@@ -2213,6 +2213,90 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             break;
 
 
+        case 'pagosxpacientes_prestaciones':
+
+            $data = [];
+
+
+            $start          = $_POST["start"];
+            $length         = $_POST["length"];
+
+            $idpaciente      = GETPOST("idpaciente");
+            $iddetalle       = GETPOST("iddetalle");
+            $idcabtranmiento = GETPOST("idtratamiento");
+
+            $fk_prestacion = "";
+            $fk_pieza      = "";
+
+            $query = "SELECT            
+
+                pc.rowid,
+                pc.n_fact_boleta, 
+                cast(pd.feche_create as date) as emitido,
+                dt.rowid iddetplantram,
+                ct.rowid idcabplantram,   
+                dt.fk_prestacion , 
+                ct.fk_paciente as paciente,  
+                dt.fk_diente as diente,           
+                dt.estado_pay , 
+                cp.descripcion prestacion ,  
+                dt.estadodet ,
+                ROUND(dt.total, 2) AS totalprestacion , 
+                ifnull(round(sum(pd.amount),2),0) as abonado, 
+                (select t.nom from tab_bank_operacion t where t.rowid = pd.fk_tipopago) as forma_pago
+                
+            FROM
+                tab_conf_prestaciones            as cp ,
+                tab_plan_tratamiento_cab         as ct ,
+                tab_plan_tratamiento_det         as dt ,
+                tab_pagos_independ_pacientes_det as pd ,
+                tab_pagos_independ_pacientes_cab as pc
+            WHERE
+                ct.rowid                = dt.fk_plantratam_cab
+                AND pd.fk_plantram_cab  = ct.rowid
+                AND pd.fk_plantram_det  = dt.rowid
+                AND pc.rowid            = pd.fk_pago_cab
+                AND cp.rowid            = dt.fk_prestacion
+                AND pd.fk_plantram_det  = $iddetalle 
+                AND ct.fk_paciente      = $idpaciente
+                AND ct.rowid            = $idcabtranmiento
+                ";
+            $query .= " group by dt.rowid, pd.rowid  ";
+
+            if($start || $length){
+                $query .= " LIMIT $start,$length;";
+            }
+            $Total = $db->query($query)->rowCount();
+
+            $result = $db->query($query);
+            if($result){
+                if($result->rowCount()>0){
+                    $resultData = $result->fetchAll(PDO::FETCH_ASSOC);
+                        foreach ($resultData as $value){
+
+                            $row = [];
+                            $row[] = $value['emitido'];
+                            $row[] = $value['forma_pago'];
+                            $row[] = 'P_'.str_pad($value['rowid'], 6, "0", STR_PAD_LEFT);;
+                            $row[] = $value['n_fact_boleta'];
+                            $row[] = number_format($value['abonado'],2,'.','');
+
+                            $data[] = $row;
+                        }
+                }
+            }
+
+            $output=[
+                "draw" => $_POST['draw'],
+                "data" => $data,
+                "recordsTotal"    => $Total,
+                "recordsFiltered" => $Total
+
+            ];
+            echo json_encode($output);
+            break;
+
+
     }
 }
 
@@ -2353,16 +2437,16 @@ function listcitas_admin($idPaciente, $fechaInicio, $fechafin, $n_citas, $Estado
 
             $numero_cita_asociada = "<table>
                                         <tr> 
-                                            <td title='número de cita' > <img  src='". $iconCita. "' class='img-rounded' style='width: 25px; height: 25px' > - </td>
-                                            <td> ".(str_pad($obj->id_cita_det, 6, "0", STR_PAD_LEFT))." </td> 
+                                            <td title='número de cita' > <img  src='". $iconCita. "' class='img-rounded' style='width: 20px; height: 20px' > - </td>
+                                            <td style='font-weight: bold'> ".(str_pad($obj->id_cita_det, 6, "0", STR_PAD_LEFT))." </td> 
                                         </tr>
                                      </table>";
 
 
             #FECHA Y HORA DE LA CITAS
             $row[]  = "<div>
-                            <p>". date('Y/m/d', strtotime($obj->fecha_cita)) ."</p>
-                            <p><small style='padding: 3px; background-color: #eaecee'> <i class='fa fa-clock-o'></i> &nbsp; ".$obj->hora_inicio." - ".$obj->hora_fin."</small></p>
+                            <p style='font-size: small; font-weight: bold'>". date('Y/m/d', strtotime($obj->fecha_cita)) ."</p>
+                            <p><small style='padding: 3px; background-color: #eaecee; font-weight: bold '> <i class='fa fa-clock-o'></i> &nbsp; ".$obj->hora_inicio." - ".$obj->hora_fin."</small></p>
                       </div>";
             $row[]  = $obj->especialidad;
             $row[]  = $numero_cita_asociada;

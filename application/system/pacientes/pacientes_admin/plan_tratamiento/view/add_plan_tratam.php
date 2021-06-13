@@ -141,3 +141,39 @@
     </div>
 </div>
 
+
+<!--MODAL LISTA DE PAGOS DEL PACIENTE POR PRESTACIONES PAGADAS-->
+<div id="modPagosxPacientes" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header modal-diseng">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"><span>Lista de pagos por prestaciones</span></h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="form-group col-xs-12 col-md-12">
+                        <div class="table-responsive">
+                            <table class="table table-condensed" id="pagosxpacientes_prestaciones" width="100%">
+                                <thead style="background-color: #f4f4f4;">
+                                    <tr>
+                                        <th>Emitido</th>
+                                        <th>Forma</th>
+                                        <th># Pago</th>
+                                        <th># Documento</th>
+                                        <th>Saldo</th>
+                                    </tr>
+                                </thead>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
