@@ -14,6 +14,7 @@ function ProccessCronSendEmail(){
     //obtengos la clinicas registradas
     $fetchClinicas    = $dbconectar->fetchClinicas($dbconectar->Connection);
 
+//    echo '<pre>'; print_r($fetchClinicas); die();
     $ArraySendProgram = array();
 
     //recorro las database existentes
@@ -32,8 +33,11 @@ function ProccessCronSendEmail(){
                 }
             }
 
-            $ArraySendProgram['clinica_'.$value['db_name']]['name_db']      = $value['db_name'];
-            $ArraySendProgram['clinica_'.$value['db_name']]['info_clinica'] = $dbconectar->obtener_clinica($value['db_name']);
+            $ArraySendProgram['clinica_'.$value['db_name']]['name_db']                          = $value['db_name'];
+            $ArraySendProgram['clinica_'.$value['db_name']]['info_clinica']                     = $dbconectar->obtener_clinica($value['db_name']);
+            $ArraySendProgram['clinica_'.$value['db_name']]['info_clinica']->mail_service       = (empty($value['mail_service'])?'':$value['mail_service']);
+            $ArraySendProgram['clinica_'.$value['db_name']]['info_clinica']->password_service   = (empty($value['password_service'])?'':$value['password_service']);
+            $ArraySendProgram['clinica_'.$value['db_name']]['info_clinica']->disabled_mail      = (empty($value['disabled_mail'])?'':$value['disabled_mail']);
 
             //email programados
             $sql = "select 
@@ -78,7 +82,6 @@ function ProccessCronSendEmail(){
                         cita.fk_doc as id_odontologo,
                         (select concat(o.nombre_doc,' ',o.apellido_doc) from tab_odontologos o where o.rowid = cita.fk_doc) as odontol, 
                         cast(concat(cast(cita.fecha_cita AS DATE),' ',cita.hora_inicio) as datetime) AS fecha_cita_ini
-                        
                     FROM
                         tab_notificacion_email e
                             INNER JOIN

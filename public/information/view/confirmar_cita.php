@@ -52,12 +52,7 @@
             <tr>
                 <td align="center" colspan="2">
                     <p>
-                        <img
-                                src="<?= DOL_HTTP .'/logos_icon/logo_default/campana.png' ;?>"
-                                alt=""
-                                width="90px"
-                                height="90px"
-                        />
+                        <img src="<?=  "data: image/*; base64, ".base64_encode(file_get_contents(DOL_DOCUMENT .'/logos_icon/logo_default/campana.png')) ;?>" alt="" width="90px" height="90px" />
                     </p>
                 </td>
             </tr>

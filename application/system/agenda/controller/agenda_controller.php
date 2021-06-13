@@ -1491,6 +1491,9 @@ function Email_confirmacion_programDate($datos=array(), $fecha_programa, $id_cit
 
     if($datos->idcita!=0){
 
+        //se elimina la lista de confirmaciones asociado a dicha cita para eviar la duplicida de confirmacion
+        $result = $db->query("DELETE FROM `tab_noti_confirmacion_cita_email` WHERE `rowid`>0 and `fk_cita`= ".$datos->idcita);
+
         $queryNoti  = " INSERT INTO `tab_noti_confirmacion_cita_email` (`fk_paciente`, `fk_cita`, `estado` , `fk_noti_email`) ";
         $queryNoti .= " VALUES(";
         $queryNoti .= " $datos->idpaciente ,";

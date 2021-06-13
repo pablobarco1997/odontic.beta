@@ -138,8 +138,8 @@ function obtenerCitasSendNoti($idPaciente, $Fecha, $Status, $n_citas){
 
             $numCita = "<table>
                             <tr>
-                                <td><img src='data:image /*; base64, ". base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/cita-medica.ico'))."' alt='' class=' img-rounded' style='width: 25px; height: 25px'>-</td>
-                                <td>".(str_pad($obj->fk_cita, 5, "0", STR_PAD_LEFT))."</td>
+                                <td style='font-weight: bold'><img src='data:image /*; base64, ". base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/cita-medica.ico'))."' alt='' class=' img-rounded' style='width: 25px; height: 25px'> -</td>
+                                <td style='font-weight: bold'>".(str_pad($obj->fk_cita, 5, "0", STR_PAD_LEFT))."</td>
                             </tr>
                         </table>";
 

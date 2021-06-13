@@ -7,10 +7,12 @@ class log{
 
     private $db;
 
-    public $consultar   = "CONSULTAR";
-    public $crear       = "CREAR";
-    public $modificar   = "MODIFICAR";
-    public $eliminar    = "ELIMINAR";
+    public $consultar      = "CONSULTAR";
+    public $crear          = "CREAR";
+    public $modificar      = "MODIFICAR";
+    public $eliminar       = "ELIMINAR";
+    public $error          = "ERROR"; //cuando ocurre un error en la consulta
+    public $CronLinux      = "TAREAS_CRON_SERVER";
 
 
     public function __construct($db, $id_users_author){

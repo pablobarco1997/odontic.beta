@@ -4,6 +4,9 @@ include_once '../application/config/lib.global.php';
 
 class db_and_procesos{
 
+    private $hosting = "a03be9415be4179e42b7d2aff6032911";
+//    private $hosting = "";
+
     var $db;
     var $Connection;
 
@@ -13,7 +16,7 @@ class db_and_procesos{
 
     function Connection(){
 
-        /*if(md5($_SERVER['SERVER_NAME'])=='068234a2d85a5233fd17f6d0507d3454'){
+        if($this->hosting=='a03be9415be4179e42b7d2aff6032911'){
             #REMOTO
             $conexion = null;
             $host     = 'localhost'; #ip o nombre del servidor remoto o local
@@ -29,15 +32,8 @@ class db_and_procesos{
             $username = 'root';
             $password = ''; #PASSWIRD #PASSWORD SERVIDOR REMOTO ==> Pablo_1997
             $utf8mb4  = 'utf8mb4';
-        }*/
+        }
 
-        #REMOTO
-        $conexion = null;
-        $host     = 'localhost'; #ip o nombre del servidor remoto o local
-        $database = 'adminnub_sch_dental_entity_login'; //SE ENCUENTRA TODAS LAS ENTIDADES REGISTRADAS
-        $username = 'adminnub_entidad_dental'; //Usuario de la Base de datos todos los privilegios
-        $password = '740631f8cd06c9b56f1190b29db9ec54'; #PASSWIRD #PASSWORD SERVIDOR REMOTO ==> Pablo_1997
-        $utf8mb4  = 'utf8mb4';
 
         try{
             $conexion = new PDO("mysql:host=$host;dbname=$database;charset=$utf8mb4",$username, $password );
@@ -49,7 +45,7 @@ class db_and_procesos{
     }
 
     function dbConectar($dbname){
-        /*if(md5($_SERVER['SERVER_NAME'])=='068234a2d85a5233fd17f6d0507d3454'){
+        if($this->hosting=='a03be9415be4179e42b7d2aff6032911'){
             #REMOTO
             $conexion = null;
             $host     = 'localhost'; #ip o nombre del servidor remoto o local
@@ -65,15 +61,9 @@ class db_and_procesos{
             $username = 'root';
             $password = ''; #PASSWIRD #PASSWORD SERVIDOR REMOTO ==> Pablo_1997
             $utf8mb4  = 'utf8mb4';
-        }*/
+        }
 
-        #REMOTO
-        $conexion = null;
-        $host     = 'localhost'; #ip o nombre del servidor remoto o local
-        $database = $dbname; //SE ENCUENTRA TODAS LAS ENTIDADES REGISTRADAS
-        $username = 'adminnub_entidad_dental'; //Usuario de la Base de datos todos los privilegios
-        $password = '740631f8cd06c9b56f1190b29db9ec54'; #PASSWIRD #PASSWORD SERVIDOR REMOTO ==> Pablo_1997
-        $utf8mb4  = 'utf8mb4';
+
         $conexion = new PDO("mysql:host=$host;dbname=$database;charset=$utf8mb4",$username, $password );
 
         if($conexion){
@@ -87,9 +77,12 @@ class db_and_procesos{
 
         $fetchClinicas=[];
         $sql = "SELECT 
-            nombre_db_entity AS db_name, numero_entity AS entity
-        FROM
-            tab_entidades_dental;";
+                    d.rowid, d.nombre_db_entity AS db_name, d.numero_entity AS entity, 
+                    (SELECT e.correo FROM tab_cuentas_correos_clinica e WHERE e.entidad_clinica_id = d.rowid AND e.entity = d.numero_entity) as mail_service, 
+                    (SELECT e.password_email FROM tab_cuentas_correos_clinica e WHERE e.entidad_clinica_id = d.rowid AND e.entity = d.numero_entity) as password_service, 
+                    (SELECT e.disabled FROM tab_cuentas_correos_clinica e WHERE e.entidad_clinica_id = d.rowid AND e.entity = d.numero_entity) as disabled_mail
+            FROM
+                tab_entidades_dental d;";
         $result = $db->query($sql);
         if($result && $result->rowCount()>0){
             $fetchClinicas = $result->fetchAll(PDO::FETCH_ASSOC);

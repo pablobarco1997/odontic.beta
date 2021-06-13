@@ -5,8 +5,12 @@ class send_email_program{
 
     var $db;
 
-    private $service_Email      = "odontic2@adminnube.com";
-    private $service_Password   = "7))UK[zmjVn$";
+    //true  servidor remoto
+    //false servidor local
+    private $cronlinuxServer = true;
+
+    var $service_Email      = "";
+    var $service_Password   = "";
 
     var $id_noti;
 
@@ -130,16 +134,33 @@ class send_email_program{
 
     private function btn_token_confirmacion(){
 
-        $idcita = $this->id_cita_agendada;
+        require_once  '../application/config/class.log.php';
+        $log = new log($this->db,0);
 
-        $this->db->query("DELETE FROM `tab_noti_token_confirmacion` WHERE `fk_cita_agendada`= $idcita; ");
+        $idcita = $this->id_cita_agendada;
+        $resultTokenDel = $this->db->query("DELETE FROM `tab_noti_token_confirmacion` WHERE `fk_cita_agendada`= $idcita; ");
+
+        if($resultTokenDel){
+            $log->log(0, $log->eliminar, 'Eliminacion de registros Token de confirmación Asociado a N. cita id: '.$idcita, 'tab_noti_token_confirmacion' );
+        }
+
         $idToken =  $this->db->query("INSERT INTO `tab_noti_token_confirmacion` (`fk_cita_agendada`, `token`) VALUES ($idcita, 'NULL') ");
 
         if($idToken){
 
             $idToken = $this->db->lastInsertId("tab_noti_token_confirmacion");
+
+            $log->log($idToken, $log->crear, "Se registro un nuevo Token de confirmación id: $idToken Asociado a N. cita id: ".$idcita, 'tab_noti_token_confirmacion' );
+
             $create_token_confirm_citas = [$idcita,md5($this->datosClinica->nombre_db_entity),md5($this->datosClinica->numero_entity),$this->datosClinica->nombre,$this->datosClinica->logo, $idToken];
             $result  =  $this->db->query("UPDATE `tab_noti_token_confirmacion` SET `token`= '".((tokenSecurityId(json_encode($create_token_confirm_citas))))."'  WHERE `rowid`= $idToken;");
+
+            $labelQueryErr="UPDATE `tab_noti_token_confirmacion` SET `token`= '".((tokenSecurityId(json_encode($create_token_confirm_citas))))."'  WHERE `rowid`= $idToken;";
+            if($result){
+                $log->log($idToken, $log->modificar, 'Se Modifico Token de confirmación Asociado a N. cita id: '.$idcita, 'tab_noti_token_confirmacion' );
+            }else{
+                $log->log($idToken, $log->error, "Ocurrio un error al Modificar el Token de confirmación id: $idToken Asociado a N. cita id: ".$idcita, 'tab_noti_token_confirmacion', $labelQueryErr );
+            }
 
         }else{
 
@@ -151,7 +172,7 @@ class send_email_program{
         }else{
 
             $token              = tokenSecurityId(json_encode($create_token_confirm_citas));
-            $buttonConfirmacion = ConfirmacionEmailHTML( $token, true );
+            $buttonConfirmacion = ConfirmacionEmailHTML( $token, $this->cronlinuxServer );
 
             return $buttonConfirmacion;
         }
@@ -164,7 +185,8 @@ class send_email_program{
 
         require_once  '../application/controllers/controller.php';
         require_once  '../public/lib/PHPMailer/PHPMailerAutoload.php';
-
+        require_once  '../application/config/class.log.php';
+        $log = new log($this->db, 0);
 
         //obtengo la fecha spanish
         $spanishxDate = GET_DATE_SPANISH(date('Y-m-d', strtotime($this->fecha_cita))) ." - hora ".$this->hora_cita;
@@ -193,6 +215,7 @@ class send_email_program{
         $mail->SMTPAutoTLS = TRUE;
         $mail->SMTPSecure = "ssl";
 
+        //servidor de correo
         $mail->Username = $this->service_Email;//correo del servidor
         $mail->Password = $this->service_Password;//password de servidor de correo
 
@@ -205,33 +228,61 @@ class send_email_program{
         $mail->Body = $FormHtml;
 
         if($mail->send()){
+             $log->log($this->id_noti, $log->CronLinux, 'Se realizo el envio de E-mail Tareas Cron Ejecutado Correctamente', 'tab_notificacion_email' );
              if($this->Actualizar_notificacion_email()==-1){
                  $Update = "Ocurrio un error con la actualización del envio ";
              }
         }else{
-            $Update='Ocurrio un error con el envio del emil';
+
+            $Update='Ocurrio un error con el envio del e-mil';
+            $err_send_main = "Ocurrio un problema con el servidor no pudo enviar el correo, consulte con soporte  Tecnico \n ".$mail->ErrorInfo;
+            $log->log($this->id_noti, $log->CronLinux, $err_send_main, 'tab_notificacion_email', 'Ocurrio un problema con el servidor para envio de e-mail ( PROCESO CRON )');
+
+            $this->db->query("UPDATE `tab_notificacion_email` SET `estado`='A', program=0, error_send_program='".$err_send_main."' WHERE `rowid`=".$this->id_noti. " and fk_cita = ".$this->id_cita_agendada);
+            $desc = "Se Modifico el registro E-mail Asociados id: ".$this->id_noti." Cambio de Estado `No confirmado`\n(Error de envio de E-mail)\nAsociado de N. cita Agendada:  ".$this->id_cita_agendada;
+            $log->log($this->id_noti, $log->error, $desc, 'tab_notificacion_email');
         }
 
         return $Update;
 
-//        print_r($FormHtml);
 
     }
 
     private function Actualizar_notificacion_email(){
 
+        require_once  '../application/config/class.log.php';
+        $log = new log($this->db,0);
+
         $err_count = 0;
         $result = $this->db->query("UPDATE `tab_notificacion_email` SET `estado`='A', program=0 WHERE `rowid`=".$this->id_noti. " and fk_cita = ".$this->id_cita_agendada);
         if(!$result){
+
+            $desc = "Ocurrio un error al Modificar E-mail Asociados id: ".$this->id_noti. "\nAsociado de N. cita Agendada:  ".$this->id_cita_agendada;
+            $log->log($this->id_noti, $log->error, $desc, 'tab_notificacion_email',  "UPDATE `tab_notificacion_email` SET `estado`='A', program=0 WHERE `rowid`=".$this->id_noti. " and fk_cita = ".$this->id_cita_agendada );
             $err_count++;
+        }else{
+
+            $desc = "Se Modifico el registro E-mail Asociados id: ".$this->id_noti." Cambio de Estado `No confirmado`\nAsociado de N. cita Agendada:  ".$this->id_cita_agendada;
+            $log->log($this->id_noti, $log->modificar, $desc, 'tab_notificacion_email');
         }
-            $result = $this->db->query("UPDATE `tab_pacientes_citas_det` SET `fk_estado_paciente_cita`= 1 WHERE `rowid`='".$this->id_cita_agendada."'; ");
-            if(!$result){
-                $err_count++;
-            }
-            if($err_count!=0){
-                return -1;
-            }
+
+        $estado = $this->db->query("select text as label from tab_pacientes_estado_citas where rowid = 1")->fetchObject()->label;
+
+        $result = $this->db->query("UPDATE `tab_pacientes_citas_det` SET `fk_estado_paciente_cita`= 1 WHERE `rowid`='".$this->id_cita_agendada."'; ");
+        if(!$result){
+
+            $desc = "Ocurrio un error al Modificar la cita id: ".$this->id_cita_agendada. " Cambio de estado a: ".$estado;
+            $log->log($this->id_cita_agendada, $log->modificar, $desc, 'tab_pacientes_citas_det');
+            $err_count++;
+        }else{
+
+            $desc = "Se Modifico el registro de una cita id: ".$this->id_cita_agendada. " Cambio de estado a: ".$estado;
+            $log->log($this->id_cita_agendada, $log->modificar, $desc, 'tab_pacientes_citas_det');
+        }
+
+        if($err_count!=0){
+            return -1;
+        }
         return "";
 
     }
