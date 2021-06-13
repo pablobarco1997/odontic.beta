@@ -1368,6 +1368,10 @@ function notificarCitaEmail($datos, $token_confirmacion)
                 $r1 = $db->query($queryDel);
                 if($r1)
                 {
+
+                    //se elimina la lista de confirmaciones asociado a dicha cita para eviar la duplicida de confirmacion
+                    $resultConfNoti = $db->query("DELETE FROM `tab_noti_confirmacion_cita_email` WHERE `rowid`>0 and `fk_cita`= ".$datos->idcita);
+
                     $queryNoti  = " INSERT INTO `tab_noti_confirmacion_cita_email` (`fk_paciente`, `fk_cita`, `estado` , `fk_noti_email`) ";
                     $queryNoti .= " VALUES(";
                     $queryNoti .= " $datos->idpaciente ,";
@@ -1376,6 +1380,7 @@ function notificarCitaEmail($datos, $token_confirmacion)
                     $queryNoti .= " $fk_notifi_id ";
                     $queryNoti .= " )";
                     $db->query($queryNoti);
+
                     $idnotiConfirmacion = $db->lastInsertId('tab_noti_confirmacion_cita_email'); #id de la notificaion de insert confirmacion
 
                     if(!empty($idnotiConfirmacion) )
