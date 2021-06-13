@@ -11,7 +11,7 @@
 <style>
     .highcharts-figure, .highcharts-data-table table {
         min-width: 310px;
-        max-width: 800px;
+        max-width: 650px;
         margin: 1em auto;
     }
 
@@ -44,48 +44,33 @@
     }
 </style>
 
-<div class="form-group col-xs-12 col-md-7 col-centered">
-    <div class="form-group col-md-6 col-xs-12">
-        <label for="">Busqueda x Mes</label>
-        <select name="report_meses" id="report_meses" class="form-control" style="width: 100%">
-            <option value=""></option>
-            <?php
-            $Meses = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
-            $i = 1;
-            foreach ($Meses as $value){
-                print "<option value='".$i."'>".$value."</option>";
-                $i++;
-            }
-            ?>
-        </select>
-    </div>
-    <div class="form-group col-md-6 col-xs-12">
-        <label for="">Busqueda x Año</label>
-        <select name="report_anual" id="report_anual" class="form-control" style="width: 100%">
-            <?php
-            for ($u = 2000; $u <= date("Y"); $u++){
-                print "<option value='".$u."'>".$u."</option>";
-            }
-            ?>
-        </select>
-    </div>
-</div>
 
 
 <div class="form-group col-md-12 col-xs-12">
-    <h5 class="text-center text-bold"><span>Pagos recibidos</span></h5>
-</div>
 
-<div class="form-group col-md-12 col-xs-12">
-    <figure class="highcharts-figure" style="width: 100%">
-        <div id="container_pagos_recibidos"></div>
-    </figure>
-    <a href="#recaudacion" id="recaudacion">&nbsp;</a>
+    <div class="row">
+
+        <div class="col-md-6 col-xs-12">
+            <figure class="highcharts-figure" >
+                <div id="container_pagos_recibidos" ></div>
+            </figure>
+<!--            <a href="#recaudacion" id="recaudacion">&nbsp;</a>-->
+        </div>
+
+        <div class="col-md-6 col-xs-12">
+            <figure class="highcharts-figure" >
+                <div id="container_prestaciones_mas_realizadas" ></div>
+            </figure>
+<!--            <a href="#recaudacion" id="recaudacion">&nbsp;</a>-->
+        </div>
+
+    </div>
+
 </div>
 
 <script>
 
-    $dataMes = [
+    var $dataMes = [
         'Ene',
         'Feb',
         'Mar',
@@ -102,28 +87,98 @@
 
     $url_reportes = $DOCUMENTO_URL_HTTP + '/application/system/reportes/controller/controller_reporte.php';
 
-    function chartBrowzerPagosRecibidos(dataMensual, Total, meses, YearText){
+    function chartBrowzerPrestacionesR(data, anual) {
+
+        Highcharts.chart('container_prestaciones_mas_realizadas', {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: "Prestaciones Recaudadas "+"<?= date('Y')?>"
+            },
+            // subtitle: {
+            //     text: 'Click the columns to view versions. Source: <a href="http://statcounter.com" target="_blank">statcounter.com</a>'
+            // },
+            accessibility: {
+                announceNewData: {
+                    enabled: true
+                }
+            },
+            xAxis: {
+                type: 'category',
+            },
+            yAxis: {
+                title: {
+                    text: 'Recaudaciones por Prestaciones'
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                series: {
+                    borderWidth: 0,
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.y} $'
+                    }
+                }
+            },
+
+            tooltip: {
+                // headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                // pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
+                headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> total<br/>'
+            },
+
+            colors: ['#7cb4eb', '#212f3d', '#184999', '#434348'],
+            series: [
+                {
+                    name: "Prestaciones "+anual,
+                    colorByPoint: true,
+                    data: data
+                }
+            ],
+        });
+
+    }
+    
+    function chartBrowzerPagosRecibidos(Series){
+
+        // console.log( [
+        //     {name:'prueba', data:[0,1,2,3,4,5,6,7,8,9,10,11]},
+        //     {name:'prueba2', data:[0,1,2,3,4,5,6,7,8,9,10,11]},
+        //     {name:'prueba3', data:[0,1,2,3,4,5,6,7,8,9,10,11]},
+        // ] );
+        //
+        // console.log(Series);
 
         Highcharts.chart('container_pagos_recibidos', {
             chart:{
                 type:'column'
             },
             title: {
-                text: 'Pago Total de lo que lleva del año '+ YearText + ' <b>$'+Total+'</b>'
+                // text: '<b>TOTAL '+ YearText+' </b> <span style="font-weight: bold ;color: green" >$'+Total+'</span>'
+                text: 'Recaudaciones'
             },
             xAxis: {
-                categories: meses,
-                crosshair: true
+                categories: $dataMes,
+                crosshair: false
             },
             yAxis: {
-                min: 0,
                 title: {
-                    text: ' '
+                    text: ''
+                },
+                labels: {
+                    formatter: function () {
+                        return this.value + ' $';
+                    }
                 }
             },
             // tooltip: {
-            //     headerFormat: '<span style="font-size:11px">Pagos recibidos</span><br>',
-            //     pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>$ {point.y}</b><br/>'
+            //     // headerFormat: '<span>{point.x}</span>',
+            //     // pointFormat: '<span style="color:{point.color}" >{point.name}</span> <small><b>$ {point.y}</b></small>'
             // },
             // plotOptions: {
             //     column: {
@@ -131,83 +186,118 @@
             //         borderWidth: 0
             //     }
             // },
-            series:[
-                {
-                    name: 'Pago total del Mes',
-                    data: dataMensual
-                }
-            ],
-            responsive: {
-                rules: [{
-                    condition: {
-                        maxWidth: 1000
-                    },
-                    chartOptions: {
-                        legend: {
-                            layout: 'horizontal',
-                            align: 'center',
-                            verticalAlign: 'bottom'
-                        }
-                    }
-                }]
-            }
+
+            // series:[
+            //     {name:'prueba', data:[0,1,2,3,4,5,6,7,8,9,10,11]},
+            //     {name:'prueba2', data:[0,1,2,3,4,5,6,7,8,9,10,11]},
+            //     {name:'prueba3', data:[0,1,2,3,4,5,6,7,8,9,10,11]},
+            // ],
+
+            series: Series,
+
+            // responsive: {
+            //     rules: [{
+            //         condition: {
+            //             maxWidth: '650px'
+            //         },
+            //         chartOptions: {
+            //             legend: {
+            //                 layout: 'horizontal',
+            //                 align: 'center',
+            //                 verticalAlign: 'bottom'
+            //             }
+            //         }
+            //     }]
+            // }
         });
     }
 
     function loadcharRecaudacionesPagosRecibidos(focus = false){
-        var $Mes = [];
-        var u = 0;
-        $.each($dataMes, function (i, item) {
-            var m = $("#report_meses").find(":selected").val();
-            if( m !=""){
-                if(m==(u+1)){
-                    $Mes.push($dataMes[u]);
+
+        $.ajax({
+            url: $url_reportes,
+            type: 'POST',
+            data:{
+                'accion' : 'fechPagosRecibidosMensuales',
+                'ajaxSend' : 'ajaxSend',
+                'year': $("#report_anual").find(":selected").val(),
+                'mes' : $("#report_meses").find(":selected").val(),
+            },
+            dataType: 'json',
+            cache: false, 
+            async:true ,
+            success: function (response) {
+                var respuesta = response;
+                if(respuesta['error']==''){
+                    chartBrowzerPagosRecibidos(respuesta['data']);
                 }
             }
-            else{
-                $Mes.push($dataMes[u]);
-            }
-            u++;
         });
 
-        $.get($url_reportes, {
-                'ajaxSend':'ajaxSend',
-                'accion':'fechPagosRecibidosMensuales',
-                'year':$("#report_anual").find(":selected").val(),
-                'mes': $("#report_meses").find(":selected").val()
-            },
-            function(data) {
-                var respuesta = $.parseJSON(data);
-                if(respuesta['error']==''){
-                    chartBrowzerPagosRecibidos(respuesta['err'],respuesta['totalAnual'],$Mes, $("#report_anual").find(":selected").text());
-                }
-        });
+        // $.get($url_reportes, {
+        //         'ajaxSend':'ajaxSend',
+        //         'accion':'fechPagosRecibidosMensuales',
+        //         'year':$("#report_anual").find(":selected").val(),
+        //         'mes': $("#report_meses").find(":selected").val()
+        //     },
+        //     function(data) {
+        //         var respuesta = $.parseJSON(data);
+        //         if(respuesta['error']==''){
+        //             chartBrowzerPagosRecibidos(respuesta['err'],respuesta['totalAnual'],$Mes, $("#report_anual").find(":selected").text());
+        //         }
+        // });
+
         if(focus==true){
 
         }
     }
 
+    function loadCharPrestacionesRealizadas(){
 
-    $("#report_anual, #report_meses").change(function () {
-        loadcharRecaudacionesPagosRecibidos(true);
-    });
+        $.ajax({
+            url: $url_reportes,
+            type: 'POST',
+            data:{
+                'accion': 'Charts_prestaciones_realizadas',
+                'ajaxSend' : 'ajaxSend',
+            },
+            dataType: 'json',
+            cache: false,
+            async:true ,
+            success: function (response) {
+                var respuesta = response;
+                var count = respuesta['result']['data'].left;
+                var data  = respuesta['result']['data'];
+                var anual = respuesta['result']['anual'];
+                console.log(data);
+                chartBrowzerPrestacionesR(data, anual);
+            }
+        });
+        
+    }
+
+
 
     $(window).on('load', function() {
 
         $("#report_anual").select2({
-            placeholder:'Selecione un año',
+            placeholder:'Busqueda Anual',
             allowClear: false,
-            language:'es'
+            language:languageEs
         });
 
         $("#report_meses").select2({
-            placeholder:'Selecione un Mes',
+            placeholder:'Busqueda por Mes',
             allowClear: true,
-            language:'es'
+            language:languageEs
         });
 
         $("#report_anual").val(<?= $Year ?>).trigger("change");
 
+        loadcharRecaudacionesPagosRecibidos();
+        loadCharPrestacionesRealizadas();
+
+        // chartBrowzerPrestacionesR();
     });
 
 

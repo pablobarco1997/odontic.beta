@@ -16,7 +16,7 @@
                     <div class="col-md-12 col-xs-12">
                         <div class="table-responsive">
                             <table class="table  table-condensed" id="reporte_pacientes_registrados" width="100%">
-                                <thead>
+                                <thead style="background-color: #f0f0f0">
                                     <tr>
                                         <th width="10%" rowspan="2" colspan="1">Nombre</th>
                                         <th width="30%" rowspan="2" colspan="1">Dirección</th>
@@ -56,14 +56,14 @@
                     <div class="col-md-12 col-xs-12">
                         <div class="table-responsive">
                             <table class="table  table-condensed" id="reporte_citas_canceladas" width="100%">
-                                <thead>
+                                <thead style="background-color: #f0f0f0">
                                     <tr>
-                                        <th>N.- Cita</th>
-                                        <th>Fecha</th>
-                                        <th>Hora</th>
-                                        <th>Paciente</th>
-                                        <th>Doctor(a)</th>
-                                        <th>Estado</th>
+                                        <th width="5%">N.- Cita</th>
+                                        <th width="5%">Fecha</th>
+                                        <th width="10%">Hora</th>
+                                        <th width="15%">Paciente</th>
+                                        <th width="15%">Doctor(a)</th>
+                                        <th width="5%">Estado</th>
                                     </tr>
                                 </thead>
                             </table>
@@ -93,15 +93,15 @@
                     <div class="col-md-12 col-xs-12">
                         <div class="table-responsive">
                             <table class="table  table-condensed" id="reporte_tratamientosActivFinalizado" width="100%">
-                                <thead>
+                                <thead style="background-color: #f0f0f0">
                                     <tr>
-                                        <th>Emitido</th>
-                                        <th>Plan de Tratamiento</th>
-                                        <th>Ultima Cita</th>
-                                        <th>Paciente</th>
-                                        <th>Encargado</th>
+                                        <th width="5%">Emitido</th>
+                                        <th width="20%">Plan de Tratamiento</th>
+                                        <th width="10%">Ultima Cita</th>
+                                        <th width="10%">Paciente</th>
+                                        <th width="10%">Encargado</th>
 <!--                                        <th>Situación</th>-->
-                                        <th>Estado</th>
+                                        <th width="15%">Estado</th>
                                     </tr>
                                 </thead>
                             </table>

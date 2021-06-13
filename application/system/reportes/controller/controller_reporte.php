@@ -28,20 +28,11 @@ if(isset($_POST['ajaxSend']) || isset($_GET['ajaxSend']))
 
         case "fechPagosRecibidosMensuales":
 
-            $year = GETPOST("year");
-            $mes  = GETPOST("mes");
-
-            $quAnual = "SELECT  IFNULL(ROUND(SUM(pd.amount), 2),0) AS total_anual FROM tab_pagos_independ_pacientes_det pd where YEAR(pd.feche_create) = ".$year." limit 1";
-            $total_anual = $db->query($quAnual)->fetchObject()->total_anual;
-
-            $Meses = [1,2,3,4,5,6,7,8,9,10,11,12];
-
-            $arr = ObtenerPagoRecibidosMensuales($Meses, $year,$mes);
+            $data = ObtenerPagoRecibidosMensuales();
 
             $output = [
-                'error'      => '',
-                'err'        => $arr,
-                'totalAnual' => $total_anual
+                'error'       => '',
+                'data'        => $data,
             ];
 
             echo json_encode($output);
@@ -58,67 +49,124 @@ if(isset($_POST['ajaxSend']) || isset($_GET['ajaxSend']))
             echo json_encode($output);
             break;
 
+
+        case "Charts_prestaciones_realizadas":
+
+            $result = Obtener_prestaciones_realizadas();
+
+            $output = [
+                'result' => $result
+            ];
+            echo json_encode($output);
+            break;
+
     }
 
 }
 
-function ObtenerPagoRecibidosMensuales($arr_mens = array(), $year = "", $mes=""){
+function Obtener_prestaciones_realizadas(){
+
+    global  $db;
+
+    $prestaciones_realizadas = [];
+
+    $query = "SELECT 
+                year(b.fecha_create) as anual, 
+                d.fk_prestacion, 
+                c.descripcion  as label, 
+                round(sum(d.total), 2) as saldo
+            FROM
+                
+                tab_plan_tratamiento_cab  b
+                    inner join 
+                tab_plan_tratamiento_det  d on d.fk_plantratam_cab = b.rowid
+                    inner join 
+                tab_conf_prestaciones c on c.rowid = d.fk_prestacion
+                
+                WHERE d.estadodet = 'R'
+                and year(b.fecha_create) = 2020
+                group by d.fk_prestacion
+                order by round(sum(d.total), 2) desc
+                limit 5;";
+
+    $results = $db->query($query);
+    if($results){
+        if($results->rowCount()>0){
+            $result_arr = $results->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($result_arr as $value){
+                $prestaciones_realizadas[] = array('name'=>$value['label'], 'y'=>(double)$value['saldo'], 'drilldown' => $value['label']);
+            }
+
+        }
+    }
+
+    $output = [
+        'data'  => $prestaciones_realizadas,
+        'anual' => date('Y')
+    ];
+
+    return $output;
+
+}
+
+function ObtenerPagoRecibidosMensuales(){
 
     global $db;
 
-    $dataMensuales = array();
+    $fetch = [];
 
-    foreach ($arr_mens as $value){
+    $query = "
+    SELECT 
+    YEAR(pd.feche_create) AS anual,
+    (MONTH(pd.feche_create) - 1) AS mes,
+    ROUND(SUM(pd.amount), 2) AS totalMes
+FROM
+    tab_pagos_independ_pacientes_det pd
+WHERE
+    YEAR(pd.feche_create) IN ((YEAR(pd.feche_create) - 1) , YEAR(pd.feche_create))
+GROUP BY YEAR(pd.feche_create) , MONTH(pd.feche_create)
+ORDER BY YEAR(pd.feche_create) , MONTH(pd.feche_create);";
+    $result = $db->query($query);
 
-        if(!empty($mes)){
-            if($mes==$value){
-                $sql = "SELECT 
-                    MONTH(pd.feche_create) AS mes, ROUND(SUM(pd.amount), 2) AS totalMes
-                FROM
-                    tab_pagos_independ_pacientes_det pd
-                WHERE
-                    MONTH(pd.feche_create) = ".$value."
-                ";
-                if($year!="")
-                    $sql .= " and year(pd.feche_create) = ".$year;
+    if($result && $result->rowCount()>0){
 
-                $sql .= " GROUP BY MONTH(pd.feche_create)";
-                $result = $db->query($sql);
-                if($result&&$result->rowCount()>0){
-                    while ($object = $result->fetchObject()){
-                        $dataMensuales[] = (double)$object->totalMes;
-                    }
-                }else{
-                    $dataMensuales[] = 0.00;
-                }
-            }
+        while ($object = $result->fetchObject()){
+            $fetch[$object->anual][$object->mes] = $object->totalMes;
         }
-        else{
-            $sql = "SELECT 
-                    MONTH(pd.feche_create) AS mes, ROUND(SUM(pd.amount), 2) AS totalMes
-                FROM
-                    tab_pagos_independ_pacientes_det pd
-                WHERE
-                    MONTH(pd.feche_create) = ".$value."
-                ";
-            if($year!="")
-                $sql .= " and year(pd.feche_create) = ".$year;
+    }
 
-            $sql .= " GROUP BY MONTH(pd.feche_create)";
-            $result = $db->query($sql);
-            if($result&&$result->rowCount()>0){
-                while ($object = $result->fetchObject()){
-                    $dataMensuales[] = (double)$object->totalMes;
+
+    $Mensuales = [];
+    for ($i=0;$i<=11;$i++){
+        $Mensuales[$i]=0;
+    }
+
+    $Array = [];
+    foreach ($fetch as $k => $value){
+
+        $dataMensual = $value;
+        $data = [];
+        foreach ($Mensuales as $km => $valuesM){
+
+            if(isset($dataMensual[$km])){
+                if(count($dataMensual)>0){
+                    $data[] = (double)$dataMensual[$km];
+                }else{
+                    $data[] = 0.00;
                 }
             }else{
-                $dataMensuales[] = 0.00;
+                $data[] = 0.00;
             }
         }
 
+
+        $Array[] = array('name' => 'Recaudación '.$k, 'data' => $data);
 
     }
 
-    return $dataMensuales;
+    $result = $Array;
+
+    return $result;
 
 }
 

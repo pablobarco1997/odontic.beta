@@ -26,22 +26,18 @@
 
 </style>
 
-<div class="form-group col-xs-12 col-md-12">
-    <br>
-    <div class=" col-xs-12 col-md-6 col-sm-12 col-centered " style="border-bottom: 1px solid #e8e8e8; border-top: 1px solid #e8e8e8">
-        <h4 class="text-center text-bold"><span style="font-size: 1.8rem">Agenda</span></h4>
-    </div>
+<div class="form-group col-xs-12 col-md-12 no-margin">
 
-    <br>
-    <div class="form-group col-xs-12 col-md-12 col-lg-12">
-        <div class="form-group col-md-5 col-lg-5 col-sm-8 col-xs-12 col-centered">
-<!--            <label for="">Filtro x Fecha</label>-->
-            <input type="text" class="form-control filtroFecha  " id="startDate" value="" readonly>
-            <h4 class="text-center" style="padding: 7px" id="labelSpanishSatrDtae" ><span style="margin-top: 10px; font-size: 1.3rem!important; font-weight:bold ">1 de enero de 2021 hasta 1 de enero de 2022</span></h4>
+    <div class="form-group col-xs-12 col-md-12 col-lg-12 no-margin">
+        <div class="form-group col-md-5 col-lg-5 col-sm-8 col-xs-12 no-margin">
+            <div id="datereporte" class="collapse">
+                <input type="text" class="form-control filtroFecha  " id="startDate" value="" readonly>
+            </div>
+            <h4 class="btnhover" style="padding: 7px" id="labelSpanishSatrDtae" data-toggle="collapse" data-target="#datereporte"><span style="margin-top: 10px; font-size: 1.3rem!important; font-weight:bold ">1 de enero de 2021 hasta 1 de enero de 2022</span></h4>
         </div>
     </div>
 
-    <div class="form-group col-xs-12 col-md-12">
+    <div class="form-group col-xs-12 col-md-12 no-margin" >
 
         <div class="col-lg-3 col-xs-6">
             <div class="small-box bg-blue-active">
@@ -99,11 +95,6 @@
 
 </div>
 
-<div class="form-group col-xs-12 col-md-12">
-    <div class="col-xs-12 col-md-6 col-sm-12 col-centered " style="border-bottom: 1px solid #e8e8e8; border-top: 1px solid #e8e8e8">
-        <h4 class="text-center text-bold"><span style="font-size: 1.8rem">Recaudaciones</span></h4>
-    </div>
-</div>
 
 <div class="form-group col-xs-12 col-md-12">
     <div class="form-group col-xs-12 col-md-12">

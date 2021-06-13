@@ -41,33 +41,35 @@ function consultarAcciones(){
 
     var date = $('#startDate').val();
 
-    var parametros = {
-        'ajaxSend': 'ajaxSend',
-        'accion':'consultar_accion_date',
-        'date': date
-    };
+    setTimeout(function () {
+        var parametros = {
+            'ajaxSend': 'ajaxSend',
+            'accion':'consultar_accion_date',
+            'date': date
+        };
 
-    $.ajax({
-        url: $DOCUMENTO_URL_HTTP + '/application/system/reportes/controller/controller_reporte.php',
-        type: 'POST',
-        data:parametros,
-        dataType:'json',
-        async: false,
-        cache:false,
-        complete:function(xhr, status){
-            boxInformation.find(".textInformacionbox").text("Más Información");
-            boxInformation.parents(".small-box").removeClass("disabled_link3");
-        },
-        success:function (respuesta) {
-            console.log(respuesta);
+        $.ajax({
+            url: $DOCUMENTO_URL_HTTP + '/application/system/reportes/controller/controller_reporte.php',
+            type: 'POST',
+            data:parametros,
+            dataType:'json',
+            async: false,
+            cache:false,
+            complete:function(xhr, status){
+                boxInformation.find(".textInformacionbox").text("Más Información");
+                boxInformation.parents(".small-box").removeClass("disabled_link3");
+            },
+            success:function (respuesta) {
+                console.log(respuesta);
 
-            var object = respuesta['result'];
-            $("#nu_plantActivoAbonad").text(object['n_tratamientos']);
-            $("#nu_citasAnuladaCancel").text(object['citas_canceladas']);
-            $("#nu_citasAtendidas").text(object['atendidos']);
-            $("#nu_paciente").text(object['n_pacientes']);
-        }
-    });
+                var object = respuesta['result'];
+                $("#nu_plantActivoAbonad").text(object['n_tratamientos']);
+                $("#nu_citasAnuladaCancel").text(object['citas_canceladas']);
+                $("#nu_citasAtendidas").text(object['atendidos']);
+                $("#nu_paciente").text(object['n_pacientes']);
+            }
+        });
+    },500);
 
 }
 
@@ -86,6 +88,7 @@ $('#buscarPaciente').on('click', function() {
 
 
 $("#startDate").on("change", function() {
+
 
     cargarRecursosInfo();
 
@@ -189,8 +192,14 @@ $("#reportes_citas_canceladas").click(function() {
                 // boxloading(idmodal ,false , 1500);
             },
         },
-        // createdRow:function (row, data, dataIndex) {
-        // },
+        createdRow:function (row, data, dataIndex) {
+            $(row).children().eq(0).css('width','8%');
+            $(row).children().eq(1).css('width','5%');
+            $(row).children().eq(2).css('width','10%');
+            $(row).children().eq(3).css('width','15%');
+            $(row).children().eq(4).css('width','15%');
+            $(row).children().eq(5).css('width','5%');
+        },
         "language": $tableLanguaje
     });
 
@@ -232,6 +241,14 @@ $("#reportes_tratamientos_actv_finalizados").click(function() {
             complete:function () {
                 // boxloading(idmodal ,false , 1500);
             },
+        },
+        createdRow: function(row, data, index){
+            $(row).children().eq(0).css('width','5%');
+            $(row).children().eq(1).css('width','20%');
+            $(row).children().eq(2).css('width','10%');
+            $(row).children().eq(3).css('width','10%');
+            $(row).children().eq(4).css('width','10%');
+            $(row).children().eq(5).css('width','15%');
         },
         columnDefs:[
             {
@@ -291,8 +308,14 @@ $("#reportes_citas_atendidas").click(function() {
                 // boxloading(idmodal ,false , 1500);
             },
         },
-        // createdRow:function (row, data, dataIndex) {
-        // },
+        createdRow: function(row, data, index){
+            $(row).children().eq(0).css('width','8%');
+            $(row).children().eq(1).css('width','5%');
+            $(row).children().eq(2).css('width','10%');
+            $(row).children().eq(3).css('width','15%');
+            $(row).children().eq(4).css('width','15%');
+            $(row).children().eq(5).css('width','5%');
+        },
         "language": $tableLanguaje
     });
 
