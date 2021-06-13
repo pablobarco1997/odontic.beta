@@ -68,9 +68,9 @@
         <div class="form-group col-xs-12 col-md-12">
             <div class="table-responsive">
                 <table class="table" id="list_evoluprinpl" width="100%">
-                    <thead>
+                    <thead style="background-color: #f4f4f4">
                         <tr>
-                            <th>Fecha</th>
+                            <th>Emitido</th>
                             <th>Plan de Tratamiento</th>
                             <th>Prestación</th>
                             <th>Pieza</th>

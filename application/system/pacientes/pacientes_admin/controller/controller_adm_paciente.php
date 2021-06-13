@@ -2678,7 +2678,7 @@ function evoluc_listprincpl($datos)
             $cadena_caras[] = ($caras->lingual=="true") ? "lingual" : "";
 
             $row   = array();
-            $row[] = date('Y/m/d', strtotime($objevol->fechaevul) ).'<br>'.date('h:m:s', strtotime($objevol->fechaevul));
+            $row[] = date('Y/m/d', strtotime($objevol->fechaevul) );
             $row[] = $objevol->plantram;
             $row[] = $objevol->presstacion;
             $row[] = ($objevol->diente!=0)?$objevol->diente:'No asignado';
