@@ -98,46 +98,36 @@
 
 
     <!--google Font 2-->
-    <link rel="preconnect" href="https://fonts.gstatic.com">
+<!--    <link rel="preconnect" href="https://fonts.gstatic.com">-->
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
     <style>
 
 
         *{
+            @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap');
+            font-family: 'Roboto', sans-serif;
             font-size: small;
-            /*@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');*/
-            /*font-family: 'Varela Round', sans-serif ;*/
-            /*font-size: 0.8rem !important;*/
-            font-family: 'Baloo Da 2', cursive;
-            /*font-family: 'Roboto', sans-serif;*/
+            /*font-family: 'Baloo Da 2', cursive;*/
         }
 
         h3{
             font-size: small;
-            /*font-family: 'Roboto', sans-serif;*/
-            /*font-family: 'Varela Round', sans-serif ;*/
-            font-family: 'Baloo Da 2', cursive;
+            font-family: 'Roboto', sans-serif;
+            /*font-family: 'Baloo Da 2', cursive;*/
         }
 
         h5{
             font-size: small;
-            /*font-family: 'Roboto', sans-serif;*/
-            /*font-family: 'Varela Round', sans-serif ;*/
-            font-family: 'Baloo Da 2', cursive;
+            /*font-family: 'Baloo Da 2', cursive;*/
         }
 
         div{
             font-size: small;
-            /*font-family: 'Roboto', sans-serif;*/
-            /*font-family: 'Varela Round', sans-serif ;*/
-            font-family: 'Baloo Da 2', cursive;
+            font-family: 'Roboto', sans-serif;
+            /*font-family: 'Baloo Da 2', cursive;*/
         }
 
-        .table  tr {
-            font-size: small;
-            /*font-size: 1.5rem !important;*/
-        }
 
     </style>
 </head>
