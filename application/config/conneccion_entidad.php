@@ -127,16 +127,23 @@ class CONECCION_ENTIDAD{
 
     public static function INFORMACION_EMPRESA_GLOB($idEntidad, $cn)
     {
-        $datos = array();
+        $datos = new stdClass();
 
         $sql = "SELECT * FROM tab_entidades_dental WHERE rowid = $idEntidad";
         $result = $cn->query($sql);
-
         if($result->rowCount()>0) {
-            while ($Obj = $result->fetchObject()) {
-                $datos = $Obj;
+            while ($obj = $result->fetchObject()) {
+
+                $datos  = $obj;
+
+                $correroService = $cn->query("select correo, password_email, disabled from tab_cuentas_correos_clinica where entidad_clinica_id=".$obj->rowid." and entity=".$obj->numero_entity)->fetchObject();
+                $datos->correo_service          = $correroService->correo;
+                $datos->password_service        = $correroService->password_email;
+                $datos->correo_service_disabled = $correroService->disabled;
             }
         }
+
+
 
         return $datos;
     }

@@ -1,10 +1,13 @@
 <?php
 
 
-    global   $db, $conf, $user , $permisos, $dateZoneCurrent,  $messErr, $dbConectar;
+    global   $db, $conf, $user , $permisos, $dateZoneCurrent,  $messErr, $dbConectar, $log;
 
     /** Coneccion a la entidad de la empresa o clinica x login*/
     require_once  DOL_DOCUMENT .'/application/config/conneccion_entidad.php';
+
+    /** class log **/
+    require_once  DOL_DOCUMENT .'/application/config/class.log.php';
 
     /**Coneccion a la empresa o clinica dental asociada x el usuario*/
     require_once  DOL_DOCUMENT .'/application/system/conneccion/conneccion.php';
@@ -67,6 +70,9 @@
 
 //    $conf->ObtnerNoficaciones($db, false);
 
+    /** log de la clinica**/
+    $log = new log($db, $user->id);
+
     /**ruta de la carpeta donde se guardan ficheros de la clinicla - global del directorio x defaul del sistema*/
     $conf->DIRECTORIO = DOL_DOCUMENT.'/logos_icon/icon_logos_'.$_SESSION['entidad']; #url de los ficheros que upload clinica dental especifica
 
@@ -108,7 +114,7 @@
     ); */
 
 
-    #echo '<pre>'; print_r($conf); die();
+//    echo '<pre>'; print_r($user); die();
 
     #echo phpversion();
 

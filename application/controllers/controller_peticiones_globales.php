@@ -219,7 +219,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                                     && d.fk_estado_paciente_cita in(2,1,3,4,7,8,9,10,11,5,  (select statusc.rowid from tab_pacientes_estado_citas statusc where statusc.system=0) )  , 
                                         concat('Atrasada ', (select concat(s.text) from tab_pacientes_estado_citas s where s.rowid = d.fk_estado_paciente_cita) , 
                                                 '<br> Fecha : ' , date_format(d.fecha_cita, '%Y/%m/%d') , '<br>Hora: ' , d.hora_inicio ,' a ' , d.hora_fin) , ''
-                                                ) as cita_atrazada   
+                                                ) as cita_atrazada   , 
+                         (select s.color from tab_pacientes_estado_citas s where s.rowid = d.fk_estado_paciente_cita) as color_stado
                      FROM 
                         tab_pacientes_citas_cab c , 
                         tab_pacientes_citas_det d ,
@@ -251,12 +252,12 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 if($result && $result->rowCount()>0){
                     while ($object = $result->fetchObject()){
                         $row = [];
-                        $row[] = "<img src='$iconcita' width='15.5px' height='15.5px'>".'-'.$object->numberCitas;
+                        $row[] = "<span style='font-weight: bold'>"."<img src='$iconcita' width='25px' height='25px'>"." - ".$object->numberCitas."</span>";
                         $row[] = date("Y/m/d", strtotime($object->fecha_cita));
                         $row[] = $object->hora_inicio.' h '.$object->hora_fin;
                         $row[] = $object->paciente;
                         $row[] = $object->doct;
-                        $row[] = $object->estado;
+                        $row[] = "<label class='control-label' style='background-color: $object->color_stado !important;  color: #333333; margin-top: 3%; padding: 5px;' > $object->estado </label>";
 
                         $arr[] = $row;
                     }

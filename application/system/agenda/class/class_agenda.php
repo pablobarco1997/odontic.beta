@@ -1,5 +1,6 @@
 <?php
 
+
 class admin_agenda{
 
     var $db;
@@ -107,12 +108,19 @@ class admin_agenda{
                     $sql1 .= ")";
 
 //                    echo '<pre>'; print_r($sql1); die();
-                    $this->db->query($sql1);
+                    $result = $this->db->query($sql1);
+
+                    if($result){
+                        $lastid = $this->db->lastInsertId("tab_pacientes_citas_det");
+                        return $lastid;
+                    }else{
+                        return $sql1;
+                    }
 
             }
 
         }else{
-            $error = 'Ocurrio un error al  generar la cita , consulte con soporte tecnico';
+            $error = 'Ocurrió un error al  generar la cita , consulte con soporte tecnico';
         }
 
         return $error;

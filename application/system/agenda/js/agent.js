@@ -743,7 +743,7 @@ $(document).ready(function() {
         },
 
         startDate: moment().startOf('month'),
-        endDate: moment(),
+        endDate: moment().endOf('month'),
         ranges: {
             'Hoy': [moment(), moment()],
             'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],

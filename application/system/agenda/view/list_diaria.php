@@ -115,7 +115,7 @@
                         if($rs->rowCount() > 0){
                             while ($obj = $rs->fetchObject()){
                                 $nombOdontologos = $obj->nombre_doc ."  ". $obj->apellido_doc;
-                                print "<option value='$obj->rowid'> ".(strtoupper($nombOdontologos))."  &nbsp;&nbsp;&nbsp;&nbsp;  ( <small> ".(strtolower($obj->iestado))."</small>  ) </option>";
+                                print "<option value='$obj->rowid'> ".($nombOdontologos)." </option>";
                             }
                         }
                     ?>

@@ -374,7 +374,7 @@ function Breadcrumbs_Mod( $titulo, $url, $module )
 
         $Breadcrumbs .= '<ul style="list-style: none; " class="list-inline" >';
 
-                    $Breadcrumbs .= '<li><a href="'.DOL_HTTP.'/index.php?view=inicio" style="font-size: small; font-weight: lighter;  color: #212f3d" title="inicio"  > <i class="fa fa-home"></i> </a></li>';
+                    $Breadcrumbs .= '<li><a href="'.DOL_HTTP.'/index.php?view=inicio" style="font-size: small; font-weight: lighter;  color: #212f3d" title="inicio"  > <i class="fa fa-dashcube"></i> </a></li>';
         for( $i = 0; $i <= $CountBread; $i++ )
         {
             if(isset($Breadcrumbs_Mod[$i])) //verifico si existe o hay valores

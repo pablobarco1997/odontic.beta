@@ -10,10 +10,9 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
     require_once DOL_DOCUMENT .'/application/system/agenda/class/class_agenda.php';
 
 
-    global  $db , $conf;
+    global  $db , $conf, $log;
 
     $agenda = new admin_agenda($db);
-
 
     $accion = GETPOST('accion');
 
@@ -31,8 +30,16 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $agenda->fk_login_users = $conf->login_id; #USUARIO LOGEADO
             $agenda->detalle        = $row['detalle'];
 
-//            print_r($agenda); die();
-            $error = $agenda->GenerarCitas();
+            $result = $agenda->GenerarCitas();
+
+//            print_r($result); die();
+
+            if($result > 0){ //me retorna el id
+                $log->log($result, $log->crear, 'Se registro una cita Numero: '.$result, 'tab_pacientes_citas_det');
+            }else{ //caso contrario query 
+                $log->log(0, $log->crear, 'Ocurrió un error para el registro de una cita', 'tab_pacientes_citas_det', $result);
+                $error = "Ocurrió un error al  generar la cita , consulte con soporte tecnico";
+            }
 
             $output = [
               'error' => $error
@@ -687,7 +694,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                 if($object->valid_dateadd != ""){
                     $error  = "La Fecha Agregada no puede ser menor a la Fecha Actual <br>  ";
-                    $error .= " <b>Fecha Actual: </b>".(date('Y/m/d H:m', strtotime($object->now_)))."<br>";
+                    $error .= " <b>Fecha Actual: </b>".(date('Y/m/d H:m', strtotime($object->Now)))."<br>";
                     $error .= " <b>Fecha de la Cita: </b>".(date('Y/m/d H:m', strtotime($object->dateadd)))."<br>";
                 }
             }
@@ -840,7 +847,7 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
              IF( now() > CAST(d.fecha_cita AS DATETIME)  
                         && d.fk_estado_paciente_cita in(2,1,3,4,7,8,9,10,11,5,  (select statusc.rowid from tab_pacientes_estado_citas statusc where statusc.system=0) )  , 
                             concat('Atrasada ', (select concat(s.text) from tab_pacientes_estado_citas s where s.rowid = d.fk_estado_paciente_cita) , 
-                                    '<br> Fecha : ' , date_format(d.fecha_cita, '%Y/%m/%d') , '<br>Hora: ' , d.hora_inicio ,' a ' , d.hora_fin) , ''
+                                    '\n Fecha : ' , date_format(d.fecha_cita, '%Y/%m/%d') , '\n Hora: ' , d.hora_inicio ,' h ' , d.hora_fin) , ''
                                     ) as cita_atrazada
 									            
          FROM 
@@ -906,6 +913,7 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
     {
         $Total = $resultTotal->rowCount();
 
+        $src = "data: image/png; base64, ".base64_encode(file_get_contents(DOL_HTTP.'/logos_icon/logo_default/cita-medica.ico'));
         $iu = 0; #acumulador
 
         while ($acced = $rs->fetchObject())
@@ -921,8 +929,7 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
 
 
             #numero o codigo de cita
-            $src = "data: image/png; base64, ".base64_encode(file_get_contents(DOL_HTTP.'/logos_icon/logo_default/cita-medica.ico'));
-            $numeroCita = "<table>
+            $numeroCita = "<table style='font-weight: bold'>
                                 <tr>
                                     <td> <img  src='".$src."' class='img-rounded' style='width: 25px; height: 25px' >  - </td>
                                     <td> ".(str_pad($acced->id_cita_det, 5, "0", STR_PAD_LEFT))." </td>
@@ -932,8 +939,8 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
             $row[] = $numeroCita;
 
             $html1 = "";
-            $html1 .= "<p class='text-center' >".date('Y/m/d', strtotime($acced->fecha_cita))."</p>";
-            $html1 .= "<div style='background-color: $acced->color; padding: 3px'>";
+            $html1 .= "<p class='text-center' style='font-weight: bold'>".date('Y/m/d', strtotime($acced->fecha_cita))."</p>";
+            $html1 .= "<div style='background-color: $acced->color; padding: 3px; font-weight: bold'>";
                 $html1 .= "<p class='text-center'>$acced->hora_inicio</p>";
                 $html1 .= "<p class='text-center'><i class='fa fa-arrow-circle-o-down'></i></p>";
                 $html1 .= "<p class='text-center'>$acced->hora_fin</p>";
@@ -1010,7 +1017,7 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
             #CITAS ATRAZADAS CON ESTADO NO CONFIRMADO - ID DEL ESTADO = 2
             if(!empty($acced->cita_atrazada))
             {
-                $html4 .= '<small style="color: red; display: block"  class="" title="'. $acced->cita_atrazada .'"> '. $acced->cita_atrazada .' </small>';
+                $html4 .= '<small style="white-space: pre-wrap;  color: red; display: block; font-weight: bold"  class="" title="'. $acced->cita_atrazada .'"> '. $acced->cita_atrazada .' </small>';
             }
 
             $html4 .= "</div>
@@ -1305,8 +1312,8 @@ function notificarCitaEmail($datos, $token_confirmacion)
     $mail->SMTPAutoTLS = TRUE;
     $mail->SMTPSecure = "ssl";
 
-    $mail->Username = $conf->service_Email;//correo del servidor
-    $mail->Password = $conf->service_Password;//password de servidor de correo
+    $mail->Username = $conf->EMPRESA->INFORMACION->correo_service;//correo del servidor
+    $mail->Password = $conf->EMPRESA->INFORMACION->password_service;//password de servidor de correo
 
     $mail->Subject = "Clinica dental ".$conf->EMPRESA->INFORMACION->nombre; //nombre de la clinica
     $mail->addCustomHeader("'Reply-to:".$conf->EMPRESA->INFORMACION->conf_email."'");
@@ -1334,18 +1341,19 @@ function notificarCitaEmail($datos, $token_confirmacion)
         #SI EL $error = 1 -- EL EMAIL SE ENVIO CORRECTAMENTE
         if($error == 1 ) {
 
-            $sql = "INSERT INTO `tab_notificacion_email` (`asunto`, `from`, `to`, `subject`, `message`, `estado`, `fk_paciente`, `fk_cita`, `fecha`) ";
+            $sql = "INSERT INTO `tab_notificacion_email` (`asunto`, `from`, `to`, `subject`, `message`, `estado`, `fk_paciente`, `fk_cita`, `fecha`, user_athor) ";
             $sql .= "VALUES (";
-            $sql .= "'$asunto' ,";
-            $sql .= "'$from' ,";
-            $sql .= "'$to' ,";
-            $sql .= "'$subject' ,";
-            $sql .= "'$message' ,";
-            $sql .= "'A' ,";
-            $sql .= "'$datos->idpaciente' ,";
-            $sql .= "'$datos->idcita' ,";
-            $sql .= " now() ";
-            $sql .= ");";
+            $sql .= " '$asunto' ,";
+            $sql .= " '$from' ,";
+            $sql .= " '$to' ,";
+            $sql .= " '$subject' ,";
+            $sql .= " '$message' ,";
+            $sql .= " 'A' ,";
+            $sql .= " '$datos->idpaciente' ,";
+            $sql .= " '$datos->idcita' ,";
+            $sql .= "  now() ,";
+            $sql .= "  $user->id ";
+            $sql .= " );";
             $rs = $db->query($sql);
 
             if(!$rs){
@@ -1398,11 +1406,11 @@ function notificarCitaEmail($datos, $token_confirmacion)
 //confirmacion de email programado por fecha
 function Email_confirmacion_programDate($datos=array(), $fecha_programa, $id_cita){
 
-    global $db;
+    global $db, $user;
 
     $error="";
 
-    $fecha_programa .= " 22:00:00";
+    $fecha_programa .= " 23:00:00";
 
     $query = "select 
                   cast(concat(cast(fecha_cita as date),' ',hora_inicio) as datetime) as fecha_cita_datetime,
@@ -1458,7 +1466,7 @@ function Email_confirmacion_programDate($datos=array(), $fecha_programa, $id_cit
 
     $id_notificacion_email = 0;
 
-    $sql = "INSERT INTO `tab_notificacion_email` (`asunto`, `from`, `to`, `subject`, `message`, `estado`, `fk_paciente`, `fk_cita`, `fecha`, `program`, `program_date`) ";
+    $sql = "INSERT INTO `tab_notificacion_email` (`asunto`, `from`, `to`, `subject`, `message`, `estado`, `fk_paciente`, `fk_cita`, `fecha`, `program`, `program_date`, `user_athor` ) ";
     $sql .= "VALUES (";
     $sql .= " '$asunto' ,";
     $sql .= " '$from' ,";
@@ -1470,7 +1478,8 @@ function Email_confirmacion_programDate($datos=array(), $fecha_programa, $id_cit
     $sql .= " '$datos->idcita' ,";
     $sql .= " now() ,";
     $sql .= " 1 ,";
-    $sql .= " '$fecha_programa' ";
+    $sql .= " '$fecha_programa',  ";
+    $sql .= " $user->id ";
     $sql .= ");";
 
     $result = $db->query($sql);
