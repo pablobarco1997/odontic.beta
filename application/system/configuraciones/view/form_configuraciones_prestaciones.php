@@ -77,7 +77,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="control-label col-sm-3 " for="prestacion_descr">nombre de Prestación:</label>
+                            <label class="control-label col-sm-3 " for="prestacion_descr">Nombre de Prestación:</label>
                             <div class="col-sm-8">
                                 <input type="email" class="form-control invalic_prestaciones" id="prestacion_descr" name="prestacion_descr" onkeyup="validNuevUpdate()">
                                 <small style="color: red;" id="msg_prestaciones"></small>
@@ -95,7 +95,7 @@
                         <div class="form-group">
                             <label class="control-label col-sm-3" for="explicacionInfo">Explicación (<small>opcional</small>):</label>
                             <div class="col-sm-8">
-                                <textarea name="explicacionInfo" id="explicacionInfo" class="form-control" cols="30" rows="4"></textarea>
+                                <textarea name="explicacionInfo" id="explicacionInfo" class="form-control" cols="30" rows="4" style="resize: vertical"></textarea>
 <!--                                <small style="color: red;" id="msg_valor"></small>-->
                             </div>
                         </div>
@@ -258,14 +258,14 @@
             <div class="modal-body">
                    <div class="form-group">
                        <div class="table-responsive">
-                           <table class="table table-striped" id="listprestacionestable" width="100%">
+                           <table class="table table-condensed listprestacionestable_STYLE" id="listprestacionestable" width="100%" >
                                <thead>
                                     <tr>
-                                        <th WIDTH="5%">Emitido</th>
-                                        <th WIDTH="35%">Descripción</th>
-                                        <th WIDTH="15%">Categoría</th>
-                                        <th WIDTH="10%">Costo $</th>
-                                        <th width="5%">Acciones</th>
+                                        <th >Emitido</th>
+                                        <th >Descripción</th>
+                                        <th >Categoría</th>
+                                        <th >Costo $</th>
+                                        <th >Acciones</th>
                                     </tr>
                                </thead>
                            </table>

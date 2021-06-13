@@ -94,13 +94,25 @@ function load_table_prestaciones() {
         ordering:false,
         destroy:true,
         serverSide: true,
+        lengthChange: false,
         processing:true,
+        lengthMenu:[ 10 ],
         ajax:{
             url: $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php',
             type:'POST',
             data:{'ajaxSend':'ajaxSend', 'accion':'list_prestaciones'},
             dataType:'json',
         },
+
+        'createdRow':function(row, data, index){
+
+            $(row).children().eq(0).css('width','62px');
+            $(row).children().eq(1).css('width','429px');
+            $(row).children().eq(2).css('width','185px');
+            $(row).children().eq(3).css('width','60px');
+            $(row).children().eq(4).css('width','122px');
+        },
+
         language:{
             "sProcessing":     "Procesando...",
             "sLengthMenu":     "Mostrar _MENU_ registros",
@@ -188,8 +200,9 @@ function ActivarDesactivarServicios($id, Element){
 
                 var table = $("#listprestacionestable").DataTable();
                 table.page.info();
-                var url = $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php'+'?accion=list_prestaciones'+'&ajaxSend=ajaxSend';
-                table.ajax.url(url).load();
+                // var url = $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php'+'?accion=list_prestaciones'+'&ajaxSend=ajaxSend';
+                // table.ajax.url(url).load();
+                table.ajax.reload(null, false);
             }
         }
     });
