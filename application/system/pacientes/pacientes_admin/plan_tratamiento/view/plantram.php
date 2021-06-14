@@ -183,7 +183,7 @@
 
         <!--    MODAL CREAR PLAN DE TRATAMIENTO ASOCIADO A UNA CITA  -------------------------------------------------------->
         <div id="modal_plantrem_citas" class="modal fade" role="dialog">
-            <div class="modal-dialog " >
+            <div class="modal-dialog " style="margin: 2% auto; width: 50%" >
 
                 <!-- Modal content-->
                 <div class="modal-content">
@@ -227,10 +227,10 @@
                                                     <th colspan="4">Lista de Citas Agendadas para este Plan de Tratamiento</th>
                                                 </tr>
                                                 <tr>
-                                                    <th>Citas Agendadas</th>
-                                                    <th>Especialidad</th>
-                                                    <th>Emitido</th>
-                                                    <th>Estado</th>
+                                                    <th width="20%">Citas Agendadas</th>
+                                                    <th width="15%">Especialidad</th>
+                                                    <th width="25%">Emisión de cita</th>
+                                                    <th width="20%">Estado</th>
                                                 </tr>
                                             </thead>
                                         </table>

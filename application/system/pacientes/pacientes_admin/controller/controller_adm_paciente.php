@@ -2178,7 +2178,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     while ($object = $result->fetchObject()){
 
                         $row = [];
-                        $row[] = "<table><tr><td>$ico_cita</td> <td> - $object->numberCitas</td> </tr></table>";
+                        $row[] =  "<span style='font-weight: bold' > $ico_cita - $object->numberCitas</span>";
                         $row[] = $object->especialidad;
                         $row[] = date("Y-m-d", strtotime($object->fecha_cita))."  H  ".$object->hora_inicio;
                         $row[] = "<span style='font-weight: bold; background-color: $object->color '>".$object->estado."</span>";
@@ -2382,8 +2382,13 @@ function listcitas_admin($idPaciente, $fechaInicio, $fechafin, $n_citas, $Estado
                 (select IFNULL(tc.edit_name, concat('Plan de tratamiento #',tc.numero)) from tab_plan_tratamiento_cab tc where tc.fk_cita = c.rowid limit 1) as plantratamiento ,
                 (select p.telefono_movil from tab_admin_pacientes p where p.rowid = c.fk_paciente) as telefono_movil ,
                 
+                -- validaciones
                 -- citas atrazada con estado no confirmado
-                if( cast(d.fecha_cita as date) < '".$fecha_hoy."' && d.fk_estado_paciente_cita = 2 , concat('cita agendada atrasada <br> NO CONFIRMADO - ', date_format(d.fecha_cita, '%Y/%m/%d') , ' <br> hora ' , d.hora_inicio ) , '') as cita_atrazada
+                IF( now() > CAST(d.fecha_cita AS DATETIME)  
+                                        && d.fk_estado_paciente_cita in(2,1,3,4,7,8,9,10,11,5,  (select statusc.rowid from tab_pacientes_estado_citas statusc where statusc.system=0) )  , 
+                                            concat('Atrasada ', (select concat(s.text) from tab_pacientes_estado_citas s where s.rowid = d.fk_estado_paciente_cita) , 
+                                                    '\n Fecha : ' , date_format(d.fecha_cita, '%Y/%m/%d') , '\n Hora: ' , d.hora_inicio ,' h ' , d.hora_fin) , ''
+                                                    ) as cita_atrazada
          
              from 
          
@@ -2430,7 +2435,7 @@ function listcitas_admin($idPaciente, $fechaInicio, $fechafin, $n_citas, $Estado
             #Citas Atrazadas
             $citas_atrazadas = "";
             if( $obj->cita_atrazada != "") {
-                $citas_atrazadas = "<small style='display: block; color: red' class=''> ". $obj->cita_atrazada ." </small>";
+                $citas_atrazadas = '<small style="white-space: pre-wrap;  color: red; display: block; font-weight: bold"  class="" title="'. $obj->cita_atrazada .'"> '. $obj->cita_atrazada .' </small>';
             }
 
             $iconCita = 'data:image/*; base64, '.base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/cita-medica.ico'));

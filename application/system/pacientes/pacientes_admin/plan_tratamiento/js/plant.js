@@ -279,13 +279,14 @@ if($accion == "principal")
                             tratamiento_id : id
                         }
                     },
-                    // createdRow: function (row, data, index) {
-                    //     // console.log($(row).find('td'));
-                    //     // $(row).find('td').css('vertical-align','center');
-                    //     $(row).find('td').eq(3).css('vertical-align','center');
-                    //     $(row).find('td').eq(4).css('vertical-align','center');
-                    //     $(row).find('td').eq(5).css('vertical-align','center');
-                    // },
+                    createdRow: function (row, data, index) {
+                        // console.log($(row).find('td'));
+                        // $(row).find('td').css('vertical-align','center');
+                        $(row).find('td').eq(0).css('width','15%');
+                        $(row).find('td').eq(1).css('width','20%');
+                        $(row).find('td').eq(2).css('width','25%');
+                        $(row).find('td').eq(3).css('width','20%');
+                    },
                     "language": {
                         "sProcessing":     "Procesando...",
                         "sLengthMenu":     "Mostrar _MENU_ registros",
@@ -343,7 +344,11 @@ if($accion == "principal")
             async: false,
             success: function(resp){
 
+                var table_aso_citas = $("#listTramnCitasAsoc").DataTable();
                 var idpacienteToken = resp.idpacientetoken;
+
+                table_aso_citas.ajax.reload(null, false);
+                $("#citasPaciente").val(null).trigger('change');
 
                 if(resp.error == ''){
                     if(subaccion=="CREATE"){
@@ -360,7 +365,7 @@ if($accion == "principal")
                 }
 
 
-                if(resp.error == '' && subaccion=="ASOCIAR_CITAS"){
+                if(resp.error == '' && subaccion=="ASOCIAR_CITAS" && redirecionar == true){
                     var $tener = 0;
                     var $idtratamiento = 0;
                     if( resp.idtratamiento > 0){

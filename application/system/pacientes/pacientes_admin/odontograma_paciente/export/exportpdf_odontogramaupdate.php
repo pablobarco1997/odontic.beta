@@ -306,7 +306,7 @@ function obtenerImgDienteStatus($pieza, $idestado )
     if($idestado!=""){
         $urlStatus = DOL_HTTP.'/application/system/pacientes/pacientes_admin/odontograma_paciente/export/img_status_odontograma/'.$idestado;
     }else{
-        $urlStatus = DOL_HTTP.'/application/system/pacientes/pacientes_admin/odontograma_paciente/export/img_status_odontograma/normal';
+        $urlStatus = DOL_HTTP.'/application/system/pacientes/pacientes_admin/odontograma_paciente/export/img_status_odontograma/normal.png';
     }
 
 

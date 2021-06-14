@@ -147,7 +147,7 @@ $pdf .= '
                        
                 </tr>
                 <tr style="background-color: #f0f0f0">
-                    <th class="tables">Fecha</th>
+                    <th class="tables">Emitido</th>
                     <th class="tables">Plan de Tratamiento</th>
                     <th class="tables">Prestación</th>
                     <th class="tables">Pieza</th>
@@ -219,7 +219,7 @@ $mpdf->showImageErrors = 'true';
 $mpdf->SetDisplayMode('fullpage');
 $mpdf->SetTitle('Evoluciones' );
 
-//$mpdf->AddPage('L');
+$mpdf->AddPage('L');
 
 $mpdf->WriteHTML($body.$pdf);
 

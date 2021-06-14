@@ -67,7 +67,7 @@ $sql = "SELECT
     round(sum(pd.amount),2)  abonado , 
     if(round(td.total,2)=round(sum(pd.amount),2), 'Prestación Cancelada', 'Pendiente') as estado, 
     if(round(td.total,2)>round(sum(pd.amount),2), (round(td.total,2)-round(sum(pd.amount),2)),0) as  pendiente,
-    (select t.descripcion from tab_tipos_pagos t where t.rowid = pc.fk_tipopago) as tipo_p
+    (select t.nom from tab_bank_operacion t where t.rowid = pc.fk_tipopago) as tipo_p
 FROM
 tab_plan_tratamiento_det td , 
 tab_pagos_independ_pacientes_det pd, 
@@ -79,16 +79,14 @@ and p.rowid = pd.fk_prestacion
 and pc.rowid = pd.fk_pago_cab ";
 
 if(!empty($idplantratamiento)){
-
     $sql .= " and td.fk_plantratam_cab = ".$idplantratamiento;
 }
 
 $sql .= " group by pd.fk_prestacion, pd.fk_plantram_cab, td.fk_diente ";
+//echo '<pre>'; print_r($sql); die();
 $result = $db->query($sql);
-
 $data = $result->fetchAll(PDO::FETCH_ASSOC);
 
-//echo '<pre>'; print_r($data); die();
 
 
 $pdf .= '<style>
