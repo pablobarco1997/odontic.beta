@@ -204,7 +204,7 @@
 
                                 <li class="lipaddi <?= $array_PagosRealizados->active ?>">
                                     <a class="lista" href="<?= $array_PagosRealizados->url ; ?>">&nbsp;&nbsp;
-                                        <i class="fa fa-briefcase"></i>&nbsp;&nbsp; <b>Recaudaciones Realizados</b>  </a>
+                                        <i class="fa fa-briefcase"></i>&nbsp;&nbsp; <b>Pagos Realizados</b>  </a>
                                 </li>
 
                             </ul>

@@ -62,35 +62,38 @@
     );
 
 
+    //Modulo Operaciones
+    $Permissions_Operaciones = array(
+        'url'     => array(
+            'declaracion_cuentas'       => array('url' => DOL_HTTP .'/application/system/operacion/declaracion_cuentas/index.php?view=all_cuentas&key='.KEY_GLOB , 'Active_subMod' => (isset($Active) && $Active == 'Declaracion_Cuentas') ? 'Active_link_subM' : ''),
+        ),
+        'Active'  => (isset($Active)  && $Active == 'Declaracion_Cuentas') ? 'Active_link' : '' ,
+        'permiso' => '',
+    );
+
 ?>
 
 
-<style>
-    ul.sidebar-menu  li.treeview a span{
-        font-size: 1.5rem;
-    }
-    ul.sidebar-menu a span{
-        font-size: 1.5rem;
-    }
-</style>
-
+<?php
+    $stylefontSmall = 'style="font-size: small; padding-top: 14px" ';
+?>
 
 <li class="header">NAVEGACIÓN</li>
 
 
 <li class=" <?php if(isset($Active) && $Active =='inicio'){ echo 'disabled_link3'; } ?> hide">
-    <a href="#buscarPacienteModal" data-toggle="modal"><i class="fa fa-search"></i> <span>Buscar</span></a>
+    <a href="#buscarPacienteModal" data-toggle="modal"><i class="fa fa-search"></i> <span >Buscar</span></a>
 </li>
 
 <li class="<?= $Permissions_inicio['Active'] ?>">
     <a href="<?= $Permissions_inicio['url'] ?>"><i class="fa fa-dashcube"></i>
-        <span>inicio</span>
+        <span <?= $stylefontSmall ?>  <?= $stylefontSmall ?>>Inicio</span>
     </a>
 </li>
 
 <!--<li  class="" ><a href="#"><i class="fa fa-link"></i> <span>Another Link</span></a></li>-->
 <!--<li class="treeview">-->
-<!--    <a href="#"><i class="fa fa-link"></i> <span>Multilevel</span>-->
+<!--    <a href="#"><i class="fa fa-calendar"></i> <span>Multilevel</span>-->
 <!--        <span class="pull-right-container">-->
 <!--                <i class="fa fa-angle-left pull-right"></i>-->
 <!--              </span>-->
@@ -106,29 +109,32 @@
 <!--MODULO AGENDA-->
 <li class="<?= $Permissions_agenda['Active'] ?>">
     <a href="<?= $Permissions_agenda['url'] ?>">
-        <i class="fa fa-list-alt"></i> <span>Agenda</span>
+        <i class="fa fa-list-alt"></i><span   <?= $stylefontSmall ?>>Agenda</span>
     </a>
 </li>
 
 <!--MODULO PACIENTES-->
 <li class="treeview <?= $Permissions_pacientes['Active'] ?> " style="cursor: pointer">
-    <a><i class="fa fa-users"></i> <span>Paciente</span>
+    <a><i class="fa fa-users"></i> <span <?= $stylefontSmall ?>>Paciente</span>
         <span class="pull-right-container">
                 <i class="fa fa-angle-left pull-right"></i>
         </span>
     </a>
     <ul class="treeview-menu">
-        <li><a href="<?= $Permissions_pacientes['url']['directorioPaciente']['url'] ?>"  class="<?= $Permissions_pacientes['url']['directorioPaciente']['Active_subMod'] ?>" >Directorio de pacientes</a></li>
-        <li><a href="<?= $Permissions_pacientes['url']['nuevoPaciente']['url'] ?>"  class="<?= $Permissions_pacientes['url']['nuevoPaciente']['Active_subMod'] ?>"    >Nuevo Paciente</a></li>
+        <li><a href="<?= $Permissions_pacientes['url']['directorioPaciente']['url'] ?>"  class="<?= $Permissions_pacientes['url']['directorioPaciente']['Active_subMod'] ?>" <?= $stylefontSmall ?>>Directorio de pacientes</a></li>
+        <li><a href="<?= $Permissions_pacientes['url']['nuevoPaciente']['url'] ?>"  class="<?= $Permissions_pacientes['url']['nuevoPaciente']['Active_subMod'] ?>"    <?= $stylefontSmall ?>>Nuevo Paciente</a></li>
     </ul>
 </li>
 
 <!--MODULO DE DOCUMENTOS CLINICOS DE UN PACIENTE-->
-<li class="<?= $Permissions_documentosClinicos['Active'] ?>"><a href="<?= $Permissions_documentosClinicos['url'] ?>"><i class="fa fa-file"></i><span>Documentos clinicos</span></a></li>
+<li class="<?= $Permissions_documentosClinicos['Active'] ?>"><a href="<?= $Permissions_documentosClinicos['url'] ?>"><i class="fa fa fa-briefcase"></i><span <?= $stylefontSmall ?>>Documentos clinicos</span></a></li>
+
+<!--MODULO DE TAREAS CLINICAS-->
+<li class="<?= $Permissions_TareasClinicas['Active'] ?>"><a href="<?= $Permissions_TareasClinicas['url'] ?>"><i class="fa fa-calendar"></i><span <?= $stylefontSmall ?> >Tareas Clinicas</span></a></li>
 
 <!--MODULO CONFIGURACIONES-->
 <li class="treeview <?= $Permissions_configuration['Active'] ?> <?= (!empty($Permissions_configuration['Active'])?"menu-open":"")?> " style="cursor: pointer">
-    <a><i class="fa fa-wrench"></i> <span>Configuraciones</span>
+    <a><i class="fa fa-wrench"></i> <span <?= $stylefontSmall ?> >Configuraciones</span>
         <span class="pull-right-container">
                 <i class="fa fa-angle-left pull-right"></i>
         </span>
@@ -136,19 +142,33 @@
 
     <!--SUB MENUS-->
     <ul class="treeview-menu" <?= (!empty($Permissions_configuration['Active'])?"style=\"display: block\"":"") ?> >
-        <li><a href="<?= $Permissions_configuration['url']['principal']['url'] ?>"  class="<?= $Permissions_configuration['url']['principal']['Active_subMod'] ?>" >Principal</a></li>
-        <li><a href="<?= $Permissions_configuration['url']['prestaciones']['url'] ?>"  class="<?= $Permissions_configuration['url']['prestaciones']['Active_subMod'] ?>" >Prestaciones</a></li>
-        <li><a href="<?= $Permissions_configuration['url']['descuento']['url'] ?>"  class="<?= $Permissions_configuration['url']['descuento']['Active_subMod'] ?> disabled_link3" >Descuento</a></li>
-        <li><a href="<?= $Permissions_configuration['url']['odontolog']['url'] ?>"  class="<?= $Permissions_configuration['url']['odontolog']['Active_subMod'] ?>" >Odontolog@</a></li>
-        <li><a href="<?= $Permissions_configuration['url']['especialidades']['url'] ?>"  class="<?= $Permissions_configuration['url']['especialidades']['Active_subMod'] ?>" >Especialidades</a></li>
-        <li><a href="<?= $Permissions_configuration['url']['users']['url'] ?>"  class="<?= $Permissions_configuration['url']['users']['Active_subMod'] ?>" >Users</a></li>
-        <li><a href="<?= $Permissions_configuration['url']['laboratorios']['url'] ?>"  class="<?= $Permissions_configuration['url']['laboratorios']['Active_subMod'] ?>" >Laboratorios Clinicos</a></li>
+        <li><a href="<?= $Permissions_configuration['url']['principal']['url'] ?>"  class="<?= $Permissions_configuration['url']['principal']['Active_subMod'] ?>"  <?= $stylefontSmall ?>>Principal</a></li>
+        <li><a href="<?= $Permissions_configuration['url']['prestaciones']['url'] ?>"  class="<?= $Permissions_configuration['url']['prestaciones']['Active_subMod'] ?>"  <?= $stylefontSmall ?>>Prestaciones</a></li>
+        <li><a href="<?= $Permissions_configuration['url']['descuento']['url'] ?>"  class="<?= $Permissions_configuration['url']['descuento']['Active_subMod'] ?> disabled_link3"  <?= $stylefontSmall ?>>Descuento</a></li>
+        <li><a href="<?= $Permissions_configuration['url']['odontolog']['url'] ?>"  class="<?= $Permissions_configuration['url']['odontolog']['Active_subMod'] ?>"  <?= $stylefontSmall ?>>Odontolog@</a></li>
+        <li><a href="<?= $Permissions_configuration['url']['especialidades']['url'] ?>"  class="<?= $Permissions_configuration['url']['especialidades']['Active_subMod'] ?>"  <?= $stylefontSmall ?>>Especialidades</a></li>
+        <li><a href="<?= $Permissions_configuration['url']['users']['url'] ?>"  class="<?= $Permissions_configuration['url']['users']['Active_subMod'] ?>"  <?= $stylefontSmall ?>>Users</a></li>
+        <li><a href="<?= $Permissions_configuration['url']['laboratorios']['url'] ?>"  class="<?= $Permissions_configuration['url']['laboratorios']['Active_subMod'] ?>"  <?= $stylefontSmall ?>>Laboratorios Clinicos</a></li>
     </ul>
 
 </li>
 
 <!--MODULO DE CAJA-->
-<li class="<?= $Permissions_Cajas['Active'] ?>"><a href="<?= $Permissions_Cajas['url'] ?>"><i class="fa fa-bar-chart"></i><span>Cajas Clinicas</span></a></li>
+<li class="<?= $Permissions_Cajas['Active'] ?> hide"><a href="<?= $Permissions_Cajas['url'] ?>"><i class="fa fa-bar-chart"></i><span <?= $stylefontSmall ?> >Cajas Clinicas</span></a></li>
 
-<!--MODULO DE TAREAS CLINICAS-->
-<li class="<?= $Permissions_TareasClinicas['Active'] ?>"><a href="<?= $Permissions_TareasClinicas['url'] ?>"><i class="fa fa-calendar"></i><span>Tareas Clinicas</span></a></li>
+
+
+<!--MODULO OPERACIONES-->
+<li class="treeview <?= $Permissions_Operaciones['Active'] ?> <?= (!empty($Permissions_Operaciones['Active'])?"menu-open":"")?> " style="cursor: pointer">
+    <a><i class="fa fa-bar-chart"></i> <span <?= $stylefontSmall ?>>Operaciones</span>
+        <span class="pull-right-container">
+                <i class="fa fa-angle-left pull-right"></i>
+        </span>
+    </a>
+
+    <!--SUB MENUS-->
+    <ul class="treeview-menu" <?= (!empty($Permissions_Operaciones['Active'])?"style=\"display: block\"":"") ?> >
+        <li><a href="<?= $Permissions_Operaciones['url']['declaracion_cuentas']['url'] ?>"  class="<?= $Permissions_Operaciones['url']['declaracion_cuentas']['Active_subMod'] ?>" <?= $stylefontSmall ?> >Declarar Cuentas</a></li>
+    </ul>
+
+</li>
