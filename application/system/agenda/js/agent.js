@@ -29,7 +29,7 @@ function loadtableAgenda() {
         // responsive: true,
         // destroy:true,
         scrollX: false,
-        // scrollY: 700,
+        // scrollY: 500,
         lengthChange: false,
         fixedHeader: true,
         paging:true,
@@ -304,6 +304,7 @@ function UpdateEstadoCita(idestado, idcita, html = "", textEstado) //Actualizar 
                 var table =  $('#tableAgenda').DataTable();
                 notificacion( 'Información Actualizada', 'success');
                 table.ajax.reload( null, false );
+                Notify_odontic(1,false); //actualizo la notificacion o numero de notificacion
             }
         }
     });

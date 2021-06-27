@@ -295,7 +295,7 @@ function invalic_puedoGuardar()
         //citas agendadas dentro del mismo rango de fecha para el mismo odontologo
         if(citas_MismaFechas > 0){
             puedoGuardar++;
-            notificacion('Se detectó cita agendada con la fecha '+$("#inputFecha").val()+' Doctor(a): <b>'+$('select[name="odont[0].det"]').find('option:selected').text() + '</b>  <br><b><small>Compruebe la información antes de guardar</small></b>', "question");
+            notificacion('Se detectó cita agendada con la fecha '+$("#inputFecha").val()+' Doctor(a): <b>'+$('select[name="odont[0].det"]').find('option:selected').text() + '</b>  <br><b>Compruebe la información antes de guardar</b>', "question");
         }
 
         if($('#agndar_paciente').find(':selected').val()==''){

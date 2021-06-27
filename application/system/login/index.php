@@ -29,10 +29,7 @@ if(isset($_SESSION['is_open']))
     <!-- Ionicons -->
     <link rel="stylesheet" href="<?php echo DOL_HTTP .'/public/bower_components/Ionicons/css/ionicons.min.css'?>">
 
-    <!--    font google-->
-<!--    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round">-->
-<!--    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">-->
-    <link href="https://fonts.googleapis.com/css2?family=Baloo+Da+2&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
     <link rel="shortcut icon" href="<?=DOL_HTTP.'/application/system/login/img/odontic_ico.png';?>" type="image/x-icon" >
 
@@ -48,13 +45,8 @@ if(isset($_SESSION['is_open']))
 <style>
 
     *{
-        font-size: small !important;
-        font-family: 'Baloo Da 2', cursive;
-    }
-    body{
-        /*background-image: url("*/<?php //echo DOL_HTTP .'/application/system/login/img/photo_main.jpg'?>/*");*/
-        background-size: 670px 669px;
-        background-repeat: no-repeat;
+        font-family: 'Roboto', sans-serif;
+        font-size: small;
     }
 
     input {
@@ -65,13 +57,7 @@ if(isset($_SESSION['is_open']))
         /*font-weight: bolder;*/
     }
     .form-uic{
-        width: 100%;
-        -webkit-box-shadow: 10px 10px 5px -9px rgba(0,0,0,0.75);
-        -moz-box-shadow: 10px 10px 5px -9px rgba(0,0,0,0.75);
-        box-shadow: 10px 10px 5px -9px rgba(0,0,0,0.75);
-        border-bottom-left-radius: 30px;
-        border-top-right-radius: 30px ;
-
+        background-color: rgba(245,249,252,0.5);
     }
 
     .effect-2 ~ .focus-border{
@@ -101,39 +87,38 @@ if(isset($_SESSION['is_open']))
     :focus{outline: none;}
 
 
-    .col-3{margin: 40px 3%; position: relative;}
+    .col-3{position: relative;}
 
     body{
         background-color: #f3f4f7;
     }
 
-    .btnlogin{
-        border-bottom-left-radius: 30px;
-        border-top-left-radius: 0px;
-        border-top-right-radius: 0px;
-        border-bottom-right-radius: 0px;
-    }
-    .btnlogin:focus{
-        outline: 0;
-        outline: none; !important;
-    }
+
+
 
     .outlogintext{
         /*border-radius: 15px;*/
-        border: solid 1px #cccccc;
+        border-bottom: solid 1px #cccccc;
         padding: 10px;
+    }
+
+    body{
+        background-image: url("https://www.udla.edu.ec/wp-content/uploads/2013/08/150872418.jpg");
+        background-size: 100%;
+        background-repeat: no-repeat;
+        background-position-x: right;
+        /*background-attachment: fixed;*/
+        background-position: center;
+        /*background-origin: content-box;*/
     }
 
 </style>
 
-    <body>
-
-            <div class="container">
-                <div class="row">
-                    <?php include_once 'view/viewlogin.php'; ?>
-                </div>
-            </div>
-
-
-    </body>
+<body >
+    <div class="container">
+        <div class="row ">
+            <?php include_once 'view/viewlogin.php'; ?>
+        </div>
+    </div>
+</body>
 </html>

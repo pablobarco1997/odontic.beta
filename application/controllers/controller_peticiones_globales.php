@@ -429,6 +429,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $info           = [];
             $notification   = [];
             $validTime      = GETPOST('validTime');
+            $subaccion      = GETPOST('subaccion');
             if($validTime == 0 ){
 //                set_time_limit(0); //se establese el numero de segundo que se permite la ejecucion de un script
 //                usleep(3000000);
@@ -437,19 +438,33 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $error = "";
             if( isset($_SESSION['is_open']) ){
 
-                $fecha_time     = GETPOST('fecha_time');
-                $fecha_php      = !empty(GETPOST('fecha_time'))?GETPOST('fecha_time'):date("Y-m-d H:m:s");
+                if($subaccion=='noti_numero'){
 
-                $notification   = $conf->ObtnerNoficaciones($db, false);
-                $fechadb        = $notification['fecha_time_db'];
-                $info           = info_noti( $notification );
+                    $count_notify   = $conf->numero_de_notificaiones($db);
+                    $output = [
+                        'n_notify' => $count_notify
+                    ];
+
+                    echo json_encode($output);
+                    die();
+
+                }else{
+                    //lista de notificaciones data
+                    $fecha_time     = GETPOST('fecha_time');
+                    $fecha_php      = !empty(GETPOST('fecha_time'))?GETPOST('fecha_time'):date("Y-m-d H:m:s");
+                    $notification   = $conf->ObtnerNoficaciones($db, false);
+                    $fechadb        = $notification['fecha_time_db'];
+                }
+
+//                $info         = info_noti( $notification );
+//                print_r($notification); die();
 
             }else{
                 $error          = "Ocurrio un error";
             }
 
             $output = [
-              'data'   => ($info!="")?$info:array(),
+              'data'   => ((count($notification)>0)?$notification:array()),
               'N_noti' => $notification['numero'],
               'error'  => $error
             ];

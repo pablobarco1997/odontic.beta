@@ -194,7 +194,7 @@ function ActivarDesactivarServicios($id, Element){
                 notificacion( resp.error , 'error');
 
             }else{
-                notificacion('Información Actualizada', 'success');
+                // notificacion('Información Actualizada', 'success');
                 // location.href = $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/index.php?view=form_prestaciones';
                 //   load_table_prestaciones(); //resfresco la table list servicios
 

@@ -3,7 +3,7 @@
         /*background: rgb(2,0,36);*/
         /*background: linear-gradient(35deg, rgba(2,0,36,1) 0%, rgba(9,9,121,0.9528186274509804) 0%, rgba(0,212,255,1) 100%);*/
         /*background: rgb(2,0,36);*/
-        background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(33,47,61,1) 17%, rgba(8,122,145,1) 100%);
+        background: #0866a5;
     }
     input[type="text"]{
         font-size: 1.5rem;
@@ -15,22 +15,18 @@
     label{
         font-size: 1.5rem;
     }
+
 </style>
 <!--jquery ui min js-->
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-<div class="col-xs-12 col-md-5 col-sm-7 col-lg-4 col-centered" >
-    <br>
-    <br>
+<div class="col-xs-12 col-md-5 col-sm-7 col-lg-4 col-centered" style="margin-top: 10%">
+    <div  class="form-uic" style="width: 100%;">
 
-    <div  class="form-uic" style="background-color: #ffffff; width: 100%">
-
-        <div class="form-group col-sm-12 col-xs-12" style="padding: 10px">
-
-            <br>
+        <div class="form-group col-sm-12 col-xs-12  " style="padding: 10px">
 
             <?php
 
-                $url = DOL_DOCUMENT.'/application/system/login/img/odontic.beta_sistema_odontologico_online.png';
+                $url = DOL_DOCUMENT.'/application/system/login/img/odontic.beta2_sistema_odontologico_online.png';
                 $base64 = base64_encode(file_get_contents($url));
                 $imgbase64 = "data:image/*; base64, ".$base64;
 
@@ -41,25 +37,29 @@
             <div class="form-group">
                 <div class="col-3">
                     <label for=""> <i class="fa fa-2x fa-fw fa-user"></i> <b>username</b> </label>
-                    <input class="effect-2 outlogintext" type="text" autocomplete="off" placeholder="Ingrese su Usuario" id="usu">
+                    <input class="effect-2 outlogintext text-sm"  style=" font-weight: bold; font-size: small" type="text" autocomplete="off" placeholder="username" id="usu">
                     <span class="focus-border"></span>
-                    <small style="color: red;" id="msg_usuario"></small>
+                </div>
+                <div class="col-3">
+                    <small style="color: red;" id="msg_usuario">&nbsp;</small>
                 </div>
             </div>
 
             <div class="form-group">
                 <div class="col-3">
                     <label for=""> <i class="fa fa-2x fa-fw fa-unlock-alt"></i> <b>password</b> </label>
-                    <input class="effect-2 outlogintext" type="password" autocomplete="off" placeholder="Ingrese su Password" id="pass">
+                    <input class="effect-2 outlogintext "  style=" font-weight: bold; font-size: small" type="password" autocomplete="off" placeholder="password" id="pass">
                     <span class="focus-border"></span>
-                    <small style="color: red;" id="msg_password"></small>
+                </div>
+                <div class="col-3">
+                    <small style="color: red;" id="msg_password">&nbsp;</small>
                 </div>
             </div>
 
         </div>
 
         <div style="width: 100%;  " >
-            <input type="button" id="btn_logearse" value="LOGIN" class="btnlogin"  style="width: 100%;height: 50px;   !important; font-size: 1.5rem; font-weight: bolder;  color: #ffffff; outline: none" >
+            <input type="button" id="btn_logearse" value="LOGIN" class="btn  btnlogin"  style="width: 100%;height: 50px;   !important; font-size: 1.5rem; font-weight: bolder;  color: #ffffff; outline: none" >
         </div>
 
     </div>
@@ -139,8 +139,8 @@
         }
 
         setTimeout(function() {
-            $('#msg_usuario').text(null);
-            $('#msg_password').text(null);
+            $('#msg_usuario').html('&nbsp');
+            $('#msg_password').html('&nbsp');
         }, 2500);
 
     });

@@ -699,25 +699,12 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     d.rowid,
                     d.descripcion,
                     cast(d.tms as date) AS fecha,
-                    IFNULL((SELECT 
-                                    c.nombre_conv
-                                FROM
-                                    tab_conf_convenio_desc c
-                                WHERE
-                                    c.rowid = d.fk_convenio),
-                            'no asignado') AS convenio,
-                    IFNULL((SELECT 
-                                    ct.nombre_cat
-                                FROM
-                                    tab_conf_categoria_prestacion ct
-                                WHERE
-                                    ct.rowid = d.fk_categoria),
-                            'no asignado') AS cat,
-                            d.valor , 
+                    IFNULL((SELECT c.nombre_conv FROM tab_conf_convenio_desc c WHERE c.rowid = d.fk_convenio), 'no asignado') AS convenio,
+                    IFNULL((SELECT  ct.nombre_cat FROM tab_conf_categoria_prestacion ct WHERE ct.rowid = d.fk_categoria), 'no asignado') AS cat,
+                    d.valor , 
                     d.estado
                 FROM
                     tab_conf_prestaciones d 
-                
                 where d.rowid != 0 ";
 
             if(isset($_POST['search'])){
@@ -727,7 +714,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             }
 
             $sql .= $permisoConsultar;
-            $sql .= " order by d.tms desc";
+            $sql .= " order by d.rowid desc";
 
             $sqlTotal = $sql;
 

@@ -824,10 +824,10 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
     $fecha_hoy = date("Y-m-d");
 
     $sql = "SELECT 
+            d.rowid  as id_cita_det,
             d.fecha_cita  as fecha_cita,         
             d.hora_inicio , 
             d.hora_fin ,
-            d.rowid  as id_cita_det,
             (select concat(p.nombre ,' ',p.apellido) from tab_admin_pacientes p where p.rowid = c.fk_paciente) as paciente,
             (select rowid from tab_admin_pacientes p where p.rowid = c.fk_paciente) as idpaciente,                   
             (select telefono_movil from tab_admin_pacientes p where p.rowid = c.fk_paciente) as telefono_movil,
@@ -1037,10 +1037,29 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
             $row[] = $html5;
 
             #DROPDOWN  ESTADOS DE CITAS AGENDADAS-------------------------------------------------------------------------------------------------
+
+            #se realiza una validacion para el id del estado numero 10 ( confirmado por paciente )
+            $msg_confirmacion_estado10 = "";
+            if($acced->fk_estado_paciente_cita==10){ //si el estado es confirmado por paciente se valida el tipo
+                $query  = "SELECT fk_cita, estado, action as accion_confirm FROM tab_noti_confirmacion_cita_email WHERE fk_cita = ".$acced->id_cita_det." and estado = 10 and action <> '' ";
+                $resultconfirm = $db->query($query);
+                if($resultconfirm && $resultconfirm->rowCount()==1){
+                    $obj = $resultconfirm->fetchObject();
+                    if($obj->accion_confirm == 'ASISTIR'){
+                        $msg_confirmacion_estado10 = " <br><small class=' text-sm' style='font-weight: normal !important; color: green;'>Este paciente a notificado que si asistirá a la cita</small>";
+                    }
+                    if($obj->accion_confirm == 'NO_ASISTIR'){
+                        $msg_confirmacion_estado10 = " <br><small class=' text-sm' style='font-weight: normal !important; color: red'>Este paciente a notificado que no asistirá a la cita</small>";
+                    }
+                }
+            }
+
             $html3 = "";
             $html3 .= "<div class='form-group col-md-12 col-xs-12'>
                         <div class='col-xs-12 col-ms-10 col-md-10 no-padding'> 
-                            <label class='' title='$acced->estado' >$acced->estado</label> 
+                            <label class='' title='$acced->estado' >$acced->estado 
+                            ".$msg_confirmacion_estado10." 
+                            </label> 
                         </div>";
 
             $html3 .= "<div class='col-xs-12 col-ms-2 col-md-2 no-padding no-margin'>
