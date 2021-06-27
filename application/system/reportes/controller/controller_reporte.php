@@ -84,17 +84,19 @@ function Obtener_prestaciones_realizadas(){
                 tab_conf_prestaciones c on c.rowid = d.fk_prestacion
                 
                 WHERE d.estadodet = 'R'
-                and year(b.fecha_create) = 2020
+                and year(b.fecha_create) = year(now()) 
                 group by d.fk_prestacion
                 order by round(sum(d.total), 2) desc
-                limit 5;";
+                limit 10;";
 
     $results = $db->query($query);
     if($results){
         if($results->rowCount()>0){
             $result_arr = $results->fetchAll(PDO::FETCH_ASSOC);
             foreach ($result_arr as $value){
-                $prestaciones_realizadas[] = array('name'=>$value['label'], 'y'=>(double)$value['saldo'], 'drilldown' => $value['label']);
+                $prestaciones_realizadas[] = array('name'=>$value['label'], 'y'=>(double)$value['saldo'],
+                    'saldo' => (double)$value['saldo']
+                );
             }
 
         }

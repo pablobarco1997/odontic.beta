@@ -2435,7 +2435,7 @@ function listcitas_admin($idPaciente, $fechaInicio, $fechafin, $n_citas, $Estado
             #Citas Atrazadas
             $citas_atrazadas = "";
             if( $obj->cita_atrazada != "") {
-                $citas_atrazadas = '<small style="white-space: pre-wrap;  color: red; display: block; font-weight: bold"  class="" title="'. $obj->cita_atrazada .'"> '. $obj->cita_atrazada .' </small>';
+                $citas_atrazadas = '<small style="white-space: pre-wrap;  color: red; display: block; font-weight: bold"  class="" title="'. $obj->cita_atrazada .'">'.$obj->cita_atrazada.'</small>';
             }
 
             $iconCita = 'data:image/*; base64, '.base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/cita-medica.ico'));
@@ -2448,15 +2448,14 @@ function listcitas_admin($idPaciente, $fechaInicio, $fechafin, $n_citas, $Estado
                                      </table>";
 
 
-            #FECHA Y HORA DE LA CITAS
-            $row[]  = "<div>
-                            <p style='font-size: small; font-weight: bold'>". date('Y/m/d', strtotime($obj->fecha_cita)) ."</p>
-                            <p><small style='padding: 3px; background-color: #eaecee; font-weight: bold '> <i class='fa fa-clock-o'></i> &nbsp; ".$obj->hora_inicio." - ".$obj->hora_fin."</small></p>
-                      </div>";
-            $row[]  = $obj->especialidad;
+            //Fecha Hora de cita
+            $row[]  = "<span style='white-space: pre-wrap;'> <b>".date('Y/m/d', strtotime($obj->fecha_cita))."</b>\n<b><small style='padding: 3px; background-color: #eaecee; font-weight: bold '> <i class='fa fa-clock-o'></i> &nbsp; ".$obj->hora_inicio." - ".$obj->hora_fin."</small></b> </span>";
+
+
+            $row[]  = "<span style='white-space: pre-wrap;'>".$obj->especialidad."\n<b>Doctor(a):</b>$obj->doct<span>";
             $row[]  = $numero_cita_asociada;
             $row[]  =  "" . (($obj->comentario == "") ? "" : $obj->comentario) . "" .$citas_atrazadas;
-            $row[]  = ($obj->plantratamiento == "") ? "No Asignado" : $obj->plantratamiento;
+            $row[]  = ($obj->plantratamiento == "") ? "No Asignado" : "<span style='font-weight: bold; ' title='$obj->plantratamiento'>$obj->plantratamiento</span>";
             $row[]  = "<label class='control-label' style='background-color: $obj->color !important;  color: #333333; margin-top: 3%; padding: 5px;'> $obj->estado </label>";
             $row[]  = "";
             $data[] = $row;

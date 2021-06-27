@@ -98,7 +98,7 @@
 
 
     <!--google Font 2-->
-<!--    <link rel="preconnect" href="https://fonts.gstatic.com">-->
+    <!--<link rel="preconnect" href="https://fonts.gstatic.com">-->
     <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
 
     <style>
@@ -109,6 +109,24 @@
             font-family: 'Roboto', sans-serif;
             font-size: small;
             /*font-family: 'Baloo Da 2', cursive;*/
+        }
+
+        /*Filtro Contenedor*/
+        #ContenFiltroDocumentos > div > h3 > span {
+            font-size: large;
+            font-weight: bold;
+        }#FiltrarAgenda > div > h3 > span {
+            font-size: large;
+            font-weight: bold;
+        }#contentFilter > div > div > h3 > span {
+            font-size: large;
+            font-weight: bold;
+        }#contentFilter > div  > h3 > span {
+            font-size: large;
+            font-weight: bold;
+        }#FiltrarPagoPacientes > div  > h3 > span {
+            font-size: large;
+            font-weight: bold;
         }
 
         h3{

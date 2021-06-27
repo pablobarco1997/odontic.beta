@@ -344,10 +344,13 @@ if($accion == "principal")
             async: false,
             success: function(resp){
 
-                var table_aso_citas = $("#listTramnCitasAsoc").DataTable();
                 var idpacienteToken = resp.idpacientetoken;
 
-                table_aso_citas.ajax.reload(null, false);
+                if(subaccion=='ASOCIAR_CITAS'){
+                    var table_aso_citas = $("#listTramnCitasAsoc").DataTable();
+                    table_aso_citas.ajax.reload(null, false);
+                }
+
                 $("#citasPaciente").val(null).trigger('change');
 
                 if(resp.error == ''){

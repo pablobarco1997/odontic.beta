@@ -51,29 +51,36 @@ if($Fecha!=""){
 }
 
 
-$sql = "SELECT 
-            date_format(d.fecha_cita, '%Y-%m-%d')  as fecha_cita,
-            c.rowid as id_cita_cab ,
-            d.hora_inicio , 
-            d.hora_fin ,
-            d.rowid  as id_cita_det,
-            (select concat(p.nombre ,' ',p.apellido) from tab_admin_pacientes p where p.rowid = c.fk_paciente) as paciente,
-            (select rowid from tab_admin_pacientes p where p.rowid = c.fk_paciente) as idpaciente,
-            (select telefono_movil from tab_admin_pacientes p where p.rowid = c.fk_paciente) as telefono_movil,
-            (select concat(o.nombre_doc,' ', o.apellido_doc) from tab_odontologos o where o.rowid = d.fk_doc) as doct ,
-            (select concat(s.text) from tab_pacientes_estado_citas s where s.rowid = d.fk_estado_paciente_cita) as estado,
-            (select s.color from tab_pacientes_estado_citas s where s.rowid = d.fk_estado_paciente_cita) as color,
-            d.fk_estado_paciente_cita , 
-            c.comentario ,
-            IFNULL((select es.nombre_especialidad FROM tab_especialidades_doc es where es.rowid = d.fk_especialidad), 'General') as especialidad,
-            (select IFNULL(tc.edit_name, concat('Plan de tratamiento #',tc.numero)) from tab_plan_tratamiento_cab tc where tc.fk_cita = c.rowid limit 1) as plantratamiento ,
-            (select p.telefono_movil from tab_admin_pacientes p where p.rowid = c.fk_paciente) as telefono_movil ,
-            -- citas atrazada con estado no confirmado
-            if( cast(d.fecha_cita as date) < '".$fecha_hoy."' && d.fk_estado_paciente_cita = 2 , concat('cita agendada atrasada <br> NO CONFIRMADO - ', date_format(d.fecha_cita, '%Y/%m/%d') , ' <br> hora ' , d.hora_inicio ) , '') as cita_atrazada
-         FROM 
-         tab_pacientes_citas_cab c , 
-         tab_pacientes_citas_det d
-         WHERE c.rowid = d.fk_pacient_cita_cab ";
+$sql = "select 
+                date_format(d.fecha_cita, '%Y-%m-%d')  as fecha_cita,
+                c.rowid as id_cita_cab ,
+                d.hora_inicio , 
+                d.hora_fin ,
+                d.rowid  as id_cita_det,
+                (select concat(p.nombre ,' ',p.apellido) from tab_admin_pacientes p where p.rowid = c.fk_paciente) as paciente,
+                (select rowid from tab_admin_pacientes p where p.rowid = c.fk_paciente) as idpaciente,
+                (select telefono_movil from tab_admin_pacientes p where p.rowid = c.fk_paciente) as telefono_movil,
+                (select concat(o.nombre_doc,' ', o.apellido_doc) from tab_odontologos o where o.rowid = d.fk_doc) as doct ,
+                (select concat(s.text) from tab_pacientes_estado_citas s where s.rowid = d.fk_estado_paciente_cita) as estado,
+                (select s.color from tab_pacientes_estado_citas s where s.rowid = d.fk_estado_paciente_cita) as color,
+                d.fk_estado_paciente_cita , 
+                c.comentario ,
+                IFNULL((select es.nombre_especialidad FROM tab_especialidades_doc es where es.rowid = d.fk_especialidad), 'General') as especialidad,
+                (select IFNULL(tc.edit_name, concat('Plan de tratamiento #',tc.numero)) from tab_plan_tratamiento_cab tc where tc.fk_cita = c.rowid limit 1) as plantratamiento ,
+                (select p.telefono_movil from tab_admin_pacientes p where p.rowid = c.fk_paciente) as telefono_movil ,
+                
+                -- validaciones
+                -- citas atrazada con estado no confirmado
+                IF( now() > CAST(d.fecha_cita AS DATETIME)  
+                                        && d.fk_estado_paciente_cita in(2,1,3,4,7,8,9,10,11,5,  (select statusc.rowid from tab_pacientes_estado_citas statusc where statusc.system=0) )  , 
+                                            concat('Atrasada ', (select concat(s.text) from tab_pacientes_estado_citas s where s.rowid = d.fk_estado_paciente_cita) , 
+                                                    '\n Fecha : ' , date_format(d.fecha_cita, '%Y/%m/%d') , '<br> Hora: ' , d.hora_inicio ,' h ' , d.hora_fin) , ''
+                                                    ) as cita_atrazada
+         
+             from 
+         
+             tab_pacientes_citas_cab c , tab_pacientes_citas_det d
+             where c.rowid = d.fk_pacient_cita_cab ";
 
 if(!empty($idPaciente))
     $sql .= "  and c.fk_paciente = $idPaciente";
@@ -135,10 +142,9 @@ $pdf .= '
 $pdf .= "
     <table  width='100%' class='tables'>
         <tr  style='width: 100%; background-color: #f0f0f0'>
-            <td style='text-align: center'> <h2> HISTORIAL DE CITAS </h2> </td>
+            <td style='text-align: center; ' > <h4> HISTORIAL DE CITAS </h4> </td>
         </tr>
-    </table>    
-<br>";
+    </table>    ";
 
 
 $objPaciente = getnombrePaciente($idpaciente);
@@ -146,21 +152,21 @@ $objPaciente = getnombrePaciente($idpaciente);
 $pdf .= "<br>";
 
 $pdf .= "
-    <p style='margin: 0.5px'><b>Nombre de Paciente:</b>&nbsp; ".($objPaciente->nombre). " ". ($objPaciente->apellido) ."</p>
-    <p style='margin: 0.5px'><b>C.I.:</b>&nbsp; ".($objPaciente->ruc_ced). "</p>
-    <p style='margin: 0.5px'><b>E-mail:</b>&nbsp; ".($objPaciente->email). "</p>
+    <p style='margin: 0.5px; font-size: 1.1rem;'><b>Nombre de Paciente:</b>&nbsp; ".($objPaciente->nombre). " ". ($objPaciente->apellido) ."</p>
+    <p style='margin: 0.5px; font-size: 1.1rem;'><b>C.I.:</b>&nbsp; ".($objPaciente->ruc_ced). "</p>
+    <p style='margin: 0.5px; font-size: 1.1rem;'><b>E-mail:</b>&nbsp; ".($objPaciente->email). "</p>
     <br>";
 
 $pdf .= "<table class='tables' width='100%'>";
     $pdf .= "    <thead>
                     <tr style='background-color: #f0f0f0'>
-                        <th class='tables' width='10%'>Fecha</th>    
-                        <th class='tables' width='30%'>Hora</th>    
-                        <th class='tables' width='20%'>Espacialidad</th>    
-                        <th class='tables' width='12%'>N.cita</th>    
-                        <th class='tables' width='15%'>Información Adicional</th>    
-                        <th class='tables'>Plan de tratamiento Asociado</th>    
-                        <th class='tables'>Estado de la Cita</th>    
+                        <th class='tables' width='10%' style='font-size: 1rem'>Fecha</th>    
+                        <th class='tables' width='30%' style='font-size: 1rem'>Hora</th>    
+                        <th class='tables' width='20%' style='font-size: 1rem'>Espacialidad</th>    
+                        <th class='tables' width='12%' style='font-size: 1rem'>N.cita</th>    
+                        <th class='tables' width='15%' style='font-size: 1rem'>Información Adicional</th>    
+                        <th class='tables' title='plan de tratamiento asociado' style='font-size: 1rem'>P. Tratamiento asoc.</th>    
+                        <th class='tables' style='font-size: 1rem'>Estado de la Cita</th>    
                     </tr>
                 </thead>
             <tbody>";
@@ -168,15 +174,17 @@ $pdf .= "<table class='tables' width='100%'>";
     foreach ($object as $item)
     {
         $pdf .= "<tr>";
-            $pdf .= "<td class='tables' width='10%' align='center' style='vertical-align: top'> ". date('Y/m/d', strtotime( $item->fecha_cita))." </td>";
+            $pdf .= "<td class='tables' width='10%' align='center' style='vertical-align: top; font-weight: bold; font-size: 1rem'> ". date('Y/m/d', strtotime( $item->fecha_cita))." </td>";
 
             $pdf .= "<td class='tables' width='10%' style='vertical-align: top'>
                             <table>
                                 <tr>
-                                    <td>Hora Inicio: </td> <td> $item->hora_inicio </td>
+                                    <td style='font-weight: bold'>Hora Inicio: </td> 
+                                    <td style='font-weight: bold'> $item->hora_inicio </td>
                                 </tr>
                                 <tr>
-                                    <td>Hora Fin: </td> <td> $item->hora_fin </td>
+                                    <td style='font-weight: bold'>Hora Fin: </td> 
+                                    <td style='font-weight: bold'> $item->hora_fin </td>
                                 </tr>
                             </table>     
                      </td>";
@@ -184,7 +192,7 @@ $pdf .= "<table class='tables' width='100%'>";
             $pdf .= "<td class='tables' width='30%' style='vertical-align: top'> 
                             <p>$item->especialidad</p> 
                                 <hr style='margin: 1px; background-color: black; color: black'> 
-                            <small style='color: black; display: block; font-size: 1rem' > <b>Odontolg@:</b> ".$item->doct."</small>
+                            <small style='color: black; display: block; font-size: 1rem; font-weight: bold' > <b>Doctor(a):</b> ".$item->doct."</small>
                      </td>";
 
             $pdf .= "<td class='tables' width='8%' style='vertical-align: top'> 
@@ -196,9 +204,9 @@ $pdf .= "<table class='tables' width='100%'>";
                         </table>
                      </td>";
 
-            $pdf .= "<td class='tables' width='30%' style='vertical-align: top'> <p>$item->comentario  </p> <p><small style='color: red'>".($item->cita_atrazada)."</small></p> </td>";
-            $pdf .= "<td class='tables' width='10%' style='vertical-align: top'> ". $item->plantratamiento ." </td>";
-            $pdf .= "<td class='tables' width='15%' style='vertical-align: top'> <p style='background-color: $item->color; margin-top: 3px;'> ".$item->estado." </p> </td>";
+            $pdf .= "<td class='tables' width='30%' style='vertical-align: top'> <p>$item->comentario  </p> <p><small style='color: red; font-weight: bold'>".($item->cita_atrazada)."</small></p> </td>";
+            $pdf .= "<td class='tables' width='10%' style='vertical-align: top'> <small style='font-weight: bold'> ". $item->plantratamiento ." </small> </td>";
+            $pdf .= "<td class='tables' width='15%' style='vertical-align: top'> <p style='background-color: $item->color; margin-top: 3px; font-weight: bold'> ".$item->estado." </p> </td>";
         $pdf .= "</tr>";
 
 

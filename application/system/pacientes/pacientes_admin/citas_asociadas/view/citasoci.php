@@ -68,9 +68,9 @@
                 <table class="table table-condensed" width="100%" id="list_citasAsociadas">
                     <thead>
                         <tr>
-                            <th width="15%">Fecha y Hora</th>
+                            <th width="15%">Fecha - Hora</th>
                             <th width="17%">Especialidad</th>
-                            <th width="9%">#. Cita</th>
+                            <th width="9%"># Cita</th>
                             <th width="27%">Información Adicional</th>
                             <th width="20%">Plan de tratamiento asociado</th>
                             <th width="17%">Estado de la Cita</th>

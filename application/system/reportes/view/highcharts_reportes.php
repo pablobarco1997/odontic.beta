@@ -91,55 +91,37 @@
 
         Highcharts.chart('container_prestaciones_mas_realizadas', {
             chart: {
-                type: 'column'
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
             },
             title: {
-                text: "Prestaciones Recaudadas "+"<?= date('Y')?>"
+                text: 'Prestaciones Realizadas '+anual
             },
-            // subtitle: {
-            //     text: 'Click the columns to view versions. Source: <a href="http://statcounter.com" target="_blank">statcounter.com</a>'
-            // },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'+' <br> '+'<small><b>$ {point.saldo}</b></small>'
+            },
             accessibility: {
-                announceNewData: {
-                    enabled: true
+                point: {
+                    valueSuffix: '%'
                 }
-            },
-            xAxis: {
-                type: 'category',
-            },
-            yAxis: {
-                title: {
-                    text: 'Recaudaciones por Prestaciones'
-                }
-            },
-            legend: {
-                enabled: false
             },
             plotOptions: {
-                series: {
-                    borderWidth: 0,
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
                     dataLabels: {
                         enabled: true,
-                        format: '{point.y} $'
+                        format: '<b>{point.name}</b>: {point.percentage:.1f} %'
                     }
                 }
             },
-
-            tooltip: {
-                // headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-                // pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
-                headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-                pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}</b> total<br/>'
-            },
-
-            colors: ['#7cb4eb', '#212f3d', '#184999', '#434348'],
-            series: [
-                {
-                    name: "Prestaciones "+anual,
-                    colorByPoint: true,
-                    data: data
-                }
-            ],
+            series: [{
+                name: anual,
+                colorByPoint: true,
+                data: data
+            }]
         });
 
     }
