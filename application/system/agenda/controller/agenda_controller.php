@@ -87,43 +87,55 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             /*Esta funcion se usa globalmente para actualizar el estado de la citas */
         case 'EstadoslistCitas':
 
-            $output = [ 'resp' => '', 'errmsg' => '' ];
+            $countError = 0;
+            $output = ['error'=>"",'errmsg'=>"", 'success'=>""];
 
             $idestado   = GETPOST('idestado'); //ID ESTADO
             $idcita_det = GETPOST('idcita'); // ID DE LA CITA
             $textEstado = GETPOST('estadoText'); //text estado
 
-            $error = "";
-            $errmsg = "";
 
             //Consulto el estado para validar si se encuentra en estado E-mail de confirmacion Programdo
             //Si esta en estado E-mail de confirmacion programado para poder cambiar de estado tendra que librar la cita de dicho estado ubicarse en el modulo E-mail Asociado y eliminar dicho email progrmado
-            $consultarStatus = "select fk_estado_paciente_cita as estado_id from tab_pacientes_citas_det where (rowid = $idcita_det)";
+            $consultarStatus = "SELECT fk_estado_paciente_cita as estado_id , 
+                                       IF( now() > CAST(fecha_cita AS DATETIME) , 
+                                            concat('Atrasada ', (select concat(s.text) from tab_pacientes_estado_citas s where s.rowid = fk_estado_paciente_cita) , 
+                                                    'Fecha : ' , date_format(fecha_cita, '%Y/%m/%d') , 'Hora: ' , hora_inicio ,' h ' , hora_fin) , ''
+                                                    ) as vencidad_estados
+                                    FROM tab_pacientes_citas_det where (rowid = $idcita_det)";
             $result = $db->query($consultarStatus);
             if($result && $result->rowCount()>0){
-                $estadoCurrentCita = $result->fetchObject()->estado_id;
+                $listEstados = $result->fetchObject();
+
                 //id 11 E-mail de confirmación Programado
-                if($estadoCurrentCita==11){
+                if($listEstados->estado_id==11){
                     $output['errmsg']  = "No puede actualizar esta cita, se encuentra en estado <b>E-mail de confirmacion programado</b>  
                                                 <br> <small style='font-weight: bold'> Verifique la información antes de actualizar para continuar y liberar la cita agendada diríjase al modulo E-mail Asociados del paciente para desactivar el registro E-mail Programado </small>";
+                    $countError++;
+                }
+
+                //id 6 Atendido si el paciente se encuentra atendido y validar la fecha
+                //validar que no puede cambiar el estado Atendido si encaso la fecha es vencida
+                if($listEstados->estado_id==6){
+                    if($listEstados->vencidad_estados!=""){
+                        $output['errmsg'] = "Esta cita #".$idcita_det." .Ya se encuentra en estado Atendido no puede actualizar la información";
+                        $countError++;
+                    }
                 }
             }
 
+//            print_r($output);
+//            die();
+            if($countError==0){
+                $sqlUpdateEstado = "UPDATE `tab_pacientes_citas_det` SET `fk_estado_paciente_cita` = $idestado WHERE (`rowid` = $idcita_det);";
+                $rs = $db->query($sqlUpdateEstado);
 
-            $sqlUpdateEstado = "UPDATE `tab_pacientes_citas_det` SET `fk_estado_paciente_cita` = $idestado WHERE (`rowid` = $idcita_det);";
-            $rs = $db->query($sqlUpdateEstado);
-
-            if($rs)
-            {
-                $error = "Estado $textEstado: información Actualizada";
-            }else{
-                $errmsg = 'Ocurrio un error con Update ' .'Status'.$textEstado;
+                if($rs){
+                    $output['success'] = "Estado $textEstado: información Actualizada";
+                }else{
+                    $output['error'] = 'Ocurrio un error con Update ' .'Status'.$textEstado;
+                }
             }
-
-            $output = [
-                'resp' => $error,
-                'errmsg' => $errmsg #variable aux para notimificaciones
-            ];
 
             echo json_encode($output);
             break;
@@ -1046,10 +1058,10 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
                 if($resultconfirm && $resultconfirm->rowCount()==1){
                     $obj = $resultconfirm->fetchObject();
                     if($obj->accion_confirm == 'ASISTIR'){
-                        $msg_confirmacion_estado10 = " <br><small class=' text-sm' style='font-weight: normal !important; color: green;'>Este paciente a notificado que si asistirá a la cita</small>";
+                        $msg_confirmacion_estado10 = " <br><small class=' text-sm' style='font-weight: bold !important; color: green;'>Este paciente a notificado que si asistirá a la cita</small>";
                     }
                     if($obj->accion_confirm == 'NO_ASISTIR'){
-                        $msg_confirmacion_estado10 = " <br><small class=' text-sm' style='font-weight: normal !important; color: red'>Este paciente a notificado que no asistirá a la cita</small>";
+                        $msg_confirmacion_estado10 = " <br><small class=' text-sm' style='font-weight: bold !important; color: red'>Este paciente a notificado que no asistirá a la cita</small>";
                     }
                 }
             }
@@ -1062,7 +1074,7 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
                             </label> 
                         </div>";
 
-            $html3 .= "<div class='col-xs-12 col-ms-2 col-md-2 no-padding no-margin'>
+            $html3 .= "<div class='col-xs-12 col-ms-2 col-md-2 no-padding no-margin '>
                             <div class='dropdown pull-right' >";
 
                 $html3 .= "    <button class='btn btnhover  dropdown-toggle btn-xs ' id='estadoDropw' type='button' data-toggle='dropdown' style='height: 100%'> <i class='fa fa-ellipsis-v'></i> </button>";

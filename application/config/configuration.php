@@ -107,6 +107,7 @@
                         -- alerta la notificacion de la cita con fecha hasta la hora fin 
                         AND date_format(d.fecha_cita , '%Y-%m-%d') = date_format( now() , '%Y-%m-%d') 
                         AND TRIM(SUBSTRING(NOW(), 11, 17)) <= TRIM(d.hora_fin) 
+                        AND d.noti_aceptar = 0
                         -- Solo las citas que estan confirmadas
                         AND s.rowid not in(5,9,7,6,4) ";
 
@@ -179,7 +180,7 @@
                                             FROM tab_noti_confirmacion_cita_email e  , tab_pacientes_citas_det d 
                                             WHERE e.fk_cita = d.rowid and e.action != '' and e.noti_aceptar = 0 
                                             and d.fk_estado_paciente_cita = 10
-                                            and now() <= cast(concat(cast(d.fecha_cita as date),' ',d.hora_inicio) as datetime)";
+                                            and now() <= cast(concat(cast(d.fecha_cita as date),' ',d.hora_fin) as datetime)";
                 $rsCitasConfirmadas        = $db->query($ConsultarCitasConfirmadas);
                 if($rsCitasConfirmadas && $rsCitasConfirmadas->rowCount() > 0){
                     while ( $NotiConfirmPacientes = $rsCitasConfirmadas->fetchObject() ){
@@ -259,6 +260,7 @@
                 c.fk_paciente = p.rowid
                     AND c.rowid = d.fk_pacient_cita_cab
                     AND d.fk_estado_paciente_cita = s.rowid
+                    AND d.noti_aceptar = 0
                     AND DATE_FORMAT(d.fecha_cita, '%Y-%m-%d') = DATE_FORMAT(NOW(), '%Y-%m-%d')
                     AND TRIM(SUBSTRING(NOW(), 11, 17)) <= TRIM(d.hora_fin)
                     AND s.rowid NOT IN (5 , 9, 7, 6, 4)";
@@ -279,7 +281,7 @@
                     and e.action != ''
                     and e.noti_aceptar = 0
                     and d.fk_estado_paciente_cita = 10
-                    and now() <= cast(concat(cast(d.fecha_cita as date),' ',d.hora_inicio) as datetime);";
+                    and now() <= cast(concat(cast(d.fecha_cita as date),' ',d.hora_fin) as datetime);";
             $result = $db->query($query_noti2);
             if($result){
                 if($result->rowCount()>0){

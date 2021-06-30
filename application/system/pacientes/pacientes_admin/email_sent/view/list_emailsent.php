@@ -53,7 +53,7 @@
     <div class="form-group col-md-12 col-xs-12">
         <div class="table-responsive">
             <table class="table table-condensed" id="mailSentTable" width="100%">
-                <thead>
+                <thead style="background-color: #f4f4f4">
                     <th> Emitido </th>
                     <th> Confirmación x Paciente </th>
                     <th> Desde </th>

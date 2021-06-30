@@ -409,13 +409,25 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             $error = "";
 
+            $table = GETPOST('table');
             $id = GETPOST('id');
 
-            $query = "UPDATE `tab_noti_confirmacion_cita_email` SET `noti_aceptar`='1' WHERE `rowid`= $id;";
-            $rs = $db->query($query);
-            if(!$rs){
-                $error = 'Ocurrio un error';
+            if($table == 'confirmacion_email_cita'){
+                $query = "UPDATE `tab_noti_confirmacion_cita_email` SET `noti_aceptar`='1' WHERE `rowid`= $id;";
+                $rs = $db->query($query);
+                if(!$rs){
+                    $error = 'Ocurrio un error';
+                }
             }
+
+            if($table == 'cita_agendada'){
+                $query = "UPDATE `tab_pacientes_citas_det` SET `noti_aceptar`='1' WHERE `rowid`= $id;";
+                $rs = $db->query($query);
+                if(!$rs){
+                    $error = 'Ocurrio un error';
+                }
+            }
+
 
             $output = [
                 'error' => $error,
@@ -440,9 +452,29 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                 if($subaccion=='noti_numero'){
 
+                    $push = 0;
+                    if(!isset($_SESSION['noti_count_number'])){
+                        $_SESSION['noti_count_number'] = 0;
+                    }
+
                     $count_notify   = $conf->numero_de_notificaiones($db);
+
+                    if($count_notify['result'] == 0){ //reset
+                        $_SESSION['noti_count_number'] = 0;
+                    }
+
+                    if((int)$count_notify['result'] == (int)$_SESSION['noti_count_number']){
+                        // no hay notificaciones
+                    }
+                    if((int)$count_notify['result'] > (int)$_SESSION['noti_count_number']){
+                        //si hay notificaciones
+                        $_SESSION['noti_count_number'] = $count_notify['result'];
+                        $push++;
+                    }
+
                     $output = [
-                        'n_notify' => $count_notify
+                        'n_notify'          => $count_notify,
+                        'notificacion_push' => $push
                     ];
 
                     echo json_encode($output);

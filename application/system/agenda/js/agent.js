@@ -191,6 +191,12 @@ function NOTIFICACION_CITAS_NUMEROS()
     });
 }
 
+// fa-refresh
+function fa_refresh_agenda() {
+    filtrarAgenda();
+    Notify_odontic(1, false)
+}
+
 
 //Funciones Cambio de estados 
 function EstadosCitas(idestado, idcita, html, idpaciente) //Comprotamientos de los estados de las citas
@@ -300,11 +306,18 @@ function UpdateEstadoCita(idestado, idcita, html = "", textEstado) //Actualizar 
         async: false,
         success: function(resp)
         {
-            if(resp.error != "") {
+            if(resp.error != "" && resp.errmsg != "") {
                 var table =  $('#tableAgenda').DataTable();
                 notificacion( 'Información Actualizada', 'success');
                 table.ajax.reload( null, false );
                 Notify_odontic(1,false); //actualizo la notificacion o numero de notificacion
+            }else{
+                if(resp.errmsg != ""){
+                    notificacion( resp.errmsg , 'question');
+                }
+                if(resp.error  != ""){
+                    notificacion( resp.error , 'question');
+                }
             }
         }
     });

@@ -89,6 +89,18 @@
             </div>
         </li>
 
+        <li>
+            <div class="callbox">
+                <div class="form-group">
+                    <div class="checkbox  ">
+                        <a href="#" class="btn btnhover " title="refrescar Datos" style="color: #333333" onclick="fa_refresh_agenda()">
+                            <b><i class="fa fa-refresh"></i></b>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </li>
+
     </ul>
 </div>
 

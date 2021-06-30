@@ -34,6 +34,55 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             echo json_encode($output);
 
             break;
+
+
+        case 'anular_program_email':
+
+            $error   = "";
+            $success   = "";
+            $id_noti = GETPOST('id');
+
+            $query = "SELECT 
+                 e.estado, e.program, e.program_date
+                ,cd.fk_estado_paciente_cita as estado_cita
+                ,cd.rowid as id_cita
+            FROM
+                tab_notificacion_email e
+                inner join
+                tab_pacientes_citas_det cd on cd.rowid = e.fk_cita
+            WHERE
+                e.rowid = ".$id_noti ." order by e.rowid desc limit 1";
+
+//            print_r($query); die();
+            $result = $db->query($query);
+            if($result){
+                if($result->rowCount()==1){
+
+                    $object = $result->fetchObject();
+
+                    //E-mail de confirmación Programado
+                    //se verifica que la cita se encuentre en el estado 11 para poder liberarla
+                    if($object->estado_cita == 11){
+                        if($object->estado == 'P'){
+                            $valor = $db->query("UPDATE `tab_notificacion_email` SET `estado`='E' WHERE `fk_cita`='$object->id_cita';");
+                            if($valor){
+                                $success = "ok";
+                            }
+                            $valor = $db->query("UPDATE `tab_pacientes_citas_det` SET `fk_estado_paciente_cita`='2' WHERE `rowid`='$object->id_cita';");
+                            if($valor){
+                                $success = "ok";
+                            }
+                        }
+                    }
+                }
+            }
+
+            $output = [
+                'error' => $error,
+                'success' => $success
+            ];
+            echo json_encode($output);
+            break;
     }
 }
 

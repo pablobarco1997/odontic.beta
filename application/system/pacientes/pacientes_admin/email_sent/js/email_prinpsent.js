@@ -50,7 +50,7 @@ function list_mail_sent(){
                                 menu += "</button>";
 
                                 menu += "<ul class='dropdown-menu' style='z-index: +2000'>";
-                                   menu += "<li> <a href='#' data-id='"+btoa(full['id_noti'])+"'> Anular </a> </li>";
+                                   menu += "<li> <a href='#' data-id='"+btoa(full['id_noti'])+"' onclick='anular_program($(this))'> Anular </a> </li>";
                                 menu += "</ul>";
 
                             menu += "</div>";
@@ -150,6 +150,31 @@ $(".limpiar").click(function() {
     AplicarBusqueda();
 });
 
+function anular_program(element) {
+
+    var id = element.prop('dataset').id;
+
+    if(id!=""){
+
+        $.ajax({
+            url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/email_sent/controller/controller_emailsent.php',
+            type:'POST',
+            data:{
+                ajaxSend:'ajaxSend',
+                accion:'anular_program_email',
+                id: atob(id),
+            },
+            cache:false, 
+            async:false, 
+            success:function (response) {
+                if(response['error']!=""){
+                    var table = $("#mailSentTable").DataTable();
+                    table.ajax.reload(false, null);
+                }
+            }
+        });
+    }
+}
 
 $(document).ready(function() {
 
