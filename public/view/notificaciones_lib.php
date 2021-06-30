@@ -45,8 +45,9 @@
                 <p class="notify_cita_paciente">Paciente: Pablo Barco Marquez</p>
                 <table style="width: 280px ">
                     <tr><td><p class="notify_cita_estado no-margin" style="color: #888888">Estado actual de la cita</p></td></tr>
+                    <tr><td><p class="text-right no-margin" style="color: #888888"> <i class="fa fa-clock-o"></i> <span class="notify_cita_horaIniFin " >Hora: 13:15:00 h 14:00:00</span></p></td></tr>
+                    <tr><td><a href="#" data-id="" data-type="cita_agendada" id="notify_cita_visto" class="notify_cita_visto btn btn-xs text-sm btnhover" style="color: #2e5ac7; color: #2e5ac7" title="visto" onclick="to_accept_noti_confirmpacient($(this))"><i class="fa fa-2x fa-eye-slash"></i></a></td></tr>
                 </table>
-                <p> <i class="fa fa-clock-o"></i> <span class="notify_cita_horaIniFin">Hora: 13:15:00 h 14:00:00</span></p>
             </a>
         </li>
 
@@ -85,7 +86,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <a href="#" data-id="" class="btn btn-xs btnhover" style="color: #2e5ac7; color: blue" onclick="to_accept_noti_confirmpacient($(this))" title="visto"><i class="fa fa-2x fa-eye-slash"></i></a>
+                            <a href="#" data-id="" data-type="confirmacion_email_cita" id="notify_confirm_email_visto" class="btn btn-xs btnhover notify_confirm_email_visto" style="color: #2e5ac7; color: #2e5ac7" onclick="to_accept_noti_confirmpacient($(this))" title="visto"><i class="fa fa-2x fa-eye-slash"></i></a>
                         </td>
                     </tr>
                 </table>

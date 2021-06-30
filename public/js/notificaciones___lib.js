@@ -10,21 +10,27 @@ var paramt = { 'ajaxSend':'ajaxSend', 'accion':'notification_'};
 
 function to_accept_noti_confirmpacient( Elemento )
 {
-    if(Elemento.prop('data').id == ""){
+    var table = '';
+
+    if(Elemento.prop('dataset').id == ""){
         return false;
     }
+    table = Elemento.prop('dataset').type;
 
-    var id  =  Elemento.prop('data').id;
+    if(table=='')
+        return false;
+
+    var id  =  Elemento.prop('dataset').id;
 
     $.ajax({
         url: $DOCUMENTO_URL_HTTP + '/application/controllers/controller_peticiones_globales.php',
-        data:{'ajaxSend':'ajaSend', 'accion' : 'accept_noti_confirm_pacient', 'id': id},
+        data:{'ajaxSend':'ajaSend', 'accion' : 'accept_noti_confirm_pacient', 'id': id, 'table': table },
         dataType:'json',
         async:false,
         success:function(resp){
             if(resp.error == ""){
                 // location.reload(true);
-                Notify_odontic(null , false);
+                Notify_odontic(1 , false);
             }
         }
 
@@ -139,7 +145,7 @@ $('.messages-menu').on({
 //click Agendar Citas
 if( $('#nuevoGuardarCitas').length > 0){
     $('#nuevoGuardarCitas').click(function(){
-        Notify_odontic();
+        Notify_odontic(1 , false );
     }); 
 }
 
@@ -153,7 +159,7 @@ function Notify_odontic(solo_numero_noti = false, tiempoReal=false) {
             ajaxSend:'ajaxSend'
         };
 
-        var historial = fetch(url+'?ajaxSend=ajaxSend&accion=notification_&subaccion=noti_numero', {
+        var historial = fetch(url+'?ajaxSend=ajaxSend&accion=notification_&subaccion=noti_numero'+'&numero_notify='+(parseFloat(($('#N_noti').text()=="")?0:$('#N_noti').text())), {
             method: 'POST',
             body:JSON.stringify(Object),
             headers:{
@@ -215,6 +221,7 @@ function Htmlnotificacion( push_data , n ) {
     var ul_noti_list = $("#noti_list");
     var acumulador = 1000;
 
+    var n = push_data['data'].length;
     var i = 0;
     for (i = 0; i <= push_data['data'].length -1; i++ ){
 
@@ -239,6 +246,7 @@ function Htmlnotificacion( push_data , n ) {
             elemento.find('.notify_cita_horaIniFin').text(response['horaIni']+' h '+response['horafin']);
             elemento.find('.notify_cita_numero').text("#"+response['id_detalle_cita']);
             elemento.find('.notify_cita_estado').text('Estado actual de la cita '+response['estado_cita']);
+            elemento.find('.notify_cita_visto').attr('data-id',response['id_detalle_cita']);
 
             var minutos_entrada = response['minutos_entrada']+' min';
             if(response['minutos_entrada']=='cita atrazada'){
@@ -269,6 +277,7 @@ function Htmlnotificacion( push_data , n ) {
             }
             var elemento = clone_noti_email_confirmacion_paciente;
             elemento.find('.notify_confirm_label').html('El paciente <b>'+response['paciente']+'</b> '+msg);
+            elemento.find('.notify_confirm_email_visto').attr('data-id', response['id']);
             array_notify.push(elemento);
         }
 
