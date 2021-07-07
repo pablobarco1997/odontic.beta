@@ -647,4 +647,38 @@ function ConsultarCajaUsers($id_users=0, $objectp=false){#se consulta la caja pa
 
 }
 
+function acceso_system($key, $module, $pathView, $operacion){
+
+    $AcumuladorDie = 0;
+
+    switch ($operacion){
+
+        case 'pathView':
+
+
+            break;
+
+    }
+
+    if($AcumuladorDie > 0){
+
+        print_r("Acceso denegado se detecto manipulación sospechosa");
+        die();
+
+
+    }
+
+}
+
+
+function string_comillas_delet($string_c = ""){
+    if($string_c !="" ){
+        $string_c =  preg_replace('/["]/', '', $string_c);
+        $string_c =  preg_replace("/[']/", '', $string_c);
+        return $string_c;
+    }else{
+        return false;
+    }
+}
+
 ?>
