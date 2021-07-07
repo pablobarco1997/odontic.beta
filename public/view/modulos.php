@@ -66,6 +66,7 @@
     $Permissions_Operaciones = array(
         'url'     => array(
             'declaracion_cuentas'       => array('url' => DOL_HTTP .'/application/system/operacion/declaracion_cuentas/index.php?view=all_cuentas&key='.KEY_GLOB , 'Active_subMod' => (isset($Active) && $Active == 'Declaracion_Cuentas') ? 'Active_link_subM' : ''),
+            'cajas_clinicas'            => array('url' => DOL_HTTP .'/application/system/operacion/cajas_clinicas/index.php?view=all_cajas_clinicas&key='.KEY_GLOB , 'Active_subMod' => (isset($Active) && $Active == 'cajas_clinicas') ? 'Active_link_subM' : ''),
         ),
         'Active'  => (isset($Active)  && $Active == 'Declaracion_Cuentas') ? 'Active_link' : '' ,
         'permiso' => '',
@@ -169,6 +170,7 @@
     <!--SUB MENUS-->
     <ul class="treeview-menu" <?= (!empty($Permissions_Operaciones['Active'])?"style=\"display: block\"":"") ?> >
         <li><a href="<?= $Permissions_Operaciones['url']['declaracion_cuentas']['url'] ?>"  class="<?= $Permissions_Operaciones['url']['declaracion_cuentas']['Active_subMod'] ?>" <?= $stylefontSmall ?> >Declarar Cuentas</a></li>
+        <li><a href="<?= $Permissions_Operaciones['url']['cajas_clinicas']['url'] ?>"  class="<?= $Permissions_Operaciones['url']['cajas_clinicas']['Active_subMod'] ?>" <?= $stylefontSmall ?> >Cajas Clinicas</a></li>
     </ul>
 
 </li>

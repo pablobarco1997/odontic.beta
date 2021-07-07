@@ -141,14 +141,12 @@ $('.messages-menu').on({
     "hide.bs.dropdown":  function() { return this.closable; }
 });
 
-
 //click Agendar Citas
 if( $('#nuevoGuardarCitas').length > 0){
     $('#nuevoGuardarCitas').click(function(){
         Notify_odontic(1 , false );
     }); 
 }
-
 
 function Notify_odontic(solo_numero_noti = false, tiempoReal=false) {
 
@@ -168,9 +166,14 @@ function Notify_odontic(solo_numero_noti = false, tiempoReal=false) {
         })
         .then(reponse  => reponse.json())
         .then(response => {
-            console
-                .log(response.n_notify.result);
+
             $('#N_noti').text(response.n_notify.result);
+            if(response.notificacion_push > 0){
+                //alert notificacion
+                if($("#swal2-container").length == 0){
+                    notificacion('Tiene notificaciones Pendientes', 'question');
+                }
+            }
         });
 
 

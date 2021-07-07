@@ -1,11 +1,13 @@
 
 <?php
-if( !headers_sent() && '' == session_id() ) {
-    session_start();
-}
+//if( !headers_sent() && '' == session_id() ) {
+//    session_start();
+//}
 ?>
 
 <?php
+
+session_start();
 
 if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 {
@@ -20,8 +22,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
     switch($accion)
     {
-        case "UpdateEntidad":
 
+        case "UpdateEntidad":
 
             $logo            = "";
             $type            = "";
@@ -452,29 +454,50 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                 if($subaccion=='noti_numero'){
 
-                    $push = 0;
-                    if(!isset($_SESSION['noti_count_number'])){
-                        $_SESSION['noti_count_number'] = 0;
-                    }
-
+                    $push           = 0;
+                    $numero_notify  = (int)GETPOST('numero_notify');//vista
                     $count_notify   = $conf->numero_de_notificaiones($db);
 
-                    if($count_notify['result'] == 0){ //reset
-                        $_SESSION['noti_count_number'] = 0;
-                    }
 
-                    if((int)$count_notify['result'] == (int)$_SESSION['noti_count_number']){
-                        // no hay notificaciones
-                    }
-                    if((int)$count_notify['result'] > (int)$_SESSION['noti_count_number']){
-                        //si hay notificaciones
-                        $_SESSION['noti_count_number'] = $count_notify['result'];
-                        $push++;
+                    if(isset($_SESSION['noti_count_number'])){
+
+                        if($count_notify['result'] < $_SESSION['noti_count_number']){
+                            $_SESSION['noti_count_number'] = $count_notify['result'];
+                        }
+
+                        if($count_notify['result'] == 0){
+                            $_SESSION['noti_count_number'] = 0;
+                        }else{
+                            if($numero_notify == 0){
+                                if($count_notify['result'] > $_SESSION['noti_count_number']){
+                                    $_SESSION['noti_count_number'] =  $count_notify['result'];
+                                    $push++;
+                                }
+                            }else{
+                                if($_SESSION['noti_count_number'] == $numero_notify){
+                                    //si no hay notificaciones en la sesion
+                                    //nada
+                                }else{
+                                    if($count_notify['result'] > $numero_notify){
+                                        $_SESSION['noti_count_number'] =  $count_notify['result'];
+                                        $push++;
+                                    }
+                                    if($_SESSION['noti_count_number'] > $numero_notify){
+                                        $push++;
+                                    }
+                                }
+                            }
+                        }
+                    }else{
+                        $_SESSION['noti_count_number'] = $count_notify['result']; //si en caso es 0
+                        if($_SESSION['noti_count_number'] > 0){
+                            $push++;
+                        }
                     }
 
                     $output = [
                         'n_notify'          => $count_notify,
-                        'notificacion_push' => $push
+                        'notificacion_push' => (($push>0)?$_SESSION['noti_count_number']:0)
                     ];
 
                     echo json_encode($output);
