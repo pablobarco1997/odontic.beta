@@ -625,7 +625,8 @@ function PermitsModule($idModule = "", $action = ""){
     return $valid;
 }
 
-function ConsultarCajaUsers($id_users=0, $objectp=false){#se consulta la caja para que usuario puede realizar cobros de un plan de tratamiento
+//se consulta la caja para que usuario puede realizar cobros de un plan de tratamiento
+function ConsultarCajaUsers($id_users=0){
 
     global $db, $messErr;
 
@@ -633,17 +634,51 @@ function ConsultarCajaUsers($id_users=0, $objectp=false){#se consulta la caja pa
         return 'Este usuario no está asociado a ninguna caja';
     }
 
-    $result = $db->query("select * from tab_login_users where rowid = $id_users and id_caja_account != 0 limit 1");
-    if($result && $result->rowCount()==1){
-        if($objectp==false){
-            return 1;
-        }
-        if($objectp==true){
-            return $result->fetchObject();
+    $err_caja = [];
+
+    $sql = "SELECT 
+        s.rowid as id_user, 
+        cp.date_apertura , 
+        cp.date_cierre , 
+        cp.estado, 
+        cp.rowid as id_caja_ope, 
+        cp.estado , 
+        CASE
+                WHEN cp.estado = 'A' THEN 'Caja abierta'
+                WHEN cp.estado = 'C' THEN 'Caja Cerrada'
+                WHEN cp.estado = 'E' THEN 'Caja Eliminada'
+            ELSE 'Caja no asignada' 
+        END as estado_caja
+            
+    FROM
+        tab_login_users s 
+        left join
+        tab_ope_cajas_clinicas cp on cp.id_user_caja = s.rowid
+    where 
+        cp.estado = 'A'
+        and cp.date_cierre is null
+        and s.rowid = ".$id_users. " limit 1";
+
+    //error caja no asignada
+    $err_caja['error'] = "";
+
+    $result = $db->query($sql);
+    if($result && $result->rowCount() > 0){
+        $all = $result->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($all as $k => $value){
+            if($value['estado'] == 'A'){
+                $err_caja['caja'] = $value;
+            }
+            if($value['estado'] == 'C'){
+                $err_caja['error'] = 'Caja Cerrada';
+            }
         }
     }else{
-        return $messErr;
+        $err_caja['error'] = 'Este usuario no está asociado a ninguna caja';
     }
+
+    return $err_caja;
 
 }
 
