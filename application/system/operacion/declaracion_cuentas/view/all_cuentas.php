@@ -91,7 +91,7 @@ $modulo = true;
                     <div class="row">
                         <div class="col-xs-12 col-md-12">
                             <label for="">Agrege un nombre</label>
-                            <textarea class="form-control" id="fn_editar_name_cuenta" maxlength="500"></textarea>
+                            <textarea class="form-control" id="fn_editar_name_cuenta" maxlength="500" style="resize: vertical"></textarea>
                         </div>
                     </div>
                 </div>
@@ -231,14 +231,17 @@ $modulo = true;
     });
 
 
-    var cuenta_id = 0;
+    var cuenta_id = 0, name_edit_cuenta = "";
     $("#modal_modificar_name_cuenta").on("show.bs.modal", function (event) {
         cuenta_id = $(event.relatedTarget).prop('dataset').idcuenta;
-        $("#fn_editar_name_cuenta").val($(event.relatedTarget).prop('dataset').name)
+        $("#fn_editar_name_cuenta").val($(event.relatedTarget).prop('dataset').name);
+        name_edit_cuenta = $("#fn_editar_name_cuenta").val();
     });
 
+
     $("#guardarEditNameCuen").click(function () {
-        if(cuenta_id == 0){
+
+        if(cuenta_id == 0 || name_edit_cuenta == ""){
             notificacion("Ocurrio un error parámetros de búsqueda\n Consulte con soporte");
             return false;
         }else{
@@ -253,6 +256,7 @@ $modulo = true;
                     'ajaxSend'  :'ajaxSend',
                     'cuenta_id' : cuenta_id,
                     'nom' : $("#fn_editar_name_cuenta").val(),
+                    "nom_anterior" : name_edit_cuenta,
                 },
                 dataType:'json',
                 cache:false,

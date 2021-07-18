@@ -71,7 +71,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 $valor = $cuenta->addAcount();
 
                 if($valor != -1){
-                    $log->log($valor, $log->crear, 'Se a creado una Cuenta N.'.$n_cuenta. ' '.$label, 'tab_ope_declare_cuentas');
+                    $log->log($valor, $log->crear, 'Se ha creado una Cuenta N.'.$n_cuenta. ' '.$label, 'tab_ope_declare_cuentas');
                 }else{
                     $log->log($valor, $log->error, 'Ocurrio un error con la Operación Cuenta N.'.$n_cuenta. ' '.$label, 'tab_ope_declare_cuentas');
                 }
@@ -88,7 +88,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
         case 'list_all_cuentas':
 
 
-            if(!PermitsModule(2,1 ))
+            if(!PermitsModule(29,1 ))
                 $PermisoConsultar = " 1<>1 ";
             else
                 $PermisoConsultar = " 1=1 ";
@@ -187,8 +187,10 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $error = "";
             $cuenta_id  = GETPOST("cuenta_id");
             $nom = GETPOST("nom");
+            $nomAnterior = GETPOST("nom_anterior");
 
             $nom = string_comillas_delet($nom);
+            $nomAnterior = string_comillas_delet($nomAnterior);
 
             if($cuenta_id!=""){
                 $query   = "UPDATE `tab_ope_declare_cuentas` SET `name_acount`='".$nom."' WHERE `rowid`= ".$cuenta_id;
@@ -198,7 +200,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     $log_error = "query: $query"."  "."\n no ejecuto la query ";
                     $log->log($cuenta_id, $log->error, 'Ocurrio un error con la operacion modificar cuenta'.$nom.' campo de la cuenta', 'tab_ope_declare_cuentas',$log_error);
                 }else{
-                    $log->log($cuenta_id, $log->modificar, 'se actualizo  el nombre de la cuenta '.$nom, 'tab_ope_declare_cuentas');
+                    $log->log($cuenta_id, $log->modificar, 'se actualizo el nombre de la cuenta '.$nomAnterior." a ".$nom , 'tab_ope_declare_cuentas');
                 }
             }
 
