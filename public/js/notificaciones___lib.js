@@ -189,10 +189,11 @@ function Notify_odontic(solo_numero_noti = false, tiempoReal=false) {
     $.ajax({
         url: url,
         type:'POST',
+        delay:300,
         data: parametros,
         dataType:'json',
         cache:false,
-        async:false,
+        async:true,
         complete: function (xhr, status) {
 
         },

@@ -87,8 +87,8 @@
     require_once  DOL_DOCUMENT .'/application/controllers/controller.php';
 
     /** VARIABLE GLOBAL DE DATETIME MYSQL*/
-    $sqlCurrentDatezone = "SELECT NOW() datezpnecurrent;";
-    $dateZoneCurrent    = $db->query($sqlCurrentDatezone)->fetchObject()->datezpnecurrent;
+//    $sqlCurrentDatezone = "SELECT NOW() datezpnecurrent;";
+//    $dateZoneCurrent    = $db->query($sqlCurrentDatezone)->fetchObject()->datezpnecurrent;
 
     $NavSearchPacientes = NavSearchPacientes();
 
@@ -114,7 +114,7 @@
     ); */
 
 
-//    echo '<pre>'; print_r($user); die();
+// echo '<pre>'; print_r($user); die();
 
     #echo phpversion();
 

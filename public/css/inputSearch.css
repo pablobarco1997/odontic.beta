@@ -1,3 +1,14 @@
+.swal2-cancel{
+    margin: 10px;
+    color: red; !important;
+    font-weight: bolder;
+}
+
+.swal2-confirm{
+    margin: 10px;
+    color: green; !important;
+    font-weight: bolder;
+}
 
 .autocomplete {
     position: relative;

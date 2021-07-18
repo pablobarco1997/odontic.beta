@@ -382,9 +382,41 @@ function notificacion(mensage, accion)
         label = "Advertencia";
     }
 
-    Swal.fire(label, mensage, accion);
+    Swal.fire(label, mensage, accion, 1000);
 
 }
+
+function notificacionSIoNO(title, text, object ){
+
+    const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+            confirmButton: 'btn ',
+            cancelButton: 'btn '
+        },
+        buttonsStyling: false
+    });
+
+    swalWithBootstrapButtons.fire({
+        title: title,
+        text: text,
+        showCancelButton: true,
+        confirmButtonText: 'Si, Confirmar!',
+        cancelButtonText: 'No, Cancelar!',
+        reverseButtons: true
+    }).then((result) => {
+        // console.log(result);
+        if (result.value==true) {
+            //no cancelar
+            object.callback();
+            console.log(object);
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+            //si confirmado
+        }
+    });
+
+}
+
+
 
 //CARGAR LOGO E GUARDAR INFOMACION COMPLETA DE LA EMPRESA
 $("#subirLogo").change(function(event){
@@ -792,4 +824,24 @@ if($('#perf_cedula').length>0 && $('#especialidadPerfil').length>0){
     //     allowClear: false,
     //     language:'es'
     // });
+}
+
+
+function button_loadding(Elementbtn, on) {
+
+    if(on==true){
+        if(Elementbtn.find('span').hasClass('btnSpinner')){
+            Elementbtn.find('span').removeClass('hide');
+            Elementbtn.attr('disabled', true);
+        }else{
+            Elementbtn.find('span').addClass('hide');
+            Elementbtn.attr('disabled', false);
+        }
+    }
+    if(on==false){
+        if(Elementbtn.find('span').hasClass('btnSpinner')){
+            Elementbtn.find('span').addClass('hide');
+            Elementbtn.attr('disabled', false);
+        }
+    }
 }

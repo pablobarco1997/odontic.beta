@@ -1,4 +1,31 @@
 
+/*css styles btnSpinner o button loadding*/
+.btnSpinner{
+    width: 14.01px;
+    height: 13.33px;
+    animation-name: spinnerBtnLoad;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+@keyframes spinnerBtnLoad {
+    0% {
+        transform:rotate(0deg);
+    }
+    100% {
+        transform:rotate(360deg);
+    }
+}
+@-webkit-keyframes spinnerBtnLoad {
+    0% {
+        transform:rotate(0deg);
+    }
+    100% {
+        transform:rotate(360deg);
+    }
+}
+
 /*dataTables_paginate*/
 .dataTables_paginate .pagination .paginate_button a{
     padding: 10px;

@@ -208,7 +208,6 @@ function EstadosCitas(idestado, idcita, html, idpaciente) //Comprotamientos de l
     }
 
     var textEstado = html.data('text');
-
     switch (idestado)
     {
         case 1: //notificar por email
@@ -234,7 +233,14 @@ function EstadosCitas(idestado, idcita, html, idpaciente) //Comprotamientos de l
 
         case 4: // En sala de espera
 
-            UpdateEstadoCita(idestado, idcita, html, textEstado );
+            $.get($DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php" , {'ajaxSend':'ajaxSend', 'accion':'consultar_estado_cita_atrazada', 'idcita':idcita } , function(data) {
+                var dato = $.parseJSON(data);
+                if(dato.result == 'atrazada'){
+                    notificacion('Esta cita se encuentra atrasada no puede cambiar a estado <b>Atendiendose</b>', 'question');
+                }else{
+                    UpdateEstadoCita(idestado, idcita, html, textEstado );
+                }
+            });
             break;
 
         case 5: // Atendiendose
@@ -306,7 +312,8 @@ function UpdateEstadoCita(idestado, idcita, html = "", textEstado) //Actualizar 
         async: false,
         success: function(resp)
         {
-            if(resp.error != "" && resp.errmsg != "") {
+            console.log(resp);
+            if(resp.error == "" && resp.errmsg == "") {
                 var table =  $('#tableAgenda').DataTable();
                 notificacion( 'Información Actualizada', 'success');
                 table.ajax.reload( null, false );
