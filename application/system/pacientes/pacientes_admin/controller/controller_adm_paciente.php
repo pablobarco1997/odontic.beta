@@ -950,13 +950,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         tc.fk_paciente,
                         tc.fk_doc fkdoc,
                         
-                        IFNULL((SELECT 
-                                        CONCAT(od.nombre_doc, ' ', od.apellido_doc)
-                                    FROM
-                                        tab_odontologos od
-                                    WHERE
-                                        od.rowid = tc.fk_doc),
-                                'No asignado') AS nombre_doc,
+                        IFNULL((SELECT CONCAT(od.nombre_doc, ' ', od.apellido_doc) FROM tab_odontologos od WHERE od.rowid = tc.fk_doc), 'No asignado') AS nombre_doc,
                                 
                         tc.estados_tratamiento,
                         tc.ultima_cita,
@@ -1018,12 +1012,18 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     }else{
                         $estado = 'Inactivo';
                     }
+
                     $nombre_tratamiento = null;
                     if($ob->edit_name != ""){
-                        $nombre_tratamiento = $ob->edit_name;
+//                        $nombre_tratamiento = $ob->edit_name;
+                        $edit = "<small style='display: block; font-weight: normal;' class='text-sm' >Editado: ".$ob->edit_name."</small>";
                     }else{
-                        $nombre_tratamiento = "Plan de Tratamiento: # $ob->numero ";
+                        $nombre_tratamiento = "Plan de Tratamiento: N. $ob->numero ";
+                        $edit = "";
                     }
+
+                    //numero del plan de tratamiento del Paciente
+                    $nombre_tratamiento = "Plan de Tratamiento: N. $ob->numero ".$edit;
 
                     $url_planform = DOL_HTTP .'/application/system/pacientes/pacientes_admin/?view=plantram&key='.KEY_GLOB.'&id='.tokenSecurityId($ob->idpaciente).'&v=planform&idplan='.tokenSecurityId($ob->rowid);
 

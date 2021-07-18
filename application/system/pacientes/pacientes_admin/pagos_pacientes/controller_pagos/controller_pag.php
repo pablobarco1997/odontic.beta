@@ -59,7 +59,13 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $datosp['amoun_t']      = $amount_total;
             $datosp['observ']       = $observa;
 
-            if(ConsultarCajaUsers($user->id, false)==1){
+            //se valida la caja asociado a un usuario
+            //tiene qeu estar en estado Abierto
+            //no
+            // C cerrada
+            // E eliminada
+            $consultar_caja_usuario = ConsultarCajaUsers($user->id);
+            if($consultar_caja_usuario['error']==""){
 
                 $respuesta = realizar_PagoPacienteIndependiente( $datosp, $idpaciente, $idplancab );
                 if($respuesta == 1){
@@ -68,7 +74,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                 }
             }else{
-                $respuesta = "Este usuario no tiene asociada una caja <br> <b>No puede realizar esta Operación</b>";
+                $respuesta = "Este usuario no tiene asociada una caja <br> <b>No puede realizar esta Operación</b> <br> ".$consultar_caja_usuario['error'];
             }
 
             $Output = [
@@ -376,10 +382,10 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             $error = "";
 
-            $respuesta = ConsultarCajaUsers($user->id, false);
+            $respuesta = ConsultarCajaUsers($user->id);
 
 //            print_r($respuesta);
-            if($respuesta==1){
+            if($respuesta['error']==""){
                 $error = "";
             }else{
                 $error = "Ud. No tiene asociado una caja";
@@ -531,11 +537,9 @@ function listPrestacionesApagar($idpaciente, $idplantram)
                 ,ifnull((select lb.name from tab_conf_laboratorios_clinicos lb where lb.rowid = cp.fk_laboratorio),'') as nom_laboratorio
                 
             FROM
-            
                 tab_conf_prestaciones cp    ,
                 tab_plan_tratamiento_cab ct ,
                 tab_plan_tratamiento_det dt
-                
             WHERE
             
                 ct.rowid = dt.fk_plantratam_cab
@@ -597,7 +601,7 @@ function listPrestacionesApagar($idpaciente, $idplantram)
             $row[] = "<p class='prestaciones_det' data-idprest='$objPrest->fk_prestacion' data-iddetplantram='$objPrest->iddetplantram' data-idcabplantram='$objPrest->idcabplantram' data-status='$objPrest->estado_pay' > $objPrest->prestacion 
                             &nbsp;&nbsp;&nbsp; ".(($objPrest->diente==0)?"":"<img src='".$icoPieza."' width='14px' height='14px'> $objPrest->diente")." 
                             <small style='display: block; color: #2c4ea4' title='$objPrest->nom_laboratorio'> ".((!empty($objPrest->nom_laboratorio))?"<i class='fa fa-flask'></i> $objPrest->nom_laboratorio":"")."</small>".
-                        ((!empty($StatusPagado))?"<small style='display: block; color: green'> <b>Recaudación Completa</b> <i class='fa fa-money'></i></small>":"").
+                        ((!empty($StatusPagado))?"<small style='display: block; color: green'> Recaudación Completa <i class='fa fa-money'></i></small>":"").
                       "</p>";
 
             $val_pendiente = number_format(( $objPrest->totalprestacion - $objPrest->abonado ), 2, '.', '');
@@ -624,6 +628,11 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
 
     global  $db, $conf, $user;
 
+    require_once DOL_DOCUMENT .'/application/system/operacion/class/Class.operacion.php';
+
+
+    $operaciones = new operacion($db);
+
     $idpacgos = 0;
     $datosdet   = $datos['datos'];
 
@@ -637,8 +646,11 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
         $iddetplantram[] = $idValue['iddetplantram'];
     }
 
+    if((double)$amoun_t == 0){
+        return "El monto no puede ser 0";
+    }
 
-    if(count($iddetplantram)==0)
+    if(count($iddetplantram) == 0)
         return "Ocurrio un error con la Operación Recaudar: Verifique la información antes de Recaudar";
 
 
@@ -656,7 +668,6 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
         return "Estas Prestaciones ya se encuentran ya se encuentran recaudadas: <br>"."<b>".(implode("<br>", $labelServicio))."</b>";
     }
 
-//    print_r($countValid); die();
 
     $sql1  = " INSERT INTO `tab_pagos_independ_pacientes_cab` ( `fecha`, `fk_tipopago`, `observacion`, `monto`, n_fact_boleta, fk_plantram, fk_paciente, id_login)";
     $sql1 .= " VALUES( ";
@@ -669,14 +680,15 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
     $sql1 .= " $idpaciente , ";
     $sql1 .= " $user->id  ";
     $sql1 .= ")";
-//    echo '<pre>';
-//    print_r($sql1); die();
-    $rsPagos = $db->query($sql1);
 
+    $rsPagos  = $db->query($sql1);
     $idpacgos = $db->lastInsertId('tab_pagos_independ_pacientes_cab');
 
-    if($rsPagos){
+    $fetch_caja    = ConsultarCajaUsers($user->id);
+    $n_tratamiento = $db->query("select concat('Plan de Tratamiento',' #',pc.numero) as n_tratamiento from tab_plan_tratamiento_cab pc where pc.rowid = $idplancab")->fetchObject()->n_tratamiento;
+    $nom_paciente  = $db->query("select (select concat(d.nombre, ' ', d.apellido) from tab_admin_pacientes d where d.rowid = pc.fk_paciente)  as nom_p from tab_plan_tratamiento_cab pc where pc.rowid = $idplancab")->fetchObject()->nom_p;
 
+    if($rsPagos){
         for ( $i = 0; $i <= count($datosdet) -1; $i++ )
         {
             $sql2  = " INSERT INTO `tab_pagos_independ_pacientes_det` (`feche_create`, `fk_paciente`, `fk_usuario`, `fk_plantram_cab`, `fk_plantram_det`, `fk_prestacion`, `fk_tipopago`, `amount`, fk_pago_cab)";
@@ -699,8 +711,29 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
             // PA => Pagado
             // PS => saldo
 
+            if($rs2){
+
+                $datos['id_pago']             = $idpacgos;
+                $datos['plan_tram_cab']       = $datosdet[$i]['idcabplantram'];
+                $datos['plan_tram_det']       = $datosdet[$i]['iddetplantram'];
+                $datos['id_paciente']         = $idpaciente;
+                $datos['prestacion_servicio'] = $datosdet[$i]['fk_prestacion'];
+                $datos['fk_tipo_pago']        = $t_pagos;
+                $datos['amount']              = $datosdet[$i]['valorAbonar'];
+                $datos['id_ope_caja_cab']     = $fetch_caja['caja']['id_caja_ope'];
+                $datos['date_apertura']       = $fetch_caja['caja']['date_apertura'];
+                $datos['date_cierre']         = null;
+                $datos['estado']              = "A";
+                $datos['n_tratamiento']       = $n_tratamiento;
+
+
+                $operaciones->new_trasaccion_caja($datos, $n_tratamiento, $nom_paciente);
+
+            }
+
             #se realiza las transacciones ingreso o egreso de caja
-            realizarTrasaccionCobrosRecaudaciones($observacion, $idplancab, $idpacgos, $datosdet[$i]['valorAbonar'], $datosdet[$i]['fk_prestacion']);
+//            realizarTrasaccionCobrosRecaudaciones($observacion, $idplancab, $idpacgos, $datosdet[$i]['valorAbonar'], $datosdet[$i]['fk_prestacion']);
+
         }
 
         //Consulto los pagos que este y actualizo el estado si ya esta pagada o solo haya saldo

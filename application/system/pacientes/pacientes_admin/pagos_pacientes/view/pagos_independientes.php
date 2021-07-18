@@ -67,9 +67,9 @@ global $db, $user;
 
 
 
-$showCaja = ConsultarCajaUsers($user->id, false);
+$showCaja = ConsultarCajaUsers($user->id);
 
-if($showCaja!=1){
+if($showCaja['error']!=""){
     $showCaja = "Este usuario no tiene asociada una caja <br> <b>No puede realizar esta Operación</b>";
 }else{
     $showCaja="1";
@@ -143,11 +143,10 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
 
      <div class="form-group col-xs-12 col-md-12 col-sm-12">
          <div class="table-responsive">
-             <table class="table-condensed table" id="ApagarlistPlantratmm" width="100%">
-
-                 <thead>
-                     <tr>
-                         <th colspan="3">LISTA DE PRESTACIONES  <span> <?= strtoupper($n_plantram) ?> </span> </th>
+             <table class="table-condensed table" id="ApagarlistPlantratmm" width="100%" >
+                 <thead >
+                     <tr style="background-color: #f0f0f0">
+                         <th colspan="7">LISTA DE PRESTACIONES  <span> <?= strtoupper($n_plantram) ?> </span> </th>
                      </tr>
                      <tr>
                          <th width="5%">
@@ -165,12 +164,12 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
                      </tr>
                  </thead>
 
-                 <tfoot>
+                 <tfoot style="background-color: #f0f0f0">
                     <tr>
                         <td colspan="5" class="text-right">&nbsp;</td>
-                        <td colspan="1" class="" style="font-weight: bolder">TOTAL:</td>
-                        <td colspan="1" class="text-center" style="font-weight: bolder">
-                            <span id="totalPrestacion" style="padding: 5px; border-radius: 5px; padding: 5px; font-weight: bolder; background-color: #f0f0f0">0.00</span>
+                        <td colspan="1" class="" style="font-weight: bolder">TOTAL RECAUDADO:</td>
+                        <td colspan="1" class="text-center" style="font-weight: bolder; text-align: left" >
+                            <span id="totalPrestacion" style="padding: 5px; border-radius: 5px; font-weight: bolder; background-color: #f0f0f0; text-align: left">0.00</span>
                         </td>
                     </tr>
                  </tfoot>
@@ -179,9 +178,8 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
          </div>
      </div>
 
-     <div class="form-group col-xs-12 col-md-12">
-         <div class="col-sm-12 col-xs-12 col-md-9 col-centered" style="background-color:#f9f9f9 ">
-<!--             <h2 style="margin-top:0px ">DETALLE</h2>-->
+     <div class="form-group col-xs-12 col-md-12" >
+         <div class="col-sm-12 col-xs-12 col-md-9 col-centered" style="background-color:#f9f9f9;">
              <br>
              <div class="form-horizontal">
 
@@ -194,7 +192,6 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
 
                              ?>
                          </select>
-                         <small style="color: red" id="err_t_pago"></small>
                      </div>
                  </div>
 
@@ -202,30 +199,28 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
                      <label for=""  class="control-label col-sm-4 col-md-4 col-xs-12"> № Factura / Boleta:</label>
                      <div class="col-sm-6 col-md-6 col-xs-12">
                          <input type="text" id="n_factboleta" class="form-control" maxlength="11">
-                         <small style="color: red" id="err_t_nboleta"></small>
                      </div>
                  </div>
 
                  <div class="form-group">
-                     <label for=""  class="control-label col-sm-4 col-md-4 col-xs-12"> Descripción ( <small>opcional</small> ): </label>
+                     <label for=""  class="control-label col-sm-4 col-md-4 col-xs-12"> observación ( <small>opcional</small> ): </label>
                      <div class="col-sm-6 col-md-6 col-xs-12">
-                         <textarea id="descripObserv" class="form-control"></textarea>
+                         <textarea id="descripObserv" class="form-control" rows="2" style="resize: vertical"></textarea>
                      </div>
                  </div>
 
                  <div class="form-group">
                      <label for=""  class="control-label col-sm-4 col-md-4 col-xs-12"> Monto: </label>
                      <div class="col-sm-5 col-md-5 col-xs-12">
-                         <label for=""  class="control-label col-sm-8 col-md-8 col-xs-12">
-                             <i class="fa fa-dollar"></i> <span id="monto_pag">0.00</span>
-                             <small style="color: red; display: block" id="err_monto" ></small>
+                         <label for=""  class="control-label col-sm-8 col-md-8 col-xs-12" style="padding-left: 0px; ">
+                             <span id="monto_pag" class="pull-left">0.00</span>
                          </label>
                      </div>
                  </div>
 
 
-                 <div class="form-group col-sm-12 col-md-12 col-xs-12 pull-right">
-                     <input type="button" class="btn btnhover btn-block" style="font-weight: bolder; color: green" id="btnApagar" value="Aceptar">
+                 <div class="form-group pull-right">
+                     <button class="btn btnhover btn-block" style="font-weight: bolder; color: green" id="btnApagar" > Aceptar </button>
                  </div>
 
              </div>
@@ -267,7 +262,7 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
          $(window).on("load", function () {
              if("<?= $showCaja ?>" != "1"){
                  notificacion("<?= $showCaja ?>", "question");
-                $("#btnApagar").attr("disabled",true).addClass("disabled_link3");
+                $("#btnApagar").addClass("disabled_link3");
                 $('.Abonar').attr("disabled",true);
              }
          });

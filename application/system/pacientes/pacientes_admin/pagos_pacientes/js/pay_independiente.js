@@ -45,6 +45,66 @@ var FomValidFormaPagos = function() {
 
 };
 
+
+//Formulario validar de recaudacion
+var FormValidaRecaudar = function () {
+
+    var valid = 0;
+    var ErroresData  = [];
+    var forma_pagos  = $("#t_pagos"); //forma de pagos
+    var nfacture     = $("#n_factboleta"); //numero de facture
+    var monto        = $("#monto_pag"); //monto
+
+
+    if(forma_pagos.find(":selected").val() == ""){
+        ErroresData.push({
+            'document' : forma_pagos ,
+            'text' : 'Campo requerido',
+        });
+    }
+    if(parseFloat(monto.text())==0){
+        ErroresData.push({
+            'document' : monto,
+            'text' : 'El monto no puede ser 0',
+        });
+    }
+    if(nfacture.val().length!=17 && nfacture.val()==""){
+        ErroresData.push({
+            'document' : nfacture,
+            'text' : 'Campo requerido',
+        });
+    }
+
+    if(ErroresData.length>0){
+        valid++;
+    }
+
+    $(".ElementErrorFormaPago").remove();
+
+    if(ErroresData.length>0){
+        for (var i=0; i<=ErroresData.length-1;i++){
+
+            var documento = ErroresData[i]['document'];
+            var text      = ErroresData[i]['text'];
+            var Msg       = document.createElement('small');
+
+            console.log(documento[0].localName);
+            if(documento[0].localName=='select'){
+                $(Msg).insertAfter(documento.parent().find('span:eq(0)')).addClass('ElementErrorFormaPago').css('color','red').css('display','block').text(text);
+            }else{
+                $(Msg).insertAfter(documento).addClass('ElementErrorFormaPago').css('color','red').css('display','block').text(text);
+            }
+
+        }
+    }
+
+    if(valid>0){
+        return false;
+    }else{
+        return true;
+    }
+};
+
 function listaprestacionesApagar()
 {
     $('#ApagarlistPlantratmm').DataTable({
@@ -247,6 +307,8 @@ $("#addFormaPago").on("click", function() {
 //mask money
 function moneyPagosInput(Input)
 {
+    FormValidaRecaudar();
+
     if(Input.val()=="")
         Input.val("0.00");
 
@@ -495,87 +557,46 @@ function fetchPagosListSelect(){
 /**PAGAR PLAN DE TRATAMIENTO ------------------*/
 $('#btnApagar').click(function() {
 
-    $(this).addClass('disabled_link3');
-    var puedo = 0;
-
-
-    if($('#n_factboleta').val()==""){
-        $('#err_t_nboleta').text('Debe ingresar el número de voleta');
-        puedo++;
-    }else if($('#n_factboleta').val().length != 17){
-        $('#err_t_nboleta').text('Debe completar el número');
-    }else if($('#n_factboleta').val() == "000-000-000000000"){
-        $('#err_t_nboleta').text('No puede ser 0');
-    }
-    else{
-        $('#err_t_nboleta').text(null);
-    }
-
-    if($('#t_pagos').find(':selected').val() == 0){
-
-        $('#err_t_pago').text('Debe seleccionar un tipo de pago');
-        puedo++;
-
-    }else{
-
-        $('#err_t_pago').text(null);
-    }
-
-    if( $('#monto_pag').text() == 0 )
-    {
-        $('#err_monto').text('El monto no puede ser $ 0.00');
-        puedo++;
+    if(FormValidaRecaudar()==false){
+        return false;
     }
 
     if(cajaUsuario()==false){
-        puedo++;
         notificacion("Este usuario no tiene asociada una caja <br> <b>No puede realizar esta Operación</b>", "question");
     }
 
-    if(puedo == 0)
-    {
-        var datos = fetch_apagar();
 
-        $.ajax({
+    var datos = fetch_apagar();
+    $.ajax({
 
-            url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/pagos_pacientes/controller_pagos/controller_pag.php',
-            type:'POST',
-            data: {
-                'ajaxSend': 'ajaxSend',
-                'accion':'realizar_pago_independiente',
-                'datos': datos,
-                'tipo_pago' : $('#t_pagos').find(':selected').val(),
-                'n_fact_bolet' : $('#n_factboleta').val(),
-                'amount_total' : $('#monto_pag').text(),
-                'observ' : $('#descripObserv').val(),
-                'idpaciente': $id_paciente , 'idplancab': Get_jquery_URL('idplantram'),
-            },
-            dataType: 'json',
-            async: false,
-            success: function( respuesta ){
+        url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/pagos_pacientes/controller_pagos/controller_pag.php',
+        type:'POST',
+        data: {
+            'ajaxSend': 'ajaxSend',
+            'accion':'realizar_pago_independiente',
+            'datos': datos,
+            'tipo_pago' : $('#t_pagos').find(':selected').val(),
+            'n_fact_bolet' : $('#n_factboleta').val(),
+            'amount_total' : $('#monto_pag').text(),
+            'observ' : $('#descripObserv').val(),
+            'idpaciente': $id_paciente , 'idplancab': Get_jquery_URL('idplantram'),
+        },
+        dataType: 'json',
+        async: false,
+        success: function( respuesta ){
 
-                if(respuesta.error == 1){
+            if(respuesta.error == 1){
 
-                    listaprestacionesApagar();
-                    notificacion('Pago realizado con Exito !', 'success');
-                    location.reload();
+                listaprestacionesApagar();
+                notificacion('Pago realizado con Exito !', 'success');
+                location.reload();
 
-                }else{
-                    notificacion(respuesta.error, 'error');
-                }
+            }else{
+                notificacion(respuesta.error, 'error');
             }
+        }
 
-        });
-
-    }
-
-    setTimeout(function() {
-
-        $('#err_t_pago').text(null);
-        $('#err_monto').text(null);
-        $('#err_t_nboleta').text(null);
-
-    },3000);
+    });
 
 });
 
@@ -654,7 +675,12 @@ var cajaUsuario = function consulCajaUsuario(){
     return valid;
 };
 
-
+$("#t_pagos").change(function () {
+    FormValidaRecaudar();
+});
+$("#n_factboleta").keyup(function () {
+    FormValidaRecaudar();
+});
 
 $(document).ready(function() {
 
