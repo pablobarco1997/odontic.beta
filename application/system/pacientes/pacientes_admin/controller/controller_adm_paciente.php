@@ -2056,10 +2056,12 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     FROM tab_plan_tratamiento_cab c where c.fk_paciente = $paciente_id 
                     ";
             if(!empty($search)){
-                $sql .= " and replace(concat( ifnull(c.edit_name, concat('Plan de Tratamiento ', 'N. ', c.numero , ' ', concat('Doc(a) ', ' ', ifnull( (select concat( od.nombre_doc , ' ', od.apellido_doc ) as nomb from tab_odontologos od where od.rowid = c.fk_doc), 'No asignado'))) )),' ','') like '%".(str_replace(' ','', $search))."%' ";
+                $sql .= " and ";
+                $sql .= " replace((concat('Plan de Tratamiento ', 'N. ', c.numero , ' ', concat('Doc(a) ', ' ', ifnull( (select concat( od.nombre_doc , ' ', od.apellido_doc ) as nomb from tab_odontologos od where od.rowid = c.fk_doc), 'No asignado')))) , ' ','') like '%".(str_replace(' ','', $search))."%' ";
             }
 
             $sql .= " limit 5";
+//            print_r($sql); die();
 
             $results = $db->query($sql);
             if($results && $results->rowCount()>0){

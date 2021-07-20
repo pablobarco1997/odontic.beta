@@ -1067,6 +1067,17 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                 if($permisoConsultar){
                     $data = infolistUsuarios($cual,$idusuMod);
+
+                    $output = [
+                        "draw"            => $_POST["draw"],
+                        "data"            => $data['data'],
+                        "recordsTotal"    => $data['total'],
+                        "recordsFiltered" => $data['total'],
+                        'error'           => $error,
+                    ];
+
+                    echo json_encode($output);
+                    die();
                 }
             }
             if( $cual == 'objecto'){
@@ -2018,6 +2029,10 @@ function infolistUsuarios($cual, $idusuMod)
 {
     global $db, $conf;
 
+    $Total          = 0;
+    $start          = GETPOST("start");
+    $length         = GETPOST("length");
+
 
     $objetoUsuario = array();
 
@@ -2041,10 +2056,16 @@ function infolistUsuarios($cual, $idusuMod)
                         tab_odontologos od
                         WHERE 
                         us.fk_doc = od.rowid";
-    $sql .= " and  us.fk_doc !=  ".$idUsuarioOdontLogeado;
 
+    $sql .= " and  us.fk_doc !=  ".$idUsuarioOdontLogeado;
     if($cual=='objecto'){
         $sql .= ' and us.rowid ='.$idusuMod;
+    }
+
+    $Total = $db->query($sql)->rowCount();
+
+    if($start || $length){
+        $sql.=" LIMIT $start,$length;";
     }
 
     $rsUs = $db->query($sql);
@@ -2073,7 +2094,7 @@ function infolistUsuarios($cual, $idusuMod)
             $row = array();
 
             $row[] = "";
-            $row[] = $usdoc->usuario ."<a href='#' style='display: block'><small>Odontolg@ &nbsp; - &nbsp; $usdoc->nomdoc </small></a>";
+            $row[] = $usdoc->usuario ."<a href='#' style='display: block'><small>Doctor(a): &nbsp; - &nbsp; $usdoc->nomdoc </small></a>";
             $row[] = fetchEntityPerfilPermisos(null, $usdoc->fk_perfil_entity );
             $row[] = $estado;
 
@@ -2087,7 +2108,10 @@ function infolistUsuarios($cual, $idusuMod)
     }
 
     if($cual=="list"){
-        return $data;
+        return array(
+            'data'  => $data,
+            'total' => $Total
+        );
     }
     if($cual=="objecto"){
         return $objetoUsuario;

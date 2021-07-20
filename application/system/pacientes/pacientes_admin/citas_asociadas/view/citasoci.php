@@ -4,7 +4,7 @@
 
     <div class="form-group col-md-12 col-lg-12 col-xs-12">
         <label for="">LISTA DE COMPORTAMIENTOS</label>
-        <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px; background-color: #f4f4f4">
+        <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px; background-color: #f4f4f4; margin-left: 0px">
             <li><a data-toggle="collapse" data-target="#contentFilter" class="btnhover btn btn-sm" style="color: #333333" aria-expanded="true"> <b>   ▼  Filtrar  </b>  </a> </li>
             <li>
                 <a href="<?= DOL_HTTP?>/application/system/pacientes/pacientes_admin/citas_asociadas/export/exportpdf_historialcitas.php?idpaciente=<?=$idPaciente?>"  style="color: #333333" target="_blank" class="btnhover btn btn-sm " id="exportCitasPaciente"><b> <i class="fa fa-print"></i> imprimir pdf </b> </a>
@@ -67,8 +67,8 @@
                 <br>
                 <table class="table table-condensed" width="100%" id="list_citasAsociadas">
                     <thead>
-                        <tr>
-                            <th width="15%">Fecha - Hora</th>
+                        <tr style="background-color: #f4f4f4">
+                            <th width="15%">Emitido</th>
                             <th width="17%">Especialidad</th>
                             <th width="9%"># Cita</th>
                             <th width="27%">Información Adicional</th>

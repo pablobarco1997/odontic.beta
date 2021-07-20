@@ -143,12 +143,12 @@
 
     <!--SUB MENUS-->
     <ul class="treeview-menu" <?= (!empty($Permissions_configuration['Active'])?"style=\"display: block\"":"") ?> >
-        <li><a href="<?= $Permissions_configuration['url']['principal']['url'] ?>"  class="<?= $Permissions_configuration['url']['principal']['Active_subMod'] ?>"  <?= $stylefontSmall ?>>Principal</a></li>
+        <li><a href="<?= $Permissions_configuration['url']['principal']['url'] ?>"  class="<?= $Permissions_configuration['url']['principal']['Active_subMod'] ?>"  <?= $stylefontSmall ?>> Principal</a></li>
         <li><a href="<?= $Permissions_configuration['url']['prestaciones']['url'] ?>"  class="<?= $Permissions_configuration['url']['prestaciones']['Active_subMod'] ?>"  <?= $stylefontSmall ?>>Prestaciones</a></li>
         <li><a href="<?= $Permissions_configuration['url']['descuento']['url'] ?>"  class="<?= $Permissions_configuration['url']['descuento']['Active_subMod'] ?> disabled_link3"  <?= $stylefontSmall ?>>Descuento</a></li>
-        <li><a href="<?= $Permissions_configuration['url']['odontolog']['url'] ?>"  class="<?= $Permissions_configuration['url']['odontolog']['Active_subMod'] ?>"  <?= $stylefontSmall ?>>Odontolog@</a></li>
+        <li><a href="<?= $Permissions_configuration['url']['odontolog']['url'] ?>"  class="<?= $Permissions_configuration['url']['odontolog']['Active_subMod'] ?>"  <?= $stylefontSmall ?>>Odontologos</a></li>
         <li><a href="<?= $Permissions_configuration['url']['especialidades']['url'] ?>"  class="<?= $Permissions_configuration['url']['especialidades']['Active_subMod'] ?>"  <?= $stylefontSmall ?>>Especialidades</a></li>
-        <li><a href="<?= $Permissions_configuration['url']['users']['url'] ?>"  class="<?= $Permissions_configuration['url']['users']['Active_subMod'] ?>"  <?= $stylefontSmall ?>>Users</a></li>
+        <li><a href="<?= $Permissions_configuration['url']['users']['url'] ?>"  class="<?= $Permissions_configuration['url']['users']['Active_subMod'] ?>"  <?= $stylefontSmall ?>>  Usuarios</a></li>
         <li><a href="<?= $Permissions_configuration['url']['laboratorios']['url'] ?>"  class="<?= $Permissions_configuration['url']['laboratorios']['Active_subMod'] ?>"  <?= $stylefontSmall ?>>Laboratorios Clinicos</a></li>
     </ul>
 

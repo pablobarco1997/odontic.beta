@@ -440,7 +440,8 @@ function list_pagos_independientes($idpaciente = 0)
                     cast(ct.fecha_create as date) fecha_create,       
                     ct.rowid  as idplantratamiento, 
                     -- NUMERO DE PLAN DE TRATAMIENTO
-                    ifnull(ct.edit_name, concat('Plan de Tratamiento N.' , ' ', ct.numero)) as name_tratamm, 
+                    concat('Plan de Tratamiento N.' , ' ', ct.numero) as name_tratamm, 
+                    ct.edit_name , 
                     -- CITAS ASOCIADAS
                     ct.fk_cita as cita  , 
                     -- TOTAL DE PRESTACIONES
@@ -491,7 +492,7 @@ function list_pagos_independientes($idpaciente = 0)
 
             $row[] = $pay_dom;
             $row[] = date('Y/m/d', strtotime($objpagos->fecha_create));
-            $row[] = $objpagos->name_tratamm;
+            $row[] = $objpagos->name_tratamm. (!empty($objpagos->edit_name)?'<span style="display: block; color: #4789cf" class="text-sm">'.("<b>Editado:</b> ".$objpagos->edit_name).'</span>':'');
 //            $row[] = $CitasNum;
             $row[] = "<span class='' style='padding: 1px 2px; border-radius: 5px; font-weight: bolder; background-color: #66CA86'>$ $objpagos->totalprestaciones </span>  ";
             $row[] = "<span class='' style='padding: 1px 2px; border-radius: 5px; font-weight: bolder; background-color: #ffcc00'>$ $objpagos->totalprestaciones_realizadas </span>  ";
@@ -685,7 +686,7 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
     $idpacgos = $db->lastInsertId('tab_pagos_independ_pacientes_cab');
 
     $fetch_caja    = ConsultarCajaUsers($user->id);
-    $n_tratamiento = $db->query("select concat('Plan de Tratamiento',' #',pc.numero) as n_tratamiento from tab_plan_tratamiento_cab pc where pc.rowid = $idplancab")->fetchObject()->n_tratamiento;
+    $n_tratamiento = $db->query("select concat('#',pc.numero) as n_tratamiento from tab_plan_tratamiento_cab pc where pc.rowid = $idplancab")->fetchObject()->n_tratamiento;
     $nom_paciente  = $db->query("select (select concat(d.nombre, ' ', d.apellido) from tab_admin_pacientes d where d.rowid = pc.fk_paciente)  as nom_p from tab_plan_tratamiento_cab pc where pc.rowid = $idplancab")->fetchObject()->nom_p;
 
     if($rsPagos){
@@ -727,7 +728,7 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
                 $datos['n_tratamiento']       = $n_tratamiento;
 
 
-                $operaciones->new_trasaccion_caja($datos, $n_tratamiento, $nom_paciente);
+                $operaciones->new_trasaccion_caja($datos, $nom_paciente , $n_tratamiento, $nfact_boleto);
 
             }
 

@@ -1,7 +1,4 @@
 
-
-<div class="form-group col-md-12 col-lg-12 col-xs-12">
-
     <div id="FiltrarPagoPacientes" class="form-group col-xs-12 col-md-12 collapse" aria-expanded="true" style="">
         <div class="form-group col-md-12 col-xs-12" style="background-color: #f4f4f4; padding: 25px">
             <h3 class="no-margin"><span>Filtrar Pagos de Pacientes</span></h3>
@@ -80,27 +77,25 @@
         </div>
     </div>
 
-    <div class="form-group col-xs-12 col-md-12 col-lg-12">
+    <div class="form-group col-md-12">
         <div class="table-responsive">
             <table id="pag_particular" class="table" width="100%" style="border-collapse: collapse">
-                <thead>
-                    <tr>
-                        <th>&nbsp;</th>
-                        <th>Fecha</th>
-                        <th># Pago</th>
-                        <th># Plan de Tratamiento</th>
-                        <th>Forma de Pago</th>
-                        <th>Observación</th>
-                        <th># Documento</th>
-                        <th>Valor</th>
-                        <th>&nbsp;</th>
-                    </tr>
+                <thead style="background-color: #f4f4f4">
+                <tr>
+                    <th>&nbsp;</th>
+                    <th>Fecha</th>
+                    <th># Pago</th>
+                    <th># Plan de Tratamiento</th>
+                    <th>Forma de Pago</th>
+                    <th>Observación</th>
+                    <th># Documento</th>
+                    <th>Valor</th>
+                    <th>&nbsp;</th>
+                </tr>
                 </thead>
             </table>
         </div>
     </div>
-
-</div>
 
 
 <!--Modal pagos detalles-->

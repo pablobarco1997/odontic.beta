@@ -535,13 +535,13 @@ if($result && $result->rowCount()>0){
                         <div class="table-responsive">
                             <table class="table" id="Solicitudes_info" width="100%">
                                 <thead>
-                                    <tr>
+                                    <tr style="background-color: #f4f4f4;">
                                         <th>&nbsp;</th>
                                         <th width="20%">Fecha de P. Tratamiento</th>
                                         <th width="20%">Tratamiento</th>
                                         <th width="20%">Paciente</th>
                                         <th width="20%">Prestación</th>
-                                        <th width="20%">Odontolog@ Encargado</th>
+                                        <th width="20%">Doctor(a) Encargado</th>
                                         <th width="20%">Recepción</th>
                                         <th width="20%">Estado</th>
                                     </tr>

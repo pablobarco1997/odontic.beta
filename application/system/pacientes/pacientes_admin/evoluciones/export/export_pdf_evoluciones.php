@@ -152,7 +152,7 @@ $pdf .= '
                     <th class="tables">Prestación</th>
                     <th class="tables">Pieza</th>
                     <th class="tables">Estado de Pieza</th>
-                    <th class="tables">Odontolog@ Encargado</th>
+                    <th class="tables">Doctor(a) Encargado</th>
                     <th class="tables">Observación</th>
                     <th class="tables">Caras</th>
                 </tr>   

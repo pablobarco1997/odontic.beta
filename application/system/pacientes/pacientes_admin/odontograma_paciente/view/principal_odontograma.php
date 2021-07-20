@@ -49,7 +49,7 @@
 <!--        OPCIONES ODONTOGRAMA-->
         <div class="form-group col-md-12 col-xs-12">
             <label for="">LISTA DE COMPORTAMIENTOS</label>
-            <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px">
+            <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px; margin-left: 0px; background-color: #f4f4f4">
                 <li>
                     <a href="#add_odontograma" data-toggle="modal" class="btnhover btn btn-sm " style="color: #333333" id="createOdontograma"> <b> &nbsp;&nbsp; <img  src="<?= "data:image/png; base64, ". base64_encode(file_get_contents(DOL_HTTP."/logos_icon/logo_default/diente.png"))?>" width="12px" height="14px" alt=""> &nbsp; Crear Odontograma  </b> </a>
                 </li>
@@ -64,7 +64,7 @@
             <div class="table-responsive">
                 <table class="table dataTable" id="odontPLant" width="100%">
                     <thead>
-                        <tr>
+                        <tr style="background-color: #f4f4f4">
                             <th WIDTH="10%">Emitido</th>
                             <th WIDTH="20%">Secuencial</th>
                             <th WIDTH="30%">Observación</th>

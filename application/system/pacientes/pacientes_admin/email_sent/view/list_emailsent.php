@@ -5,7 +5,7 @@
     <div class="form-group col-md-12 col-xs-12">
 
         <label for="">LISTA DE COMPORTAMIENTOS</label>
-        <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px; background-color: #f4f4f4">
+        <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px; background-color: #f4f4f4; margin-left: 0px">
             <li>
                 <a data-toggle="collapse" data-target="#contentFilter" class="btnhover btn btn-sm collapsed" style="color: #333333" aria-expanded="false"> <b>   ▼  Filtrar  </b>  </a>
             </li>

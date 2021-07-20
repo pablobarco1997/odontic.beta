@@ -4,11 +4,13 @@
         <h3 style="font-weight: bolder">Información de Estados</h3>
         <table class="table" id="detalles_estados_odontograma" width="100%">
             <thead>
-                <th>Emitido</th>
-                <th>Pieza</th>
-                <th>Caras</th>
-                <th>Estado</th>
-                <th>&nbsp;</th>
+                <tr style="background-color: #f4f4f4">
+                    <th>Emitido</th>
+                    <th>Pieza</th>
+                    <th>Caras</th>
+                    <th>Estado</th>
+                    <th>&nbsp;</th>
+                </tr>
             </thead>
         </table>
     </div>

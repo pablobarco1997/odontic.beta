@@ -26,7 +26,7 @@
 
         <div class="form-group col-md-12 col-xs-12">
             <label for="">LISTA DE COMPORTAMIENTOS</label>
-            <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px; background-color: #f4f4f4">
+            <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px; background-color: #f4f4f4; margin-left: 0px">
                 <li> <a data-toggle="collapse" data-target="#contentFilter" style="color: #333333" class="btnhover btn btn-sm " id="fitrar_document"> <b>  ▼ &nbsp;Filtrar <i></i> </b> </a> </li>
                 <li> <a href="#" style="color: #333333" class="btnhover btn btn-sm " id="imprimirEvolucion" onclick="AppExporPrint()"> <i class="fa fa-print"></i> <b> Imprimir <i></i> </b> </a> </li>
             </ul>
@@ -75,7 +75,7 @@
                             <th>Prestación</th>
                             <th>Pieza</th>
                             <th>Estado de Pieza</th>
-                            <th>Odontolog@ Encargado</th>
+                            <th>Doctor(a) Encargado</th>
                             <th>observación</th>
                             <th>Caras</th>
                         </tr>

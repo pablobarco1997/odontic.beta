@@ -114,7 +114,7 @@ if(isset($_GET['v'])){
                         <li>
                             <div class="checkbox " style="margin: 0px; padding: 5px; ">
                                 <label for="desabilitado_doctores" style=" font-weight: bolder"><input type="checkbox" id="desabilitado_doctores">
-                                <i class="fa fa-user-times"></i> Ver lista de odontolog@ desabilitados</label>
+                                <i class="fa fa-user-times"></i> Ver lista de Doctor(a) desabilitados</label>
                             </div>
                         </li>
                     </ul>
@@ -125,15 +125,16 @@ if(isset($_GET['v'])){
 
                 <div class="col-md-12 col-xs-12 col-sm-12">
                     <div class="table-responsive">
-                        <table width="100%" class="table table-striped" id="gention_odontologos_list">
+                        <table width="100%" class="table table-hover" id="gention_odontologos_list">
                             <thead>
-<!--                                <th width="5%"></th>-->
-                                <th width="18%">Nombre</th>
-                                <th width="15%">Cedula</th>
-                                <th width="15%">Dirección</th>
-                                <th width="18%">E-mail</th>
-                                <th width="15%">Especialidad</th>
-                                <th width="5%"></th>
+                                <tr style="background-color: #f4f4f4;">
+                                    <th width="18%">Nombre</th>
+                                    <th width="15%">Cedula</th>
+                                    <th width="15%">Dirección</th>
+                                    <th width="18%">E-mail</th>
+                                    <th width="15%">Especialidad</th>
+                                    <th width="5%"></th>
+                                </tr>
                             </thead>
                         </table>
                     </div>
@@ -204,8 +205,8 @@ if(isset($_GET['v'])){
                 <?php if( isset($_GET['list']) ){?>
                       <div class="form-group col-md-12 col-xs-12">
                           <div class="table-responsive">
-                              <table class="table table-striped" id="usuariolistinfo" width="100%">
-                                  <thead>
+                              <table class="table table-hover" id="usuariolistinfo" width="100%">
+                                  <thead style="background-color: #f4f4f4" >
                                         <tr>
                                             <th></th>
                                             <th>Usuario</th>

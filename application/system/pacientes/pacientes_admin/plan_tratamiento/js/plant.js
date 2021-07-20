@@ -422,7 +422,7 @@ if($accion == "principal")
                 };
                 return query;
             },
-            delay: 250,
+            delay: 500,
             processResults:function (data) {
                 return data;
             }
@@ -431,7 +431,7 @@ if($accion == "principal")
     });
 
     $('#filtrPlantram').select2({
-        placeholder: 'Seleccione una opcion',
+        placeholder: 'buscar plan de tratamiento',
         allowClear:true,
         language: languageEs,
         minimumInputLength:1,
@@ -449,7 +449,7 @@ if($accion == "principal")
                 };
                 return query;
             },
-            delay: 250,
+            delay: 500,
             processResults:function (data) {
                 return data;
             }
