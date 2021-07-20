@@ -10,7 +10,7 @@ class operacion{
     }
 
     //guarda los ingresos de caja
-    public function new_trasaccion_caja($datos, $name_paciente, $plantamiento)
+    public function new_trasaccion_caja($datos, $name_paciente, $plantamiento, $Documento)
     {
         global $user, $log;
 
@@ -35,7 +35,7 @@ class operacion{
 
         $name_servicio = $this->db->query("select descripcion as name from tab_conf_prestaciones where rowid = $fk_prestacion_servicio")->fetchObject()->name;
 
-        $label = "cobro de plan de tratamiento Numero .".$datos['n_tratamiento'].' .Prestacion de Servicio '.$name_servicio;
+        $label  = "Pago de Paciente: $name_paciente - Plan de tratamiento N.".$datos['n_tratamiento']." - Prestacion de Servicio: ".$name_servicio." - #Documento: ".$Documento;
 
         $query  = "INSERT INTO tab_ope_cajas_clinicas_det(";
         $query .= " `datecc`, ";
@@ -76,7 +76,7 @@ class operacion{
 
         $result = $this->db->query($query);
         if(!$result){
-            $log->log(0, $log->error, 'Ocurrio un error con el registro. Pago de paciente '.$name_paciente. ' Tratamiento '.$plantamiento, 'tab_ope_cajas_clinicas_det', $query);
+            $log->log(0, $log->error, 'Ocurrio un error con el registro. Pago de paciente '.$name_paciente. ' Plan de tratamiento N. '.$plantamiento, 'tab_ope_cajas_clinicas_det', $query);
             return -1;
         }else{
             $id = $this->db->lastInsertId("tab_ope_cajas_clinicas_det");

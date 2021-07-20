@@ -255,8 +255,7 @@ $modulo = true;
             ajax:{
                 url: $DOCUMENTO_URL_HTTP + '/application/system/operacion/cajas_clinicas/controller/caja_controller.php',
                 type:'POST',
-                delay: 500,
-                async:false,
+                async:true,
                 cache:false,
                 dataType:'json',
                 data: function (params) {
@@ -267,8 +266,9 @@ $modulo = true;
                     };
                     return query;
                 },
+                delay: 500,
                 processResults: function (results) {
-                    console.log(results);
+                    // console.log(results);
                     return results;
                 }
             }
