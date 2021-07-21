@@ -278,9 +278,10 @@ if($accion == 'addplan')
     }
 
     //ADD PRESTACION
-    function fetch_prestaciones(idprest){
+    function fetch_prestaciones(idprest, async){
 
         if($("#btn_refresh_addService").hasClass("fa-plus-square")){
+
             $("#btn_refresh_addService").removeClass("fa-plus-square");
             $("#btn_refresh_addService").addClass("fa-refresh btnSpinner");
         }
@@ -288,20 +289,24 @@ if($accion == 'addplan')
         var dataPrest = [];
 
         $.ajax({
-            delay:500,
             url: $DOCUMENTO_URL_HTTP +'/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
             type:'POST',
             data: {'ajaxSend': 'ajaxSend', 'accion':'fetch_prestaciones', 'idprest': idprest},
             dataType:'json',
-            async: false,
+            cache: false,
+            async: async,
             complete:function(xhr, status){
                 if($("#btn_refresh_addService").hasClass("fa-refresh btnSpinner")){
                     $("#btn_refresh_addService").removeClass("fa-refresh btnSpinner");
                     $("#btn_refresh_addService").addClass("fa-plus-square");
                 }
             },
-            success: function(resp) {
-                dataPrest = resp;
+            success: function (response) {
+                dataPrest = response;
+                if(async){
+                    //Se pinta las prestaciones en el modal
+                    print_html_detallePrestacion(response, idprest);
+                }
             }
         });
 
@@ -728,14 +733,10 @@ if($accion == 'addplan')
         if( $("#prestacion_planform").find(':selected').val() != "" ){
 
             var idprestacion = $("#prestacion_planform").find(':selected').val();
-            if(idprestacion > 0)
-            {
-
-                var objetoPrestacion = fetch_prestaciones(idprestacion);
-
-                //Se pinta las prestaciones en el modal
-                print_html_detallePrestacion(objetoPrestacion, idprestacion);
-
+            if(idprestacion > 0){
+                //se pinta el detalle a agregar de manera async
+                fetch_prestaciones(idprestacion, true);
+                //se remueve las clases activas
                 $(".CaraDiv").each(function (index, Element){
                     var Elementdiv = $(Element);
                     $(Element).parents('td').removeClass('PiezaActiva');
@@ -994,10 +995,12 @@ $("#prestacion_planform").select2({
     language: languageEs,
     minimumInputLength:1,
     ajax:{
+        delay: 500,
         url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
         type: "POST",
         dataType: 'json',
-        async:false,
+        async:true,
+        cache: false,
         data:function (params) {
             var query = {
                 accion: 'prestacionesSearchSelect2',
@@ -1007,7 +1010,6 @@ $("#prestacion_planform").select2({
             };
             return query;
         },
-        delay: 250,
         processResults:function (data) {
             return data;
         }

@@ -891,20 +891,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     c.rowid,
                     c.descripcion,
                     c.valor,
-                    IFNULL((SELECT 
-                                    d.nombre_conv
-                                FROM
-                                    tab_conf_convenio_desc d
-                                WHERE
-                                    d.rowid = c.fk_convenio),
-                            '') AS convenio,
-                    IFNULL((SELECT 
-                                    d.valor
-                                FROM
-                                    tab_conf_convenio_desc d
-                                WHERE
-                                    d.rowid = c.fk_convenio),
-                            0) convenio_valor
+                    IFNULL((SELECT  d.nombre_conv FROM tab_conf_convenio_desc d WHERE d.rowid = c.fk_convenio), '') AS convenio,
+                    IFNULL((SELECT  d.valor FROM tab_conf_convenio_desc d WHERE d.rowid = c.fk_convenio), 0) convenio_valor
                 FROM
                     tab_conf_prestaciones c where  rowid > 0";
 
