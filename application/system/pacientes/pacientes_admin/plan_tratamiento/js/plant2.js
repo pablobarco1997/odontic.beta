@@ -278,16 +278,28 @@ if($accion == 'addplan')
     }
 
     //ADD PRESTACION
-    function fetch_prestaciones(idprest)
-    {
+    function fetch_prestaciones(idprest){
+
+        if($("#btn_refresh_addService").hasClass("fa-plus-square")){
+            $("#btn_refresh_addService").removeClass("fa-plus-square");
+            $("#btn_refresh_addService").addClass("fa-refresh btnSpinner");
+        }
+
         var dataPrest = [];
 
         $.ajax({
+            delay:500,
             url: $DOCUMENTO_URL_HTTP +'/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
             type:'POST',
             data: {'ajaxSend': 'ajaxSend', 'accion':'fetch_prestaciones', 'idprest': idprest},
             dataType:'json',
             async: false,
+            complete:function(xhr, status){
+                if($("#btn_refresh_addService").hasClass("fa-refresh btnSpinner")){
+                    $("#btn_refresh_addService").removeClass("fa-refresh btnSpinner");
+                    $("#btn_refresh_addService").addClass("fa-plus-square");
+                }
+            },
             success: function(resp) {
                 dataPrest = resp;
             }
@@ -650,7 +662,7 @@ if($accion == 'addplan')
         }
 
         if($puedoPasar == 2){
-            notificacion('Debe Seleccionar una Detención', 'error');
+            notificacion('Debe Seleccionar una Detención', 'question');
         }
 
         if(DetencionTemporal == 1 && DetencionPermanente == 1){
@@ -662,13 +674,16 @@ if($accion == 'addplan')
         }
 
         if(objInformacion.length == 0 ){
-            notificacion('No hay ningun detalle asignado', 'error');
+            notificacion('No hay ningun detalle asignado', 'question');
         }
 
         if(objInformacion.length > 0 &&  $puedoPasar == 0)
         {
 
+            button_loadding($("#guardarPrestacionPLantram"), true);
+
             $.ajax({
+                delay:500,
                 url: $DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php",
                 type:'POST',
                 data: {
@@ -682,21 +697,21 @@ if($accion == 'addplan')
                     'detencion': DetencionLabel
                 },
                 dataType:'json',
-                async: false,
+                async: true,
+                cache: false,
+                complete:function(xhr, status){
+                    button_loadding($("#guardarPrestacionPLantram"), false);
+                },
                 success: function(resp){
-
                     if( resp.error != ''){
-
                         notificacion(resp.error , 'error');
-
                     }else{
                         clearModalDetalle('todo');
                         $('#detdienteplantram').modal('hide');
                         fetch_plantratamiento(); //reload lista de plantram form
-
                         setTimeout(function () {
                             notificacion('Información Actualizada' , 'success');
-                        },700);
+                        },500);
                     }
                 }
             });
@@ -713,7 +728,9 @@ if($accion == 'addplan')
         if( $("#prestacion_planform").find(':selected').val() != "" ){
 
             var idprestacion = $("#prestacion_planform").find(':selected').val();
-            if(idprestacion > 0){
+            if(idprestacion > 0)
+            {
+
                 var objetoPrestacion = fetch_prestaciones(idprestacion);
 
                 //Se pinta las prestaciones en el modal

@@ -187,7 +187,7 @@ function CargarConsultasReportes($date){
     $object->n_pacientes = $pacientes;
 
     //planes de tratamiento activos y abonados
-    $fecha_tratamiento = " and fecha_create between '$dateInicio' and '$dateFin' ";
+    $fecha_tratamiento = " and cast(fecha_create as date) between '$dateInicio' and '$dateFin' ";
     $planesTratamientoActivos = $db->query("select count(*) as count from tab_plan_tratamiento_cab where estados_tratamiento in('A','S','F')  $fecha_tratamiento ")->fetchObject()->count;
     $object->n_tratamientos = $planesTratamientoActivos;
 

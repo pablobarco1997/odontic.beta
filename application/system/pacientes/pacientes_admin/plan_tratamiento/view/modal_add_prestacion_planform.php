@@ -1,25 +1,5 @@
 
 
-<?php
-
-    //$prestacion = '<option></option>';
-    /*$objectServicios =   fetchPrestacionGroupLab();
-
-
-    foreach ($objectServicios as $key => $value){
-        $prestacion .= '<optgroup label="Laboratorio: '.$key.'">';
-        foreach ($value as $key2 => $val){
-            $prestacion .= '<option value="'.$val['id'].'">'.$val['text'].'</option>';
-        }
-        $prestacion .= '</optgroup>';
-    }*/
-
-?>
-
-<style>
-
-
-</style>
 <!-- Modal Add Plan tratamiento-->
 <div id="detdienteplantram" class="modal fade" role="dialog" data-backdrop="static">
     <div class="modal-dialog modal-lg" style="width: 80% ">
@@ -32,36 +12,24 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="form-group col-xs-12 col-md-12" style="margin: 0px; padding-left: 30px">
-                        <ul class="list-inline" >
-                            <li >
-                                <div class="checkbox btn btn-block btn-sm" style="border-left: 1.5px solid #202a33">
-                                    <label>
-                                        <input type="checkbox" id="detencionPermanente">
-                                        <img  src=" <?= DOL_HTTP .'/logos_icon/logo_default/diente.png';?>" width="12px" height="14px" alt=""> &nbsp;
-                                        &nbsp;DENTICIÓN PERMANENTE
-                                    </label>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="checkbox btn btn-block btn-sm" style="border-left: 1.5px solid #202a33">
-                                    <label>
-                                        <input type="checkbox" id="detencionTemporal">
-                                        <img  src=" <?= DOL_HTTP .'/logos_icon/logo_default/diente.png';?>" width="12px" height="14px" alt=""> &nbsp; &nbsp;
-                                        DENTICIÓN TEMPORAL
-                                    </label>
-                                </div>
-                            </li>
-<!--                            id del detalle de plan de tratamiento-->
-                            <li>
-                                <p id="detallemod" data-iddet="0"></p>
-                            </li>
-                        </ul>
+                    <div class="form-group col-xs-12 col-md-12" style="margin: 0px;">
+                        <div class="checkbox" style="">
+                            <label>
+                                <input type="checkbox" id="detencionPermanente">
+                                <img  src=" <?= DOL_HTTP .'/logos_icon/logo_default/diente.png';?>" width="12px" height="14px" alt=""> &nbsp; DENTICIÓN PERMANENTE
+                            </label>
+                        </div>
+                        <div class="checkbox" style="">
+                            <label>
+                                <input type="checkbox" id="detencionTemporal">
+                                <img  src=" <?= DOL_HTTP .'/logos_icon/logo_default/diente.png';?>" width="12px" height="14px" alt=""> &nbsp; DENTICIÓN TEMPORAL
+                            </label>
+                        </div>
                     </div>
                 </div>
-                <hr style="margin: 10px; background-color: #e2e2e2">
+
                 <div class="row">
-                    <div class="col-md-12 col-xs-12">
+                    <div class="form-group col-md-12 col-xs-12">
                         <div class="table-responsive">
                             <?php
                                     #caras pieza animaciones
@@ -69,24 +37,20 @@
                             ?>
                         </div>
                     </div>
-                </div>
 
-                <!--PRESTACIOANES CATEGORIZADA  -->
-                <hr style="margin: 20px; background-color: #e2e2e2">
-                <div class="row">
-                    <div class="form-group col-md-9 col-xs-12" style="padding-left: 30px">
+                    <div class="form-group col-md-12 col-xs-12" >
                         <div class="box_prestaciones">
-                            <select id="prestacion_planform" class="form-control " style="width: 100%">
-                            </select>
+                            <div class="input-group">
+                                <select id="prestacion_planform" class="form-control " style="width: 100%"></select>
+                                <div class="input-group-addon btn">
+                                    <span onclick="" id="addprestacionPlantram" class="btnaddtrans_loadding">
+                                        <i  class="fa fa-plus-square " id="btn_refresh_addService"></i>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group col-md-3 col-xs-12">
-                        <a href="#" class="btnhover btn" id="addprestacionPlantram" style="background-color: #efefef; color: #333333">Agregar Prestación</a>
-                    </div>
-                    <!--                    <div class="form-group col-md-5 col-xs-12">-->
-                    <!--                        <label style="display: block">&nbsp;</label>-->
-                    <!--                        <small style="color: red" id="errores_msg_addplantram"></small>-->
-                    <!--                    </div>-->
+
                 </div>
 
                 <style>
@@ -100,10 +64,10 @@
 
                         <div class="table-responsive">
                             <table class="table" >
-                                <thead>
+                                <thead style="background-color:#f4f4f4 ">
                                     <tr id="prestacionesDetalles">
                                         <th width="5%"></th>
-                                        <th title="DESCRIPCION DE LA PRESTACIÓN">Prestación</th>
+                                        <th title="DESCRIPCION DE LA PRESTACIÓN" width="30%">Prestación</th>
                                         <th title="SUB-TOTAL">Subtotal</th>
                                         <th title="DESCUENTO DE CONVENIO">Desc. Conv</th>
                                         <th title="CANTIDAD DE LA PRESTACIÓN">Cantidad</th>
@@ -123,8 +87,10 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <a href="#" class="btn btnhover" style="font-weight: bolder; color: green" id="guardarPrestacionPLantram">Guardar</a>
-                <a href="#" class="btn btnhover" data-dismiss="modal" style="font-weight: bolder">Cerrar</a>
+                <button href="#" class="btn btnhover" style="font-weight: bolder; color: green" id="guardarPrestacionPLantram">
+                    Guardar <span class="fa fa-refresh btnSpinner hide"> </span>
+                </button>
+                <button href="#" class="btn btnhover" data-dismiss="modal" style="font-weight: bolder">Cerrar</button>
 <!--                <button type="button" class="btn btn" data-dismiss="modal">Close</button>-->
             </div>
         </div>
