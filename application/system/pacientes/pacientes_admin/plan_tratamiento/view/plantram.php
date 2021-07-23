@@ -133,8 +133,8 @@
 
 <!--        OTRAS OPCIONES DE FILTRO  -->
 
-        <div class="form-group col-xs-12 col-md-12 col-lg-12 collapse" id="contentFilter" >
-            <div class="col-md-12 col-xs-12 col-lg-12" style="background-color: #f4f4f4; padding-top: 15px">
+        <div class="form-group col-xs-12 col-md-12 col-lg-12 collapse no-margin" id="contentFilter" >
+            <div class="col-md-12 col-xs-12 col-lg-12" style="background-color: #f4f4f4; padding-top: 15px; margin-bottom: 15px">
                 <div class="form-group col-md-12 col-xs-12 col-lg-12"> <h3 class="no-margin"><span>Filtrar Planes de Tratamiento</span></h3> </div>
 
                 <div class="form-group col-xs-12 col-md-4 col-sm-6">
@@ -182,14 +182,14 @@
 
 
         <!--    MODAL CREAR PLAN DE TRATAMIENTO ASOCIADO A UNA CITA  -------------------------------------------------------->
-        <div id="modal_plantrem_citas" class="modal fade" role="dialog">
+        <div id="modal_plantrem_citas" class="modal fade" role="dialog" data-backdrop="static">
             <div class="modal-dialog " style="margin: 2% auto; width: 50%" >
 
                 <!-- Modal content-->
                 <div class="modal-content">
                     <div class="modal-header modal-diseng">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title"><span>Plan de tratamiento desde cita de paciente</span></h4>
+                        <h4 class="modal-title"><span>Asociar citas</span></h4>
                     </div>
                     <div class="modal-body">
                         <div class="row">
@@ -238,9 +238,11 @@
                                 </div>
 
                             </div>
-                            <div class="form-group col-md-5 no-margin" style="float: right" >
-                                <a href="#" class="btn btnhover " style="font-weight: bolder; color: green; float: right" id="CrearPlanTratamientoPlantram">Guardar</a>
-                                <a href="#" class="btn btnhover " data-dismiss="modal" style="font-weight: bolder; float: right">Cerrar</a>
+                            <div class="form-group col-md-5 " style="float: right" >
+                                <button class="btn btnhover " style="font-weight: bolder; color: green; float: right" id="CrearPlanTratamientoPlantram" >
+                                    Guardar
+                                    <span class="fa fa-refresh btnSpinner hide"> </span>
+                                </button>
                             </div>
                         </div>
                     </div>

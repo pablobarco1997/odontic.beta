@@ -285,7 +285,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 //                        $list_plantramAsociados[] = $label;
 //                    }
 
-                    $error = "<p> Documento Asociado </p>";
+                    $error = "Documento Asociado";
                 }
             }
 
@@ -375,6 +375,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
         /*CREAR PLAN DE TRATAMIENTO DETALLE*/
         case "nuevoUpdatePlanTratamientoDetalle":
 
+//            die();
             $error = '';
             #id del plan de tratamiento cabezera
             $idplantratamiento = GETPOST("idtratamiento");

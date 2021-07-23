@@ -13,7 +13,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
     require_once DOL_DOCUMENT .'/application/system/pacientes/class/class_paciente.php';
 
 
-    global $db, $conf, $user, $messErr;
+    global $db, $conf, $user, $messErr, $log;
 
     $paciente = new Pacientes($db); //se declara la clase de pacientes
 
@@ -635,24 +635,25 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $puedoPasar = 0;
             $lastidOdontogramacab = 0;
 
-            $url_location = ""; #para redirigir al odontograma creado
 
-            $fk_tratamiento = GETPOST('fk_tratamiento');
-            $descript       = GETPOST('descrip');
-            $numero         = 0;
-            $idpaciente     = GETPOST("fk_paciente");
+            $fk_tratamiento  = GETPOST('fk_tratamiento');
+            $descript        = GETPOST('descrip');
+            $numero          = 0;
+            $idpaciente      = GETPOST("fk_paciente");
+            $nombre_paciente = GETPOST("nom_paciente");
 
 
-            $sql = "SELECT * FROM tab_odontograma_paciente_cab WHERE fk_tratamiento = $fk_tratamiento and fk_paciente = $idpaciente";
-            $rs = $db->query($sql);
-            if( $rs->rowCount() > 0 ){
-                $puedoPasar++;
-                $error = 'Ya se encuentra este plan de tratamiento asociado a un odontograma';
-
+            $sql_a    = "SELECT * FROM tab_odontograma_paciente_cab WHERE fk_tratamiento = $fk_tratamiento and fk_paciente = $idpaciente";
+            $result_a = $db->query($sql_a);
+            $valid    = $result_a->rowCount();
+            if($valid>0){
+                $object_a = $result_a->fetchObject();
+                // se detecta si esta asociado ya a un odontograma
+                if($object_a->fk_tratamiento == $fk_tratamiento){
+                    $error = 'Se detecto asociado a un odontograma '.$object_a->numero;
+                    $puedoPasar++;
+                }
             }
-
-            #consulto el ultmo id
-            $numero       = $db->query("SELECT (max(rowid) + 1) as rowid FROM tab_odontograma_paciente_cab")->fetchObject()->rowid;
 
             if( $puedoPasar == 0 && $error == ''){
 
@@ -662,13 +663,11 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 $paciente->fk_usuario         = $user->id;
                 $paciente->fk_paciente        = $idpaciente;
 
-                $error = $paciente->createOdontogramaCab();
-
+                $error = $paciente->createOdontogramaCab($nombre_paciente);
                 $lastidOdontogramacab = $db->lastInsertId('tab_odontograma_paciente_cab'); /*ultimo id del odontograma insertado cabezera*/
 
             }
 
-//            print_r($paciente);  die();
             $output = [
               'error' => $error , 'lasidOdont' => $lastidOdontogramacab
             ];
@@ -708,38 +707,68 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
         case 'list_odontograma':
 
-            $data = array();
+            $Total          = 0;
+            $start          = $_POST["start"];
+            $length         = $_POST["length"];
 
+            $data       = array();
             $idpaciente = GETPOST('idpaciente');
+            $date_cc    = GETPOST('date_c');
+            $fk_plantratamiento    = GETPOST('plantramiento');
+            $estado     = GETPOST('estado');
+
+            if(!empty($date_cc)){
+                $date_cc = explode('-', $date_cc);
+                $date_cc_ini =  str_replace('/','-', $date_cc[0] );
+                $date_cc_fin =  str_replace('/','-', $date_cc[1] );
+            }
 
             $sql = "SELECT
                         dc.fecha,
                         dc.rowid, 
+                        dc.rowid as odontograma_id, 
                         dc.numero,
                         dc.descripcion,
                         dc.fk_tratamiento, 
                         dc.estado_odont , 
-                        (select ifnull(edit_name, concat('Plan de tratamiento # ', numero)) as editnum
-                            from tab_plan_tratamiento_cab tc where tc.rowid = dc.fk_tratamiento) as labeltram
-                    FROM tab_odontograma_paciente_cab dc where dc.rowid > 0 ";
+                        concat('Plan de tratamiento N.', pc.numero) as label
+                    FROM 
+                    tab_odontograma_paciente_cab dc 
+                      inner  join 
+                    tab_plan_tratamiento_cab pc on pc.rowid = dc.fk_tratamiento
+                    where 1=1";
 
             if(!empty($idpaciente)){
                 $sql .= " and dc.fk_paciente = ".$idpaciente;
             }
+            if(!empty($fk_plantratamiento)){
+                $sql .= " and dc.fk_tratamiento = ".$fk_plantratamiento;
+            }
+            if(!empty($estado)){
+                $sql .= " and dc.estado_odont = '$estado' ";
+            }else{
+                $sql .= " and dc.estado_odont = 'A' ";
+            }
+            if(!empty($date_cc_ini) && !empty($date_cc_fin)){
+                $sql .= " and cast(dc.fecha as date) between '$date_cc_ini' and '$date_cc_fin' ";
+            }
 
-            $sql .= ' order by dc.rowid desc';
+            $Total = $db->query($sql)->rowCount();
+
+            $sql .= ' order by dc.numero desc';
+            if($start || $length){
+                $sql.=" LIMIT $start,$length;";
+            }
+
+//            print_r($sql); die();
             $resul = $db->query($sql);
 
             if($resul->rowCount() > 0){
+                while ( $ob = $resul->fetchObject() ){
 
-                while ( $ob = $resul->fetchObject() )
-                {
                     $row = array();
-
                     $itemAsociarOdontograma = "";
-                    if($ob->fk_tratamiento == 0)
-                    {
-
+                    if($ob->fk_tratamiento == 0){
                         $itemAsociarOdontograma = "<p>
                             <b>Asociar Odontograma</b>
                         </p>";
@@ -751,17 +780,33 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                     $url_updateOdont = DOL_HTTP.'/application/system/pacientes/pacientes_admin/index.php?view=odot&key='.KEY_GLOB.'&id='.tokenSecurityId($idpaciente).'&v=fordont'.$URL_idplantramiento;
 
+
+                    $delete = "<td><a class='btnhover btn btn-xs delete_odont_click' onclick='Eliminar_odontograma($(this))' style='font-weight: bolder; color: red'>
+                                        <input type='text' class='hidden odont_id' id='odont_id' value='".$ob->odontograma_id."' data-id='".$ob->odontograma_id."' data-tratamiento='".$ob->label."'>
+                                        <i class='fa fa-trash'></i> ELIMINAR </a>
+                                </td>";
+                    if($ob->estado_odont == 'E'){
+                        $delete = "";
+                    }
+
                     $opciones = "<table>
                                    <tr>
                                        <td><a href='$url_updateOdont' class='btnhover btn btn-xs ' style='font-weight: bolder'> <i class='fa fa-edit'></i> ACTUALIZAR </a>     </td>
-                                       <td><a href='#' class='btnhover btn btn-xs ' style='font-weight: bolder; color: red' > <i class='fa fa-trash'></i> ELIMINAR </a></td>
+                                       $delete
                                    </tr> 
                                 </table>";
 
+                    $numero = (int)$ob->numero;
+
+                    if($ob->estado_odont=='E')
+                        $stado = "<small style='display: block; color: #9f191f'>odontograma Eliminado</small>";
+                    if($ob->estado_odont=='A')
+                        $stado = "<small style='display: block; color: green'>odontograma Activo</small>";
+
                     $row[] = date('Y/m/d', strtotime($ob->fecha));
-                    $row[] = 'Odontograma N.'.$ob->numero .' - '.'<img src="'."data:image/png; base64, ". base64_encode(file_get_contents(DOL_HTTP."/logos_icon/logo_default/diente.png")).'" width="12px" height="14px" >';
+                    $row[] = 'Odontograma N.'.str_pad($numero, 6, "0", STR_PAD_LEFT)."".$stado;
                     $row[] = $ob->descripcion;
-                    $row[] = $ob->labeltram; #PLAN DE TRATAMIENTO NOMBRE
+                    $row[] = $ob->label; #PLAN DE TRATAMIENTO NOMBRE
                     $row[] = $opciones;
 
                     #ID
@@ -772,10 +817,48 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             }
 
 
-            $output = [
-              'data' => $data,
-            ];
+            $output = array(
+                "draw"            => $_POST['draw'],
+                "data"            => $data,
+                "recordsTotal"    => $Total,
+                "recordsFiltered" => $Total
+            );
 
+
+            echo json_encode($output);
+            break;
+
+
+        case 'deleteOdontograma':
+
+            $error = "";
+
+            $id = GETPOST('id');
+
+            $sql_b = "Select * from tab_odontograma_paciente_cab where rowid = ".$id;
+            $result_b = $db->query($sql_b);
+            if($result_b){
+                $object_b = $result_b->fetchObject();
+                if($object_b->estado_odont == 'E'){
+                    $error = 'Se encuentra Eliminado';
+                }else{
+                    $sql_a = "UPDATE `tab_odontograma_paciente_cab` SET `estado_odont`='E' WHERE `rowid`= $id;";
+                    $result = $db->query($sql_a);
+                    if($result){
+                        $error = "";
+                        $log->log($id, $log->modificar ,'Se ha actualizado un registro Odontograma'.$object_b->numero .' ha estado Eliminar', 'tab_odontograma_paciente_cab');
+                    }else{
+                        $error = $messErr;
+                        $log->log($id, $log->error ,'Ha ocurrido un error con la operación Eliminar Odontograma.'.$object_b->numero, 'tab_odontograma_paciente_cab', $sql_b);
+                    }
+                }
+            }else{
+                $error = $messErr;
+            }
+
+            $output = [
+                'error' => $error
+            ];
             echo json_encode($output);
             break;
 
@@ -873,9 +956,6 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
               'objetoCab'     => $objetoCab,
               'objetoDet'     => $objetoDet,
               'ico_diente'    => "data: image/*; base64, ".base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/diente.png')),
-              'ico_checked_1' => "data: image/*; base64, ".base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/checked-checkbox.png')),
-              'ico_checked_2' => "data: image/*; base64, ".base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/unchecked-checkbox.png')),
-
             ];
 
             echo json_encode($output);
@@ -1151,11 +1231,6 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             }else{
                 $error = 'Ocurrio un error no se encontraron datos para ejecutar el proceso Realizar prestación';
             }
-
-//            echo '<pre>';
-//            print_r($datosRealizarPrestacion);
-//            print_r( json_decode( $datosRealizarPrestacion->json_caras ) );
-//            die();
 
             if( $iddiente != 0 && $error == '') //Se actualiza el odontograma en caso de tener asociado
             {
@@ -2038,9 +2113,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             $sql = "SELECT 
                         c.rowid , 
-                        ifnull(c.edit_name, concat('Plan de Tratamiento ', 'N. ', c.numero)) plantram ,
-                        concat('Doc(a) ', ' ', ifnull( (select concat( od.nombre_doc , ' ', od.apellido_doc ) as nomb from tab_odontologos od where od.rowid = c.fk_doc), 'No asignado')) as encargado ,
-                        replace(concat( ifnull(c.edit_name, concat('Plan de Tratamiento ', 'N. ', c.numero , ' ', concat('Doc(a) ', ' ', ifnull( (select concat( od.nombre_doc , ' ', od.apellido_doc ) as nomb from tab_odontologos od where od.rowid = c.fk_doc), 'No asignado'))) )),' ','') as label
+                        cast(c.fecha_create as date) as date_c , 
+                        concat('Plan de Tratamiento: N.', c.numero, ' - Doc(a): ', ifnull( (select concat( od.nombre_doc , ' ', od.apellido_doc ) as nomb from tab_odontologos od where od.rowid = c.fk_doc), 'No asignado'), ' ') as plantram
                     FROM tab_plan_tratamiento_cab c where c.fk_paciente = $paciente_id 
                     ";
             if(!empty($search)){
@@ -2055,7 +2129,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             if($results && $results->rowCount()>0){
                 $results = $results->fetchAll(PDO::FETCH_ASSOC);
                 foreach ($results as $value){
-                    $data[] = array('id' => $value['rowid'], 'text' => $value['plantram'].' '.$value['encargado']);
+                    $data[] = array('id' => $value['rowid'], 'text' => $value['plantram'].' '.(!empty($value['date_c'])?' - Emitido: '.(date("Y/m/d", strtotime($value['date_c']))):''));
                 }
             }
 
@@ -2076,8 +2150,9 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     d.fk_especialidad,
                     d.fk_doc,
                     d.rowid AS id_cita_det,
+                    cast(c.fecha_create as date) date_c, 
                     (concat('C_', lpad('0',(5-length(d.rowid)),'0' ),d.rowid, '  Doc(a): ' , 
-			                    concat(o.nombre_doc, ' ', o.apellido_doc), ' Especialidad : ', IFNULL((SELECT s.nombre_especialidad FROM tab_especialidades_doc s WHERE s.rowid = d.fk_especialidad), 'General') )) as label_cita
+			                    concat(o.nombre_doc, ' ', o.apellido_doc), ' - Especialidad: ', IFNULL((SELECT s.nombre_especialidad FROM tab_especialidades_doc s WHERE s.rowid = d.fk_especialidad), 'General'), ' - Emitido: ', replace(cast(c.fecha_create as date),'-','/') )) as label_cita
                 FROM
                     tab_pacientes_citas_det d,
                     tab_pacientes_citas_cab c,
@@ -2090,9 +2165,10 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 if(GETPOST('search')!=""){
                     $search = GETPOST('search');
                     $sql   .= " and (concat('C_', lpad('0',(5-length(d.rowid)),'0' ),d.rowid, '  Doc(a): ' , 
-			                    concat(o.nombre_doc, ' ', o.apellido_doc), ' Especialidad: ', IFNULL((SELECT s.nombre_especialidad FROM tab_especialidades_doc s WHERE s.rowid = d.fk_especialidad), 'General') )) like '%$search%' ";
+			                    concat(o.nombre_doc, ' ', o.apellido_doc),' - Especialidad: ', IFNULL((SELECT s.nombre_especialidad FROM tab_especialidades_doc s WHERE s.rowid = d.fk_especialidad), 'General') )) like '%$search%' ";
                 }
                 $sql .= " limit 4 ";
+//                print_r($sql); die();
                 $result = $db->query($sql);
                 while ($object = $result->fetchObject()){
                     $data[] = array('id' => $object->id_cita_det, 'text' => $object->label_cita);
@@ -2170,7 +2246,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         $row = [];
                         $row[] =  "<span style='font-weight: bold' > $ico_cita - $object->numberCitas</span>";
                         $row[] = $object->especialidad;
-                        $row[] = date("Y-m-d", strtotime($object->fecha_cita))."  H  ".$object->hora_inicio;
+                        $row[] = date("Y/m/d", strtotime($object->fecha_cita))."   ".$object->hora_inicio;
                         $row[] = "<span style='font-weight: bold; background-color: $object->color '>".$object->estado."</span>";
 
                         $data[] = $row;

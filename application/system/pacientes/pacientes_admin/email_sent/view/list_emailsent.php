@@ -12,7 +12,7 @@
         </ul>
     </div>
 
-    <div class="form-group col-xs-12 col-md-12 col-lg-12 collapse" id="contentFilter" aria-expanded="false" style="height: 0px;" >
+    <div class="form-group col-xs-12 col-md-12 col-lg-12 collapse no-margin" id="contentFilter" aria-expanded="false" style="height: 0px;" >
         <div class="form-group col-xs-12 col-md-12 col-sm-12 col-lg-12" style="background-color: #f4f4f4; padding-top: 15px">
             <div class="form-group col-md-12 col-xs-12 col-lg-12">
                 <h3 class="no-margin"><span>Filtrar E-mail Enviados</span></h3>

@@ -153,28 +153,39 @@
         }
 
         #CREACION DE ODONTOGRAMA CABEZERA
-        public function createOdontogramaCab()
+        public function createOdontogramaCab($nom = "")
         {
+            global $log;
+
             $error = '';
-
             $tratamiento = !empty($this->fk_plantratamiento) ? $this->fk_plantratamiento : '0';
-
-            $numero = str_pad($this->numero, 4, "0", STR_PAD_LEFT);
 
             $sql  = "INSERT INTO `tab_odontograma_paciente_cab` (`numero`, `fk_user`, `descripcion`, `fk_tratamiento`, `fecha`, `fk_paciente`) ";
             $sql .= " VALUES(";
-            $sql .= " '$numero',";
+            $sql .= " (SELECT CONCAT(SUBSTR(CONCAT('000000', CAST(SUBSTR(c.numero, 3) AS SIGNED) + 1), - 6)) secuencial FROM tab_odontograma_paciente_cab c WHERE c.rowid = (SELECT  MAX(c1.rowid) FROM tab_odontograma_paciente_cab c1)),";
             $sql .= " '$this->fk_usuario',";
             $sql .= " '$this->odontodescripcion',";
             $sql .= " '$tratamiento' ,";
             $sql .= " now() ,";
             $sql .= " $this->fk_paciente ";
             $sql .= ");";
-//            print_r($sql); die();
-            $rs = $this->db->query($sql);
+            $result_a = $this->db->query($sql);
 
-            if( !$rs ){
+            if( !$result_a ){
                 $error = 'Ocurrió un problema con la Operción, consulte con soporte Técnico';
+                $log->log(0, $log->error, 'Ha ocurrido un error con la creación del Odontograma - Paciente: '.$nom,'tab_odontograma_paciente_cab', $sql);
+            }else{
+                $id_last = $this->db->lastInsertId('tab_odontograma_paciente_cab');
+
+                $sql_b = "SELECT 
+                            c.numero , concat(dp.nombre, ' ', dp.apellido) as nom
+                        FROM
+                            tab_odontograma_paciente_cab c
+                                inner join 
+                            tab_admin_pacientes dp on dp.rowid = c.fk_paciente
+                        where c.rowid = '$id_last' limit 1";
+                $result_b = $this->db->query($sql_b)->fetchObject();
+                $log->log($id_last, $log->crear, 'Se ha registrado un Odontograma N.'.$result_b->numero.' - Paciente: '.$result_b->nom ,'tab_odontograma_paciente_cab');
             }
 
             return $error;

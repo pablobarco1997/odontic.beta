@@ -121,7 +121,7 @@ if($accionOdontograma == 'form_odont')
                         notificacion(resp.error, 'error');
                     }
 
-                    detallesOdontogramasEstados(); //detalles list estados
+                    // detallesOdontogramasEstados(); //detalles list estados
                 }
             });
 

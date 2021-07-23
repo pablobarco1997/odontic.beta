@@ -53,8 +53,10 @@
 
             </div>
             <div class="modal-footer">
-                <a class="btn btnhover" style="font-weight: bolder; color: green" id="RealizarPrestacion" >Aceptar</a>
-                <a class="btn btnhover" style="font-weight: bolder; "  data-dismiss="modal" id="">Close</a>
+                <button class="btn btnhover" style="font-weight: bolder; color: green"  id="RealizarPrestacion">
+                    Aceptar <span class="fa fa-refresh btnSpinner hide"> </span>
+                </button>
+                <a class="btn btnhover" style="font-weight: bolder; "  data-dismiss="modal" id="">Cerrar</a>
             </div>
         </div>
 

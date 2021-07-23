@@ -113,7 +113,7 @@
 
             <div class="modal-header modal-diseng">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title"><span>Menu Informativo</span></h4>
+                <h4 class="modal-title"><span>Navegación</span></h4>
             </div>
 
             <div class="modal-body" style="padding-bottom: 0px; padding-top: 0px; background-color: #ffffff;">
@@ -125,7 +125,7 @@
                                     <div style="width: 100%">
                                         <p class="text-center"><i class="fa fa-4x fa-user"></i></p>
 
-                                        <p class="text-center" style="font-weight: bold"><?= getnombrePaciente($idPaciente)->nombre.' '. getnombrePaciente($idPaciente)->apellido ?></p>
+                                        <p class="text-center" id="nav_paciente_admin_nomb" style="font-weight: bold"><?= getnombrePaciente($idPaciente)->nombre.' '. getnombrePaciente($idPaciente)->apellido ?></p>
                                         <hr style="margin: 2px" >
                                     </div>
                                 </li>

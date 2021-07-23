@@ -215,7 +215,7 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
 </div>
 
 
-<div id="CambiarStadoPieza" class="modal fade" role="dialog">
+<div id="CambiarStadoPieza" class="modal fade" role="dialog" data-backdrop="static">
     <div class="modal-dialog ">
         <div class="modal-content">
             <div class="modal-header modal-diseng">
@@ -267,7 +267,10 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn " data-dismiss="modal" id="aplicar_estado_odont">Aplicar</button>
+                <button type="button" class="btn " style="font-weight: bolder; color: green"  id="aplicar_estado_odont">
+                    Aplicar
+                    <span class="fa fa-refresh btnSpinner hide"></span>
+                </button>
             </div>
         </div>
     </div>
@@ -511,7 +514,8 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
             type:'POST',
             data: { 'ajaxSend':'ajaxSend', 'accion':'nuevo_odontograma_detalle', 'info': inform } ,
             dataType:'json',
-            async:false,
+            async:true,
+            cache: false,
             success:function(resp) {
 
                 if(resp.error == ''){
@@ -527,6 +531,7 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
     }
     function updateOdontograma(datosPiezas){
 
+        button_loadding($("#aplicar_estado_odont"), true);
         boxloading($boxContentViewAdminPaciente ,true);
 
         var $parametros = {
@@ -537,14 +542,17 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
             'idpaciente': $id_paciente,
 
         };
+
         $.ajax({
             url: $DOCUMENTO_URL_HTTP +'/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
             type:'POST',
             data: $parametros ,
             dataType:'json',
-            async:false,
+            async:true,
+            cache:false,
             complete:function(xhr, status){
                 boxloading($boxContentViewAdminPaciente ,true,1000);
+                button_loadding($("#aplicar_estado_odont"), false);
             },
             success:function(resp){
                 if(resp.error != ''){
@@ -555,6 +563,7 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
                     detallesOdontogramasEstados();
                     setTimeout(()=>{ notificacion("Información Actualizada", "success"); },800);
                     boxloading($boxContentViewAdminPaciente ,true,1000);
+                    setTimeout(()=>{ location.reload(true) },1500);
                 }
             }
         });
@@ -568,6 +577,7 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
     $(window).on('load', function () {
 
         fetchOdontograma();
+        detallesOdontogramasEstados();
         // resetOdont();
     });
 

@@ -117,7 +117,7 @@ $(document).ready(function() {
                     };
                     return query;
                 },
-                delay: 250,
+                delay: 500,
                 processResults:function (data) {
                     return data;
                 }

@@ -9,15 +9,11 @@ function Get_jquery_odontogramPlantram()
     return idplantratamiento;
 }
 
-function cargarOdontogramaUpdate()
-{
-
-}
 
 
 // alert(Get_jquery_odontogramPlantram());
 //EXECUTE FUNCION
-fetchOdotogramaActual( Get_jquery_odontogramPlantram() ); //obtengo y pinto el estado del diente
+// fetchOdotogramaActual( Get_jquery_odontogramPlantram() ); //obtengo y pinto el estado del diente
 
 // alert($accionOdontograma);
 if( $accionOdontograma == 'form_odont') //ACTUALIZAR ODONTOGRAMA FORMULARIO ODONTOGRAMA

@@ -465,6 +465,13 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                             $_SESSION['noti_count_number'] = $count_notify['result'];
                         }
 
+                        //si en caso en vista diferentes son 0
+                        if($numero_notify==0){
+                            if($_SESSION['noti_count_number']==0){
+                                $push++;
+                            }
+                        }
+
                         if($count_notify['result'] == 0){
                             $_SESSION['noti_count_number'] = 0;
                         }else{
@@ -504,15 +511,13 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     die();
 
                 }else{
+
                     //lista de notificaciones data
                     $fecha_time     = GETPOST('fecha_time');
                     $fecha_php      = !empty(GETPOST('fecha_time'))?GETPOST('fecha_time'):date("Y-m-d H:m:s");
                     $notification   = $conf->ObtnerNoficaciones($db, false);
                     $fechadb        = $notification['fecha_time_db'];
                 }
-
-//                $info         = info_noti( $notification );
-//                print_r($notification); die();
 
             }else{
                 $error          = "Ocurrio un error";
@@ -700,90 +705,6 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
 }
 
-
-function info_noti( $data = array() )
-{
-
-    global $conf;
-    $HTML = "";
-    foreach ($data['data'] as $key => $v){
-
-        #notificaciones de citas
-        if( $v->tipo_notificacion == 'NOTIFICAIONES_CITAS_PACIENTES' ){
-
-            $ico = "data: image/*; base64, ".base64_encode(file_get_contents(DOL_HTTP."/logos_icon/logo_default/cita-medica.ico"));
-            $hora_desde_A = substr($v->horaIni, 0, 5 ) ." A " . substr($v->horafin, 0, 5 ); //Corto
-
-            $HTML_CITAS_PACIENTES = "
-                <li style='margin-bottom: 2px; padding: 5px' class='listNotificacion' >
-                
-                    <div class='form-group col-md-12 col-xs-12 no-margin no-padding'>
-                        
-                        <div class='media' style='border-top: 1px solid #f4f4f4; padding:10px 10px'>
-                            <a class='pull-left'> <img src='".$ico."' class='img-rounded img-md' alt=''> </a>
-                            <div class='media-body'>
-                            
-                                <div class='text-justify' style='font-size: 1.2rem; ' >
-                                    <b>Doctor:   &nbsp;</b><span title='$v->doctor_cargo'>".(($v->doctor_cargo))."</span><br>
-                                    <b>Paciente: &nbsp;</b><span title='$v->nombe_paciente'>".(($v->nombe_paciente))."</span><br>
-                                    <b>Fecha:    &nbsp;</b><span title='$v->fecha'>$v->fecha</span><br>
-                                    <b>Hora:     &nbsp;</b><span title='$hora_desde_A'>$hora_desde_A</span><br>
-                                                                    
-                                    ";
-            $HTML_CITAS_PACIENTES               .= ($v->comment!='')?"<b>Comentario: </b>&nbsp;&nbsp; <span title='$v->comment'>$v->comment</span>":"";
-
-            $HTML_CITAS_PACIENTES .=    "
-                                    <button class='btn-sm btn btn-block btnhover' onclick='Actulizar_notificacion_citas($v->id_detalle_cita)' style='font-weight: bolder; color: green'>EN SALA DE ESPERA</button>
-                                </div>
-                               
-                            </div>
-                        </div>
-                    </div>
-                    
-                </li>
-                ";
-
-            $HTML .= $HTML_CITAS_PACIENTES;
-        }
-
-        #notificaiones x pacientes - confirmaciones de pacientes via email
-        if( $v->tipo_notificacion == 'NOTIFICACION_CONFIRMAR_PACIENTE' ){
-            $icon2 = "";
-            if(!empty($v->icon_paciente) && file_exists(DOL_DOCUMENT."/logos_icon/".$conf->NAME_DIRECTORIO."/".$v->icon_paciente)){
-                $icon2 = "data: image/*; base64, ".base64_encode(file_get_contents(DOL_HTTP."/logos_icon/".$conf->NAME_DIRECTORIO."/".$v->icon_paciente));
-            }
-            else{
-                $icon2 = "data: image/*; base64, ".base64_encode(file_get_contents(DOL_HTTP."/logos_icon/logo_default/avatar-user.png"));
-            }
-
-            $HTML_NOTIFICACION_X_PACIENTES_EMAIL = "
-                    <li style='margin-bottom: 2px; padding: 5px' class='listNotificacion' >
-                        <div class='form-group col-md-12 col-xs-12 no-margin no-padding'>
-                            <div class='media'>
-                                <a class='pull-left'> <img src='".$icon2."' class='img-rounded img-md' alt=''> </a>    
-                                <div class='media-body'>
-                                    <div class='text-justify' style='font-size: 1.2rem;'>
-                                        <b>Paciente: </b> &nbsp;&nbsp;   <span title='$v->paciente'>$v->paciente</span> <br>
-                                        <b>Comentario: </b> &nbsp;&nbsp;   <span title='$v->accion'>$v->accion <i class=\"fa fa-bell\"></i>  </span> <br>
-                                        <b>Estado Confirmado: </b> &nbsp;&nbsp;   <span title='$v->estado_confirmado' > 
-                                        <span style='font-weight: bold; color: blue'>
-                                                <small>$v->estado_confirmado</small> </span>
-                                        </span>   <br>
-                                        <button class='btn-sm btn btn-block btnhover'  onclick='to_accept_noti_confirmpacient($v->id)' style='font-weight: bolder; color: green'>ACEPTAR</button> 
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-            ";
-
-            $HTML .= $HTML_NOTIFICACION_X_PACIENTES_EMAIL;
-        }
-    }
-
-    return $HTML;
-
-}
 
 
 /*Actualiza el perfil de usuario */

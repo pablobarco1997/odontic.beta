@@ -25,15 +25,17 @@
             ?>
 
         <div class="form-group col-md-12 col-xs-12">
+
             <label for="">LISTA DE COMPORTAMIENTOS</label>
             <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px; background-color: #f4f4f4; margin-left: 0px">
                 <li> <a data-toggle="collapse" data-target="#contentFilter" style="color: #333333" class="btnhover btn btn-sm " id="fitrar_document"> <b>  ▼ &nbsp;Filtrar <i></i> </b> </a> </li>
                 <li> <a href="#" style="color: #333333" class="btnhover btn btn-sm " id="imprimirEvolucion" onclick="AppExporPrint()"> <i class="fa fa-print"></i> <b> Imprimir <i></i> </b> </a> </li>
             </ul>
+            <br>
 
-            <div class="form-group col-xs-12 col-md-12 col-lg-12 contentFilter collapse " id="contentFilter" style="background-color: #f4f4f4; padding-top: 15px">
+            <div class="form-group col-xs-12 col-md-12 col-lg-12 contentFilter no-margin collapse  " id="contentFilter" style="background-color: #f4f4f4; ">
 
-                <div class="form-group col-md-12 col-xs-12 col-lg-12"> <h3 class="no-margin"><span>Filtrar Evoluciones</span></h3> </div>
+                <div class="form-group col-md-12 col-xs-12 col-lg-12"> <h3 class="no-margin" style="padding-top: 15px"><span>Filtrar Evoluciones</span></h3> </div>
 
                 <div class="form-group col-md-3 col-xs-12 col-sm-12">
                     <label>Fecha</label>

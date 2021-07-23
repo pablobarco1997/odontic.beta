@@ -39,31 +39,34 @@
     <div class="form-group col-xs-12 col-md-12">
 
         <div class="table-responsive">
-            <table class="table " width="100%" id="detalles_plantram">
+            <table class="table table-hover" width="100%" id="detalles_plantram">
                 <thead id="headplantram">
-                    <tr>
+                    <tr style="background-color: #f4f4f4">
                         <th width="40%">
-                            <label  style="float: left;  padding-top: 5px" class="control-label" >Prestación</label>
-                            <a href="#detdienteplantram" id="asociarPrestacion" data-toggle="modal" onclick="clearModalDetalle('todo')" class="btnhover btn-sm btn" style="color: #00a157; cursor: pointer; float: right; font-weight: bold "> Cargar Prestaciones</a>
+                            <label  style="float: left;  padding-top: 5px; font-size: 1.4rem" class="control-label" >Prestación</label>
+                            <a href="#detdienteplantram" id="asociarPrestacion" data-toggle="modal" onclick="clearModalDetalle('todo')" class="btnhover btn-sm btn" style="color: #00a157; cursor: pointer; float: right; font-weight: bold; font-size: 1.4rem "> Cargar Prestaciones</a>
                         </th>
                         <th width="10%">
-                            <label for="">Estado</label>
+                            <label for="" style="font-size: 1.4rem">Estado</label>
                         </th>
                         <th width="10%">
-                            <label for="">Dcto Adicional</label>
+                            <label for="" style="font-size: 1.4rem">Dcto Adicional</label>
                         </th>
                         <th width="10%">
-                            <label for="">Sub. Total</label>
+                            <label for="" style="font-size: 1.4rem">Sub. Total</label>
                         </th>
                         <th width="10%">
-                            <label for="">Qty</label>
+                            <label for="" style="font-size: 1.4rem">Qty</label>
                         </th>
                         <th width="10%">
-                            <label for="">Total</label>
+                            <label for="" style="font-size: 1.4rem">Total</label>
                         </th>
                     </tr>
                 <tr>
-                    <th colspan="6" style="font-size: 1.4rem; cursor: pointer">Acciones Clinicas</th>
+                    <th colspan="5" style="font-size: 1.4rem; cursor: pointer; vertical-align: center" >Acciones Clinicas</th>
+                    <th colspan="1"  >
+                        <button class="btn  btn-block btn-default btn-sm" title="Refresh detalle" id="refresh_detalle_table"> Actualizar <span class="fa fa-refresh btnSpinner hide"> </span> </button>
+                    </th>
                 </tr>
                 </thead>
 

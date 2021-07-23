@@ -1,8 +1,22 @@
 
+//Objecto Prestacion Servicio
+var objRealizarServicio = {
+    idcab: 0, 
+    iddet: 0,
+    idpieza: 0,
+};
+
 /** JAVASCRIP DE PRESTACION REALIZADA **/
 
-//REALIZAR PRESTACION -----------------------
-function  realizarPrestacionModal($Dom)
+$("#modal_prestacion_realizada").on("show.bs.modal", function (event) {
+    // console.log($(event.relatedTarget));
+    var ElementoAfter = $(event.relatedTarget); //elemento de donde se levanto el modal
+    realizarPrestacionShowModal(ElementoAfter);
+
+});
+
+// Prestaciones realizadas
+function  realizarPrestacionShowModal($Dom)
 {
     var idcabplantram = 0;
     var iddetplantram = 0;
@@ -12,8 +26,7 @@ function  realizarPrestacionModal($Dom)
 
     // alert( padre.find('.dientePieza').data('iddiente') );
     //si no hat diente asociado a la prestacion no se puede selecionar un estado con la evolucion
-    if(parseInt(padre.find('.dientePieza').data('iddiente')) ==  0)
-    {
+    if(parseInt(padre.find('.dientePieza').data('iddiente')) ==  0){
         $('#actualizarOdontogramaPlantform').addClass('disabled_link3');
 
     }else{
@@ -30,19 +43,34 @@ function  realizarPrestacionModal($Dom)
     iddetplantram = padre.find('.statusdet').data('iddet');
     iddiente      = padre.find('.dientePieza').data('iddiente');
 
+    objRealizarServicio.idcab   = idcabplantram;
+    objRealizarServicio.iddet   = iddetplantram;
+    objRealizarServicio.idpieza = iddiente;
+
     /*se ejecuta un attr onclick para crear la evolucion*/
-    $('#RealizarPrestacion').attr('onclick', 'RealizarPrestacionDetallePLantram('+idcabplantram+','+iddetplantram+','+iddiente+')');
+    // $('#RealizarPrestacion').attr('onclick', 'RealizarPrestacionDetallePLantram('+idcabplantram+','+iddetplantram+','+iddiente+')');
+
+
 
 }
 
+$("#RealizarPrestacion").click(function () {
+
+    if(objRealizarServicio.idcab==0 && objRealizarServicio.iddet==0){
+        notificacion('Ocurrio un error de parametros de entrada, Consulte con Soporte', 'error');
+        return false;
+    }else{
+        RealizarPrestacionDetallePLantram(objRealizarServicio.idcab, objRealizarServicio.iddet, objRealizarServicio.idpieza);
+    }
+});
+
 /*REALIZA LA PRESTACION*/
-function RealizarPrestacionDetallePLantram(idcabplantram, iddetplantram, iddiente)
-{
+function RealizarPrestacionDetallePLantram(idcabplantram, iddetplantram, iddiente){
+
     var $msg_err = 0;
     var msgDoct  = $('#msgDoctorerr');
-
     if($('#evolucionDoct').find(':selected').val()==""){
-        $msg_err = "Seleccione un Doct@r";
+        $msg_err = "Seleccione un Doctor(a)";
         msgDoct.text($msg_err);
     }
 
@@ -64,7 +92,8 @@ function RealizarPrestacionDetallePLantram(idcabplantram, iddetplantram, iddient
                 'fk_estadodiente': ($('#actualizarOdontogramaPlantform').find(':selected').val() == "") ? 0 : $('#actualizarOdontogramaPlantform').find(':selected').val()
             },
             dataType: 'json',
-            async: false,
+            async: true,
+            cache: false,
             success: function(resp) {
 
                 if(resp.error == ""){
@@ -79,6 +108,9 @@ function RealizarPrestacionDetallePLantram(idcabplantram, iddetplantram, iddient
 
             }
         });
+    }else{
+
+        return false;
     }
 
 }

@@ -15,19 +15,17 @@ if($accion == 'addplan')
     ];
 
     //FORM DETALLE MUESTRA TODOS LOS DETALLES CON SUS ESTADO DE LAS PRESTACIONES GURADAS
-    function fetch_plantratamiento(subaccion)
-    {
+    function fetch_plantratamiento(subaccion){
+
+        button_loadding($("#refresh_detalle_table"), true);
 
         // $formatIndex = 0;
         var datos = {
-
             'ajaxSend'     : 'ajaxSend',
             'accion'       : 'fetchnewtratamiento',
             'subaccion'    : 'consultar',
-
             'idpaciente'    : $id_paciente,
             'idtratamiento' : $ID_PLAN_TRATAMIENTO
-
         };
 
         $.ajax({
@@ -35,14 +33,17 @@ if($accion == 'addplan')
             type:'POST',
             data: datos,
             dataType:'json',
-            async: false,
+            async: true,
+            cache: false,
+            complete:function(xhr, status){
+                button_loadding($("#refresh_detalle_table"), false);
+            },
             success:function(respuesta) {
 
                 if(respuesta.error == "") {
 
                     var cabezera             = respuesta.objetoCab[0];
-
-                    //CABEZRA NOMBRE TRATAM - PROFECIONAL
+                    //cab plan de tratamiento
                     $('#addcomment').val( cabezera.observacion );
 
                     var abonado              =  cabezera.abonado_cab;
@@ -71,7 +72,7 @@ if($accion == 'addplan')
                     /*view header plan de tratamiento*/
                     print_html_cabezera_viewPrincipal(profecional,convenio, Nomb_tratam);
 
-                    console.log(respuesta['objetoDet']);
+                    // console.log(respuesta['objetoDet']);
                     /*Se comprueba si hay prestaciones agregadas*/
                     if(respuesta.objetoDet.length > 0){
 
@@ -96,6 +97,10 @@ if($accion == 'addplan')
         recalculoViewForm();
     }
 
+
+    $("#refresh_detalle_table").click(function () {
+        fetch_plantratamiento();
+    });
 
     //PINTA LAS PRESTACIONES GUARDAS EN EL FORMULARIO
     function print_html_detalle_viewPrincipal(tratramientodet, icoDiente, icoCheckedTrue, icoCheckedFalse)
@@ -141,7 +146,7 @@ if($accion == 'addplan')
 
             //comportamiento realizar prestacion
             var ImgRealizadoChecked   = " <i class='fa fa-square'></i> Realizar ? "; //No realizado
-            var onclickRealizadoModal = " href='#modal_prestacion_realizada' data-toggle='modal' onclick='realizarPrestacionModal($(this))' title='Realizar esta prestación' "; //Click para realizar la prestacion
+            var onclickRealizadoModal = " href='#modal_prestacion_realizada' data-toggle='modal' title='Realizar esta prestación' "; //Click para realizar la prestacion
 
             if(tratramientodet[i]['estadodet'] == 'R'){
                 var ImgRealizadoChecked = "<i class='fa fa-check'></i> Realizado  ";

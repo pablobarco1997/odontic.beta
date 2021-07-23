@@ -1,18 +1,42 @@
 
 // LISTA DE ODONTOGRAMA
-function  odontolist()
-{
+function  odontolist(){
+
+    var ElemmentoContentload = $("#odontPLant");
+    boxTableLoad(ElemmentoContentload, true);
+
+    var busqueda = {
+        'ajaxSend'      :'ajaxSend',
+        'accion'        :'list_odontograma',
+        'idpaciente'    : $id_paciente,
+        'date_c'        : $("#startDate_odont").val() ,
+        'plantramiento' : $("#tratamientoSeled").find('option:selected').val(),
+        'numero'        : $("#numero_odont").val(),
+        'estado'        : $("#estado_odont").find('option:selected').val()
+    };
+
     var table = $('#odontPLant').DataTable({
 
-        searching: true,
+        serverSide:true,
+        searching: false,
         ordering:false,
         destroy:true,
+        lengthChange: false,
+        fixedHeader: true,
+        paging:true,
+        processing: true,
+        lengthMenu:[ 10 ],
 
         ajax:{
             url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
             type:'POST',
-            data:{'ajaxSend':'ajaxSend', 'accion':'list_odontograma', 'idpaciente': $id_paciente } ,
+            data: busqueda ,
             dataType:'json',
+            cache:false,
+            async:true,
+            complete:function (xhr, status) {
+                boxTableLoad(ElemmentoContentload, false);
+            }
         },
 
         language: {
@@ -40,8 +64,13 @@ function  odontolist()
             }
         },
 
+    }).on( 'length.dt', function ( e, settings, len ) { // cambiar
+        boxTableLoad(ElemmentoContentload, true);
+    }).on( 'page.dt', function ( e, settings, len ) { // cambiar
+        boxTableLoad(ElemmentoContentload, true);
     });
 }
+
 
 //CONSULTAR SECUENCIAL ODONTOGRAMA
 function  concultarSecuencialOdontograma() {
@@ -64,62 +93,114 @@ function  concultarSecuencialOdontograma() {
     return sucuencial;
 }
 
-//corre todos los campos de entrada modificados con librias o framewrok
-function inputs_runn() {
-
-
-    $('#tratamientoSeled').select2({
-        placeholder: 'seleccione una opcion',
-        allowClear: true,
-        language:languageEs,
-        minimumInputLength:1,
-        ajax:{
-            url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
-            type: "POST",
-            dataType: 'json',
-            async:false,
-            data:function (params) {
-                var query = {
-                    accion: 'filtrarPlantratamientoSearchSelect2',
-                    ajaxSend:'ajaxSend',
-                    paciente_id: $id_paciente,
-                    search: params.term,
-                };
-                return query;
-            },
-            delay: 250,
-            processResults:function (data) {
-                return data;
-            }
-        }
-    });
-
-
-}
-
-
-
-
-
 // EXEC ODONTOGRAMA
 // alert($accionOdontograma);
-if( $accionOdontograma == 'principal')
-{
-    odontolist();
-    inputs_runn();
+if( $accionOdontograma == 'principal'){
+
+    //delete odontograma estado E
+    var Eliminar_odontograma = function (Element) {
+
+        //fetch id
+        var id              = Element.find('.odont_id').prop("dataset").id;
+        var plantratamiento = Element.find('.odont_id').prop("dataset").tratamiento;
+
+        if(id==0 || id==""){
+            notificacion("Ocurrio un error de parametros de entrada, Consulte con soporte", "error");
+            return false;
+        }
+
+        //crea el ojecto y guardas la funcion en el
+        var object = {
+            id: id,
+            callback: function () {
+                $.ajax({
+                    url:  $DOCUMENTO_URL_HTTP +'/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
+                    delay:500,
+                    type:'POST',
+                    data:{ 'ajaxSend':'ajaxSend', 'accion':'deleteOdontograma', 'id': id },
+                    async:true,
+                    cache:false,
+                    dataType:'json',
+                    complete: function(xhr, status){
+
+                    },
+                    success:function (response) {
+                        if(response.error==""){
+                            var table = $("#odontPLant").DataTable();
+                            table.ajax.reload(null, false);
+                            setTimeout(()=>{ notificacion('información Actualizada', 'success'); }, 700);
+                        }else{
+                            setTimeout(()=>{ notificacion(response.error, 'error'); }, 700);
+                        }
+                    }
+                });
+            }
+        };
+
+        notificacionSIoNO("Eliminar el odontograma?","Este odontograma se encuentro asociado al "+ plantratamiento, object);
+    };
+
+
+    var FormValidationCrearOdontograma = function(){
+
+        var Errores         = [];
+        var PlanTratamiento = $("#tratamientoSeled_modal");
+        if(PlanTratamiento.val() == "" ){
+            Errores.push({
+                "documento" :   PlanTratamiento,
+                "mesg" :  "Campo Obligatorio",
+            });
+        }
+
+        var valid = true;
+
+        $(".error_odontograma_msg").remove();
+
+        if(Errores.length>0){
+            for (var i=0; i<=Errores.length-1;i++ ){
+
+                var menssage =  document.createElement("small");
+                menssage.setAttribute("style","display: block; color:blue;");
+                menssage.setAttribute("class","error_odontograma_msg");
+                menssage.appendChild(document.createTextNode(Errores[i]['mesg']));
+                var documentoDol        = Errores[i]['documento'];
+                if( $(documentoDol)[0].nodeName == 'SELECT'){
+                    $(menssage).insertAfter($(documentoDol).parent().find('span:eq(0)'));
+                }
+
+            }
+            valid = false;
+        }else{
+            valid = true;
+        }
+
+        return valid;
+    };
+
+
+    $("#tratamientoSeled_modal").change(function () {
+        FormValidationCrearOdontograma();
+    });
 
     /*CREAR EL ODONTOGRAMA*/
     $('#crear_odontograma').on('click', function() {
 
         // alert( $id_paciente );
 
+        if(FormValidationCrearOdontograma()==false){
+            return false;
+        }
+
+        button_loadding($("#crear_odontograma"), true);
+
         var parametros = {
             'accion':'nuevoUpdateOdontograma',
             'ajaxSend':'ajaxSend',
-            'numero': concultarSecuencialOdontograma(),  //ultimo secuencial del odontograma
-            'fk_tratamiento' : $('#tratamientoSeled').find(':selected').val(),
+            // 'numero': concultarSecuencialOdontograma(),  //ultimo secuencial del odontograma
+            'fk_tratamiento' : $('#tratamientoSeled_modal').find(':selected').val(),
             'descrip'        : $('#odontograDescrip').val(),
-            'fk_paciente'    : $id_paciente
+            'fk_paciente'    : $id_paciente,
+            'nom_paciente'   : $("#nav_paciente_admin_nomb").text(),
         };
 
         $.ajax({
@@ -127,23 +208,22 @@ if( $accionOdontograma == 'principal')
             type:'POST',
             data: parametros ,
             dataType:'json',
-            async:false,
+            async:true,
+            cache:false,
+            complete: function(xhr, status){
+                button_loadding($("#crear_odontograma"), false);
+            },
             success:function(resp){
-
                 if(resp.error == ''){
-
                     /*se actualiza el odontograma update detalle*/
                     var idplantram = $('#tratamientoSeled').find(':selected').val();
                     crearDetalleOdontograma(resp.lasidOdont, idplantram);
-
                     notificacion('Información Actualizada', 'success');
-
                     setTimeout(function() {
-                        location.reload();
+                        location.reload(true);
                     }, 1500);
 
                 }else{
-
                     $('#msg_errores_odontogram').html(resp.error);
                     setTimeout(function() {
                         $('#msg_errores_odontogram').html(null);
@@ -169,8 +249,108 @@ if( $accionOdontograma == 'principal')
     }
 
     $("#add_odontograma").on('show.bs.modal', function() {
-        $("#tratamientoSeled").val(null).trigger("change");
+        $("#tratamientoSeled_modal").val(null).trigger("change");
         $("#odontograDescrip").val(null);
+    });
+
+    $(".aplicar_busq_odont").click(function () {
+        odontolist();
+    });
+
+    $(".limpiar_busq_odont").click(function () {
+
+        var parent = $("#contentFilter");
+        parent.find('input:not(#startDate_odont)').val(null);
+        parent.find('select').val(null).trigger('change');
+        odontolist();
+
+    });
+
+    $(window).on('load', function () {
+
+        //lista de odontogramas creados
+        odontolist();
+
+        $('#startDate_odont').daterangepicker({
+
+            locale: {
+                format: 'YYYY/MM/DD' ,
+                daysOfWeek: [
+                    "Dom",
+                    "Lun",
+                    "Mar",
+                    "Mie",
+                    "Jue",
+                    "Vie",
+                    "Sáb"
+                ],
+                monthNames: [
+                    "Enero",
+                    "Febrero",
+                    "Marzo",
+                    "Abril",
+                    "Mayo",
+                    "Junio",
+                    "Julio",
+                    "Agosto",
+                    "Septiembre",
+                    "Octubre",
+                    "Noviembre",
+                    "Diciembre"
+                ],
+            },
+
+            startDate: moment().startOf('month'),
+            endDate: moment().endOf('month'),
+            ranges: {
+                'Hoy': [moment(), moment()],
+                'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Últimos 7 Dias': [moment().subtract(6, 'days'), moment()],
+                'Últimos 30 Dias': [moment().subtract(29, 'days'), moment()],
+                'Mes Actual': [moment().startOf('month'), moment().endOf('month')],
+                'Mes Pasado': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                'Año Actual': [moment().startOf('year'), moment().endOf('year')],
+                'Año Pasado': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
+            }
+        });
+
+        $('.rango span').click(function() {
+            $(this).parent().find('input').click();
+        });
+
+
+        $("#estado_odont").select2({
+            placeholder:'Elija una opción',
+            allowClear: true,
+            language: languageEs,
+        });
+
+        $('.tratamientoSeled').select2({
+            placeholder: 'buscar Plan de tratamiento asignado',
+            allowClear: true,
+            language:languageEs,
+            minimumInputLength:1,
+            ajax:{
+                url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
+                type: "POST",
+                dataType: 'json',
+                async:false,
+                data:function (params) {
+                    var query = {
+                        accion: 'filtrarPlantratamientoSearchSelect2',
+                        ajaxSend:'ajaxSend',
+                        paciente_id: $id_paciente,
+                        search: params.term,
+                    };
+                    return query;
+                },
+                delay: 500,
+                processResults:function (data) {
+                    return data;
+                }
+            }
+        });
+
     });
 
 

@@ -317,10 +317,14 @@ if($accion == "principal")
     //CREAR PLAN DE TRATAMIENTO CABEZERA INDEPENDIENTE ---------------------
     function CrearPlanTratamientoIndependienteDependiente(subaccion, redirecionar=false)
     {
+
+        button_loadding($("#CrearPlanTratamientoPlantram"), true);
+
         var CitasPacientes = $('#citasPaciente').find(':selected').val();
 
         if($('#nuPlanTratamiento').prop('dataset').id == "" && $('#nuPlanTratamiento').prop('dataset').id != 0){
-                 notificacion('Ocurrio un error consulte con soporte <br> <b>No se detecto el plan de tratamiento seleccionado</b> ', 'question');
+            notificacion('Ocurrio un error consulte con soporte <br> <b>No se detecto el plan de tratamiento seleccionado</b> ', 'question');
+            button_loadding($("#CrearPlanTratamientoPlantram"), false);
             return false;
         }
 
@@ -341,7 +345,11 @@ if($accion == "principal")
                 'subaccion' : ($('#nuPlanTratamiento').data('id') == 0) ? "CREATE" : "ASOCIAR_CITAS"
             },
             dataType:'json',
-            async: false,
+            async: true,
+            cache: false,
+            complete: function(xhr, status){
+                button_loadding($("#CrearPlanTratamientoPlantram"), false);
+            },
             success: function(resp){
 
                 var idpacienteToken = resp.idpacientetoken;
