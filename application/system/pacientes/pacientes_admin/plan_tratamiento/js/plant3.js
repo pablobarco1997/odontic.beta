@@ -76,6 +76,8 @@ function RealizarPrestacionDetallePLantram(idcabplantram, iddetplantram, iddient
 
     if($msg_err==""){
 
+        button_loadding($("#RealizarPrestacion"), true);
+
         $.ajax({
             url: $DOCUMENTO_URL_HTTP +'/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
             type:'POST',
@@ -94,8 +96,10 @@ function RealizarPrestacionDetallePLantram(idcabplantram, iddetplantram, iddient
             dataType: 'json',
             async: true,
             cache: false,
+            complete: function(xhr, status){
+                button_loadding($("#RealizarPrestacion"), false);
+            },
             success: function(resp) {
-
                 if(resp.error == ""){
                     $('#modal_prestacion_realizada').modal('hide');
                     setTimeout(function () {
@@ -163,7 +167,7 @@ function UpdateDeletePrestacionAsignada(html, AuxSatus = '')
             }, function(data) {
                 var respuesta = $.parseJSON(data);
                 if(respuesta['error'] == ''){
-                    fetch_plantratamiento('consultar');//REFRES LIST DETALLE
+                    fetch_plantratamiento('consultar');//refres
                     notificacion('Información Actualizada', 'success');
                 }else{
                     notificacion(respuesta['error'], 'error');

@@ -1,65 +1,5 @@
 
 
-<style>
-    /*!* Custom checkbox *!*/
-    /*.custom-checkbox-myStyle {*/
-        /*position: relative;*/
-    /*}*/
-    /*.custom-checkbox-myStyle input[type="checkbox"] {*/
-        /*opacity: 0;*/
-        /*position: absolute;*/
-        /*margin: 5px 0 0 3px;*/
-        /*z-index: 9;*/
-    /*}*/
-    /*.custom-checkbox-myStyle label:before{*/
-        /*width: 18px;*/
-        /*height: 18px;*/
-    /*}*/
-    /*.custom-checkbox-myStyle label:before {*/
-        /*content: '';*/
-        /*margin-right: 10px;*/
-        /*display: inline-block;*/
-        /*vertical-align: text-top;*/
-        /*background: white;*/
-        /*border: 1px solid #bbb;*/
-        /*border-radius: 2px;*/
-        /*box-sizing: border-box;*/
-        /*z-index: 2;*/
-    /*}*/
-    /*.custom-checkbox-myStyle input[type="checkbox"]:checked + label:after {*/
-        /*content: '';*/
-        /*position: absolute;*/
-        /*left: 6px;*/
-        /*top: 3px;*/
-        /*width: 6px;*/
-        /*height: 11px;*/
-        /*border: solid #000;*/
-        /*border-width: 0 3px 3px 0;*/
-        /*transform: inherit;*/
-        /*z-index: 3;*/
-        /*transform: rotateZ(45deg);*/
-    /*}*/
-    /*.custom-checkbox-myStyle input[type="checkbox"]:checked + label:before {*/
-        /*border-color: #212f3d;*/
-        /*background: #15528A;*/
-    /*}*/
-    /*.custom-checkbox-myStyle input[type="checkbox"]:checked + label:after {*/
-        /*border-color: #fff;*/
-    /*}*/
-    /*.custom-checkbox-myStyle input[type="checkbox"]:disabled + label:before {*/
-        /*color: #b8b8b8;*/
-        /*cursor: auto;*/
-        /*box-shadow: none;*/
-        /*background: #ddd;*/
-    /*}*/
-
-    /*.custom-checkbox-myStyle input[type="checkbox"]{*/
-        /*cursor: pointer;*/
-    /*}*/
-
-</style>
-
-
 <?php
 
 
@@ -79,19 +19,67 @@ if($showCaja['error']!=""){
 //LISTA PRINCIPAL DE PAGOS DE PACIENTES
 if(isset($_GET['v']) && $_GET['v'] == 'paym')
 {
-
-
 ?>
 
+    <div class="form-group col-xs-12 col-md-12 col-lg-12 no-margin collapse " id="contentFilter" aria-expanded="true" style="">
+        <div class="form-group col-md-12 col-xs-12 col-lg-12" style="background-color: #f4f4f4; padding-top: 15px">
+
+            <div class="form-group col-md-12 col-xs-12 col-lg-12"> <h3 class="no-margin"><span>Filtrar Pagos de Pacientes</span></h3> </div>
+
+            <div class="form-group col-md-3 col-xs-12">
+                <label>Emitido</label>
+                <div class="input-group form-group rango" style="margin: 0">
+                    <input type="text" class="form-control filtroFecha  " readonly="" id="startDatePagosxPacien" value="">
+                    <span class="input-group-addon" style="border-radius: 0"><i class="fa fa-calendar"></i></span>
+                </div>
+            </div>
+
+            <div class="form-group col-md-7 col-xs-12">
+                <label>Plan de Tratamiento</label>
+                <select name="tratamientoPagosxPacien" id="tratamientoPagosxPacien" class="form-control" style="width: 100%"></select>
+            </div>
+
+            <div class="form-group col-md-2 col-xs-12" style="margin-bottom: 0px;margin-top: 15px;">
+                <span style="display: block"><input type="radio" name="abonadoRPagosxPacien"  id="abonadoPagosxPacien"> Abonado</span>
+                <span style="display: block"><input type="radio" name="abonadoRPagosxPacien"  id="realizadoPagosxPacien"> Realizado</span>
+            </div>
+
+            <div class="form-group col-md-12 col-xs-12">
+                <ul class="list-inline pull-right">
+                    <li>  <button class=" btn   btn-block  btn-default" id="limpiarPagosxPacien" style="float: right; padding: 10px"> &nbsp; &nbsp; Limpiar &nbsp; &nbsp;</button> </li>
+                    <li>  <button class=" btn   btn-block  btn-success" id="aplicarPagosxPacien" style="float: right; padding: 10px"> &nbsp;  &nbsp;Aplicar busqueda &nbsp;</button> </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
         <script>
+
             $(window).on("load", function () {
+
                 if("<?= $showCaja ?>" != "1"){
                     notificacion("<?= $showCaja ?>", "question");
                 }
+
+
+                //busqueda pagos x pacientes
+                $("#limpiarPagosxPacien").click(function () {
+
+                    $("[name='abonadoRPagosxPacien']").prop('checked', false);
+                    $("[name='tratamientoPagosxPacien']").val(null).trigger('change');
+                    $("#startDatePagosxPacien").val(null);
+
+                    listPagosIndependientes();
+                });
+                $("#aplicarPagosxPacien").click(function () {
+
+                    listPagosIndependientes();
+                });
+
             });
         </script>
 
-        <div class="form-group col-xs-12 col-md-12">
+        <div class="form-group col-xs-12 col-md-12" style="margin-bottom: 25px">
             <div class="row">
                 <div class="col-md-12 col-xs-12">
                     <div class="table-responsive">
@@ -133,7 +121,7 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
  if(isset($_GET['v']) && $_GET['v'] == 'paym_pay')
  {
 
-     $query = "Select if(edit_name!=''|| edit_name!='NULL', edit_name , concat('Plan de Tratamiento N. ', numero) ) as numplantram 
+     $query = "Select concat('Plan de Tratamiento N. ', numero) as numplantram 
                From tab_plan_tratamiento_cab where rowid =". ((isset($_GET['idplantram']))?$_GET['idplantram']:0) ."   ";
      $n_plantram = $db->query($query)->fetchObject()->numplantram;
 
@@ -220,43 +208,16 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
 
 
                  <div class="form-group pull-right">
-                     <button class="btn btnhover btn-block" style="font-weight: bolder; color: green" id="btnApagar" > Aceptar </button>
+                     <button class="btn btnhover btn-block" style="font-weight: bolder; color: green" id="btnApagar" >
+                         Aceptar
+                         <span class="fa fa-refresh btnSpinner hide"></span>
+                     </button>
                  </div>
 
              </div>
          </div>
      </div>
 
-
-     <div class="modal fade" id="modal_edit_tipoPago" role="dialog">
-         <div class="modal-dialog">
-
-             <!-- Modal content-->
-             <div class="modal-content">
-                 <div class="modal-header modal-diseng">
-                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                     <h4 class="modal-title" id="tipo_pago_id" data-idpagotype="">Editar</h4>
-                 </div>
-                 <div class="modal-body">
-                   <div class="row">
-                       <div class="col-md-12 col-xs-12">
-                           <label for="">Tipo de pago</label>
-                           <input type="text" class="form-control" id="formp_descrip_formp" name="formp_descrip_formp" placeholder="descripción del pago" onkeyup="FomValidFormaPagos()">
-                       </div>
-                       <div class="col-md-12 col-xs-12">
-                           <label for="">Explicación</label>
-                           <textarea name="formp_observacion" id="formp_observacion" cols="30" rows="5" class="form-control" maxlength="650" placeholder="opcional"></textarea>
-                       </div>
-                   </div>
-                 </div>
-                 <div class="modal-footer">
-                     <a href="#" class="btn btnhover " style="font-weight: bolder; color: green; float: right" id="addFormaPago">Guardar</a>
-                     <a type="button" class="btn btnhover " style="font-weight: bolder;  float: right" data-dismiss="modal">cerrar</a>
-                 </div>
-             </div>
-
-         </div>
-     </div>
 
      <script>
          $(window).on("load", function () {

@@ -1,7 +1,7 @@
 
 <!-- MODAL DE REALIZAR PRESTACION -->
 
-<div id="modal_prestacion_realizada" class="modal fade" role="dialog">
+<div id="modal_prestacion_realizada" class="modal fade" data-backdrop="static" role="dialog">
     <div class="modal-dialog">
 
         <!-- Modal content-->
@@ -30,7 +30,7 @@
 
                     <div class="form-group col-sm-12 col-md-12">
                         <label for="">Evolución escrita (opcional)</label>
-                        <textarea id="descripEvolucion" rows="3" class="form-control"></textarea>
+                        <textarea id="descripEvolucion" rows="3" class="form-control" style=""></textarea>
                     </div>
 
                     <div class="form-group col-sm-12 col-md-12">

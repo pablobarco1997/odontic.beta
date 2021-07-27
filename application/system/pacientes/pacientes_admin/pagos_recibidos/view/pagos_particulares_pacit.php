@@ -1,6 +1,6 @@
 
-    <div id="FiltrarPagoPacientes" class="form-group col-xs-12 col-md-12 collapse" aria-expanded="true" style="">
-        <div class="form-group col-md-12 col-xs-12" style="background-color: #f4f4f4; padding: 25px">
+    <div id="FiltrarPagoPacientes" class="form-group col-xs-12 col-md-12 collapse" aria-expanded="true" style="margin-bottom: 0px;">
+        <div class="form-group col-md-12 col-xs-12" style="background-color: #f4f4f4; padding: 25px; ">
             <h3 class="no-margin"><span>Filtrar Pagos de Pacientes</span></h3>
             <div class="row">
                 <div class="form-group col-md-2 col-sm-12 col-xs-12">

@@ -302,13 +302,22 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
 
     function fetchOdontograma() {
 
+        var btn = $("#refresh_odont");
+        if(!btn.find('i').hasClass('btnSpinner')){
+            btn.find('i').addClass('btnSpinner');
+        }
+
         $.ajax({
+            delay:250,
             url: $DOCUMENTO_URL_HTTP +'/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
             type:'POST',
             data: {'ajaxSend':'ajaxSend', 'accion':'fecht_odontograma', 'idtratamiento': get('idplantram'), 'idpaciente': $id_paciente} ,
             dataType:'json',
-            async:false,
+            async:true,
             cache:false,
+            complete:function(xhr, status){
+                btn.find('i').removeClass('btnSpinner');
+            },
             success:function (result) {
                 if(result['error'] == ""){
 
@@ -572,6 +581,12 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
     //cuando el modal se oculta
     $("#CambiarStadoPieza").on("hidden.bs.modal", function () {
         $("#observacionUpdateStado").val(null);
+    });
+
+    //refresh
+    $("#refresh_odont").click(function () {
+        fetchOdontograma();
+        detallesOdontogramasEstados();
     });
 
     $(window).on('load', function () {

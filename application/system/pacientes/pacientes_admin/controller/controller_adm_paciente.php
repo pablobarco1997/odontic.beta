@@ -1183,6 +1183,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $tieneOdontograma = ''; #esta variable comprueba si el plan de tratamiento tiene odontogrma
             $datosRealizarPrestacion = [];
 
+            $result_d = $db->query("SELECT p.descripcion FROM tab_plan_tratamiento_det d INNER JOIN tab_conf_prestaciones p ON p.rowid = d.fk_prestacion WHERE d.rowid = $idDetPlant");
+            $detalle_tratamiento = $result_d->fetchObject();
 
             $sql = "SELECT * FROM tab_plan_tratamiento_det where rowid = $idDetPlant and fk_plantratam_cab = $idCabPlant limit 1";
             $resul = $db->query($sql);
@@ -1245,6 +1247,10 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         $updateOdont1 = "UPDATE `tab_odontograma_update` SET `fk_estado_pieza`= $estadoDiente , json_caras = '". $datosRealizarPrestacion->json_caras ."' WHERE `rowid`>0 and fk_tratamiento = $idCabPlant and fk_diente = $iddiente;";
                         $rsultUpdate = $db->query($updateOdont1);
 
+                        if($rsultUpdate){
+
+                        }
+
                         #Se actualiza el odontograma detalle
                         $InsertOdont2  = "INSERT INTO `tab_odontograma_paciente_det` (`fk_diente`, `json_caras`, `fk_estado_diente`, `fk_tratamiento`, `obsrvacion`, `list_caras`, `fecha`, `estado_anulado`)";
                         $InsertOdont2 .= "VALUES (";
@@ -1265,11 +1271,10 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         $updateOdont2 .= " `obsrvacion`= '". $datosRealizarPrestacion->observacion ."' ";
                         $updateOdont2 .= " WHERE `rowid` > 0  and fk_tratamiento = ".$datosRealizarPrestacion->fk_plantram_cab." and fk_diente =  ".$datosRealizarPrestacion->iddiente." "; */
 
-                        $db->query($InsertOdont2);
-
-//                        echo '<pre>';
-//                        print_r($updateOdont1);
-//                        die();
+                        $result_b = $db->query($InsertOdont2);
+                        if($result_b){
+                            $log->log($idCabPlant, $log->modificar,  "Se actualizado el Odontograma de la Prestación $detalle_tratamiento->descripcion, Pieza: $datosRealizarPrestacion->iddiente. por el Usuario: ".$user->name, 'tab_odontograma_update');
+                        }
                     }
 
                 }else{
@@ -1280,7 +1285,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
 
             if($error == "") {
-                $rlcr = realizarPrestacionupdate( $datosRealizarPrestacion );
+                $rlcr = realizarPrestacionupdate( $datosRealizarPrestacion, $detalle_tratamiento );
                 if( $rlcr != "" ){
                     $error = $rlcr;
                 }
@@ -1423,7 +1428,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     while ( $obprestFinal = $rs2->fetchObject() )
                     {
                         if($obprestFinal->estado_pay == 'PS'){
-                            $prestaciones_saldo[] = $obprestFinal->labelprestacion. " &nbsp;<i class='fa fa-dollar'></i> &nbsp;" .$obprestFinal->cancelado_saldo;
+                            $prestaciones_saldo[] = $obprestFinal->labelprestacion. " <span style='color: green'> $ ".$obprestFinal->cancelado_saldo."</span>";
                             $invalic++;
                         }
                         if($obprestFinal->estado_pay == 'PE'){
@@ -1433,12 +1438,16 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                         #prestaciones que aun no estan realizadas
                         /*
-                         * A estado Activo No realizada
-                         * P estado Pendiente No realizada
+                         * A estado Activo Pendiente
+                         * P estado En Proceso
                          * R Realizada
                          * */
                         if($obprestFinal->estadodet == 'A' || $obprestFinal->estadodet == 'P'){
-                            $prestacion_Norealizada[] = $obprestFinal->labelprestacion; #prestaciones que aun no estan realizada
+                            if($obprestFinal->estadodet == 'A') //pendiente
+                                $prestacion_Norealizada[] = $obprestFinal->labelprestacion ."&nbsp;&nbsp; <span style='color: #488cd5'>(En Proceso)</span>";
+                            if($obprestFinal->estadodet == 'P')
+                                $prestacion_Norealizada[] = $obprestFinal->labelprestacion ."&nbsp;&nbsp; <span style='color: #008000'>(Pendiente)</span>";
+
                             $invalic++;
                         }
                     }
@@ -1458,7 +1467,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     {
                         $prestacionesPend = implode(',', $prestaciones_pendientes);
                         $consultar .= '<p>
-                                            <b>Prestaciones Pendientes</b>
+                                            <b>Prestaciones Pendientes y en Procesos</b>
                                             <br>'. (str_replace(',', '<br>', $prestacionesPend)) .'
                                         </p>';
                     }
@@ -2055,6 +2064,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     $result = $db->query("UPDATE `tab_plan_tratamiento_det` SET `estadodet`='P' , `comment_laboratorio_auto` = '".$comment_status."', `date_recepcion_status_tramient`= now()   WHERE `rowid`=".$iddetTratamiento."; ");
                     if(!$result){
                         $error = 'Ocurrio un error con la Operación Actualizar Estado';
+                    }else{
+                        $log->log($iddetTratamiento, $log->modificar, 'Se ha actualizado el registro. '.$comment_status, 'tab_plan_tratamiento_det');
                     }
                 }
 
@@ -2445,7 +2456,7 @@ function listcitas_admin($idPaciente, $fechaInicio, $fechafin, $n_citas, $Estado
                 d.fk_estado_paciente_cita , 
                 c.comentario ,
                 IFNULL((select es.nombre_especialidad FROM tab_especialidades_doc es where es.rowid = d.fk_especialidad), 'General') as especialidad,
-                (select IFNULL(tc.edit_name, concat('Plan de tratamiento #',tc.numero)) from tab_plan_tratamiento_cab tc where tc.fk_cita = c.rowid limit 1) as plantratamiento ,
+                -- (select IFNULL(tc.edit_name, concat('Plan de tratamiento #',tc.numero)) from tab_plan_tratamiento_cab tc where tc.fk_cita = c.rowid limit 1) as plantratamiento ,
                 (select p.telefono_movil from tab_admin_pacientes p where p.rowid = c.fk_paciente) as telefono_movil ,
                 
                 -- validaciones
@@ -2492,11 +2503,6 @@ function listcitas_admin($idPaciente, $fechaInicio, $fechafin, $n_citas, $Estado
             $label = "";
             $diasTranscurridos = date('Y-m-d');
 
-//            if($diasTranscurridos  == date('Y-m-d', strtotime($obj->fecha_cita))) //cita Hoy
-//            {
-//                $label = "Esta cita es para Hoy";
-//                $label = " <small style='padding: 1px; background-color: #48cc58; border-radius: 5px;  color: #f0f0f0'> $label </small>";
-//            }
 
             #Citas Atrazadas
             $citas_atrazadas = "";
@@ -2514,6 +2520,27 @@ function listcitas_admin($idPaciente, $fechaInicio, $fechafin, $n_citas, $Estado
                                      </table>";
 
 
+            $list_ptranm = []; //lista de plan de tratamientos asociados
+            $sql_a = "SELECT 
+                    concat('Plan de tratamiento #',tc.numero) as plantratamiento , 
+                    aso.fk_cita
+                FROM
+                    tab_plan_asoc_tramt_citas aso
+                    inner join 
+                    tab_plan_tratamiento_cab tc on tc.rowid = aso.fk_tratamiento
+                    where aso.fk_cita = ".$obj->id_cita_det." limit 20";
+            $result_a = $db->query($sql_a)->fetchAll(PDO::FETCH_ASSOC);
+            if(count($result_a)>0){
+                foreach ($result_a as $item){
+                    $list_ptranm[] = $item['plantratamiento'];
+                }
+            }
+
+            if(count($list_ptranm)>0)
+                $lista_p = implode("\n", $list_ptranm);
+            else
+                $lista_p = "";
+
             //Fecha Hora de cita
             $row[]  = "<span style='white-space: pre-wrap;'> <b>".date('Y/m/d', strtotime($obj->fecha_cita))."</b>\n<b><small style='padding: 3px; background-color: #eaecee; font-weight: bold '> <i class='fa fa-clock-o'></i> &nbsp; ".$obj->hora_inicio." - ".$obj->hora_fin."</small></b> </span>";
 
@@ -2521,7 +2548,7 @@ function listcitas_admin($idPaciente, $fechaInicio, $fechafin, $n_citas, $Estado
             $row[]  = "<span style='white-space: pre-wrap;'>".$obj->especialidad."\n<b>Doctor(a):</b>$obj->doct<span>";
             $row[]  = $numero_cita_asociada;
             $row[]  =  "" . (($obj->comentario == "") ? "" : $obj->comentario) . "" .$citas_atrazadas;
-            $row[]  = ($obj->plantratamiento == "") ? "No Asignado" : "<span style='font-weight: bold; ' title='$obj->plantratamiento'>$obj->plantratamiento</span>";
+            $row[]  = ($lista_p == "") ? "No Asignado" : "<span style='font-weight: bold; white-space: pre-wrap;' class='text-sm' title='$lista_p'>$lista_p</span>";
             $row[]  = "<label class='control-label' style='background-color: $obj->color !important;  color: #333333; margin-top: 3%; padding: 5px;'> $obj->estado </label>";
             $row[]  = "";
             $data[] = $row;
@@ -2628,9 +2655,9 @@ function info_type_document_pacient($idpaciente="")
 }
 
 
-function realizarPrestacionupdate($datos = array())
+function realizarPrestacionupdate($datos = array(), $detalle_tratamiento)
 {
-    global  $db , $conf, $user;
+    global  $db , $conf, $user, $log;
 
     if( count($datos) != 0)
     {
@@ -2655,7 +2682,7 @@ function realizarPrestacionupdate($datos = array())
 
         }else{
 
-            $comment_status_auto = "Cambio de estado (REALIZADO) de la Prestación por el Usuario: $user->name" ;
+            $comment_status_auto = "Se ha actualizado el registro. Cambio de estado (EN REALIZADO) de la Prestación $detalle_tratamiento->descripcion  por el Usuario: ".$user->name ;
 
             $sqlUpdattramm =  "UPDATE `tab_plan_tratamiento_det` SET";
             $sqlUpdattramm .= "  `estadodet`       = 'R'  ," ;
@@ -2669,6 +2696,8 @@ function realizarPrestacionupdate($datos = array())
             $rsUp = $db->query($sqlUpdattramm);
             if(!$rsUp){
                 return 'Ocurrion un error con la Operación Evolución';
+            }else{
+                $log->log($datos->fk_plantram_det, $log->modificar, "Se ha actualizado el registro. Cambio de estado (EN REALIZADO) de la Prestación $detalle_tratamiento->descripcion  por el Usuario: ".$user->name, 'tab_plan_tratamiento_det');
             }
         }
 

@@ -311,7 +311,7 @@
         </div>
 
         <!--MENSAJE DE CONFIRMACION DE ELIMINACION DE PLAN DE TRATAMIENTO-->
-        <div id="confirm_finalizar_plantramiento" class="modal fade" role="dialog">
+        <div id="confirm_finalizar_plantramiento" class="modal fade" data-backdrop="static" role="dialog">
             <div class="modal-dialog">
 
                 <!-- Modal content-->
@@ -321,17 +321,21 @@
                         <h4 class="modal-title"><span>Confirmar</span></h4>
                     </div>
                     <div class="modal-body">
-                        <label for="">Finalizar Plan de tratamiento</label>
-                        <br>
-                        &nbsp;&nbsp;&nbsp;&nbsp; <label for="">
-                            Un plan de tratamiento se finalizar siempre y cuando  contenga todas las prestaciones Pagadas y realizadas &nbsp;<i class="fa fa-dollar"></i>
-                            <br> <small style="color: #eb9627"> <i class="fa fa-info-circle"></i> Un vez finalizado el Plan de tratamiento no podra Modificarlo </small>
-                        </label>
+                        <h3 style="font-size: 2rem">Finalizar Plan de tratamiento</h3>
+                        <p>
+                            <i class="fa fa-eye"></i> Un plan de tratamiento sé finalizar siempre y cuando contenga todas las prestaciones Pagadas y realizadas
+                        </p>
+                        <span style="display: block;  color: #eb9627"  >
+                            <i class="fa fa-info-circle"> </i> Una vez realizada esta operación el plan de tratamiento no podrá ser modificado
+                        </span>
                         <p id="mg_finalizar_plantramiento"></p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" style="font-weight: bolder; color: green" class="btn btnhover" id="finalizar_plantramiento" >Confirm</button>
-                        <button type="button" style="font-weight: bolder;" class="btn btnhover" data-dismiss="modal">Close</button>
+                        <button type="button" style="font-weight: bolder; color: green" class="btn btnhover" id="finalizar_plantramiento" >Aceptar
+
+                            <span class="fa fa-refresh btnSpinner hide"></span>
+                        </button>
+                        <button type="button" style="font-weight: bolder;" class="btn btnhover" data-dismiss="modal">Cerrar</button>
                     </div>
                 </div>
 

@@ -13,6 +13,9 @@ if(isset($_GET['v'])){
         $accionPag = "cobros_independientes";
     }
 
+}else{
+    echo "Error de parametros de entrada Consulte con Soporte";
+    die();
 }
 ?>
 
@@ -27,12 +30,13 @@ if(isset($_GET['v'])){
     <div class="form-group col-md-12 col-xs-12">
         <label for="">LISTA DE COMPORTAMIENTOS</label>
         <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px; background-color: #f4f4f4; margin-left: 0px">
-            <li>
-                <a href="<?= DOL_HTTP .'/application/system/pacientes/pacientes_admin/?view=pagospaci&key='.KEY_GLOB.'&id='. tokenSecurityId($idPaciente) .'&v=paym' ?>" style="color: #333333" class="btnhover btn btn-sm " id=""> <b>  <i class="fa fa-dollar"></i> &nbsp; Pagos </b> </a>
-            </li>
-            <li>
-                <a href="<?= DOL_HTTP .'/application/system/pacientes/pacientes_admin/?view=pagospaci&key='.KEY_GLOB.'&id='. tokenSecurityId($idPaciente) .'&v=paym_financier' ?>" style="color: #333333" class="btnhover btn btn-sm disabled_link3" disabled="disabled" readonly="" id=""> <b>  <i class="fa fa-dollar"></i> &nbsp; Pagos Financieros </b> </a>
-            </li>
+            <?php
+                if($_GET['v']=="paym"){
+                    print "            <li> <a data-toggle=\"collapse\" data-target=\"#contentFilter\" class=\"btnhover btn btn-sm\" style=\"color: #333333\" aria-expanded=\"true\"> <b>   ▼  Filtrar  </b>  </a> </li>";
+                }
+            ?>
+            <li> <a href="<?= DOL_HTTP .'/application/system/pacientes/pacientes_admin/?view=pagospaci&key='.KEY_GLOB.'&id='. tokenSecurityId($idPaciente) .'&v=paym' ?>" style="color: #333333" class="btnhover btn btn-sm " id=""> <b>  <i class="fa fa-dollar"></i> &nbsp; Pagos </b> </a></li>
+            <li> <a href="<?= DOL_HTTP .'/application/system/pacientes/pacientes_admin/?view=pagospaci&key='.KEY_GLOB.'&id='. tokenSecurityId($idPaciente) .'&v=paym_financier' ?>" style="color: #333333" class="btnhover btn btn-sm disabled_link3" disabled="disabled" readonly="" id=""> <b>  <i class="fa fa-dollar"></i> &nbsp; Pagos Financieros </b> </a></li>
         </ul>
     </div>
 

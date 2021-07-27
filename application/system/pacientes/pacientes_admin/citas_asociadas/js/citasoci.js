@@ -13,6 +13,9 @@ function list_citas_Asociadas()
         ordering:false,
         processing:true,
         serverSide: true,
+        paging:true,
+        lengthChange: false,
+        lengthMenu:[ 10 ],
         ajax:{
             url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
             type:'POST',
@@ -23,6 +26,8 @@ function list_citas_Asociadas()
                 'fecha'     : $("#startDate").val(),
                 'n_cita'    : $("#filtra_citas").val()
             },
+            async:true,
+            cache:false,
             complete:function(xhr, status){
                 boxTableLoad(ElemmentoContentload, false);
             },

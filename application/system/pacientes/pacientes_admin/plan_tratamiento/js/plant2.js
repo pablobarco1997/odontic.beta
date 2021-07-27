@@ -83,6 +83,10 @@ if($accion == 'addplan')
                         /*So hay prestacion se pinta el detalle */
                         var detalle = respuesta['objetoDet'];
                         print_html_detalle_viewPrincipal(detalle, icoDiente, icoCheckedTrue, icoCheckedFalse);
+
+                        //recalcula los detalles agregados
+                        recalculoViewForm();
+
                     }else{
                         $('#detalle-body').empty();
                     }
@@ -94,7 +98,6 @@ if($accion == 'addplan')
             }
         });
 
-        recalculoViewForm();
     }
 
 
@@ -311,6 +314,15 @@ if($accion == 'addplan')
                 if(async){
                     //Se pinta las prestaciones en el modal
                     print_html_detallePrestacion(response, idprest);
+
+                    //se remueve las clases activas
+                    $(".CaraDiv").each(function (index, Element){
+                        var Elementdiv = $(Element);
+                        $(Element).parents('td').removeClass('PiezaActiva');
+                        for (var i = 0;i<=$arr_caras.length-1; i++){
+                            Elementdiv.find('.selectCell').removeClass($arr_caras[i]+'Activar');
+                        }
+                    });
                 }
             }
         });
@@ -338,6 +350,8 @@ if($accion == 'addplan')
 
         //Obtengo todas las piezas seleciondas Activas
         var objPiezas =  ArrayPeizas();
+
+        console.log(objPiezas);
 
         var htmlpress = "";
         //Calculo de la Prestacion
@@ -741,14 +755,6 @@ if($accion == 'addplan')
             if(idprestacion > 0){
                 //se pinta el detalle a agregar de manera async
                 fetch_prestaciones(idprestacion, true);
-                //se remueve las clases activas
-                $(".CaraDiv").each(function (index, Element){
-                    var Elementdiv = $(Element);
-                    $(Element).parents('td').removeClass('PiezaActiva');
-                    for (var i = 0;i<=$arr_caras.length-1; i++){
-                        Elementdiv.find('.selectCell').removeClass($arr_caras[i]+'Activar');
-                    }
-                });
             }
         }else{
             notificacion('Debe seleccionar una prestación', 'error');

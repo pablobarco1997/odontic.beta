@@ -152,11 +152,31 @@ function Notify_odontic(solo_numero_noti = false, tiempoReal=false) {
 
     if(solo_numero_noti==1){
 
-        const Object = {
-            accion:'n_notify',
-            ajaxSend:'ajaxSend'
-        };
+        // const Object = {
+        //     accion:'n_notify',
+        //     ajaxSend:'ajaxSend'
+        // };
 
+        var numeroNotify = (parseFloat(($('#N_noti').text()=="")?0:$('#N_noti').text()));
+        $.ajax({
+            url:url,
+            type:'POST',
+            data:{'ajaxSend':'ajaxSend', 'accion':'notification_', 'subaccion':'noti_numero','numero_notify':numeroNotify},
+            dataType:'json',
+            async:true,
+            cache:false,
+            success:function (response) {
+                $('#N_noti').text(response.n_notify.result);
+                if(response.notificacion_push > 0){
+                    //alert notificacion
+                    if($("#swal2-container").length == 0){
+                        notificacion('Tiene notificaciones Pendientes', 'question');
+                    }
+                }
+            }
+        });
+
+        /*
         var historial = fetch(url+'?ajaxSend=ajaxSend&accion=notification_&subaccion=noti_numero'+'&numero_notify='+(parseFloat(($('#N_noti').text()=="")?0:$('#N_noti').text())), {
             method: 'POST',
             body:JSON.stringify(Object),
@@ -174,8 +194,7 @@ function Notify_odontic(solo_numero_noti = false, tiempoReal=false) {
                     notificacion('Tiene notificaciones Pendientes', 'question');
                 }
             }
-        });
-
+        }); */
 
         return true;
     }

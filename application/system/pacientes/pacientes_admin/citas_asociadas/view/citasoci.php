@@ -7,10 +7,10 @@
         <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px; background-color: #f4f4f4; margin-left: 0px">
             <li><a data-toggle="collapse" data-target="#contentFilter" class="btnhover btn btn-sm" style="color: #333333" aria-expanded="true"> <b>   ▼  Filtrar  </b>  </a> </li>
             <li>
-                <a href="<?= DOL_HTTP?>/application/system/pacientes/pacientes_admin/citas_asociadas/export/exportpdf_historialcitas.php?idpaciente=<?=$idPaciente?>"  style="color: #333333" target="_blank" class="btnhover btn btn-sm " id="exportCitasPaciente"><b> <i class="fa fa-print"></i> imprimir pdf </b> </a>
+                <a href="<?= DOL_HTTP?>/application/system/pacientes/pacientes_admin/citas_asociadas/export/exportpdf_historialcitas.php?idpaciente=<?=$idPaciente?>"  style="color: #333333" target="_blank" class="btnhover btn btn-sm " id="exportCitasPaciente"><b> <i class="fa fa-print"></i> PDF </b> </a>
             </li>
             <li>
-                <a href="<?= DOL_HTTP?>/application/system/agenda/index.php?view=agendadd" style="color: #333333" class="btnhover btn btn-sm " id=""><b>Agendar Cita</b> </a>
+                <a href="<?= DOL_HTTP?>/application/system/agenda/index.php?view=agendadd" style="color: #333333" class="btnhover btn btn-sm " id=""><b> <i class="fa fa-calendar"></i> Agendar Cita</b> </a>
             </li>
         </ul>
     </div>

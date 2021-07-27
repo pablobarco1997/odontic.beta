@@ -748,9 +748,9 @@ function  boxTableLoad(Element = false, load=false) {
 
         if(load==true){
             var div = document.createElement('div');
-            div.setAttribute("class","loader_odontic");
+            // div.setAttribute("class","loader_odontic");
             var p = document.createElement('p');
-            p.setAttribute('class','table_load_id');
+            // p.setAttribute('class','table_load_id');
             p.style.position = 'absolute';
             p.style.marginLeft = '50%';
             p.style.top = (Element.height()/2)+'px';
@@ -763,9 +763,9 @@ function  boxTableLoad(Element = false, load=false) {
 
         if(load==false){
             setTimeout(()=>{
-                Element.find('.table_load_id').remove();
+                // Element.find('.table_load_id').remove();
                 Element.parents('.table-responsive').removeClass('disabled_link3');
-            },1000);
+            },500);
         }
 
     }

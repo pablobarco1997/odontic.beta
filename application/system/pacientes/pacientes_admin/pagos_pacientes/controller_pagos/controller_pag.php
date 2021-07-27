@@ -15,12 +15,31 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
     {
         case 'listpagos_indepent':
 
-            $idpaciente = GETPOST('idpaciente');
 
-            $respuestas_pagos = list_pagos_independientes($idpaciente);
+            $emitido        = GETPOST('emitido');
+            $idpaciente     = GETPOST('idpaciente');
+            $abonado        = GETPOST('abonado');
+            $realizado      = GETPOST('realizado');
+            $id_tratamiento = GETPOST('id_tratamiento');
+
+            if($emitido){
+                $Filtros['fechaIni'] = str_replace('/','-', explode('-', $emitido)[0]);
+                $Filtros['fechaFin'] = str_replace('/','-', explode('-', $emitido)[1]);
+            }
+
+            $Filtros['emitido']         = $emitido;
+            $Filtros['abonado']         = $abonado;
+            $Filtros['realizado']       = $realizado;
+            $Filtros['id_tratamiento']  = $id_tratamiento;
+
+
+            $resultado = list_pagos_independientes($idpaciente, $Filtros);
 
             $Output = [
-                'data' => $respuestas_pagos
+                "data"            => $resultado['data'],
+                "recordsTotal"    => $resultado['total'],
+                "recordsFiltered" => $resultado['total']
+
             ];
 
             echo json_encode($Output);
@@ -251,32 +270,6 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             break;
 
 
-        case 'list_info_formas_pagos':
-
-            $data = array();
-
-            $sql = "SELECT rowid ,  descripcion , observacion, system FROM tab_tipos_pagos";
-            $result = $db->query($sql);
-            if($result && $result->rowCount()>0){
-                while ($object = $result->fetchObject()){
-
-                    $row = array();
-                    $row[] = $object->descripcion;
-                    $row[] = $object->observacion; #descricopm del pago option
-                    $row[] = "";
-                    $row["rowid"]  = $object->rowid;
-                    $row["system"] = $object->system;
-
-                    $data[] = $row;
-                }
-            }
-            $Output= [
-                'data' => $data
-            ];
-
-            echo json_encode($Output);
-            break;
-
             //forma de pagos update nuevo eliminar
         case 'fetchUpdateFormaPagos':
 
@@ -426,46 +419,54 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 }
 
 
-function list_pagos_independientes($idpaciente = 0)
+function list_pagos_independientes($idpaciente = 0, $Filtros = array())
 {
 
     global  $db , $conf;
 
     $data = array();
 
+    $Total = 0;
+    $start          = GETPOST("start");
+    $length         = GETPOST("length");
+
+
     $imgbase64 = "data: image/*; base64, ".base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/ahorrar-dinero.png'));
     $imgbase64ico = "data: image/*; base64, ".base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/cita-medica.ico'));
 
-    $sqlpagos = "SELECT 
+    $sql_a = "SELECT 
                     cast(ct.fecha_create as date) fecha_create,       
                     ct.rowid  as idplantratamiento, 
-                    -- NUMERO DE PLAN DE TRATAMIENTO
                     concat('Plan de Tratamiento N.' , ' ', ct.numero) as name_tratamm, 
                     ct.edit_name , 
-                    -- CITAS ASOCIADAS
                     ct.fk_cita as cita  , 
-                    -- TOTAL DE PRESTACIONES
-                    (SELECT 
-                            ifnull(round(SUM(dt.total), 2), 0) AS totalprestaciones
-                        FROM
-                            tab_plan_tratamiento_det dt
-                        WHERE
-                            dt.fk_plantratam_cab = ct.rowid
-                    ) AS totalprestaciones    , 
-                    -- TOTAL DE LAS PRESTACIONES REALIZADAS
-                    (SELECT 
-                            ifnull(round(SUM(dt.total), 2), 0) AS totalprestaciones
-                        FROM
-                            tab_plan_tratamiento_det dt
-                        WHERE
-                            dt.fk_plantratam_cab = ct.rowid and dt.estadodet = 'R'
-                    ) AS totalprestaciones_realizadas ,
-                    -- TOTAL PAGADO - y las que tenga saldo
-                    (SELECT round(sum(pd.amount),2) saldo FROM tab_pagos_independ_pacientes_det pd where pd.fk_plantram_cab = ct.rowid and pd.fk_paciente = ct.fk_paciente) as totalpresta_pagadasSaldo         
+                    (SELECT ifnull(round(SUM(dt.total), 2), 0) AS totalprestaciones FROM tab_plan_tratamiento_det dt WHERE dt.fk_plantratam_cab = ct.rowid) AS total , -- total prestaciones servicios
+                    (SELECT ifnull(round(SUM(dt.total), 2), 0) AS totalprestaciones FROM tab_plan_tratamiento_det dt WHERE dt.fk_plantratam_cab = ct.rowid and dt.estadodet = 'R') AS total_r , -- total realizados
+                    (SELECT round(sum(pd.amount),2) saldo FROM tab_pagos_independ_pacientes_det pd where pd.fk_plantram_cab = ct.rowid and pd.fk_paciente = ct.fk_paciente) as total_sp  -- total abonados y pagadas       
                 FROM
-                tab_plan_tratamiento_cab ct where  ct.estados_tratamiento in('A', 'S')  and ct.fk_paciente = $idpaciente  ";
+                tab_plan_tratamiento_cab ct where  ct.estados_tratamiento in('A', 'S')  and ct.fk_paciente =".$idpaciente;
 
-    $rspagos = $db->query($sqlpagos);
+    if(!empty($Filtros['emitido'])){
+        $sql_a .= " and cast(ct.fecha_create as date) between '".$Filtros['fechaIni']."' and '".$Filtros['fechaFin']."' ";
+    }
+    if(!empty($Filtros['id_tratamiento'])){
+        $sql_a .= " and ct.rowid = ".$Filtros['id_tratamiento'];
+    }
+    if( $Filtros['abonado'] == "true" ){
+        $sql_a .= " and ct.estados_tratamiento = 'S' "; //cuando el plan de tratamiento tiene asociado saldo
+    }
+    if( $Filtros['realizado'] == "true"){
+        $sql_a .= " and (select count(*) from tab_plan_tratamiento_det d where d.fk_plantratam_cab=ct.rowid and d.estadodet='R')  "; //plan de tratamiento con prestaciones realizadas
+    }
+
+//    print_r($sql_a); die();
+    $sql_a .= " order by ct.rowid desc";
+    $Total =  $db->query($sql_a)->rowCount();
+    if($start || $length){
+        $sql_a .=" LIMIT $start,$length;";
+    }
+
+    $rspagos = $db->query($sql_a);
     if( $rspagos && $rspagos->rowCount() > 0 ){
         while( $objpagos = $rspagos->fetchObject() ){
 
@@ -493,19 +494,24 @@ function list_pagos_independientes($idpaciente = 0)
             $row[] = $pay_dom;
             $row[] = date('Y/m/d', strtotime($objpagos->fecha_create));
             $row[] = $objpagos->name_tratamm. (!empty($objpagos->edit_name)?'<span style="display: block; color: #4789cf" class="text-sm">'.("<b>Editado:</b> ".$objpagos->edit_name).'</span>':'');
-//            $row[] = $CitasNum;
-            $row[] = "<span class='' style='padding: 1px 2px; border-radius: 5px; font-weight: bolder; background-color: #66CA86'>$ $objpagos->totalprestaciones </span>  ";
-            $row[] = "<span class='' style='padding: 1px 2px; border-radius: 5px; font-weight: bolder; background-color: #ffcc00'>$ $objpagos->totalprestaciones_realizadas </span>  ";
+
+            $row[] = "<span class='' style='padding: 1px 2px; border-radius: 5px; font-weight: bolder; background-color: #66CA86'>$ $objpagos->total </span>  ";  //total prestaciones servicios
+            $row[] = "<span class='' style='padding: 1px 2px; border-radius: 5px; font-weight: bolder; background-color: #ffcc00'>$ $objpagos->total_r </span>  "; //total realizados
 
             #pago o saldo ++
-            $row[] = "<span class='' style='padding: 1px 2px; border-radius: 5px; font-weight: bolder; background-color: #66CA86'>$ ". (($objpagos->totalpresta_pagadasSaldo==null) ? "0.00" : $objpagos->totalpresta_pagadasSaldo) ." </span>  ";
+            $row[] = "<span class='' style='padding: 1px 2px; border-radius: 5px; font-weight: bolder; background-color: #66CA86'>$ ". (($objpagos->total_sp==null) ? "0.00" : $objpagos->total_sp) ." </span>  "; //total abonados y pagadas
             $row[] = "";
             $data[] = $row;
 
         }
     }
 
-    return $data;
+    $resul_b = [
+       'total' => $Total,
+       'data'  => $data
+    ];
+
+    return $resul_b;
 }
 
 

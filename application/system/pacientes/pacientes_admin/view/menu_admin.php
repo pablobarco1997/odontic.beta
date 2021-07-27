@@ -140,7 +140,7 @@
                                         <i class="fa fa-link"></i>&nbsp;&nbsp; <b>Carga Familiares</b> </a>
                                 </li>
 
-                                <li class="lipaddi disabled_link3 <?= $array_imagenes_archivos->active ?>">
+                                <li class="lipaddi disabled_link3 hide <?= $array_imagenes_archivos->active ?>">
                                     <a class="lista disabled_link3" disabled="disabled" href="<?= $array_imagenes_archivos->url_disabled ?>">&nbsp;&nbsp;
                                         <i class="fa fa-folder"></i>&nbsp;&nbsp; <b>administrador de Ficheros</b> </a>
                                 </li>
@@ -160,7 +160,7 @@
                                         <i class="fa fa-comment-o"></i>&nbsp;&nbsp; <b>Comentarios administrativos</b> </a>
                                 </li>
 
-                                <li class="lipaddi disabled_link3 <?=  $array_email_contrap->active ?>">
+                                <li class="lipaddi disabled_link3 hide <?=  $array_email_contrap->active ?>">
                                     <a class="lista disabled_link3" href="<?= $array_email_contrap->url ?>">&nbsp;&nbsp;
                                         <i class="fa fa-calendar-check-o"></i>&nbsp;&nbsp; <b>Programar Email</b> </a>
                                 </li>
