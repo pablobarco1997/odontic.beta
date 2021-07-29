@@ -29,7 +29,7 @@ class log{
         $sql .= " '$descripcion', ";
         $sql .= "  $this->id_users_author , ";
         $sql .= " '$table' , ";
-        $sql .= " '$errordb'   ";
+        $sql .= " ".$this->db->quote($errordb)."   ";
         $sql .= " )";
 
         $result = $this->db->query($sql);

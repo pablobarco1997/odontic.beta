@@ -93,9 +93,6 @@ if(isset($_SESSION['is_open']))
         background-color: #f3f4f7;
     }
 
-
-
-
     .outlogintext{
         /*border-radius: 15px;*/
         border-bottom: solid 1px #cccccc;
@@ -103,7 +100,7 @@ if(isset($_SESSION['is_open']))
     }
 
     body{
-        background-image: url("https://www.udla.edu.ec/wp-content/uploads/2013/08/150872418.jpg");
+        background-image: url("<?= DOL_HTTP .'/application/system/login/img/wallpaper_odontic.png'?>");
         background-size: 100%;
         background-repeat: no-repeat;
         background-position-x: right;
