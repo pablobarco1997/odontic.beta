@@ -84,14 +84,9 @@ var FormValidationPerfilGlobal = function(el){
             }
         }
     }
+
     if(perfil_cedul.val()!="" && !(/^\s*$/).test(perfil_cedul.val())){
-        if( perfil_usu.prop('dataset').idcedulalogin != perfil_cedul.val() )
-        if(consultarUsuarioPerfilGlod("odontol","", perfil_cedul.val()) == false){
-            Errores.push({
-                "documento" :   perfil_cedul,
-                "mesg" :  "numero C.I repetido",
-            });
-        }
+
     }
 
     console.log(Errores);
@@ -120,34 +115,7 @@ var FormValidationPerfilGlobal = function(el){
     }else{
         valid = true;
     }
-
     return valid;
-
-     function consultarUsuarioPerfilGlod(subaccion, name_users, name_cedula)
-     {
-         var validar = null;
-         $.ajax({
-             type: "GET" ,
-             url: $DOCUMENTO_URL_HTTP + '/application/controllers/controller_peticiones_globales' ,
-             data: {
-                 "ajaxSend" : "ajaxSend",
-                 "accion" : "valid_usuario_perfil_glob",
-                 "subaccion" : subaccion,
-                 "nameUsers": name_users ,
-                 "nu_cedula": name_cedula,
-             } ,
-             dataType: "json",
-             async:false,
-             success: function (resp){
-                 if(resp['error'] == ""){
-                     validar = true;
-                 } else{
-                     validar = false;
-                 }
-             }
-         });
-         return validar;
-     }
 
 };
 

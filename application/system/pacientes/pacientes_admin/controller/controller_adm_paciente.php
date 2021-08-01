@@ -571,11 +571,9 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $sql = "SELECT * FROM tab_documentos_ficha_clinica where rowid = " . $id;
             $rs  = $db->query($sql);
 
-            if($rs->rowCount() > 0)
-            {
+            if($rs->rowCount() > 0){
                 $error=true;
-                while ($Obj = $rs->fetchObject())
-                {
+                while ($Obj = $rs->fetchObject()){
                     $dataPrincipal = $Obj;
                 }
             }
@@ -2463,7 +2461,7 @@ function listcitas_admin($idPaciente, $fechaInicio, $fechafin, $n_citas, $Estado
                 -- citas atrazada con estado no confirmado
                 IF( now() > CAST(d.fecha_cita AS DATETIME)  
                                         && d.fk_estado_paciente_cita in(2,1,3,4,7,8,9,10,11,5,  (select statusc.rowid from tab_pacientes_estado_citas statusc where statusc.system=0) )  , 
-                                            concat('Atrasada ', (select concat(s.text) from tab_pacientes_estado_citas s where s.rowid = d.fk_estado_paciente_cita) , 
+                                            concat(' Atrasada ', (select concat(s.text) from tab_pacientes_estado_citas s where s.rowid = d.fk_estado_paciente_cita) , 
                                                     '\n Fecha : ' , date_format(d.fecha_cita, '%Y/%m/%d') , '\n Hora: ' , d.hora_inicio ,' h ' , d.hora_fin) , ''
                                                     ) as cita_atrazada
          
@@ -2547,7 +2545,7 @@ function listcitas_admin($idPaciente, $fechaInicio, $fechafin, $n_citas, $Estado
 
             $row[]  = "<span style='white-space: pre-wrap;'>".$obj->especialidad."\n<b>Doctor(a):</b>$obj->doct<span>";
             $row[]  = $numero_cita_asociada;
-            $row[]  =  "" . (($obj->comentario == "") ? "" : $obj->comentario) . "" .$citas_atrazadas;
+            $row[]  = (($obj->comentario == "")?"":$obj->comentario).$citas_atrazadas;
             $row[]  = ($lista_p == "") ? "No Asignado" : "<span style='font-weight: bold; white-space: pre-wrap;' class='text-sm' title='$lista_p'>$lista_p</span>";
             $row[]  = "<label class='control-label' style='background-color: $obj->color !important;  color: #333333; margin-top: 3%; padding: 5px;'> $obj->estado </label>";
             $row[]  = "";

@@ -463,13 +463,16 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                         if($count_notify['result'] < $_SESSION['noti_count_number']){
                             $_SESSION['noti_count_number'] = $count_notify['result'];
-                        }
-
-                        //si en caso en vista diferentes son 0
-                        if($numero_notify==0){
-                            if($_SESSION['noti_count_number']==0){
-                                $push++;
-                            }
+                        }else{
+                            //si en caso en vista diferentes son 0
+//                            if($numero_notify==0){
+//                                $numero_notify = $_SESSION['noti_count_number'];
+//                                if($numero_notify>0){
+//                                    if($count_notify['result'] == $numero_notify){
+//                                        $push++;
+//                                    }
+//                                }
+//                            }
                         }
 
                         if($count_notify['result'] == 0){

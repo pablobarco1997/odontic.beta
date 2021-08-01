@@ -16,29 +16,6 @@ if($rs->rowCount()>0) {
     }
 }
 
-$optionCajasClinicas = "<option></option>";
-$result = $db->query("SELECT 
-                                b.rowid,
-                                (SELECT u.usuario FROM tab_login_users u WHERE u.rowid = b.userAuthor) user,
-                                b.name,
-                                b.direccion, 
-                                round((SELECT sum(t.value) FROM tab_bank_transacciones t where t.id_account = b.id_account),2) as saldo_caja,
-                                case 
-                                  when b.estado = 'A' then 'Activo'
-                                  when b.estado = 'E' then 'Eliminado'
-                                  when b.estado = 'C' then 'Cerrado'
-                                  else ''
-                                end as estado
-                                   
-                            FROM
-                                tab_cajas_clinicas b
-                                where b.estado <> 'E' ")->fetchAll();
-
-//echo '<pre>';print_r($result); die();
-foreach ($result as $k => $valueCajas){
-    $label = "Caja #".$valueCajas['rowid']."  -  ".str_replace('CAJA_','', $valueCajas['name']);
-    $optionCajasClinicas .= "<option value='".($valueCajas['rowid'])."'>". $label ."</option>";
-}
 
 $v = null;
 if(isset($_GET['v'])){
@@ -52,9 +29,6 @@ if(isset($_GET['v'])){
     $accion = "<?= $accionDoctorEspicialidad ?>";
 </script>
 
-<style>
-
-</style>
 
 <div class="box box-solid">
 
@@ -196,13 +170,14 @@ if(isset($_GET['v'])){
 
                 <div class="row">
                     <div class="form-group col-md-12">
-                        <ul class="list-inline" style="border-bottom: 1px solid #333333; border-top: 1px solid #333333;  padding: 3.5px">
-                            <!--                              <li><a class="btnhover btn" data-toggle="modal" data-target="#ModalCrearUsuario"  style="font-weight: bolder; color: #333333"> <i class="fa fa-user-plus"></i> &nbsp; Crear Usuario </a> </li>-->
-                            <li><a class="btnhover"  href="#" data-url="<?= DOL_HTTP .'/application/system/configuraciones/index.php?view=form_gestion_odontologos_especialidades&v=users&creat=true'?>" onclick="AddUsers($(this))"  style="font-weight: bolder; color: #333333; padding: 1px"> <i class="fa fa-user-plus"></i> &nbsp; Crear Usuario </a> </li>
+                        <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 5px; background-color: #f4f4f4; width: 100%; margin-left: 0px;">
+                            <li><a href="#" class="btnhover btn btn-sm " data-url="<?= DOL_HTTP .'/application/system/configuraciones/index.php?view=form_gestion_odontologos_especialidades&v=users&creat=true'?>" onclick="AddUsers($(this))"  style="font-weight: bolder; color: #333333; padding: 2px; font-size: 1.3rem; "> <i class="fa fa-user-plus"></i> &nbsp; Crear Usuario </a> </li>
+                            <li><a href="#" class="btnhover btn btn-sm " data-url="<?= DOL_HTTP .'/application/system/configuraciones/index.php?view=add_perfil_users'?>" onclick="AddPerfil($(this))"  style="font-weight: bolder; color: #333333; padding: 2px; font-size: 1.3rem; "> <i class="fa fa-check"></i> &nbsp; Perfil </a> </li>
                         </ul>
                     </div>
 
-                <?php if( isset($_GET['list']) ){?>
+                <?php if( isset($_GET['list']) ){   ?>
+
                       <div class="form-group col-md-12 col-xs-12">
                           <div class="table-responsive">
                               <table class="table table-hover" id="usuariolistinfo" width="100%">
@@ -253,14 +228,6 @@ if(isset($_GET['v'])){
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="" class="control-label col-sm-2">Caja:</label>
-                            <div class="col-sm-8">
-                                <select name="caja_id_users" id="caja_id_users" class="form-control" style="width: 100%">
-                                    <?= $optionCajasClinicas ?>
-                                </select>
-                            </div>
-                        </div>
 
                         <div class="form-group">
                             <label class="control-label col-sm-2" for="">Usuario:</label>

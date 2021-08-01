@@ -20,8 +20,8 @@
                 <!--<img src="< ?= $conf->PERFIL->icon ?> " class="user-image" alt="User Image">-->
                 <i class="fa fa-user"></i>
                 <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                <span class="hidden-xs hide"><?php echo $conf->PERFIL->nombre ?></span>
-                <span class="hidden-xs"><?php echo $user->name ?></span>
+                <span class="hidden-xs hide"><?= ($conf->PERFIL->id!=0)?$conf->PERFIL->nombre:""  ?></span>
+                <span class="hidden-xs"><?= ($conf->PERFIL->id!=0)?$user->name:""  ?></span>
             </a>
 
             <ul class="dropdown-menu">
@@ -31,7 +31,7 @@
                     <i class="fa fa-4x fa-user" style="color: #f6f6f6"></i>
                     <p>
                         <?php echo $user->name ?>
-                        <small>odont. <?= $conf->PERFIL->nombre .' '.$conf->PERFIL->apellido ?></small>
+                        <small style="font-weight: bolder"><?= ($conf->PERFIL->id!=0)?"Doctor(a): ".$conf->PERFIL->nombre ." ".$conf->PERFIL->apellido:"" ?></small>
                     </p>
                 </li>
                 <!-- Menu Body -->

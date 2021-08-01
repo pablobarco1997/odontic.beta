@@ -265,7 +265,7 @@ function CargarUsuarioInfo()
     {
 
         $('#usuariolistinfo').DataTable({
-        searching: true,
+        searching: false,
         ordering:false,
         destroy:true,
         serverSide: true,
@@ -278,39 +278,29 @@ function CargarUsuarioInfo()
             data:{'ajaxSend':'ajaxSend', 'accion':'infoUsuarioOdontic', 'cual': 'list'},
             dataType:'json',
         },
-        columnDefs:[
-            {
+        columnDefs:[{
                 targets:0 ,
                 render: function (data , type , full , meta) {
-
                     var menu        = "";
                     var idusers     = full[6];
                     var url_mod     = $DOCUMENTO_URL_HTTP+"/application/system/configuraciones/index.php?view=form_gestion_odontologos_especialidades&v=users&mod=true&id="+full[6];
-
-                    menu += "<div class='dropdown'>";
-                        menu += "<button class='btn btnhover btn-xs dropdown-toggle' type='button' data-toggle='dropdown' > <i style='padding-top: 3px; padding-bottom: 3px' class=\"fa fa-ellipsis-v\"></i> </button> ";
-
-                        menu += "<ul class=\"dropdown-menu\"> ";
-                            menu += "<li> <a style='cursor: pointer;' href='#' data-url='"+url_mod+"' onclick='ModUsers($(this))'> Modificar  </a> </li>";
-
-                            // INACTIVAR
-                            if(full[4] == 'A'){
-                                menu += "<li> <a style='cursor: pointer; ' onclick='statusUserslogin("+idusers+",\"E\")'> Inactivar  </a> </li>";
-                            }
-                            // ACTIVAR
-                            if(full[4] == 'E'){
-                                menu += "<li> <a style='cursor: pointer; ' onclick='statusUserslogin("+idusers+", \"A\")' > Activar  </a> </li>";
-                            }
-                            
-                            // menu += "<li> <a style='cursor: pointer; font-size: 1.1rem;'> Eliminar </a> </li>";
-
-                        menu += "</ul>";
-                    menu += "</div>";
-
-                    console.log(full);
+                        menu += "<div class='dropdown'>";
+                            menu += "<button class='btn btnhover btn-xs dropdown-toggle' type='button' data-toggle='dropdown' > <i style='padding-top: 3px; padding-bottom: 3px' class=\"fa fa-ellipsis-v\"></i> </button> ";
+                            menu += "<ul class=\"dropdown-menu\"> ";
+                                menu += "<li> <a style='cursor: pointer;' href='#' data-url='"+url_mod+"' onclick='ModUsers($(this))'> Modificar  </a> </li>";
+                                // INACTIVAR
+                                if(full[4] == 'A'){
+                                    menu += "<li> <a style='cursor: pointer; ' onclick='statusUserslogin("+idusers+",\"E\")'> Inactivar  </a> </li>";
+                                }
+                                // ACTIVAR
+                                if(full[4] == 'E'){
+                                    menu += "<li> <a style='cursor: pointer; ' onclick='statusUserslogin("+idusers+", \"A\")' > Activar  </a> </li>";
+                                }
+                                // menu += "<li> <a style='cursor: pointer; font-size: 1.1rem;'> Eliminar </a> </li>";
+                            menu += "</ul>";
+                        menu += "</div>";
                     return menu;
                 }
-
             }
         ],
         language:{
@@ -1071,6 +1061,15 @@ $("#deletePerfilUsers").on("click", function () {
     });
 
 });
+
+function AddPerfil(Element){
+    var url = Element.prop('dataset').url;
+    if(url != ""){
+        window.location = url;
+    }else{
+        notificacion('Ocurrio un error de parametros de entrada', 'error');
+    }
+}
 
 $(document).ready(function() {
 

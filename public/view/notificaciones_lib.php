@@ -98,7 +98,7 @@
 
 <!--    lista de notificaciones-->
         <li>
-            <ul class="menu " id="noti_list">
+            <ul class="menu " id="noti_list" style="max-height: 300px !important;">
             </ul>
         </li>
 

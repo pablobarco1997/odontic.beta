@@ -30,9 +30,9 @@
                 'principal'       => array('url' => DOL_HTTP .'/application/system/configuraciones/index.php?view=principal' , 'Active_subMod' => (isset($_GET['view']) && $_GET['view'] == 'principal') ? 'Active_link_subM' : ''),
                 'prestaciones'    => array('url' => DOL_HTTP .'/application/system/configuraciones/index.php?view=form_prestaciones' , 'Active_subMod' => (isset($_GET['view']) && $_GET['view'] == 'form_prestaciones') ? 'Active_link_subM' : ''),
                 'descuento'       => array('url' => DOL_HTTP .'/application/system/configuraciones/index.php?view=form_convenios_desc' , 'Active_subMod' => (isset($_GET['view']) && $_GET['view'] == 'form_convenios_desc') ? 'Active_link_subM' : ''),
-                'odontolog'       => array('url' => DOL_HTTP .'/application/system/configuraciones/index.php?view=form_gestion_odontologos_especialidades&v=dentist' , 'Active_subMod' => (isset($_GET['v']) && $_GET['v'] == 'dentist') ? 'Active_link_subM' : ''),
+                'odontolog'       => array('url' => DOL_HTTP .'/application/system/configuraciones/?view=odontologos&v=list' , 'Active_subMod' => (isset($_GET['view']) && $_GET['view'] == 'odontologos') ? 'Active_link_subM' : ''),
                 'especialidades'  => array('url' => DOL_HTTP .'/application/system/configuraciones/index.php?view=form_gestion_odontologos_especialidades&v=specialties' , 'Active_subMod' => (isset($_GET['v']) && $_GET['v'] == 'specialties') ? 'Active_link_subM' : ''),
-                'users'           => array('url' => DOL_HTTP .'/application/system/configuraciones/index.php?view=form_gestion_odontologos_especialidades&v=users&list=true' , 'Active_subMod' => (isset($_GET['v']) && $_GET['v'] == 'users') ? 'Active_link_subM' : ''),
+                'users'           => array('url' => DOL_HTTP .'/application/system/configuraciones/?view=admin_users&v=list' , 'Active_subMod' => (isset($_GET['view']) && $_GET['view'] == 'admin_users') ? 'Active_link_subM' : ''),
                 'laboratorios'    => array('url' => DOL_HTTP .'/application/system/configuraciones/index.php?view=form_laboratorios_conf&v=laboratorios' , 'Active_subMod' => (isset($_GET['view']) && $_GET['view'] == 'form_laboratorios_conf') ? 'Active_link_subM' : ''),
         ),
         'Active'  => (isset($Active)  && $Active == 'configuraciones') ? 'Active_link' : '' ,
@@ -76,7 +76,7 @@
 
 
 <?php
-    $stylefontSmall = 'style="font-size: small; padding-top: 14px" ';
+    $stylefontSmall = 'style="font-size: small; padding-top: 16px" ';
 ?>
 
 <li class="header">NAVEGACIÓN</li>
@@ -143,7 +143,7 @@
 
     <!--SUB MENUS-->
     <ul class="treeview-menu" <?= (!empty($Permissions_configuration['Active'])?"style=\"display: block\"":"") ?> >
-        <li><a href="<?= $Permissions_configuration['url']['principal']['url'] ?>"  class="<?= $Permissions_configuration['url']['principal']['Active_subMod'] ?>"  <?= $stylefontSmall ?>> Principal</a></li>
+        <li><a href="<?= $Permissions_configuration['url']['principal']['url'] ?>"  class="<?= $Permissions_configuration['url']['principal']['Active_subMod'] ?>"  <?= $stylefontSmall ?>> Configuraciones Clinicas</a></li>
         <li><a href="<?= $Permissions_configuration['url']['prestaciones']['url'] ?>"  class="<?= $Permissions_configuration['url']['prestaciones']['Active_subMod'] ?>"  <?= $stylefontSmall ?>>Prestaciones</a></li>
         <li><a href="<?= $Permissions_configuration['url']['descuento']['url'] ?>"  class="<?= $Permissions_configuration['url']['descuento']['Active_subMod'] ?> disabled_link3"  <?= $stylefontSmall ?>>Descuento</a></li>
         <li><a href="<?= $Permissions_configuration['url']['odontolog']['url'] ?>"  class="<?= $Permissions_configuration['url']['odontolog']['Active_subMod'] ?>"  <?= $stylefontSmall ?>>Odontologos</a></li>

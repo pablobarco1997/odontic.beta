@@ -6,7 +6,6 @@
         var $PERFIL     = "";
         var $EMPRESA    = "";
         var $PACIENTES  = "";
-        var $NOTIFICACIONES = "";
         var $DIRECTORIO = "";
         var $NAME_DIRECTORIO = "";
 
@@ -297,25 +296,21 @@
         function perfil($db, $idUsuario, $url, $directorio_url)
         {
             $sql = "SELECT * FROM tab_odontologos WHERE rowid = $idUsuario limit 1";
-            $rs = $db->query($sql);
+            $result_abc = $db->query($sql);
 
-            if($rs->rowCount() > 0)
-            {
-                $Obj = $rs->fetchObject();
-
+            if($result_abc->rowCount() > 0){
+                $Obj = $result_abc->fetchObject();
                 $img = $url."/logos_icon/logo_default/doct-icon.ico"; //Icon por default
-                if(!empty($Obj->icon))
-                {
+                if(!empty($Obj->icon)){
                     $img = $url."/logos_icon/".$directorio_url."/".$Obj->icon;
                 }
-
-                $tieneUsuario = [];
+                //usuario asociado
+                $users = [];
                 $sqlusu = "SELECT usuario , passwords , passwor_abc , fk_doc , cedula FROM tab_login_users where fk_doc = ".$Obj->rowid;
                 $rsusu  = $db->query($sqlusu);
-                if($rsusu && $rsusu->rowCount())
-                {
+                if($rsusu && $rsusu->rowCount()){
                     while ($obus = $rsusu->fetchObject()){
-                        $tieneUsuario = array(
+                        $users = array(
                             "name"        => $obus->usuario,
                             "passwords"   => $obus->passwords,
                             "passwor_abc" => $obus->passwor_abc,
@@ -323,15 +318,22 @@
                         );
                     }
                 }
-
                 $data = (object)array(
                     "id"        => $Obj->rowid,
                     "nombre"    => $Obj->nombre_doc,
                     "apellido"  => $Obj->apellido_doc,
                     "icon"      => $img,
-                    "AssciUsu"  => $tieneUsuario
+                    "users"     => $users
                 );
-
+                $this->PERFIL = $data;
+            }else{
+                $data = (object)array(
+                    "id"        => 0,
+                    "nombre"    => "",
+                    "apellido"  => "",
+                    "icon"      => "",
+                    "users"     => ""
+                );
                 $this->PERFIL = $data;
             }
         }

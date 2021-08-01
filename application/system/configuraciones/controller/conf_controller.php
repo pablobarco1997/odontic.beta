@@ -1054,7 +1054,6 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
         #USUARIOS ODONTOLOGOS
         case 'infoUsuarioOdontic':
 
-            #OBTENGO EL USUARIO PARA MODIFICARLO
             $data = [];
             $obtenerUsuario = array();
             $idusuMod = GETPOST('idmodusu');
@@ -2027,41 +2026,37 @@ function list_convenios($id = "", $uno)
 
 function infolistUsuarios($cual, $idusuMod)
 {
-    global $db, $conf;
+    global $db, $conf, $user;
+
+    $permisos = "1=1";
 
     $Total          = 0;
     $start          = GETPOST("start");
     $length         = GETPOST("length");
 
-
     $objetoUsuario = array();
 
-    $idUsuarioOdontLogeado = $conf->login_id;
-
     $data = array();
-
     $sql = "SELECT 
-                        us.rowid as id , 
-                        us.usuario , 
-                        us.passwor_abc , 
-                        us.estado , 
-                        us.cedula ,
-                        concat(od.nombre_doc ,' ', od.apellido_doc) as nomdoc , 
-                        us.tipo_usuario as tipusuarioNum, 
-                        if(us.tipo_usuario=1,'administrador','normal') as tipoUsuario , 
-                      
-                        us.fk_perfil_entity
+                us.rowid as id , 
+                us.usuario , 
+                us.passwor_abc , 
+                us.estado , 
+                us.cedula ,
+                concat(od.nombre_doc ,' ', od.apellido_doc) as nomdoc , 
+                us.tipo_usuario as tipusuarioNum, 
+                if(us.tipo_usuario=1,'administrador','normal') as tipoUsuario , 
+                us.fk_perfil_entity, 
+                us.fk_doc, 
+                us.login_idusers_entity as login_unique
                     FROM
-                        tab_login_users us,
-                        tab_odontologos od
+                        tab_login_users us
+                        left join
+                        tab_odontologos od on od.rowid = us.fk_doc
                         WHERE 
-                        us.fk_doc = od.rowid";
+                        ".$permisos;
 
-    $sql .= " and  us.fk_doc !=  ".$idUsuarioOdontLogeado;
-    if($cual=='objecto'){
-        $sql .= ' and us.rowid ='.$idusuMod;
-    }
-
+    $sql .= " and  us.rowid !=  ".$user->id;
     $Total = $db->query($sql)->rowCount();
 
     if($start || $length){
@@ -2078,30 +2073,28 @@ function infolistUsuarios($cual, $idusuMod)
                 $objetoUsuario = $usdoc;
             }
 
-
-            #estado
-            #ACTIVO A
-            #INACTIVO I
-            if($usdoc->estado == 'A'){
+            if($usdoc->estado == 'A')
                 $estado = "<label class='label' style='background-color: #D5F5E3; color: green; font-weight: bolder'>ACTIVO</label>";
-            }
-            if($usdoc->estado == 'E'){
+            if($usdoc->estado == 'E')
                 $estado = "<label class='label ' style='background-color: #FADBD8; color: red; font-weight: bolder'>INACTIVO</label>";
-            }
 
+
+            $Docd  = ($usdoc->fk_doc!=0)?"<a href='#' style='display: block'><small>Doctor(a): &nbsp;&nbsp; $usdoc->nomdoc </small></a>":"";
+            $admin = (validSuperAdmin($usdoc->login_unique))?"<a href='#' style='display: block' > <span class='fa fa-unlock-alt'></span> <small>administrador</small></a> ":"";
 
 
             $row = array();
-
             $row[] = "";
-            $row[] = $usdoc->usuario ."<a href='#' style='display: block'><small>Doctor(a): &nbsp; - &nbsp; $usdoc->nomdoc </small></a>";
-            $row[] = fetchEntityPerfilPermisos(null, $usdoc->fk_perfil_entity );
+            $row[] = $usdoc->usuario ."". $Docd;
+            $row[] = $admin;
             $row[] = $estado;
 
-            #paramerts
             $row[] = $usdoc->estado;
             $row[] = "";
             $row[] = $usdoc->id;
+
+            $row['id_users'] = $usdoc->id;
+            $row['estado']   = $usdoc->estado;
 
             $data[] = $row ;
         }

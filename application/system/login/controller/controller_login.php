@@ -16,81 +16,90 @@ if(isset($_POST['ajaxSend']) || isset($_GET['ajaxSend']))
         case 'logearse':
 
             $msg_error = "";
-            $r = "";
-            if(isset($_SESSION['is_open']))
-            {
-                $r="SesionIniciada"; //se verifica si la sesion esta iniciada
+            $error = "";
+            if(isset($_SESSION['is_open'])){
+                $error="SesionIniciada"; //se verifica si la sesion esta iniciada
             }
             else {
 
                 $usuario  = GETPOST('usua'); //Usuario
                 $password = GETPOST('pass'); //password
 
+                //se valida los usuario en la base principal
                 $objers    = concretar_validacion_usuario_coneccion_entidad($usuario, $password);
-
-                $respuesta = $objers['respuesta'];  //OBTENGO LA INFORMACION DE LA ENTIDAD
-
-                #print_r($objers); die();
+                $respuesta = $objers['respuesta'];  //obtengo la información de la clinica logeada
                 if ( $objers['error_session'] == true )
                 {
                     #0 que ningun cliente no esta usando el usuaior
                     #1 que este usuario esta en session o en uso
-                    if( $objers['en_session'] == 0)
-                    {
-                        $coneccion_entity = new ObtenerConexiondb();
+                    if( $objers['en_session'] == 0){
 
-                        $sql = "SELECT lg.fk_doc , lg.rowid as id_login_2 FROM tab_login_users lg , tab_odontologos o where lg.fk_doc = o.rowid and usuario = '$usuario' and passwords = md5('$password') and lg.estado = 'A' limit 1";
-                        $rs  = $coneccion_entity::conectarEmpresa($respuesta['nombreDataBase'])->query($sql);
+                        //se verifica el login en la base de la clinica
+                        $conectar_clinica = new ObtenerConexiondb();
+                        $sql = "SELECT 
+                            s.fk_doc, 
+                            s.rowid AS id_login_2, 
+                            s.login_idusers_entity
+                        FROM
+                            tab_login_users s
+                                LEFT JOIN
+                            tab_odontologos d ON d.rowid = s.fk_doc
+                        WHERE
+                              s.estado = 'A'  
+                                AND s.usuario = '$usuario'
+                                    AND s.passwords = MD5('$password')";
+                        $result  = $conectar_clinica::conectarEmpresa($respuesta['nombreDataBase'])->query($sql);
+                        if ($result){
+                            if($result->rowCount() > 0){
 
-                        if ($rs->rowCount() > 0)
-                        {
+                                $result_abc = $result->fetchObject();
+                                session_start();
 
-                            $row = $rs->fetchObject();
-
-                            session_start();
-
-                            $_SESSION['is_open']                = true;
-                            $_SESSION['id_user']                = $row->fk_doc; #usuario de sesion es el doctor del usuario
-                            $_SESSION['db_name']                = $respuesta['nombreDataBase'];
-                            $_SESSION['usuario']                = $usuario;
-                            $_SESSION['entidad']                = $respuesta['entity'];
-                            $_SESSION['id_users_2']             = $row->id_login_2; #rowid de la data de la clinica id usuario 2
-                            $_SESSION['fk_perfil']              = $respuesta['fk_perfiles']; #El id fk_perfil  para comprobar que tipos de permisos tienen
-                            $_SESSION['admin']                  = $respuesta['admin'];
+                                $_SESSION['is_open']                = true;
+                                $_SESSION['id_user']                = $result_abc->id_login_2||0;
+                                $_SESSION['db_name']                = $respuesta['nombreDataBase'];
+                                $_SESSION['usuario']                = $usuario;
+                                $_SESSION['entidad']                = $respuesta['entity'];
+                                $_SESSION['id_users_2']             = $result_abc->id_login_2; #rowid de la data de la clinica id usuario 2
+                                $_SESSION['fk_perfil']              = $respuesta['fk_perfiles']; #El id fk_perfil  para comprobar que tipos de permisos tienen
+                                $_SESSION['admin']                  = $respuesta['admin'];
 
 
-                            $_SESSION['id_Entidad']             = $respuesta['id_Entidad'];
-                            $_SESSION['nombreClinica']          = $respuesta['nombreClinica'];
-                            $_SESSION['direccionClinica']       = $respuesta['direccionClinica'];
-                            $_SESSION['telefonoClinica']        = $respuesta['telefonoClinica'];
-                            $_SESSION['celularClinica']         = $respuesta['celularClinica'];
-                            $_SESSION['emailClinica']           = $respuesta['emailClinica'];
-                            $_SESSION['logoClinica']            = $respuesta['logoClinica'];
-                            $_SESSION['login_entidad']          = $respuesta['login_entidad'];
+                                $_SESSION['id_Entidad']             = $respuesta['id_Entidad'];
+                                $_SESSION['nombreClinica']          = $respuesta['nombreClinica'];
+                                $_SESSION['direccionClinica']       = $respuesta['direccionClinica'];
+                                $_SESSION['telefonoClinica']        = $respuesta['telefonoClinica'];
+                                $_SESSION['celularClinica']         = $respuesta['celularClinica'];
+                                $_SESSION['emailClinica']           = $respuesta['emailClinica'];
+                                $_SESSION['logoClinica']            = $respuesta['logoClinica'];
+                                $_SESSION['login_entidad']          = $respuesta['login_entidad'];
 
+                                //unique login users
+                                $_SESSION['users_unique_id']        = $result_abc->login_idusers_entity;
 
-                            if (isset($_SESSION['db_name']) && isset($_SESSION['usuario']) && isset($_SESSION['id_user'])) {
-                                $r = "SesionIniciada";
-                            } else {
-                                $r = "ErrorSesion";
+                                if (isset($_SESSION['db_name']) && isset($_SESSION['usuario']) && isset($_SESSION['id_user'])) {
+                                    $error = "SesionIniciada";
+                                } else {
+                                    $error = "ErrorSesion";
+                                }
                             }
                         }
                         else {
-                            $r = "ErrorSesion";
+                            $error = "ErrorSesion";
                         }
                     }
                     else{
-                        $r = "ErrorSesion";
+                        $error = "ErrorSesion";
                         $msg_error = "Este usuario ya se encuentra en session";
                     }
 
                 }else{
-                    $r = "ErrorSesion";
+                    $error = "ErrorSesion";
                 }
             }
 
             $output = [
-                'error'     => $r ,
+                'error'     => $error ,
                 'msg_err'   => $msg_error
             ];
 
@@ -149,63 +158,53 @@ function concretar_validacion_usuario_coneccion_entidad($user, $pass)
     $emailClinica       = "";
     $logoClinica        = "";
     $admin              = 0;
-
     $login_entidad      = "";
     $idPerfil           = "";
 
-    $con1 = new CONECCION_ENTIDAD(); //ME CONECTO CON LA ENTIDAD
-
-
+    $con1 = new CONECCION_ENTIDAD();
 
     $sql = "SELECT rowid , nombre_user , password_user, email , nombre , apellido, id_usuario , estado, idcedula, fk_perfiles, entity, fk_entidad,  session as session_user_u, fk_perfiles, admin  FROM tab_login_entity WHERE  to_base64(nombre_user) = to_base64(replace('$user',' ','')) and password_user = md5('$pass') and estado = 'A' ";
-    $resp = $con1::CONNECT_ENTITY()->query($sql);
-
-//    print_r($sql); die();
-    if($resp)
-    {
-        if($resp->rowCount() == 1)
-        {
+    $result_b = $con1::CONNECT_ENTITY()->query($sql);
+    if($result_b){
+        if($result_b->rowCount() == 1){
             $msg_sussces = true;
-            while ($row = $resp->fetchObject())
-            {
+            while ($object_b = $result_b->fetchObject()){
                 $en_session =  0;
 
-                $sql2 = "SELECT rowid,  nombre_db_entity , numero_entity , nombre, direccion , telefono , celular , email , logo, pais , ciudad FROM tab_entidades_dental where rowid = $row->fk_entidad and numero_entity = '".$row->entity."' ;";
-                $r    = $con1::CONNECT_ENTITY()->query($sql2);
-                if($r)
-                {
-                    if($r->rowCount() == 1)
-                    {
-                        $fil                        = $r->fetchObject();
-                        $id_Entidad                 = $fil->rowid; #id de la entidad de la empresa
+                $sql_a = "SELECT rowid,  nombre_db_entity , numero_entity , nombre, direccion , telefono , celular , email , logo, pais , ciudad FROM tab_entidades_dental where rowid = $object_b->fk_entidad and numero_entity = '".$object_b->entity."' ;";
+                $result_a    = $con1::CONNECT_ENTITY()->query($sql_a);
+                if($result_a){
+                    if($result_a->rowCount() == 1){
+                        $object_a                   = $result_a->fetchObject();
+                        $id_Entidad                 = $object_a->rowid; #id de la entidad de la empresa
 
-                        $nombreDataBase             = $fil->nombre_db_entity;
-                        $entity                     = $fil->numero_entity;
-                        $nombreClinica              = $fil->nombre;
-                        $direccionClinica           = $fil->direccion;
-                        $telefonoClinica            = $fil->telefono;
-                        $celularClinica             = $fil->celular;
-                        $emailClinica               = $fil->email;
-                        $logoClinica                = $fil->logo;
-                        $admin                      = $row->admin;
+                        $nombreDataBase             = $object_a->nombre_db_entity;
+                        $entity                     = $object_a->numero_entity;
+                        $nombreClinica              = $object_a->nombre;
+                        $direccionClinica           = $object_a->direccion;
+                        $telefonoClinica            = $object_a->telefono;
+                        $celularClinica             = $object_a->celular;
+                        $emailClinica               = $object_a->email;
+                        $logoClinica                = $object_a->logo;
+                        $admin                      = $object_b->admin;
 
 
-                        $login_entidad              = $row->rowid;  #ID LOGIN ENTIDAD
-                        $idPerfil                   = $row->fk_perfiles;  #id Perfil del Usuario
+                        $login_entidad              = $object_b->rowid;  #ID LOGIN ENTIDAD
+                        $idPerfil                   = $object_b->fk_perfiles;  #id Perfil del Usuario
 
                         #Session iniciada
-//                        $squpdate = "UPDATE `tab_login_entity` SET `session`= 1 WHERE `rowid`=".$row->rowid." and  entity = '".$row->entity."' and fk_entidad = ".$row->fk_entidad." ;";
+//                        $squpdate = "UPDATE `tab_login_entity` SET `session`= 1 WHERE `rowid`=".$object_b->rowid." and  entity = '".$object_b->entity."' and fk_entidad = ".$object_b->fk_entidad." ;";
 //                        $con1::CONNECT_ENTITY()->query($squpdate);
 
                     }else{
 
                         $msg_sussces = false;
-//                        $squpdate = "UPDATE `tab_login_entity` SET `session`= 0 WHERE `rowid`=".$row->rowid." and  entity = '".$row->entity."' and fk_entidad = ".$row->fk_entidad." ;";
+//                        $squpdate = "UPDATE `tab_login_entity` SET `session`= 0 WHERE `rowid`=".$object_b->rowid." and  entity = '".$object_b->entity."' and fk_entidad = ".$object_b->fk_entidad." ;";
 //                        $con1::CONNECT_ENTITY()->query($squpdate);
                     }
                 }else{
 
-//                    $squpdate = "UPDATE `tab_login_entity` SET `session`= 0 WHERE `rowid`=".$row->rowid." and  entity = '".$row->entity."' and fk_entidad = ".$row->fk_entidad." ;";
+//                    $squpdate = "UPDATE `tab_login_entity` SET `session`= 0 WHERE `rowid`=".$object_b->rowid." and  entity = '".$object_b->entity."' and fk_entidad = ".$object_b->fk_entidad." ;";
 //                    $con1::CONNECT_ENTITY()->query($squpdate);
                 }
             }

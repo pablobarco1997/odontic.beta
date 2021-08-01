@@ -41,8 +41,8 @@
      *  id_entidad_login => guarda el id del login de la tabla principal global - db adminnub_schema_dental_entity_login - table : schema_dental_entity_login.tab_login_entity para poder actualizar la tabla
      *  name => nombre de usuario
      */
-    $user     = (object)array
-    (   "id"                => $_SESSION['id_users_2'],
+    $user     = (object)array(
+        "id"                => $_SESSION['id_users_2'],
         "name"              => $_SESSION['usuario'],
         "id_entidad_login"  => $_SESSION["login_entidad"],
         "idPerfil"          => $_SESSION["fk_perfil"],
@@ -68,7 +68,6 @@
         "INFORMACION"   => $entity::INFORMACION_EMPRESA_GLOB($_SESSION["id_Entidad"], $dbConectar) #INFORMACION DE LA ENTIDAD GLOB
     );
 
-//    $conf->ObtnerNoficaciones($db, false);
 
     /** log de la clinica**/
     $log = new log($db, $user->id);
