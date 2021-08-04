@@ -220,10 +220,10 @@ class send_email_program{
         $mail->Password = $this->service_Password;//password de servidor de correo
 
         $mail->Subject = "Clinica dental ".$this->datosClinica->nombre; //nombre de la clinica
-        $mail->addCustomHeader("'Reply-to:".$this->datosClinica->email."'");
+        $mail->addCustomHeader("'Reply-to:".$this->service_Email."'");
         $mail->isHTML(TRUE);
         $mail->msgHTML("Notificación Clinica ".$this->datosClinica->nombre);
-        $mail->setFrom($this->datosClinica->email, $this->datosClinica->nombre);
+        $mail->setFrom($this->service_Email, $this->datosClinica->nombre, true);
         $mail->addAddress($this->to);
         $mail->Body = $FormHtml;
 
