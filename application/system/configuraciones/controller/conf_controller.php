@@ -1137,17 +1137,15 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
         case "status_update_users":
 
             $err              = "";
-            $idloginusers     = GETPOST("idlogin");
-            $objectUser       = getnombreUsuario($idloginusers);
+            $id               = GETPOST("idlogin");
+            $object_a         = getnombreUsuario($id);
             $status           = GETPOST("status");
 
-            #print_r($objectUser); die();
             if($status!=""){
-                if($objectUser->admin == 0){
-                    $err = status_update_usuario($idloginusers, $objectUser->login_idusers_entity, $status);
+                if($object_a->admin == 0){
+                    $error = status_update_usuario($id, $object_a->login_idusers_entity, $status);
                 }else{
-                    $err = "Ud. no puede modificar un usuario administrador <br>
-                                <b> El usuario administrado solo puede ser modificado por el mismo </b>";
+                    $error = "Ud. no puede modificar un usuario administrador";
                 }
             }
 
@@ -2045,15 +2043,15 @@ function infolistUsuarios($cual, $idusuMod)
                 us.cedula ,
                 concat(od.nombre_doc ,' ', od.apellido_doc) as nomdoc , 
                 us.tipo_usuario as tipusuarioNum, 
-                if(us.tipo_usuario=1,'administrador','normal') as tipoUsuario , 
+                (select pf.nom from tab_login_perfil_name pf where pf.rowid = us.fk_perfil_entity) as perfil, 
                 us.fk_perfil_entity, 
                 us.fk_doc, 
                 us.login_idusers_entity as login_unique
-                    FROM
-                        tab_login_users us
-                        left join
-                        tab_odontologos od on od.rowid = us.fk_doc
-                        WHERE 
+                FROM
+                    tab_login_users us
+                    left join
+                    tab_odontologos od on od.rowid = us.fk_doc
+                    WHERE 
                         ".$permisos;
 
     $sql .= " and  us.rowid !=  ".$user->id;
@@ -2080,7 +2078,11 @@ function infolistUsuarios($cual, $idusuMod)
 
 
             $Docd  = ($usdoc->fk_doc!=0)?"<a href='#' style='display: block'><small>Doctor(a): &nbsp;&nbsp; $usdoc->nomdoc </small></a>":"";
-            $admin = (validSuperAdmin($usdoc->login_unique))?"<a href='#' style='display: block' > <span class='fa fa-unlock-alt'></span> <small>administrador</small></a> ":"";
+            $admin = (validSuperAdmin($usdoc->login_unique)==1)?"<a href='#' style='display: block' > <span class='fa fa-unlock-alt'></span> <small class='text-sm'>administrador</small></a> ":"";
+
+            if($admin==""){
+                $admin = "<a href='#' style='display: block' > <span class='fa fa-lock'></span> <small class='text-sm'>".$usdoc->perfil."</small></a> ";
+            }
 
 
             $row = array();
@@ -2293,38 +2295,36 @@ function ModificarPerfil($Modperfiles, $idEntityUsers , $Perfilenom, $idPerfilEn
 }
 
 
-function status_update_usuario($idusersClinica , $identificador_entity_users, $status ){
+function status_update_usuario($id , $id_entity_users, $status ){
 
-    global $db, $conf;
-
+    global $db, $conf, $log;
     $coneccionEntity = new CONECCION_ENTIDAD();
 
-    $err = 0;
-    if($idusersClinica!="" && $identificador_entity_users!=""){
+    $error = 0;
+    if($id!="" && $id_entity_users!=""){
 
-        $sqlclinica = "UPDATE `tab_login_users` SET `estado`='".$status."' WHERE `rowid`= ".$idusersClinica;
-        $rsclin     = $db->query($sqlclinica);
-        if(!$rsclin){
-            $err++;
+        $sql_a = "UPDATE `tab_login_users` SET `estado`='".$status."' WHERE `rowid`= ".$id;
+        $result_a     = $db->query($sql_a);
+        if(!$result_a){
+            $object_b = getnombreUsuario($id);
+            $log->log($id, $log->error, "Ha ocurrido un error con la operacion modificar usuario: ".$object_b->usuario, "tab_login_users", $sql_a);
+            $error++;
+        }else{
+            $object_b = getnombreUsuario($id);
+            $log->log($id, $log->modificar, "Se ha actualizado el registro usuario: ".$object_b->usuario, "tab_login_users");
         }
 
-
-        $sqlUpdatEntity = "UPDATE `tab_login_entity` SET `estado`='".$status."' WHERE login_idusers_entity = '".$identificador_entity_users."' and rowid != 0 and fk_entidad = ".$conf->EMPRESA->ID_ENTIDAD." and entity = '".$conf->EMPRESA->ENTIDAD."' ";
-        $rsEntity   = $coneccionEntity::CONNECT_ENTITY()->query($sqlUpdatEntity);
-        if(!$rsEntity){
-            $err++;
+        $sql_b = "UPDATE `tab_login_entity` SET `estado`='".$status."' WHERE login_idusers_entity = '".$id_entity_users."' and rowid != 0 and fk_entidad = ".$conf->EMPRESA->ID_ENTIDAD." and entity = '".$conf->EMPRESA->ENTIDAD."' ";
+        $result_b   = $coneccionEntity::CONNECT_ENTITY()->query($sql_b);
+        if(!$result_b){
+            $error++;
+        }else{
+            $log->log($id, $log->modificar, "Se ha actualizado el usuario en la base principal usuario: ".$object_b->usuario." code id: ".base64_encode($id_entity_users), "tab_login_users");
         }
-
-
-//        print_r($sqlUpdatEntity); echo '<pre>';
-//        print_r($sqlclinica); echo '<pre>';
-//        die();
-
-        if($err>0)
+        if($error>0)
             return "Ocurrio un error con la Operacion, consulte con soporte";
         else
             return "";
-
     }else{
         return "Ocurrio un error con la Operacion, consulte con soporte";
     }

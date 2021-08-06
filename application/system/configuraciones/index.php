@@ -87,7 +87,7 @@ if(isset($_GET['view']))
                     </div>
                 </div>
 
-        <?php }?>
+        <?php } ?>
 
             <!-- Script  Global  Configuration-->
             <script>

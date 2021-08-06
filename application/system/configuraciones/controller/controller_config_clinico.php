@@ -191,6 +191,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
                     passwords , 
                     fk_doc, 
                     estado, 
+                    fk_perfil_entity as fk_perfil, 
                     login_idusers_entity
                 FROM
                     tab_login_users 
@@ -213,6 +214,91 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
             echo json_encode($output);
             break;
 
+        case 'fetchModulosPermisos':
+
+            $fetchpermisos = fetchModulePermissions();
+
+            $output=array(
+                "datos" => $fetchpermisos
+            );
+            echo json_encode($output);
+            break;
+
+
+        case 'nuevoPerfilpermits':
+
+            $error = "";
+            $id               = GETPOST('id');
+            $permModule       = GETPOST("fetchpermitsModule");
+            $permChild        = GETPOST("fetchpermitsChild");
+            $datos['name']    = GETPOST("name");
+            $datos['desc']    = GETPOST("desc");
+            $datos['permits']       = ($permChild!="")?json_decode($permChild):array();
+            $datos['permitsModule'] = ($permModule!="")?json_decode($permModule):array();
+
+//            print_r($datos); die();
+
+            if($id=='' || $id == '0'){
+                //nuevo
+                $response = Perfiles(null, true, false, $datos);
+                if($response==-1){
+                    $error = "Ocurrio error con los parametros de entrada. Consulte con Soporte";
+                }
+            }else{
+                //actualizar
+                $response = Perfiles($id, false, true, $datos);
+            }
+
+            $output = [
+                'error' => $error ,
+            ];
+
+            echo json_encode($output);
+            break;
+
+        case 'fetchModperfiles':
+
+            $datos = [];
+            $id = GETPOST('id');
+
+            $result = $db->query("select nom from tab_login_perfil_name where rowid = '$id' ")->fetchAll(PDO::FETCH_ASSOC);
+            if(count($result)>0){
+                $datos['name'] = $result[0]['nom'];
+            }
+
+            $datos['permits'] = array();
+            $result = $db->query("select concat(id_module,'_',id_permissions) as key_id from tab_login_users_permissions where fk_perfiles = '$id' ")->fetchAll(PDO::FETCH_ASSOC);
+            if(count($result)>0){
+                $datos['permits'] = $result;
+            }
+
+            $datos['permitsModule'] = array();
+            $result = $db->query("select id_modulo from tab_login_users_permissions_modulos where fk_perfil = '$id' ")->fetchAll(PDO::FETCH_ASSOC);
+            if(count($result)>0){
+                $datos['permitsModule'] = $result;
+            }
+
+            $output = [
+               'error' => '',
+               'success'  => $datos
+            ];
+
+            echo json_encode($output);
+            break;
+
+
+        case 'list_perfiles_permisos':
+
+            $resultado = perfiles_lis();
+
+            $output = array(
+                "data"            => $resultado['datos'],
+                "recordsTotal"    => $resultado['total'],
+                "recordsFiltered" => $resultado['total']
+            );
+
+            echo json_encode($output);
+            break;
 
     }
 
@@ -404,9 +490,9 @@ function registrarUsers($id = 0, $datos){
     if($id!=0){
         //modificar login
 
-        $sql_ab    = "UPDATE `tab_login_users` SET `usuario` = ?,`passwords` = ?,`fk_doc` = ?,`passwor_abc` = ? , passwords = ? ,`cedula` = ?,`entity` = ? WHERE `rowid` = ?;";
+        $sql_ab    = "UPDATE `tab_login_users` SET `usuario` = ?,`passwords` = ?,`fk_doc` = ?,`passwor_abc` = ? , passwords = ? ,`cedula` = ?,`entity` = ? , `fk_perfil_entity` = ? WHERE `rowid` = ?;";
         $stmt_ab   = $db->prepare($sql_ab);
-        $result_ab = $stmt_ab->execute(array($usuario, $pass, $doctor, (string)$pass64, (string)md5($pass), (string)$ci_a, (string)$entity, $id));
+        $result_ab = $stmt_ab->execute(array($usuario, $pass, $doctor, (string)$pass64, (string)md5($pass), (string)$ci_a, (string)$entity, $datos->perfil, $id));
 
         if($result_ab){
 
@@ -427,7 +513,7 @@ function registrarUsers($id = 0, $datos){
 
         $sql_a = "INSERT INTO `tab_login_users` (`usuario`, `passwords` ,`fk_doc`, `tipo_usuario`, `passwor_abc`, `cedula`, `fk_perfil_entity`, `entity`) VALUES(?,?,?,?,?,?,?,?)";
         $stmt = $db->prepare($sql_a);
-        $result =  $stmt->execute(array($usuario,md5($pass),$doctor,0,$pass64,$ci_a,0,$entity));
+        $result =  $stmt->execute(array($usuario, md5($pass), $doctor, 0, $pass64, $ci_a, $datos->perfil, $entity));
         if($result){
 
             $idLast = $db->lastInsertId("tab_login_users");
@@ -459,6 +545,171 @@ function registrarUsers($id = 0, $datos){
     return $success;
 
 
+}
+
+function fetchModulePermissions(){
+
+    global $db, $user, $conf;
+
+    //padre
+    $sql_a = "select rowid, name, estado, id_padre  from tab_modulos_clinicos where estado = 'A' and id_padre = 0";
+    $result_a = $db->query($sql_a);
+    if($result_a){
+        $fetch_father = $result_a->fetchAll(PDO::FETCH_ASSOC);
+
+        $children = [];
+        //hijos
+        $sql_b  = "select rowid, name, estado, id_padre  from tab_modulos_clinicos where estado = 'A' and id_padre <> 0;";
+        $result_b = $db->query($sql_b);
+        if($result_b){
+            $fetch_children = $result_b->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($fetch_children as $item){
+                $children[$item['id_padre']][] = $item;
+            }
+        }
+
+        $datos = [];
+        foreach ($fetch_father as $value){
+            if(array_key_exists($value['rowid'], $children)){
+                $datos[] = array($value['rowid'], $value['name'], 'father', $children[$value['rowid']]);
+            }else{
+                $datos[] = array($value['rowid'], $value['name'], 'son');
+            }
+        }
+
+        return $datos;
+
+    }
+
+}
+
+function Perfiles($id, $new=false, $update=false, $datos=array()){
+
+    global  $db, $user, $conf, $log;
+
+    if(count($datos)==0){
+        return -1;
+    }
+
+    $name = $datos['name'];
+    $desc = $datos['desc'];
+
+    if($new==true){
+        $sql_a = "INSERT INTO `tab_login_perfil_name` (`nom`, `desc`) VALUES ('$name', '$desc');";
+    }
+    if($update==true){
+        $sql_a = "UPDATE  tab_login_perfil_name p SET p.nom = '$name' , p.desc = '$desc' WHERE p.rowid = $id; ";
+    }
+
+//    print_r($sql_a); die();
+    //si no existe esa variable -6 error code 555 consulte con soporte
+    if(!isset($sql_a)){
+        return -6;
+    }
+
+    $result_a = $db->query($sql_a);
+    if($result_a){
+
+        $idlast = $db->lastInsertId("tab_login_perfil_name");
+
+        if($new == true){
+            $log->log($idlast, $log->crear, "Se ha creado un nuevo Perfil de usuario: ".$datos['name'], 'tab_login_perfil_name');
+        }
+
+        if($update == true){
+            $log->log($id, $log->modificar, "Se ha Actualizado el Perfil : ".$datos['name'], 'tab_login_perfil_name');
+            $idlast = $id;
+        }
+
+        //si no hay datos se retorna vacio
+        if(count($datos['permits'])==0){
+            return "";
+        }
+
+        /*Permisos Perfiles*/
+        //elimino los registros para agregarlos de nuevo
+        $db->query("DELETE FROM tab_login_users_permissions WHERE rowid > 0 and fk_perfiles = $id");
+        $db->query("DELETE FROM tab_login_users_permissions_modulos WHERE rowid > 0 and fk_perfil = $id");
+
+        $parametrs = array();
+        foreach ($datos['permits'] as $value){
+            $fetch = explode('_',$value);
+            $value_mod     = $fetch[0]; //modulo
+            $value_permits = $fetch[1]; //permisos
+            $parametrs[] = array($value_mod, $value_permits, $idlast);
+        }
+        $sql_b  = "INSERT INTO `tab_login_users_permissions` (`id_module`, `id_permissions`, `fk_perfiles`) VALUES (?, ?, ?);";
+        $stmt_b = $db->prepare($sql_b);
+        foreach ($parametrs as $item){
+            $stmt_b->execute($item);
+        }
+
+        /*Permisos Modulos por Perfil*/
+        $parametrsMod = array();
+        foreach ($datos['permitsModule'] as $itemMod){
+            $parametrsMod[] = array($idlast, $itemMod);
+        }
+        $sql_c = "INSERT INTO `tab_login_users_permissions_modulos` (`fk_perfil`, `id_modulo`) VALUES (?, ?);";
+        $stmt_c = $db->prepare($sql_c);
+        foreach ($parametrsMod as $item){
+            $stmt_c->execute($item);
+        }
+
+        return "";
+    }else{
+        $log->log(0, $log->error, "Ha ocurrido un error con la creación del perfil : ".$datos['name'], 'tab_login_perfil_name');
+    }
+
+}
+
+function perfiles_lis(){
+
+    global  $db;
+
+    $Total          = 0;
+    $start          = $_POST["start"];
+    $length         = $_POST["length"];
+
+
+    $data = [];
+    $sql = "select 
+            p.rowid , p.nom , p.desc, p.estado
+            from tab_login_perfil_name p";
+
+    $Total = $db->query($sql)->rowCount();
+
+    if($start || $length){
+        $sql.=" LIMIT $start,$length;";
+    }
+
+    $result = $db->query($sql);
+    if($result){
+        if($result->rowCount()>0){
+            while ($object = $result->fetchObject()){
+                $rows = [];
+
+                $link_perfil = "<a  href='".DOL_HTTP."/application/system/configuraciones/?view=admin_users&v=perfiles&id=".$object->rowid."'  class='text-black'  >".$object->nom."</a>";
+
+                $rows[] = "";
+                $rows[] = $link_perfil.'<small class="text-sm" style="display: block; color: #488cd5 ">'.$object->desc.'</small>';
+
+                if($object->estado == "A")
+                    $rows[] = "<label class=\"label\" style=\"background-color: #D5F5E3; color: green; font-weight: bolder\">ACTIVO</label>";
+                if($object->estado == "E")
+                    $rows[] = "<label class=\"label \" style=\"background-color: #FADBD8; color: red; font-weight: bolder\">INACTIVO</label>";
+
+                $rows['id'] = $object->rowid;
+                $data[] = $rows;
+            }
+        }
+    }
+
+    $resultFinal = [
+        'datos' => $data,
+        'total' => $Total
+    ];
+
+    return $resultFinal;
 }
 
 ?>

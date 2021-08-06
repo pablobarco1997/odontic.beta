@@ -690,7 +690,6 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
         case 'ConsultarTypePermisos':
 
-
             $error     = '';
             $idaction  = GETPOST('actionPermiso');
             $IdModule  = GETPOST('idModule');
