@@ -81,6 +81,8 @@ global $db, $user;
 
                             <?php
 
+                            accessoModule("Agenda");
+
                             if(!empty($view))
                             {
                                 switch ($view)

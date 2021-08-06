@@ -419,52 +419,36 @@ function Consultar_CitasHorus_(fecha, hora, duracion, fk_doc)
 }
 
 
-//GUARDAR CITAS
-$('#nuevoGuardarCitas').click(function(){
+function GuardarCitas(btn){
 
-    if(!ModulePermission(2,2)){
+    if(!ModulePermission("Agenda","agregar")){
         notificacion('ud. no tiene permiso para Agendar', 'error');
         return false;
     }
 
-    $("#nuevoGuardarCitas").addClass("disabled_link3");
-
     boxloading($boxContent,true);
-
     var datos_citas = getdatoscitas();
-
-    // if( $('.detalle_citas').length == 0) {
-    //     notificacion("No se detecto detalles asignados", "error");
-    //     boxloading($boxContent,false,1000);
-    //     $("#nuevoGuardarCitas").removeClass("disabled_link3");
-    // }
-
     if(invalic_puedoGuardar() > 0){
         boxloading($boxContent,false,1000);
         $("#nuevoGuardarCitas").removeClass("disabled_link3");
+
     }else{
+
+        button_loadding(btn, true);
 
         var paramters = {
             'ajaxSend': 'ajaxSend',
             'accion':'create_cita_paciente',
             'datos': datos_citas
         };
-
+        boxloading($boxContent,true);
         $.ajax({
             url: $DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php",
             type:'POST',
             data:paramters,
             dataType:'json',
-            error:function(xhr, status) {
-                if(xhr['status']=='200'){
-                    boxloading($boxContent,false,1000);
-                }else{
-                    if(xhr['status']=='404'){
-                        notificacion("Ocurrió un error con la <b>solicitud Agendar citas</b> <br> <b>xhr: "+xhr['status']+" <br> Consulte con Soporte </b>");
-                    }
-                    boxloading($boxContent,false,1000);
-                }
-            },
+            cache:false,
+            async: true,
             complete:function(xhr, status) {
 
                 if(xhr['status']=='200'){
@@ -475,27 +459,29 @@ $('#nuevoGuardarCitas').click(function(){
                     }
                     boxloading($boxContent,false,1000);
                 }
+
+                button_loadding(btn, false);
             },
             success: function(respuesta) {
-
-                if(respuesta.error == "")
-                {
+                if(respuesta.error == ""){
                     notificacion('Información Actualizada', 'success');
                     boxloading($boxContent,false,1000);
-                    setTimeout(()=>{                    window.location = $DOCUMENTO_URL_HTTP + "/application/system/agenda/index.php?view=principal&list=diaria";}, 1500);
+                    setTimeout(()=>{
+                        window.location = $DOCUMENTO_URL_HTTP + "/application/system/agenda/index.php?view=principal&list=diaria";
+                    }, 500);
                 }else{
-
                     notificacion(respuesta.error , 'error');
                     $(this).removeClass('disabled_link3');
                 }
+
+                button_loadding(btn, false);
 
             }
         });
 
     }
 
-
-});
+}
 
 $(document).ready(function() {
 

@@ -18,7 +18,7 @@
         <li>
             <div class="callbox">
                 <div class="form-group">
-                    <div class="checkbox  ">
+                    <div class="checkbox  <?= !PermitsModule("Agenda", "consultar")?"disabled_link3":"" ?>">
                         <a style="color: #333333" href="<?= DOL_HTTP .'/application/system/agenda/index.php?view=principal&list=diaria' ?>" class="btn btnhover ">
                             <b>Diaria</b>
                         </a>
@@ -42,7 +42,7 @@
         <li>
             <div class="callbox">
                 <div class="form-group">
-                    <div class="checkbox <?= (!PermitsModule(2,2))?"disabled_link3":"" ?>">
+                    <div class="checkbox <?= (!PermitsModule("Agenda","agregar"))?"disabled_link3":"" ?>">
                         <a href="<?= DOL_HTTP .'/application/system/agenda/index.php?view=agendadd'?>"  style="color: #333333" class="btn btnhover addCitas  ">
                             <b>Agendar una Cita </b>&nbsp;&nbsp;<i class="fa fa-calendar-check-o"></i>
                         </a>
@@ -68,7 +68,7 @@
         <li>
             <div class="callbox">
                 <div class="form-group">
-                    <div class="checkbox  ">
+                    <div class="checkbox  <?= !PermitsModule("Agenda", "consultar")?"disabled_link3":"" ?>">
                         <a href="#" class="btn btnhover" style="color: #333333" onclick="ImprimirCitasAgendadas()">
                             <b>Imprimir Citas Agendadas &nbsp;<i class="fa fa-print"></i></b>
                         </a>
@@ -80,7 +80,7 @@
         <li>
             <div class="callbox">
                 <div class="form-group">
-                    <div class="checkbox  ">
+                    <div class="checkbox <?= !PermitsModule("Agenda", "consultar")?"disabled_link3":"" ?>">
                         <a href="#FiltrarAgenda" class="btn btnhover " style="color: #333333" data-toggle="collapse" >
                             <b>Filtrar Citas</b>
                         </a>
@@ -104,7 +104,7 @@
     </ul>
 </div>
 
-<div id="FiltrarAgenda" class="collapse form-group col-xs-12 col-md-12">
+<div id="FiltrarAgenda" class="collapse form-group col-xs-12 col-md-12" style="margin-left: 0px; margin-bottom: 0px;">
 
     <div class="form-group col-md-12 col-xs-12"  style="background-color: #f4f4f4; padding: 25px">
         <h3 class="no-margin"><span>Filtrar Citas</span></h3>

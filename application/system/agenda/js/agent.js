@@ -193,6 +193,12 @@ function NOTIFICACION_CITAS_NUMEROS()
 
 // fa-refresh
 function fa_refresh_agenda() {
+
+    if(!ModulePermission('Agenda', 'consultar')){
+        notificacion('Ud. notiene permiso para consultar', 'error');
+        return false;
+    }
+
     filtrarAgenda();
     Notify_odontic(1, false)
 }
@@ -202,7 +208,7 @@ function fa_refresh_agenda() {
 function EstadosCitas(idestado, idcita, html, idpaciente) //Comprotamientos de los estados de las citas
 {
 
-    if(!ModulePermission(2,1)){
+    if(!ModulePermission("Agenda","consultar")){
         notificacion('ud. No tiene permiso para consultar <br>Se le han deshabilitado las opciones','error');
         return false
     }
@@ -682,6 +688,11 @@ function limpiarInpust(){
 
 var ImprimirCitasAgendadas = function(filter=false){
 
+    if(!ModulePermission("Agenda","consultar")){
+        notificacion("Ud. no tiene permiso para Consultar", "error");
+        return false;
+    }
+
     //busqueda de
     if(filter==true){
 
@@ -718,7 +729,7 @@ var ImprimirCitasAgendadas = function(filter=false){
             checked.push($(item).prop('dataset').idcitadet);
         });
 
-        if(!ModulePermission(2,1)){
+        if(!ModulePermission("Agenda","consultar")){
             notificacion('Ud. No tiene permiso para Consultar', 'question');
             return false;
         }else{
@@ -802,7 +813,6 @@ window.onload =  boxloading($boxContent, true);
 
 $(window).on("load", function() {
     boxloading($boxContent, true, 1000);
-
     $('.filtrar_doctor').select2({
         placeholder: 'Seleccionar un doctor',
         // allowClear:true,
@@ -818,6 +828,9 @@ $(window).on("load", function() {
         // allowClear:true,
         language:'es'
     });
+    if(!ModulePermission('Agenda', 'consultar')){
+        notificacion('Ud. notiene permiso para consultar', 'error');
+    }
 
     setTimeout(()=>{loadtableAgenda();},1000);
 

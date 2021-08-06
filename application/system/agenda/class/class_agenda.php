@@ -64,16 +64,9 @@ class admin_agenda{
         $sql .= ")";
 
         $rs = $this->db->query($sql);
-//        $rs = true;
-        if($rs)
-        {
-
+        if($rs){
             $id = $this->db->lastInsertId('tab_pacientes_citas_cab');
-
-            foreach ($this->detalle as $item)
-            {
-
-    //                print_r($item['especialidad']);
+            foreach ($this->detalle as $item){
                     $fk_doc    = $item['doctor'];
                     $recursos  = "0";
                     $duracion  = $item['duraccion'];
@@ -86,13 +79,7 @@ class admin_agenda{
                     $aux_horadate =  strtotime(" +$duracion minute", strtotime("$dateformat $Hora_inicio") );
                     $Hora_Fin     = date('H:i:s',$aux_horadate);
 
-                    $sql1  = "INSERT INTO tab_pacientes_citas_det (`fk_pacient_cita_cab`,  `fk_estado_paciente_cita`, `fk_especialidad`,  `fk_doc`, `recurso`, `duracion`,
-                        `fecha_cita`, 
-                        `hora_cita`, 
-                        `type`,
-                        `hora_inicio`,
-                        `hora_fin`
-                    )";
+                    $sql1  = "INSERT INTO tab_pacientes_citas_det (`fk_pacient_cita_cab`,  `fk_estado_paciente_cita`, `fk_especialidad`,  `fk_doc`, `recurso`, `duracion`,`fecha_cita`,`hora_cita`,`type`,`hora_inicio`,`hora_fin`)";
                     $sql1 .= "VALUES(";
                     $sql1 .= "$id,";
                     $sql1 .= "2,"; //el estado se guarda en dos "NO CONFIRMADO"
@@ -107,9 +94,7 @@ class admin_agenda{
                     $sql1 .= "'$Hora_Fin' ";
                     $sql1 .= ")";
 
-//                    echo '<pre>'; print_r($sql1); die();
                     $result = $this->db->query($sql1);
-
                     if($result){
                         $lastid = $this->db->lastInsertId("tab_pacientes_citas_det");
                         return $lastid;

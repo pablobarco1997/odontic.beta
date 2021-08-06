@@ -10,7 +10,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
     require_once DOL_DOCUMENT .'/application/system/agenda/class/class_agenda.php';
 
 
-    global  $db , $conf, $log;
+    global  $db , $conf, $log, $user;
 
     $agenda = new admin_agenda($db);
 
@@ -27,12 +27,10 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             $agenda->fk_paciente    = $row['fk_paciente'];
             $agenda->comentario     = $row['comment'];
-            $agenda->fk_login_users = $conf->login_id; #USUARIO LOGEADO
+            $agenda->fk_login_users = $user->id; #USUARIO LOGEADO
             $agenda->detalle        = $row['detalle'];
 
             $result = $agenda->GenerarCitas();
-
-//            print_r($result); die();
 
             if($result > 0){ //me retorna el id
                 $log->log($result, $log->crear, 'Se registro una cita Numero: '.$result, 'tab_pacientes_citas_det');
@@ -815,7 +813,7 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
     global $db, $permisos;
 
 
-    if(!PermitsModule(2,1 ))
+    if(!PermitsModule("Agenda", "consultar"))
         $PermisoConsultar = " 1<>1 ";
     else
         $PermisoConsultar = "";
@@ -933,15 +931,13 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
         {
 
             $row = array();
-            #checked box
-            $row[] = "<span class='custom-checkbox-myStyle'>
+            //checked box
+            $row[] = "<span class='custom-checkbox-myStyle' style='margin-left: 3px'>
 								<input type='checkbox' id='checked-detalleCitas-$iu' class='checked_detalleCitas' name='checkedCitas' data-idcitadet='$acced->id_cita_det'>
 								<label for='checked-detalleCitas-$iu' ></label>
                       </span>";
 
-
-
-            #numero o codigo de cita
+            //numero o codigo de cita
             $numeroCita = "<table style='font-weight: bold'>
                                 <tr>
                                     <td> <img  src='".$src."' class='img-rounded' style='width: 25px; height: 25px' >  - </td>
@@ -952,22 +948,22 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
             $row[] = $numeroCita;
 
             $html1 = "";
-            $html1 .= "<p class='text-center' style='font-weight: bold'>".date('Y/m/d', strtotime($acced->fecha_cita))."</p>";
+            $html1 .= "<p class='text-center no-margin' style='font-weight: bold'>".date('Y/m/d', strtotime($acced->fecha_cita))."</p>";
             $html1 .= "<div style='background-color: $acced->color; padding: 3px; font-weight: bold'>";
-                $html1 .= "<p class='text-center'>$acced->hora_inicio</p>";
-                $html1 .= "<p class='text-center'><i class='fa fa-arrow-circle-o-down'></i></p>";
-                $html1 .= "<p class='text-center'>$acced->hora_fin</p>";
+                $html1 .= "<p class='text-center no-margin'>$acced->hora_inicio</p>";
+                $html1 .= "<p class='text-center no-margin'><i class='fa fa-arrow-circle-o-down'></i></p>";
+                $html1 .= "<p class='text-center no-margin'>$acced->hora_fin</p>";
             $html1 .= "</div>";
 
             $row[] = $html1;
 
             //PACIENTES - JUNTO CON DROPDONW
 
-            #ID IMPORTANTE YA QUE ES UN TOKEN CREADO COMO UN ID DE LA CITAS GENERADO EN UN BINARIO HEXADECIMAL
+            //ID IMPORTANTE YA QUE ES UN TOKEN CREADO COMO UN ID DE LA CITAS GENERADO EN UN BINARIO HEXADECIMAL
             $token = tokenSecurityId( $acced->idpaciente); #ME RETORNA UN TOKEN
             $view  = "dop"; #view vista de datos personales admin pacientes
 
-            #url datos personales
+            //url datos personales
             $Url_datospersonales = DOL_HTTP ."/application/system/pacientes/pacientes_admin?view=$view&key=".KEY_GLOB."&id=$token";
 
             $html2 = "";
@@ -1348,10 +1344,10 @@ function notificarCitaEmail($datos, $token_confirmacion)
     $mail->Password = $conf->EMPRESA->INFORMACION->password_service;//password de servidor de correo
 
     $mail->Subject = "Clinica dental ".$conf->EMPRESA->INFORMACION->nombre; //nombre de la clinica
-    $mail->addCustomHeader("'Reply-to:".$conf->EMPRESA->INFORMACION->conf_email."'");
+    $mail->addCustomHeader("'Reply-to:".$conf->EMPRESA->INFORMACION->correo_service."'");
     $mail->isHTML(TRUE);
     $mail->msgHTML("Notificación Clinica ".$conf->EMPRESA->INFORMACION->nombre);
-    $mail->setFrom($conf->EMPRESA->INFORMACION->conf_email, $conf->EMPRESA->INFORMACION->nombre);
+    $mail->setFrom($conf->EMPRESA->INFORMACION->correo_service, $conf->EMPRESA->INFORMACION->nombre);
     $mail->addAddress($to);
 
     #$mail->msgHTML("");
@@ -1359,6 +1355,7 @@ function notificarCitaEmail($datos, $token_confirmacion)
 
     $mail->Body = $htmlSend."".$card;
     $error_insert_notific_email = "";#Se usa para comprobar el registro
+
 
     if($conf->EMPRESA->INFORMACION->conf_email != ""){
 

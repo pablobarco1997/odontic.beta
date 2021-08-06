@@ -87,11 +87,11 @@ if(isset($_GET['view']) && $_GET['view'] == 'agendadd'){
 
 <div class="row">
     <div class="form-group col-lg-12 col-xs-12 col-md-12">
-        <div class="col-md-6 col-xs-12 pull-left">
-            <?php echo Breadcrumbs_Mod($titulo, $url_breadcrumb, $module) ?>
+        <div class="col-md-6 col-xs-12 pull-left hide">
+            <?php //echo Breadcrumbs_Mod($titulo, $url_breadcrumb, $module) ?>
         </div>
-        <div class="col-md-6 col-xs-12 pull-right">
-            <h3 class="pull-right">AGENDAR CITA</h3>
+        <div class="col-md-6 col-xs-12 ">
+            <h3 class="" style="font-size: 2rem">AGENDAR CITA</h3>
         </div>
     </div>
 </div>
@@ -123,7 +123,7 @@ if(isset($_GET['view']) && $_GET['view'] == 'agendadd'){
 <div class="form-group col-md-12 col-lg-12 col-xs-12">
     <div class="form-group col-md-8 col-centered">
         <h4><span style="border-bottom: 1px solid #e9edf2; display: block; margin-bottom: 10px"><b>Detalle</b></span></h4>
-        <form class="form-horizontal">
+        <div class="form-horizontal">
             <div class="form-group">
                 <label class="control-label col-sm-3" >Especialidad:</label>
                 <div class="col-sm-9">
@@ -174,8 +174,12 @@ if(isset($_GET['view']) && $_GET['view'] == 'agendadd'){
                     </select>
                 </div>
             </div>
-            <input type="button" class="btn btnhover btn-block" style="font-weight: bolder; color: green" id="nuevoGuardarCitas" value="Guardar">
-        </form>
+
+            <button class="btn pull-right" style="color: green; font-weight: bolder" onclick="GuardarCitas($(this))">
+                    Agendar
+                <span class="fa fa-refresh btnSpinner hide"></span>
+            </button>
+        </div>
     </div>
 </div>
 
