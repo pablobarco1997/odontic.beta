@@ -2,12 +2,9 @@
 
 <?php
 
-    if( isset($_GET['view']))
-    {
-
+    if( isset($_GET['view'])){
         if( $_GET['view'] == 'inicio')
         {
-
 
 ?>
 
@@ -35,7 +32,15 @@
                </div>
 
                <div class="box-body">
-                   <?php  require_once DOL_DOCUMENT.'/application/system/reportes/view/vistarep_principal.php'?>
+
+                   <?php
+                        accessoModule('Inicio');
+                   ?>
+
+                   <?php
+                        require_once DOL_DOCUMENT.'/application/system/reportes/view/vistarep_principal.php'
+                   ?>
+
                </div>
            </div>
         </div>

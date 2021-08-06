@@ -2,6 +2,95 @@
 
 var $TieneImagenAsociada = false;
 
+
+var FormvalidPacienteMod = function(input = false){
+
+    var valid = false;
+    var ErroresData = [];
+
+    const errmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
+    var nom      = $("#nombre");
+    var ape      = $("#apellido");
+    var ci       = $("#rud_dni");
+    var ciud     = $("#ciudad");
+    var direc    = $("#direcc");
+    var t_movil  = $("#t_movil");
+    var email    = $("#email");
+
+    if(email.val()!=""){
+        if(!errmail.test(email.val())){
+            ErroresData.push({
+                'document' : email,
+                'text' : 'Email Icorrecto'
+            });
+        }
+    }if(nom.val()==""){
+        ErroresData.push({
+            'document' : nom,
+            'text' : 'Campo Obligatorio'
+        });
+    }if(ape.val()==""){
+        ErroresData.push({
+            'document' : ape,
+            'text' : 'Campo Obligatorio'
+        });
+    }if(ci.val()==""){
+        ErroresData.push({
+            'document' : ci,
+            'text' : 'Campo Obligatorio'
+        });
+    }else{
+        ci.val(ci.val().replace(/[^0-9]/g, ''));
+    }
+    if(ciud.val()==""){
+        ErroresData.push({
+            'document' : ciud,
+            'text' : 'Campo Obligatorio'
+        });
+    }if(direc.val()==""){
+        ErroresData.push({
+            'document' : direc,
+            'text' : 'Campo Obligatorio'
+        });
+    }
+    if(t_movil.val()==""){
+        ErroresData.push({
+            'document' : t_movil,
+            'text' : 'Campo Obligatorio'
+        });
+    }else{
+        t_movil.val(t_movil.val().replace(/[^1-9]/g, ''));
+        if(t_movil.val().length!=9){
+            ErroresData.push({
+                'document' : t_movil,
+                'text' : 'numero invalido'
+            });
+        }
+    }
+
+    $(".msg_error_add_paciente").remove();
+    if(ErroresData.length>0){
+        for (var i=0; i<=ErroresData.length-1;i++ ){
+            var documento = ErroresData[i]['document'];
+            var text      = ErroresData[i]['text'];
+            var Msg       = document.createElement('small');
+            $(Msg).addClass('msg_error_add_paciente').css('color', 'red');
+            if(documento[0].localName=='select'){
+                $(Msg).insertAfter(documento.parent().find('span:eq(0)')).text(text);
+            }else{
+                $(Msg).insertAfter(documento).text(text);
+            }
+        }
+        valid = false;
+    }else{
+        valid = true;
+    }
+    return valid;
+
+
+};
+
 //OBTENER DATOS DE INFORMACION DEL PACIENTE
 function obtenerDatosP($id)
 {
@@ -37,8 +126,7 @@ function obtenerDatosP($id)
                 $('#apoderado').val(data['apoderado']);
                 $('#refer').val(data['referencia']);
 
-                if($.trim( data['icon'] ) != "")
-                {
+                if($.trim( data['icon'] ) != ""){
 
                     $('#fileIcon').css('display',  'none');
                     var img = document.createElement('img'); //creo el elmento img
@@ -56,10 +144,9 @@ function obtenerDatosP($id)
                 }else{
                     $TieneImagenAsociada = false;
                 }
-                document.getElementById('tituloInfo').scrollIntoView(); //me recorre hacia ese id
+                // document.getElementById('tituloInfo').scrollIntoView(); //me recorre hacia ese id
             }
-            if(resp['error'] != '')
-            {
+            if(resp['error'] != ''){
                 notificacion(resp['error'], 'question');
             }
         }
@@ -148,15 +235,15 @@ $('#file_icon').change(function(e){
 //UPDATE PACIENTES FORM_DATOPS_PACIENTE
 $('#form_update_paciente').submit(function(e) {
 
+    e.preventDefault();
 
-    if(!ModulePermission(7,3)){
+    if(!ModulePermission("Datos Personales","modificar")){
         notificacion('Ud. No tiene permiso para Actualizar la Información del Paciente', 'error');
         return false;
     }
 
+    button_loadding($(".idsubmitbtnUpdate"), true);
     boxloading($boxContentViewAdminPaciente, true);
-
-    e.preventDefault();
 
     var formulario = $('#form_update_paciente');
     var form = new FormData(formulario[0]);
@@ -164,17 +251,16 @@ $('#form_update_paciente').submit(function(e) {
     form.append('accion','updatePaciente');
     form.append('TieneImage',$TieneImagenAsociada );
     form.append('id', $id_paciente);
-
-
     $.ajax({
 
         url: $DOCUMENTO_URL_HTTP +'/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
         type:'POST',
         data: form,
         dataType:'json',
-        async: false,
         contentType: false,
         processData: false,
+        cache:false,
+        async: true,
         error:function(xhr, status) {
             if(xhr['status']=='200'){
                 boxloading($boxContentViewAdminPaciente,false,1000);
@@ -195,6 +281,7 @@ $('#form_update_paciente').submit(function(e) {
                 }
                 boxloading($boxContentViewAdminPaciente,false,1000);
             }
+            button_loadding($(".idsubmitbtnUpdate"), false);
         },
         success:function(resp) {
             if (resp.error == '') {
@@ -204,6 +291,7 @@ $('#form_update_paciente').submit(function(e) {
                 notificacion(resp.error, 'error');
             }
             boxloading($boxContentViewAdminPaciente,false,1000);
+            button_loadding($(".idsubmitbtnUpdate"), false);
         }
 
     });
@@ -212,90 +300,6 @@ $('#form_update_paciente').submit(function(e) {
 
 });
 
-function  invaliUpdateDatosPaciente()
-{
-    var cont = 0;
-
-    if($('#nombre').val() == ''){
-        cont++;
-        $('#nombre').focus();
-        $('#noti_nombre').text("ingrese el nombre del paciente");
-    }else{
-        $('#noti_nombre').text(null);
-    }
-
-
-    if($('#apellido').val() == ''){
-        cont++;
-        $('#apellido').focus();
-        $('#noti_apellido').text("ingrese el apellido del paciente");
-    }else{
-        $('#noti_apellido').text(null);
-    }
-
-    if($('#rud_dni').val() == ''){
-        cont++;
-        $('#rud_dni').focus();
-        $('#noti_ruddni').text("ingrese un ruc o cedula del paciente");
-    }else{
-        $('#noti_ruddni').text(null);
-    }
-
-
-
-    if(cont>0){
-        return false;
-    }else{
-        return true;
-    }
-}
-
-function invalicEmailText(el , val)
-{
-    if(val==true){
-
-        var email = $(el).val();
-        const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-        if( !re.test(email) )
-        {
-            $('#noti_email').text('Email incorrecto');
-        } else {
-            $('#noti_email').text(null);
-        }
-
-    }
-}
-
-function invalicrucCedula(el, val)
-{
-    //solo numeros
-    if(val==true){
-        el.value = el.value.replace(/\D/g, '');
-    }
-
-    var puedepasar   = 0;
-    var input_rucced =  $(el).val();
-    var msg_error    =  $('#noti_ruddni');
-
-    var url = $DOCUMENTO_URL_HTTP +'/application/system/pacientes/nuevo_paciente/controller/nuevo_pacit_controller.php';
-    var parametros = { 'ajaxSend':'ajaxSend', 'accion':'validarCedulaRuc', 'ruc_ced': input_rucced };
-
-    $.get( url , parametros , function(data) {
-        var rs = $.parseJSON(data);
-        if(rs.error != ''){
-            msg_error.text('Este numero se encuentra repetido');
-            $('#submit').addClass('disabled_link3');
-            puedepasar++;
-        }else{
-            msg_error.text(null);
-            $('#submit').removeClass('disabled_link3');
-            puedepasar=0;
-        }
-    });
-
-    return puedepasar;
-}
 
 $(document).ready(function() {
 

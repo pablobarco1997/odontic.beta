@@ -88,9 +88,13 @@ function FiltrarEvolucion(){
 
 function AppExporPrint(){
 
+    if(!ModulePermission('Evoluciones', 'consultar')){
+        notificacion('Ud. No tiene permiso para consultar', 'error');
+        return false;
+    }
+
     var exporturl = $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/evoluciones/export/export_pdf_evoluciones.php?idpaciente='+$id_paciente;
     exporturl += '&idplant='+$('#filt_plantram').find(':selected').val()+'&date='+$("#startDateEvoluciones").val();
-
     window.open(exporturl, '_blank');
 }
 
@@ -130,6 +134,7 @@ $(document).ready(function() {
         });
 
         $('#limpiar').click(function() {
+            $("#startDateEvoluciones").val(null);
             $('#filt_plantram').val(null).trigger('change');
             FiltrarEvolucion();
         });
@@ -175,7 +180,8 @@ $(document).ready(function() {
                 'Año Actual': [moment().startOf('year'), moment().endOf('year')],
                 'Año Pasado': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
             }
-        });
+        })
+            .val(null);
 
         evoluciones_principal();
 
@@ -192,4 +198,8 @@ window.onload = boxloading($boxContentViewAdminPaciente ,true);
 $(window).on('load', function() {
     boxloading($boxContentViewAdminPaciente ,false, 1000);
 
+    if(!ModulePermission('Evoluciones', 'consultar')){
+        notificacion('Ud. No tiene permiso para consultar', 'error');
+        return false;
+    }
 });

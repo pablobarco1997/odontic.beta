@@ -91,6 +91,11 @@ function obtenerCitasSendNoti($idPaciente, $Fecha, $Status, $n_citas){
 
     global  $db;
 
+    if(!PermitsModule('E-mail Asociados', 'consultar')){
+        $permits = " and 1<>1 ";
+    }else{
+        $permits = " and 1=1 ";
+    }
 
     $fechaInicio  = "";
     $fechafin     = "";
@@ -142,6 +147,7 @@ function obtenerCitasSendNoti($idPaciente, $Fecha, $Status, $n_citas){
         $sql .= " and n.fk_cita like '%$n_citas%' ";
     }
 
+    $sql .= $permits; //asignar permiso consultar
 
     $sql .= " order by n.fecha desc ";
     $sqlTotal = $sql;
@@ -187,7 +193,7 @@ function obtenerCitasSendNoti($idPaciente, $Fecha, $Status, $n_citas){
 
             $numCita = "<table>
                             <tr>
-                                <td style='font-weight: bold'><img src='data:image /*; base64, ". base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/cita-medica.ico'))."' alt='' class=' img-rounded' style='width: 25px; height: 25px'> -</td>
+                                <td style='font-weight: bold'><img src='data:image /*; base64, ". base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/cita-medica.ico'))."' alt='' class=' img-rounded' style='width: 25px; height: 25px'></td>
                                 <td style='font-weight: bold'>".(str_pad($obj->fk_cita, 5, "0", STR_PAD_LEFT))."</td>
                             </tr>
                         </table>";

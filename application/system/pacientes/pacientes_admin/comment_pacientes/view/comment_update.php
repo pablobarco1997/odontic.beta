@@ -7,8 +7,7 @@ $acce   = $db->query($sql1);
 
 if($acce->rowCount() > 0)
 {
-    while ($obj = $acce->fetchObject())
-    {
+    while ($obj = $acce->fetchObject()) {
         $data_comment[] = (object)array(
             "doctor" => $obj->doc,
             "text"   => $obj->comentario,

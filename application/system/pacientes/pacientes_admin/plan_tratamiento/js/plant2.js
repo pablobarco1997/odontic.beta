@@ -213,7 +213,7 @@ if($accion == 'addplan')
 
                     html +=  "<div style='padding: 3px;  background-color: rgba(221,221,221, 0.3); '>" +
                                 " <a class='btn btn-xs text-bold btnhover'  style='cursor:pointer;' "+onclickRealizadoModal+" > "+ImgRealizadoChecked+"  </a>" +
-                                " <a class='btn btn-xs text-bold btnhover'  style='cursor:pointer;color: #9f191f' onclick='UpdateDeletePrestacionAsignada($(this))' > <i class='fa fa-trash'></i> Eliminar  </a>" +
+                                " <a class='btn btn-xs text-bold btnhover eliminar_tratamiento'  style='cursor:pointer;color: #9f191f' onclick='UpdateDeletePrestacionAsignada($(this))' > <i class='fa fa-trash'></i> Eliminar  </a>" +
                                 " <a style='cursor: pointer' data-toggle='collapse' data-target='#masInformacion-"+i+"' class='btn btn-xs text-bold btnhover'> <i class='fa fa-info-circle'></i> Mas información</a>" +
                                 " <a href='#detdienteplantram' data-toggle='modal' class='btn btn-xs text-bold btnhover hide'  style='cursor: pointer'  > <i class='fa fa-edit'></i> Modificar</a>" +
                                 " <a href='#modPagosxPacientes' data-toggle='modal' class='btn btn-xs text-bold btnhover "+((labelestadoPago=='')?'hidden':'')+"'  style='cursor: pointer' data-iddet='"+rowiddetalle+"' > "+ labelestadoPago +" </a>" +
@@ -659,6 +659,11 @@ if($accion == 'addplan')
     //GUARDAR LA PRESTACION AGREGADA AL DETALLE NUEVO PLAN DE TRATAMIENTO DETALLE
     $('#guardarPrestacionPLantram').click(function(){
 
+        if(!ModulePermission('Planes de Tratamientos', 'agregar')){
+            notificacion('Ud. No tiene permiso para realizar esta Operación', 'error');
+            return false;
+        }
+
         if($(".invalic_descuento").length>0){
             notificacion("Descuento Invalido", "error");
             return false;
@@ -701,17 +706,13 @@ if($accion == 'addplan')
             notificacion('No hay ningun detalle asignado', 'question');
         }
 
-        if(objInformacion.length > 0 &&  $puedoPasar == 0)
-        {
-
+        if(objInformacion.length > 0 &&  $puedoPasar == 0){
             button_loadding($("#guardarPrestacionPLantram"), true);
-
             $.ajax({
                 delay:500,
                 url: $DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php",
                 type:'POST',
                 data: {
-
                     'ajaxSend':'ajaxSend',
                     'accion': 'nuevoUpdatePlanTratamientoDetalle',
                     'datos': objInformacion ,
@@ -802,6 +803,12 @@ if($accion == "principal")
         //edit name -- nombre del plan de tratamiento
         if(idplantratamiento!="" && subaccion == 'editname' )
         {
+
+            if(!ModulePermission('Planes de Tratamientos','modificar')){
+                notificacion('Ud. No tiene permiso para modificar', 'error');
+                return false;
+            }
+
             $('#modnombPlantratamiento').modal('show');
             $('#idplanTratamientotitulo').attr('data-id', idplantratamiento);
             $('#nametratamiento').val(null);
@@ -820,6 +827,7 @@ if($accion == "principal")
 
     function finalizarPlanTratamiento( idplantratamiento, subaccion )
     {
+        button_loadding($("#finalizar_plantramiento"), true);
         $.ajax({
             url: $DOCUMENTO_URL_HTTP + "/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php",
             type:'POST',
@@ -831,21 +839,21 @@ if($accion == "principal")
                 'idpaciente' :  $id_paciente
             },
             dataType:'json',
-            async: false,
-            success: function(resp)
-            {
-
-                if(subaccion == 'finalizar_plantram')
-                {
+            async: true,
+            cache: false,
+            complete: function(xhr, ststus){
+                button_loadding($("#finalizar_plantramiento"), false);
+            },
+            success: function(resp){
+                if(subaccion == 'finalizar_plantram'){
                     if(resp.error.toString() == ''){
-
                         $('#confirm_finalizar_plantramiento').modal('hide');
                         notificacion('Información Actualizada', 'success');
-
                     }else{
                         $('#mg_finalizar_plantramiento').html( resp.consultar );
                     }
                 }
+                button_loadding($("#finalizar_plantramiento"), false);
             }
         });
     }
@@ -853,8 +861,13 @@ if($accion == "principal")
         //comportamiento cambiar nombre del tratamiento
         $('#acetareditNomPlanT').click(function(){
 
-            $.ajax({
+            if(!ModulePermission('Planes de Tratamientos','modificar')){
+                notificacion('Ud. No tiene permiso para modificar', 'error');
+                return false;
+            }
 
+            button_loadding($("#acetareditNomPlanT"), true);
+            $.ajax({
                 url: $DOCUMENTO_URL_HTTP + "/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php",
                 type:'POST',
                 data: {
@@ -864,14 +877,18 @@ if($accion == "principal")
                     'name' : $('#nametratamiento').val()
                 },
                 dataType:'json',
-                async: false,
+                async: true,
+                cache: false,
+                complete:function(xhr, status){
+                    button_loadding($("#acetareditNomPlanT"), false);
+                },
                 success: function(resp){
                     if(resp.error == ''){
                         $('#modnombPlantratamiento').modal('hide');
                         var table = $('#listtratamientotable').DataTable();
-                        table.ajax.reload();
-
+                        table.ajax.reload(null, false);
                     }
+                    button_loadding($("#acetareditNomPlanT"), false);
                 }
 
             });
@@ -880,71 +897,87 @@ if($accion == "principal")
     /*ESTA FUNCION ME PERMITE ELIMINAR EL PLAN DE TRATAMIENTO*/
     function eliminarPlan_tratamiento(padreDom, $idplantratamientoDom)
     {
+        if(!ModulePermission('Planes de Tratamientos','eliminar')){
+                notificacion('Ud. No tiene permisos para Anular ','error');
+            return false;
+        }
+
         var Dom = padreDom.parents('.row_list_plantram');
 
-        if($idplantratamientoDom > 0)
-        {
-            if(preguntar_confirm_eliminacion($idplantratamientoDom, 'eliminar_plantcab_preguntar'))
-            {
-                //Se cambia el atributo para confirmaar la eliminacion
-                //se cambia el atributo con la funcion  delete_confirmar_true_plantram
-                $('#delete_plantram_confirm').attr('onclick', 'delete_confirmar_true_plantram('+$idplantratamientoDom+')');
-            }
+        if($idplantratamientoDom > 0){
+            preguntar_confirm_eliminacion($idplantratamientoDom, 'eliminar_plantcab_preguntar');
         }
-        console.log(Dom);
     }
     
-    function preguntar_confirm_eliminacion($idplantDom, subaccion)
-    {
+    function preguntar_confirm_eliminacion(idplantDom, subaccion ){
+
+
+        if(subaccion=='eliminar_plantcab_preguntar'){
+            boxloading($boxContentViewAdminPaciente ,true);
+        }
+        if(subaccion=='confirm_eliminar'){
+            button_loadding($('#delete_plantram_confirm'), true);
+        }
+
         var preguntar = false;
-
         $.ajax({
-
             url: $DOCUMENTO_URL_HTTP +'/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
             type:'POST',
-            data: {'ajaxSend': 'ajaxSend', 'accion':'confirm_eliminar_plantratamiento', 'idplan':$idplantDom, 'idpaciente': $id_paciente ,  'subaccion': subaccion},
+            data: {'ajaxSend': 'ajaxSend', 'accion':'confirm_eliminar_plantratamiento', 'idplan':idplantDom, 'idpaciente': $id_paciente ,  'subaccion': subaccion},
             dataType:'json',
-            async: false,
+            async: true,
+            cache:false,
+            complete: function(xhr, status){
+                if(subaccion=='eliminar_plantcab_preguntar'){
+                    boxloading($boxContentViewAdminPaciente ,false, 1000);
+                }
+                if(subaccion=='confirm_eliminar'){
+                    button_loadding($('#delete_plantram_confirm'), false);
+                }
+            },
             success:function(respuesta){
-
-                if(respuesta.error > 0)
-                {
+                if(respuesta.error > 0){
                     notificacion(respuesta.errores, 'error');
-
                 }else{
-
-                    //CONFIRMAR - para la eliminacion
+                    //confirmar - para la eliminacion
                     $('#confirm_eliminar_plantram').modal('show');
                     $('#msg_eliminar_plantram').html( respuesta.msgConfirm );
+
+                        //subaccion preguntar si puedo eliminar elemento
+                        if(subaccion=='eliminar_plantcab_preguntar'){
+                            //Se cambia el atributo para confirmaar la eliminacion
+                            //se cambia el atributo con la funcion  delete_confirmar_true_plantram
+                            // alert($idplantratamientoDom);
+                            $('#delete_plantram_confirm').attr('data-id', idplantDom);
+                        }
                     preguntar = true;
-
-                    if(respuesta.acierto > 0)
-                    {
-                        //DATOS ACTUALIZADOS
+                    if(respuesta.acierto > 0){
+                        //datos actualizados
                         $('#confirm_eliminar_plantram').modal('hide');
-
                         notificacion('Información Actualizada', 'success');
-
                         listplaneTratamiento();
-
                     }else{
-
                         $('#msg_eliminar_plantram').html( respuesta.msgConfirm );
                     }
-
                 }
             }
         });
-
-
         return preguntar;
-
     }
 
     // eliminar plan de tratamiento confirmado
-    function delete_confirmar_true_plantram(idplan)
-    {
-        preguntar_confirm_eliminacion(idplan, 'confirm_eliminar');
+    function delete_confirmar_true_plantram(Elemento){
+
+        if(!ModulePermission('Planes de Tratamientos','eliminar')){
+            notificacion('Ud. No tiene permiso para Anular', 'error');
+            return false;
+        }
+
+        if( Elemento.prop('dataset').id != "" ){
+            preguntar_confirm_eliminacion(Elemento.prop('dataset').id, 'confirm_eliminar');
+        }else {
+            notificacion('Ocurrio un error de parametros de entrada', 'error');
+        }
     }
 
     //MOSTRAR PRODUCTOS ANULADOS
@@ -1058,7 +1091,7 @@ $("#modPagosxPacientes").on('show.bs.modal', function (e) {
                     },
                     "dataType":'json',
                     "complete": function(xhr, status) {
-
+                        boxloading($boxContentViewAdminPaciente ,false, 1000);
                     }
                 },
                 language: {
@@ -1088,7 +1121,7 @@ $("#modPagosxPacientes").on('show.bs.modal', function (e) {
         }
     }
 
-    console.log($(e.relatedTarget).prop('dataset').iddet);
 });
+
 
 

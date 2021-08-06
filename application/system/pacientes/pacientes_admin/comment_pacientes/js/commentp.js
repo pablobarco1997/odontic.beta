@@ -18,6 +18,8 @@ function  ajax_load_comment_time(text, subaccion, scroll = false) {
             'subaccion': subaccion,
             'id_ultimo' :$Ultimo_iddocument
         },
+        async:true,
+        cache:false,
         dataType:'json',
         success: function(resp) {
             var comment_html = "";
@@ -90,6 +92,12 @@ function  ajax_load_comment_time(text, subaccion, scroll = false) {
 }
 
 $("#comment").click(function() {
+
+    if(!ModulePermission('Comentarios Administrativos', 'consultar')){
+        notificacion('Ud. No tiene permiso para esta Operación', 'error');
+        return false;
+    }
+
     var text = $("#texto_comment").val();
     ajax_load_comment_time(text, "agregar", true);
     $("#texto_comment").val(null);

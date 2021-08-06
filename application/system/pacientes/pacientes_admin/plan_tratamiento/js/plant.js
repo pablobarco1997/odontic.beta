@@ -234,6 +234,11 @@ if($accion == "principal")
     //CREA EL PLEN DE TRATAMIENTO DESDE EL MODULO PLAN DE TRATAMIENTO
     $('#createPlanTratamientoCab').click(function() {
 
+        if(!ModulePermission('Planes de Tratamientos','agregar')){
+                notificacion('Ud. No tiene permiso para Crear','error');
+            return false;
+        }
+
         attrChangAsociarCitas(null);
         CrearPlanTratamientoIndependienteDependiente(null, true);
     });
@@ -818,4 +823,5 @@ $(window).on("load", function() {
     $('#modal_asociar_profecional').on('show.bs.modal', function () {
         $('#odontolog_id').val(null).trigger('change');
     }) ;
+
 });

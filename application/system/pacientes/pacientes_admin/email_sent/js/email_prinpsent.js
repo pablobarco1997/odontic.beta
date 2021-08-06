@@ -180,7 +180,6 @@ $(document).ready(function() {
 
     /**FECHA X RANGO*/
     $('#startDate').daterangepicker({
-
         locale: {
             format: 'YYYY/MM/DD' ,
             daysOfWeek: [
@@ -220,7 +219,7 @@ $(document).ready(function() {
             'Año Actual': [moment().startOf('year'), moment().endOf('year')],
             'Año Pasado': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
         }
-    });
+    }).val(null);
 
     $('.rango span').click(function() {
         $(this).parent().find('input').click();
@@ -241,5 +240,10 @@ $(window).on("load", function() {
 
     list_mail_sent();
     boxloading($boxContentViewAdminPaciente ,false, 1000);
+
+    if(!ModulePermission('E-mail Asociados', 'consultar')){
+        notificacion('Ud. no tiene permiso para Consultar', 'error');
+        return false;
+    }
 
 });

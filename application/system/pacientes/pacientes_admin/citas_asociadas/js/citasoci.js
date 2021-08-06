@@ -138,9 +138,6 @@ $("#filtrar").click(function() {
     AplicarFiltro();
 });
 
-
-
-
 $(document).ready(function() {
 
     $('#startDate').daterangepicker({
@@ -205,4 +202,9 @@ window.onload = boxloading($boxContentViewAdminPaciente ,true);
 $(window).on("load", function(e) {
     list_citas_Asociadas();
     boxloading($boxContentViewAdminPaciente ,false, 1000);
+
+    if(!ModulePermission('Citas Asociadas', 'consultar')){
+        notificacion('Ud. No tiene permiso para consultar', 'error');
+        return false;
+    }
 });

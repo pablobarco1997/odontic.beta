@@ -76,12 +76,7 @@ var FormValidationPerfilGlobal = function(el){
 
     if(perfil_usu.val()!="" && !(/^\s*$/).test(perfil_usu.val())){
         if( perfil_usu.val() != perfil_usu.prop('dataset').usurcurrent ){
-            if(consultarUsuarioPerfilGlod("usesr",perfil_usu.val(), "") == false){
-                Errores.push({
-                    "documento" :   perfil_usu,
-                    "mesg" :  "usuario en uso",
-                });
-            }
+
         }
     }
 
@@ -739,7 +734,7 @@ function  boxTableLoad(Element = false, load=false) {
     }
 }
 
-var ModulePermission = function(idModule = 0, actionPermiso = 0){
+var ModulePermission = function(idModule = "", actionPermiso = ""){
 
     var Permiso = false;
 
@@ -758,6 +753,7 @@ var ModulePermission = function(idModule = 0, actionPermiso = 0){
         processData:false,
         contentType:false ,
         async:false,
+        cache:false,
         success:function(resp) {
             Permiso = resp['valid'];
             if(resp['valid']=='')
@@ -768,7 +764,7 @@ var ModulePermission = function(idModule = 0, actionPermiso = 0){
                 Permiso = true;
         }
     });
-    alert(Permiso);
+    // alert(Permiso);
     return Permiso;
 };
 

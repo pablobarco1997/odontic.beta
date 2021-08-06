@@ -137,7 +137,6 @@
             </div>
             <div class="modal-footer">
                 <a href="#" class="btn btnhover" style="font-weight: bolder; color: green" id="AceptarDeletePrestacion" onclick="">Aceptar</a>
-                <a href="#" class="btn btnhover" data-dismiss="modal" style="font-weight: bolder">Close</a>
             </div>
         </div>
 

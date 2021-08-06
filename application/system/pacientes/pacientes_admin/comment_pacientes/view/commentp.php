@@ -1,4 +1,9 @@
 
+<?php
+    accessoModule('Comentarios Administrativos');
+?>
+
+
 <div class="form-group col-xs-12 col-md-12">
     <div class="form-group col-md-12 col-xs-12">
         <h3 id="loading_text"></h3>

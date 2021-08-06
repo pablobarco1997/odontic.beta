@@ -1,18 +1,23 @@
 <?php
-    #Opciones de Filtro
+    accessoModule('Planes de Tratamientos');
+?>
+
+<?php
+
+    /*
     $optionPlamtramFiltro  = "<option></option>";
     $sqlOptionPlantCab = "SELECT 
                             c.rowid , 
                             ifnull(c.edit_name, concat('Plan de Tratamiento ', 'N. ', c.numero)) plantram ,
                             concat('Doc(a) ', ' ', ifnull( (select concat( od.nombre_doc , ' ', od.apellido_doc ) as nomb from tab_odontologos od where od.rowid = c.fk_doc), 'No asignado')) as encargado
                           FROM tab_plan_tratamiento_cab c where c.fk_paciente = $idPaciente";
-
     $rsOption = $db->query($sqlOptionPlantCab);
     if($rsOption && $rsOption->rowCount()>0){
         while ($obOption = $rsOption->fetchObject()){
             $optionPlamtramFiltro .= "<option value='$obOption->rowid'> $obOption->plantram  &nbsp;&nbsp; $obOption->encargado </option>";
         }
-    }
+    }*/
+
 ?>
 
 
@@ -71,23 +76,32 @@
 
 
 <script>
-
     //ID DEL PLAN DE TRATAMIENTO
     $ID_PLAN_TRATAMIENTO =  <?= $idplantram ?>;
     $accion              = "<?= $accion ?>";
-
 </script>
 
 
 <div class="form-group col-md-12 col-xs-12" >
 
 
-    <?php
+    <?php if(isset($_GET['v']) && $_GET['v'] == 'planform') { ?>
 
-    if(isset($_GET['v']) && $_GET['v'] == 'planform')
-    { ?>
-       <?php include_once DOL_DOCUMENT.'/application/system/pacientes/pacientes_admin/plan_tratamiento/view/add_plan_tratam.php'; ?>
+        <?php include_once DOL_DOCUMENT.'/application/system/pacientes/pacientes_admin/plan_tratamiento/view/add_plan_tratam.php'; ?>
+
     <?php }else{ ?>
+
+        <script>
+
+            $(window).on('load', function () {
+                //valida si tiene permiso para consultar
+                if(!ModulePermission('Planes de Tratamientos', 'consultar')){
+                    notificacion('Ud. No tiene permiso para consultar', 'error');
+                    return false;
+                }
+            });
+
+        </script>
 
 
         <!-- breadcrumbs -->
@@ -98,9 +112,9 @@
         <div class="form-group col-md-12 col-xs-12 no-margin">
             <label for="">LISTA DE COMPORTAMIENTOS</label>
             <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px; background-color: #f4f4f4; width: 100%; margin-left: 0px;">
-                <li><a data-toggle="collapse"  data-target="#contentFilter" class="btnhover btn btn-sm " style="color: #333333" > <b>   ▼  Filtrar  </b>  </a> </li>
+                <li><a data-toggle="collapse"  data-target="#contentFilter" class="btnhover btn btn-sm <?= (PermitsModule('Planes de Tratamientos', 'consultar')==0)?'disabled_link3':'' ?> " style="color: #333333" > <b>   ▼  Filtrar  </b>  </a> </li>
                 <li>
-                    <a href="#" style="color: #333333" class="btnhover btn btn-sm " id="createPlanTratamientoCab"> <b>  <i class="fa fa-file-text"></i> Crear Plan de Tratamiento Independiente </b> </a>
+                    <a href="#" style="color: #333333" class="btnhover btn btn-sm <?= ((PermitsModule('Planes de Tratamientos', 'agregar')==0)?'disabled_link3':'') ?> " id="createPlanTratamientoCab"> <b>  <i class="fa fa-file-text"></i> Crear Plan de Tratamiento Independiente </b> </a>
                 </li>
 
                 <li>
@@ -108,7 +122,7 @@
                 </li>
 
                 <li>
-                    <div class="checkbox btn btnhover no-margin btn-sm">
+                    <div class="checkbox btn btnhover no-margin btn-sm <?= (PermitsModule('Planes de Tratamientos', 'consultar')==0)?'disabled_link3':'' ?>">
                         <label for="mostrarAnuladosPlantram">
                             <b><input type="checkbox" id="mostrarAnuladosPlantram" style="margin-top: 2px !important;">
                                 <i  class="fa fa-trash-o"></i>
@@ -118,7 +132,7 @@
                 </li>
 
                 <li>
-                    <div class="checkbox btn btnhover no-margin btn-sm">
+                    <div class="checkbox btn btnhover no-margin btn-sm <?= (PermitsModule('Planes de Tratamientos', 'consultar')==0)?'disabled_link3':'' ?>">
                         <label for="mostaraFinalizados">
                             <b><input type="checkbox" id="mostaraFinalizados" style="margin-top: 2px !important;">
                                 <i  class="fa fa-flag"></i>
@@ -148,7 +162,7 @@
                 <div class="form-group col-xs-12 col-md-8 col-sm-8">
                     <label for="filtrPlantram">Plan de Tramamiento</label>
                     <select id="filtrPlantram" class="form-control" style="width:100% ;">
-                        <?= $optionPlamtramFiltro ; ?>
+                        <option value=""></option>
                     </select>
                 </div>
 
@@ -163,9 +177,8 @@
             </div>
         </div>
 
-<!--       END OPCIONES CREACION DE PLANDES DE TRATAMIENTO-->
 
-
+        <!-- END OPCIONES CREACION DE PLANDES DE TRATAMIENTO -->
         <div class="form-group col-xs-12 col-md-12">
             <div class="table-responsive">
                 <table class="table" id="listtratamientotable" width="100%">
@@ -179,9 +192,7 @@
             </div>
         </div>
 
-
-
-        <!--    MODAL CREAR PLAN DE TRATAMIENTO ASOCIADO A UNA CITA  -------------------------------------------------------->
+        <!--    MODAL CREAR PLAN DE TRATAMIENTO ASOCIADO A UNA CITA  --------------------------------------------------->
         <div id="modal_plantrem_citas" class="modal fade" role="dialog" data-backdrop="static">
             <div class="modal-dialog " style="margin: 2% auto; width: 50%" >
 
@@ -254,7 +265,7 @@
 
 
         <!--MENSAJE DE CONFIRMACION DE ELIMINACION DE PLAN DE TRATAMIENTO-->
-        <div id="confirm_eliminar_plantram" class="modal fade" role="dialog">
+        <div id="confirm_eliminar_plantram" class="modal fade" role="dialog" data-backdrop="static">
             <div class="modal-dialog">
 
                 <!-- Modal content-->
@@ -268,8 +279,10 @@
                         <p id="msg_eliminar_plantram"></p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" style="font-weight: bolder; color: green" class="btn btnhover" id="delete_plantram_confirm" >Confirm</button>
-                        <button type="button" style="font-weight: bolder;" class="btn btnhover" data-dismiss="modal">Close</button>
+                        <button type="button" style="font-weight: bolder; color: green" class="btn btnhover" id="delete_plantram_confirm" onclick="delete_confirmar_true_plantram($(this))">
+                            Aceptar
+                            <span class="fa fa-refresh btnSpinner hide"></span>
+                        </button>
                     </div>
                 </div>
 
@@ -335,7 +348,6 @@
 
                             <span class="fa fa-refresh btnSpinner hide"></span>
                         </button>
-                        <button type="button" style="font-weight: bolder;" class="btn btnhover" data-dismiss="modal">Cerrar</button>
                     </div>
                 </div>
 
@@ -373,8 +385,11 @@
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">cancelar</button>
-                <button type="button" class="btn btn-success" id="acetareditNomPlanT">Aceptar</button>
+                <button type="button" class="btn" style="font-weight: bold"  data-dismiss="modal">cancelar</button>
+                <button type="button" class="btn text-bold" style="color: green" id="acetareditNomPlanT">
+                    Aceptar
+                    <span class="fa fa-refresh btnSpinner hide"></span>
+                </button>
             </div>
         </div>
 

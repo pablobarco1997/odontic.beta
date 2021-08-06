@@ -55,25 +55,26 @@ $NombrePaciente = null;
 
 $data = [];
 $sqlEvul = "SELECT 
-    ifnull(c.edit_name, concat('Plan de Tratamiento ', 'N. ', c.numero)) plantram ,
-    ev.fecha_create fechaevul ,
-    cp.descripcion as presstacion, 
-    ev.fk_diente as diente , 
-    (select concat( o.nombre_doc , ' ', o.apellido_doc ) from tab_odontologos o where o.rowid = ev.fk_doctor) as doct , 
-    ev.observacion , 
-    ifnull((select odes.descripcion from tab_odontograma_estados_piezas odes where odes.rowid = ev.estado_diente), 'Estado no asignado' )as estadodiente , 
-    ev.json_caras, 
-    (select concat(a.nombre,' ',a.apellido) as nom from tab_admin_pacientes a where a.rowid = ev.fk_paciente) as NomPaciente
-FROM
-    tab_evolucion_plantramiento ev , 
-    tab_plan_tratamiento_cab c , 
-    tab_plan_tratamiento_det d , 
-    tab_conf_prestaciones cp
-WHERE
-    ev.fk_plantram_cab = c.rowid and 
-    ev.fk_plantram_det = d.rowid and 
-    d.fk_prestacion = cp.rowid and 
-    ev.fk_paciente = ".$datos['idpaciente'];
+                        concat('Plan de Tratamiento ', 'N. ', c.numero) plantram ,
+                        concat('<b>edit:</b> ',c.edit_name) as edit_name , 
+                        ev.fecha_create fechaevul ,
+                        cp.descripcion as presstacion, 
+                        ev.fk_diente as diente , 
+                        (select concat( o.nombre_doc , ' ', o.apellido_doc ) from tab_odontologos o where o.rowid = ev.fk_doctor) as doct , 
+                        ev.observacion , 
+                        ifnull((select odes.descripcion from tab_odontograma_estados_piezas odes where odes.rowid = ev.estado_diente), 'Estado no asignado' )as estadodiente , 
+                        ev.json_caras
+                    FROM
+                        tab_evolucion_plantramiento ev , 
+                        tab_plan_tratamiento_cab c , 
+                        tab_plan_tratamiento_det d , 
+                        tab_conf_prestaciones cp
+                    WHERE
+                        ev.fk_plantram_cab = c.rowid and 
+                        ev.fk_plantram_det = d.rowid and 
+                        d.fk_prestacion = cp.rowid and 
+                    
+                         ".$datos['idpaciente'];
 if( !empty( $datos['idplan'] ) ){
     $sqlEvul .= " and ev.fk_plantram_cab =  " . $datos['idplan'] . "  ";
 }
@@ -87,7 +88,7 @@ $rsevol = $db->query($sqlEvul);
 if( $rsevol && $rsevol->rowCount() > 0){
     while ( $objevol =   $rsevol->fetchObject() ) {
 
-        $NombrePaciente = $objevol->NomPaciente;
+        $edit = "<small  style='display: block; color: blue'><br>".$objevol->edit_name."</small>";
 
         $cadena_caras = array();
         $caras = json_decode($objevol->json_caras);
@@ -99,14 +100,14 @@ if( $rsevol && $rsevol->rowCount() > 0){
         $cadena_caras[] = ($caras->lingual=="true") ? "lingual" : "";
 
         $row   = array();
-        $row[] = date('Y/d/m', strtotime( $objevol->fechaevul ) );
-        $row[] = $objevol->plantram;
+        $row[] = date('Y/m/d', strtotime($objevol->fechaevul) );
+        $row[] = $objevol->plantram." ".$edit;
         $row[] = $objevol->presstacion;
         $row[] = ($objevol->diente!=0)?$objevol->diente:'No asignado';
         $row[] = $objevol->estadodiente;
         $row[] = $objevol->doct;
-        $row[] = $objevol->observacion;
-        $row[] = "". (implode(',', array_filter( $cadena_caras ))) ; #lista de caras
+        $row[] = "<p style='color:blue; ' title='".$objevol->observacion."' >".((strlen($objevol->observacion)>50)?substr($objevol->observacion,0,50)." ...":$objevol->observacion)."</p>";
+        $row[] = "<small class='text-blue text-sm'>". (implode(', ', array_filter( $cadena_caras )))." </small> ";  ;
 
         $data[] = $row;
 
@@ -195,7 +196,7 @@ $header = '
 
 ob_end_clean();
 
-$mpdf=new mPDF('c','LETTER','12px','',
+$mpdf=new mPDF('c','LETTER','13px','',
     12, //left
     12, // right
     40, //top

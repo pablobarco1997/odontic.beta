@@ -76,6 +76,8 @@ require_once DOL_DOCUMENT.'/application/system/pacientes/pacientes_admin/control
                 $boxContentViewAdminPaciente = $("#boxViewadminPrincipal");
             </script>
 
+            <?php include_once  DOL_DOCUMENT .'/application/system/pacientes/pacientes_admin/view/menu_admin.php'; ?>
+
             <div class="box box-solid">
                 <div class="box-header with-border">
                     <div id="tituloInfo" style="display: block" class="no-margin">
@@ -118,8 +120,6 @@ require_once DOL_DOCUMENT.'/application/system/pacientes/pacientes_admin/control
 <?php include_once DOL_DOCUMENT.'/public/view/modal_search_paciente.php'?>
 <?php include_once DOL_DOCUMENT .'/public/view/footer_principal.php';?>
 
-<!--modales glob admin pacientes-->
-<?php include_once  DOL_DOCUMENT .'/application/system/pacientes/pacientes_admin/view/menu_admin.php'; ?>
 
 <!--import los script js  modulos independientes -->
 <?php include_once  'view/script_javascrip_mod.php'; ?>

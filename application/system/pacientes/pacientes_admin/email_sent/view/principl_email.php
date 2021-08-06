@@ -1,13 +1,14 @@
 
 <?php
 
+
+    accessoModule('E-mail Asociados');
+
     $accion  = "";
     $modv    = "";
 
-
     # listpmail ==> LISTA DE MAIL VISTA PRINCIPAL
-    if(isset($_GET['v']) && $_GET['v'] == "listpmail")
-    {
+    if(isset($_GET['v']) && $_GET['v'] == "listpmail"){
         $accion = 'list_email';
     }
 

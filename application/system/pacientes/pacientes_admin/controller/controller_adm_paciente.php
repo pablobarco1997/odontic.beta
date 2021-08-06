@@ -76,6 +76,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 $paciente->apoderado    = GETPOST('apoderado');
                 $paciente->refer        = GETPOST('refer');
                 $paciente->icon         = ($TieneImage==false)?'':$name; #icon de la imagen del paciente
+
                 $error                  = $paciente->UpdatePaciente($id);
 
                 if($TieneImage==false){
@@ -439,8 +440,11 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $last_msg    = false;
 
 
-            $ultimo_id   = GETPOST("id_ultimo");
+            if(!PermitsModule('Comentarios Administrativos', 'consultar')){
 
+            }
+
+            $ultimo_id   = GETPOST("id_ultimo");
             $text        = GETPOST("text");
             $idPaciente  = GETPOST("idPaciente");
             $subaccion   = GETPOST('subaccion');
@@ -992,22 +996,24 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
         case 'list_tratamiento':
 
+            if(!PermitsModule("Planes de Tratamientos", "consultar")){
+                $permits = " and 1<>1";
+            }else{
+                $permits = " and 1=1";
+            }
 
             $Total          = 0;
             $start          = $_POST["start"];
             $length         = $_POST["length"];
 
-
             $idplantmiento            = GETPOST('idplantmiento');
             $idpaciente               = GETPOST('idpaciente');
             $estadotram               = GETPOST('mostrar_anulados');
             $estadoMostrarFinalizados = GETPOST('mostrar_finalizados');
-
-            $fecha_range   = (GETPOST('fecha_range')!="")?explode('-', GETPOST('fecha_range')):"";
+            $fecha_range              = (GETPOST('fecha_range')!="")?explode('-', GETPOST('fecha_range')):"";
 
 
             $dataprincipal = array();
-
             $sql = "SELECT 
                         tc.rowid,
                         tc.numero,
@@ -1031,8 +1037,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         where 
                         tc.fk_paciente = ap.rowid 
                    ";
-            $sql .= " and tc.fk_paciente = ".$idpaciente." ";
 
+            $sql .= " and tc.fk_paciente = ".$idpaciente." ";
             if(!empty($estadotram) || !empty($estadoMostrarFinalizados)) {
                 if( $estadotram == 'si'){
                     $sql .= " and tc.estados_tratamiento = 'E' "; #anulado
@@ -1056,6 +1062,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 $sql .= " and cast(tc.fecha_create as date) between cast('$fechaIni' as date) and cast('$fechaFin' as date) ";
             }
 
+            $sql .= $permits;
             $sql .= " order by tc.rowid desc";
 //            echo '<pre>';print_r($sql);die();
 
@@ -1389,15 +1396,14 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $subaccion   = GETPOST('subaccion');
             $idpaciente  = GETPOST('idpaciente');
             $idplantram  = GETPOST('idplant');
-
 //            die();
             if($subaccion == 'consultarfinalizado')
             {
 
             }
 
-            if($subaccion == 'finalizar_plantram')//Finalizar Plan de tratamiento
-            {
+            //Finalizar Plan de tratamiento
+            if($subaccion == 'finalizar_plantram'){
                 $sql2 = "SELECT 
                         c.rowid,
                         (SELECT cp.descripcion FROM tab_conf_prestaciones cp WHERE cp.rowid = d.fk_prestacion) AS labelprestacion,
@@ -1412,8 +1418,6 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                                 AND c.rowid = $idplantram
                                 AND c.fk_paciente = $idpaciente; ";
                 $rs2 = $db->query($sql2);
-
-//                echo '<pre>';  print_r($sql2);  die();
 
                 $puedeFinalizar = "";
                 $invalic = 0;
@@ -2431,6 +2435,12 @@ function listcitas_admin($idPaciente, $fechaInicio, $fechafin, $n_citas, $Estado
 
     global $db, $conf, $user;
 
+    if(!PermitsModule('Citas Asociadas', 'consultar')){
+        $permits = " and 1<>1 ";
+    }else{
+        $permits = " and 1=1 ";
+    }
+
     $Total          = 0;
     $start          = $_POST["start"];
     $length         = $_POST["length"];
@@ -2482,13 +2492,17 @@ function listcitas_admin($idPaciente, $fechaInicio, $fechafin, $n_citas, $Estado
     if(!empty($n_citas))
         $sql .= " and d.rowid like '%$n_citas%' ";
 
+
+
+    $sql .= $permits; //permiso consultar
+
     $sql .= " order by d.fecha_cita desc ";
     $sqlTotal = $sql;
 
     if($start || $length)
         $sql.=" LIMIT $start,$length;";
 
-
+    //print_r($sql); die();
     $resultTotal = $db->query($sqlTotal);
     $res = $db->query($sql);
     if($res->rowCount()>0){
@@ -2709,16 +2723,21 @@ function realizarPrestacionupdate($datos = array(), $detalle_tratamiento)
 function evoluc_listprincpl($datos)
 {
     global  $db;
-
+    
+    if(!PermitsModule('Evoluciones', 'consultar')){
+        $permits = " and 1<>1";
+    }else{
+        $permits = " and 1=1";
+    }
     $data = array();
-
     $Total          = 0;
     $start          = $_POST["start"];
     $length         = $_POST["length"];
 
 
     $sqlevolucprip = "SELECT 
-                        ifnull(c.edit_name, concat('Plan de Tratamiento ', 'N. ', c.numero)) plantram ,
+                        concat('Plan de Tratamiento ', 'N. ', c.numero) plantram ,
+                        concat('<b>edit:</b> ',c.edit_name) as edit_name , 
                         ev.fecha_create fechaevul ,
                         cp.descripcion as presstacion, 
                         ev.fk_diente as diente , 
@@ -2748,6 +2767,7 @@ function evoluc_listprincpl($datos)
         $sqlevolucprip .= " and cast(ev.fecha_create as date) between '".$datex1."' and '".$datex2."' ";
     }
 
+    $sqlevolucprip .=  $permits ;
     $sqlevolucprip .= " order by ev.rowid desc";
 
     $sqlTotal = $sqlevolucprip;
@@ -2756,14 +2776,14 @@ function evoluc_listprincpl($datos)
         $sqlevolucprip.=" LIMIT $start,$length;";
 
 
-
-//    print_r($sqlevolucprip); die();
     $resultTotal = $db->query($sqlTotal);
     $Total = $resultTotal->rowCount();
-
     $rsevol = $db->query($sqlevolucprip);
+
     if( $rsevol && $rsevol->rowCount() > 0){
         while ( $objevol =   $rsevol->fetchObject() ) {
+
+            $edit = "<small class='text-blue' style='display: block'>".$objevol->edit_name."</small>";
 
             $cadena_caras = array();
             $caras = json_decode($objevol->json_caras);
@@ -2776,13 +2796,13 @@ function evoluc_listprincpl($datos)
 
             $row   = array();
             $row[] = date('Y/m/d', strtotime($objevol->fechaevul) );
-            $row[] = $objevol->plantram;
-            $row[] = $objevol->presstacion;
+            $row[] = $objevol->plantram." ".$edit;
+            $row[] = "<small class='text-blue text-sm'>".$objevol->presstacion."</small>";
             $row[] = ($objevol->diente!=0)?$objevol->diente:'No asignado';
             $row[] = $objevol->estadodiente;
             $row[] = $objevol->doct;
-            $row[] = "<p title='".$objevol->observacion."'>".((strlen($objevol->observacion)>50)?substr($objevol->observacion,0,50)." ...":$objevol->observacion)."</p>";
-            $row[] = "". (implode(', ', array_filter( $cadena_caras ))) ; #lista de caras
+            $row[] = "<p class='text-blue text-sm' title='".$objevol->observacion."' >".((strlen($objevol->observacion)>50)?substr($objevol->observacion,0,50)." ...":$objevol->observacion)."</p>";
+            $row[] = "<small class='text-blue text-sm'>". (implode(', ', array_filter( $cadena_caras )))." </small> ";  ;
 
             $data[] = $row;
 

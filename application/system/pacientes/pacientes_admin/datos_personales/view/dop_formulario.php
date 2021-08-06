@@ -2,6 +2,10 @@
 
     <div class="col-md-12">
 
+        <?php
+            accessoModule('Datos Personales');
+        ?>
+
         <form id="form_update_paciente" name="form_update_paciente" enctype="multipart/form-data" style="padding: 20px">
 
             <div class="col-centered col-sm-8 col-md-8">
@@ -17,26 +21,22 @@
 
                 <div class="form-group col-xs-12 col-md-8 col-lg-8">
                     <label for="">Nombre</label>
-                    <input type="text" class="form-control" id="nombre" name="nombre">
-                    <small style="color: red" id="noti_nombre"></small>
+                    <input type="text" class="form-control" id="nombre" name="nombre" onkeyup="FormvalidPacienteMod()">
                 </div>
 
                 <div class="form-group col-xs-12 col-md-8 col-lg-8">
                     <label for="">Apellido</label>
-                    <input type="text" class="form-control" id="apellido" name="apellido">
-                    <small style="color: red" id="noti_apellido"></small>
+                    <input type="text" class="form-control" id="apellido" name="apellido" onkeyup="FormvalidPacienteMod()">
                 </div>
 
                 <div class="form-group col-xs-12 col-md-12">
                     <label for="">C.I.</label>
-                    <input type="text"  class="form-control" id="rud_dni" name="rud_dni" onkeyup="invalicrucCedula(this, true)">
-                    <small style="color: red" id="noti_ruddni"></small>
+                    <input type="text"  class="form-control" id="rud_dni" name="rud_dni" maxlength="10" onkeyup="FormvalidPacienteMod()">
                 </div>
 
                 <div class="form-group col-xs-12 col-md-12">
                     <label for="">E-mail</label>
-                    <input type="text" class="form-control" id="email" name="email" onkeyup="invalicEmailText(this, true)">
-                    <small style="color: red" id="noti_email"></small>
+                    <input type="text" class="form-control" id="email" name="email" onkeyup="FormvalidPacienteMod()">
                 </div>
 
                 <div class="form-group  col-xs-12 col-md-12 hidden">
@@ -44,13 +44,14 @@
                     <select name="convenio" id="convenio" class="form-control">
                         <option value="0">Ninguno</option>
                         <?php
+                            /*
                             $sql = "select * from tab_conf_convenio_desc;";
                             $rs = $db->query($sql);
                             if($rs->rowCount()>0) {
                                 while ($row = $rs->fetchObject()) {
                                     echo "<option value='$row->rowid'> $row->nombre_conv </option>";
                                 }
-                            }
+                            }*/
                         ?>
                     </select>
                 </div>
@@ -75,7 +76,7 @@
 
                 <div class="form-group  col-xs-12 col-md-12">
                     <label for="">Ciudad</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad">
+                    <input type="text" class="form-control" id="ciudad" name="ciudad" onkeyup="FormvalidPacienteMod()">
                 </div>
 
                 <div class="form-group  col-xs-12 col-md-12 hidden">
@@ -85,7 +86,7 @@
 
                 <div class="form-group  col-xs-12 col-md-12">
                     <label for="">Direccion</label>
-                    <input type="text" class="form-control" id="direcc" name="direcc">
+                    <input type="text" class="form-control" id="direcc" name="direcc" onkeyup="FormvalidPacienteMod()">
                 </div>
 
                 <div class="form-group  col-xs-12 col-md-12">
@@ -95,7 +96,10 @@
 
                 <div class="form-group  col-xs-12 col-md-12">
                     <label for="">Teléfono Movil</label>
-                    <input type="number" class="form-control" id="t_movil" name="t_movil">
+                    <div class="input-group">
+                        <span class="input-group-addon">+593</span>
+                        <input type="text" class="form-control input-sm" id="t_movil" name="t_movil" maxlength="9"  onkeyup="FormvalidPacienteMod()">
+                    </div>
                 </div>
 
                 <div class="form-group  col-xs-12 col-md-12">
@@ -125,7 +129,10 @@
                 </div>
 
                 <div class="form-group  col-xs-12 col-md-12">
-                    <button id="submit" class="btn btnhover btn-block" style="font-weight: bolder; color: green" >Guardar</button>
+                    <button id="submit" class="btn btnhover pull-right idsubmitbtnUpdate" style="font-weight: bolder; color: green" >
+                        Guardar
+                        <span class="fa fa-refresh btnSpinner hide"></span>
+                    </button>
                 </div>
             </div>
 

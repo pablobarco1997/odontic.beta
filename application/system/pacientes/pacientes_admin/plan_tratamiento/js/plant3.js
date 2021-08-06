@@ -67,6 +67,11 @@ $("#RealizarPrestacion").click(function () {
 /*REALIZA LA PRESTACION*/
 function RealizarPrestacionDetallePLantram(idcabplantram, iddetplantram, iddiente){
 
+    if(!ModulePermission('Planes de Tratamientos','agregar')){
+        notificacion('Ud. no puede tiene permiso para realizar esta Operación', 'error');
+        return false;
+    }
+
     var $msg_err = 0;
     var msgDoct  = $('#msgDoctorerr');
     if($('#evolucionDoct').find(':selected').val()==""){
@@ -130,12 +135,22 @@ $('#evolucionDoct').change(function() {
 //ELIMINAR PRESTACION
 //ELIMINAR ESTADO DE LA PRESTACION
 //TAMBIEN CAMBIA EL ESTADO DE LA PRESTACION
-function UpdateDeletePrestacionAsignada(html, AuxSatus = '')
+function UpdateDeletePrestacionAsignada(Element, AuxSatus = '')
 {
-    var padre      = html.parents('.detalleListaInsert');
+
+    //Eliminar Validar Permiso
+    if(Element.hasClass('eliminar_tratamiento')){
+        if(!ModulePermission('Planes de Tratamientos', 'eliminar')){
+            notificacion('Ud. No tiene permiso para realizar esta Operación', 'error');
+            return false;
+        }
+    }
+
+    var padre      = Element.parents('.detalleListaInsert');
     var status     = padre.find('.statusdet');
     var iddetplant = status.data('iddet');
 
+    // alert(status.data('estadodet'));
     if(AuxSatus==''){
         //Prestacion realizada
         if( status.data('estadodet')  == 'R' ) {
@@ -145,12 +160,23 @@ function UpdateDeletePrestacionAsignada(html, AuxSatus = '')
         }
 
         //pendiente o activo
+        // si se puede eliminar
         if( status.data('estadodet') == 'A') {
+            if(!ModulePermission('Planes de Tratamientos', 'modificar')){
+                notificacion('Ud. No tiene permiso para realizar esta Operación', 'error');
+                return false;
+            }
             $('#modDeletePrestacion').modal('show');
             $('#AceptarDeletePrestacion').attr('onclick', 'DeletePrestacion('+iddetplant+')');
         }
 
+        // si se puede eliminar
         if( status.data('estadodet') == 'P') {
+            if(!ModulePermission('Planes de Tratamientos', 'modificar')){
+                notificacion('Ud. No tiene permiso para realizar esta Operación', 'error');
+                return false;
+            }
+
             $('#modDeletePrestacion').modal('show');
             $('#AceptarDeletePrestacion').attr('onclick', 'DeletePrestacion('+iddetplant+')');
         }
@@ -159,6 +185,7 @@ function UpdateDeletePrestacionAsignada(html, AuxSatus = '')
 
     if(AuxSatus!=''){ //cambiar de estados
         if(AuxSatus=='P'){ //cambiar el estado a EN PROCESO
+
             var url = $DOCUMENTO_URL_HTTP +'/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php';
             $.get(url, {
                 'ajaxSend':'ajaxSend',
