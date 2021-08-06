@@ -19,7 +19,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $estado  = GETPOST('estado');
             $data    = array();
 
-            $PermisoConsultar = (!PermitsModule(6,1))?" and 1<>1":"";
+            $PermisoConsultar = (!PermitsModule("Directorio de pacientes", "consultar"))?" and 1<>1":"";
 
             $sql = "SELECT * FROM tab_admin_pacientes WHERE rowid > 0 ";
             if(!empty($estado)) {

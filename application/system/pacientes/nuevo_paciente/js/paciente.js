@@ -6,14 +6,16 @@ $boxContentNewPaciente = $("#boxprincipalNewPaciente");
 function GuardarDatosPacientes()
 {
 
-    if(!ModulePermission(7,2)){
+    if(!ModulePermission("Nuevo Paciente","agregar")){
         notificacion('Ud. Notiene permisos para crear', 'error');
         return false;
     }
 
-    boxloading($boxContentNewPaciente,true);
+    if(!FormvalidPacienteAdd()){
+        return false;
+    }
 
-    var puedoPasar = invalic_paciente();
+    boxloading($boxContentNewPaciente,true);
 
     var nombre       = $('#nombre').val();
     var apellido     = $('#apellido').val();
@@ -61,126 +63,129 @@ function GuardarDatosPacientes()
         'datos': datos_paciente,
     };
 
-    // console.log(parametros);
-
-    if(puedoPasar == true){
-        $.ajax({
-            url: $DOCUMENTO_URL_HTTP +'/application/system/pacientes/nuevo_paciente/controller/nuevo_pacit_controller.php',
-            type:"POST",
-            data: parametros,
-            dataType: 'json',
-            async: false,
-            error:function(xhr, status){
-                if(xhr['status']=='200'){
-                    boxloading($boxContentNewPaciente,false,1000);
-                }else{
-                    if(xhr['status']=='404'){
-                        notificacion("Ocurrió un error con la <b>solicitud Agendar citas</b> <br> <b>xhr: "+xhr['status']+" <br> Consulte con Soporte </b>");
-                    }
-                    boxloading($boxContentNewPaciente,false,1000);
+    $.ajax({
+        url: $DOCUMENTO_URL_HTTP +'/application/system/pacientes/nuevo_paciente/controller/nuevo_pacit_controller.php',
+        type:"POST",
+        data: parametros,
+        dataType: 'json',
+        cache:false,
+        async: true,
+        complete:function(xhr, status){
+            if(xhr['status']=='200'){
+                boxloading($boxContentNewPaciente,false,1000);
+            }else{
+                if(xhr['status']=='404'){
+                    notificacion("Ocurrió un error con la <b>solicitud Agendar citas</b> <br> <b>xhr: "+xhr['status']+" <br> Consulte con Soporte </b>");
                 }
-            },
-            complete:function(xhr, status){
-                if(xhr['status']=='200'){
-                    boxloading($boxContentNewPaciente,false,1000);
-                }else{
-                    if(xhr['status']=='404'){
-                        notificacion("Ocurrió un error con la <b>solicitud Agendar citas</b> <br> <b>xhr: "+xhr['status']+" <br> Consulte con Soporte </b>");
-                    }
-                    boxloading($boxContentNewPaciente,false,1000);
-                }
-            },
-            success: function(resp)
-            {
-                if(resp.error == "exito")
-                {
-                    boxloading($boxContentNewPaciente,false,1000);
-                    notificacion("Información Actualizada", "success");
-                    window.location = $DOCUMENTO_URL_HTTP + '/application/system/pacientes/directorio_paciente/index.php?view=directorio';
-                    // location.reload(true);
-
-                }else{
-                    boxloading($boxContentNewPaciente,false,1000);
-                    notificacion("Error, Ocurrió un error con la Operción", "error");
-                }
-
                 boxloading($boxContentNewPaciente,false,1000);
             }
+        },
+        success: function(resp) {
+            if(resp.error == "exito") {
+                boxloading($boxContentNewPaciente,false,1000);
+                notificacion("Información Actualizada", "success");
+                window.location = $DOCUMENTO_URL_HTTP + '/application/system/pacientes/directorio_paciente/index.php?view=directorio';
+                // location.reload(true);
 
+            }else{
+                boxloading($boxContentNewPaciente,false,1000);
+                notificacion("Error, Ocurrió un error con la Operción", "error");
+            }
+
+            boxloading($boxContentNewPaciente,false,1000);
+        }
+
+    });
+
+}
+
+var FormvalidPacienteAdd = function(input = false){
+
+    var valid = false;
+    var ErroresData = [];
+
+    const errmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+
+    var nom      = $("#nombre");
+    var ape      = $("#apellido");
+    var ci       = $("#rud_dni");
+    var ciud     = $("#ciudad");
+    var direc    = $("#direcc");
+    var t_movil  = $("#t_movil");
+    var email    = $("#email");
+
+    if(email.val()!=""){
+        if(!errmail.test(email.val())){
+            ErroresData.push({
+                'document' : email,
+                'text' : 'Email Icorrecto'
+            });
+        }
+    }if(nom.val()==""){
+        ErroresData.push({
+            'document' : nom,
+            'text' : 'Campo Obligatorio'
+        });
+    }if(ape.val()==""){
+        ErroresData.push({
+            'document' : ape,
+            'text' : 'Campo Obligatorio'
+        });
+    }if(ci.val()==""){
+        ErroresData.push({
+            'document' : ci,
+            'text' : 'Campo Obligatorio'
         });
     }else{
-        boxloading($boxContentNewPaciente,false,1000);
+        ci.val(ci.val().replace(/[^0-9]/g, ''));
+    }
+    if(ciud.val()==""){
+        ErroresData.push({
+            'document' : ciud,
+            'text' : 'Campo Obligatorio'
+        });
+    }if(direc.val()==""){
+        ErroresData.push({
+            'document' : direc,
+            'text' : 'Campo Obligatorio'
+        });
+    }
+    if(t_movil.val()==""){
+        ErroresData.push({
+            'document' : t_movil,
+            'text' : 'Campo Obligatorio'
+        });
+    }else{
+        t_movil.val(t_movil.val().replace(/[^1-9]/g, ''));
+        if(t_movil.val().length!=9){
+            ErroresData.push({
+                'document' : t_movil,
+                'text' : 'numero invalido'
+            });
+        }
     }
 
-
-    $(document).ajaxComplete(boxloading($boxContentNewPaciente,false));
-
-}
-
-function invalic_paciente(input = false)
-{
-
-    var cont = 0;
-
-    if($('#nombre').val() == ''){
-        cont++;
-        $('#noti_nombre').text("ingrese el nombre del paciente");
-    }else{
-        $('#noti_nombre').text(null);
-    }
-
-
-    if($('#apellido').val() == ''){
-        cont++;
-        $('#noti_apellido').text("ingrese el apellido del paciente");
-    }else{
-        $('#noti_apellido').text(null);
-    }
-
-    if($('#sexo').find(':selected').val() == ''){
-        cont++;
-        $('#noti_sexo').text("ingrese el genero del paciente");
-    }else{
-        $('#noti_sexo').text(null);
-    }
-
-    if($('#fech_nacimit').find(':selected').val() == ''){
-        cont++;
-        $('#noti_date_nacimiento').text("ingrese fecha de nacimiento del paciente");
-    }else{
-        $('#noti_date_nacimiento').text(null);
-    }
-
-    if($('#direcc').val() == ''){
-        cont++;
-        $('#noti_direccion').text("ingrese la dirección del paciente");
-    }else{
-        $('#noti_direccion').text(null);
-    }
-
-    //se comprueba el numero de cedula se esta repetido
-    if($('#rud_dni').val()==""){
-        $('#noti_ruddni').text('Campo obligatorio');
-        cont++;
-    }else{
-        if(input==true){
-            if( invalicrucCedula($('#rud_dni'), false) > 0 ){
-                $('#noti_ruddni').text('Este numero se encuentra repetido');
-                cont++;
+    $(".msg_error_add_paciente").remove();
+    if(ErroresData.length>0){
+        for (var i=0; i<=ErroresData.length-1;i++ ){
+            var documento = ErroresData[i]['document'];
+            var text      = ErroresData[i]['text'];
+            var Msg       = document.createElement('small');
+                            $(Msg).addClass('msg_error_add_paciente').css('color', 'red');
+            if(documento[0].localName=='select'){
+                $(Msg).insertAfter(documento.parent().find('span:eq(0)')).text(text);
+            }else{
+                $(Msg).insertAfter(documento).text(text);
             }
         }
-        $('#noti_ruddni').text(null);
+        valid = false;
+    }else{
+        valid = true;
     }
+    return valid;
 
-    if( cont > 0){
 
-        return false
-    }else {
-
-        return true
-    }
-
-}
+};
 
 function carga_subida_masiva_pacientes()
 {
@@ -228,53 +233,6 @@ $('#guardar').on('click', function(){
     GuardarDatosPacientes();
 });
 
-function invalicrucCedula(el, val)
-{
-    //solo numeros
-    if(val==true){
-        el.value = el.value.replace(/\D/g, '');
-    }
-
-    var puedepasar   = 0;
-    var input_rucced =  $(el).val();
-    var msg_error    =  $('#noti_ruddni');
-
-    var url = $DOCUMENTO_URL_HTTP +'/application/system/pacientes/nuevo_paciente/controller/nuevo_pacit_controller.php';
-    var parametros = { 'ajaxSend':'ajaxSend', 'accion':'validarCedulaRuc', 'ruc_ced': input_rucced };
-
-    $.get( url , parametros , function(data) {
-            var rs = $.parseJSON(data);
-            if(rs.error != '')
-            {
-                msg_error.text('Este numero se encuentra repetido');
-                $('#guardar').addClass('disabled_link3');
-                puedepasar++;
-            }else{
-                // msg_error.text(null);
-                $('#guardar').removeClass('disabled_link3');
-                puedepasar=0;
-            }
-    });
-
-    return puedepasar;
-}
-
-function invalicEmailText(el , val)
-{
-    if(val==true){
-
-        var email = $(el).val();
-        const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-        if( !re.test(email) )
-        {
-            $('#noti_email').text('Email incorrecto');
-        } else {
-            $('#noti_email').text(null);
-        }
-
-    }
-}
 
 $(document).ready(function() {
 

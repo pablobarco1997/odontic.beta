@@ -58,17 +58,13 @@ if(isset($_GET['view']))
             <section class="content container-fluid" id="boxprincipalDirectPaciente">
                 <?php
 
-                if(!empty($view))
-                {
-                    switch ($view)
-                    {
-                        case 'directorio':
-
-                            include_once DOL_DOCUMENT.'/application/system/pacientes/directorio_paciente/view/form_directorio.php';
-
-                            break;
+                    if(!empty($view)){
+                        switch ($view){
+                            case 'directorio':
+                                include_once DOL_DOCUMENT.'/application/system/pacientes/directorio_paciente/view/form_directorio.php';
+                                break;
+                        }
                     }
-                }
 
                 ?>
             </section>

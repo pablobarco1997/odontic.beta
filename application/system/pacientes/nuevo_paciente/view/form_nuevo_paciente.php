@@ -29,17 +29,14 @@
                                         </div>
                                     </div>
 
-<!--                        FORM DE REGISTRO PACIENTE-->
+                                            <!--FORM DE REGISTRO PACIENTE-->
                                             <div class="form-group col-md-12  col-sm-12 ">
-
                                                     <div class="form-group col-md-8 col-sm-12 col-xs-12 col-lg-8 col-centered">
-
-                                                            <form class="form-horizontal" >
-
+                                                            <div    class="form-horizontal" >
                                                                         <div class="form-group">
                                                                             <label for="" class="control-label col-sm-2">Nombre</label>
                                                                             <div class="col-sm-10">
-                                                                                <input type="text" class="form-control input-sm" id="nombre" onkeyup="invalic_paciente();">
+                                                                                <input type="text" class="form-control input-sm" id="nombre" onkeyup="FormvalidPacienteAdd();">
                                                                                 <small id="noti_nombre" style="color: red"></small>
                                                                             </div>
                                                                         </div>
@@ -47,7 +44,7 @@
                                                                         <div class="form-group">
                                                                             <label for="" class="control-label col-sm-2">Apellido</label>
                                                                             <div class="col-sm-10">
-                                                                                <input type="text" class="form-control input-sm" id="apellido" onkeyup="invalic_paciente();">
+                                                                                <input type="text" class="form-control input-sm" id="apellido" onkeyup="FormvalidPacienteAdd();">
                                                                                 <small id="noti_apellido" style="color: red"></small>
                                                                             </div>
                                                                         </div>
@@ -55,7 +52,7 @@
                                                                         <div class="form-group">
                                                                             <label for="" class="control-label col-sm-2">C. I.	</label>
                                                                             <div class="col-sm-10">
-                                                                                <input type="text" class="form-control input-sm" id="rud_dni" onkeyup="invalicrucCedula(this, true); invalic_paciente(true)">
+                                                                                <input type="text" class="form-control input-sm" id="rud_dni" pattern="[0-9]+" onkeyup="FormvalidPacienteAdd();">
                                                                                 <small id="noti_ruddni" style="color: red"></small>
                                                                             </div>
                                                                         </div>
@@ -63,7 +60,7 @@
                                                                         <div class="form-group">
                                                                             <label for="" class="control-label col-sm-2" >E-mail</label>
                                                                             <div class="col-sm-10">
-                                                                                <input type="text" class="form-control input-sm" id="email" onkeyup="invalicEmailText(this, true); invalic_paciente();">
+                                                                                <input type="text" class="form-control input-sm" id="email" onkeyup="FormvalidPacienteAdd(); ">
                                                                                 <small id="noti_email" style="color: red"></small>
                                                                             </div>
                                                                         </div>
@@ -75,12 +72,14 @@
                                                                                 <select name="convenio" id="convenio" class="form-control ">
                                                                                     <option value="0"> Ninguno </option>
                                                                                     <?php
-                                                                                    $sql = "select * from tab_conf_convenio_desc";
-                                                                                    $rs  = $db->query($sql);
-                                                                                    if($rs->rowCount()>0)
-                                                                                    {   while ($rowxs = $rs->fetchObject())
-                                                                                        { print "<option value='$rowxs->rowid'> $rowxs->nombre_conv </option>"; }
-                                                                                    }
+                                                                                        /*
+                                                                                        $sql = "select * from tab_conf_convenio_desc";
+                                                                                        $rs  = $db->query($sql);
+                                                                                        if($rs->rowCount()>0){
+                                                                                            while ($rowxs = $rs->fetchObject()){
+                                                                                                print "<option value='$rowxs->rowid'> $rowxs->nombre_conv </option>";
+                                                                                            }
+                                                                                        } */
                                                                                     ?>
                                                                                 </select>
                                                                             </div>
@@ -97,8 +96,8 @@
                                                                             <label for="" class="control-label col-sm-2">Genero</label>
                                                                             <div class="col-sm-10">
                                                                                 <select name="" id="sexo" class="form-control input-sm" >
-                                                                                    <option value="masculino">masculino</option>
-                                                                                    <option value="femenino">femenino</option>
+                                                                                    <option value="masculino">Masculino</option>
+                                                                                    <option value="femenino">Femenino</option>
                                                                                 </select>
                                                                                 <small id="noti_sexo" style="color: red"></small>
                                                                             </div>
@@ -134,22 +133,25 @@
                                                                         <div class="form-group">
                                                                             <label for="" class="control-label col-sm-2">Dirección</label>
                                                                             <div class="col-sm-10">
-                                                                                <input type="text" class="form-control input-sm" id="direcc" onkeyup="invalic_paciente()">
+                                                                                <input type="text" class="form-control input-sm" id="direcc" onkeyup="FormvalidPacienteAdd()">
                                                                                 <small id="noti_direccion" style="color: red"></small>
                                                                             </div>
                                                                         </div>
 
                                                                         <div class="form-group">
-                                                                            <label for="" class="control-label col-sm-2">Teléfono Fijos</label>
+                                                                            <label for="" class="control-label col-sm-2" >Teléfono Fijos</label>
                                                                             <div class="col-sm-10">
                                                                                 <input type="number" class="form-control input-sm" id="t_fijo">
                                                                             </div>
                                                                         </div>
 
                                                                         <div class="form-group">
-                                                                            <label for="" class="control-label col-sm-2">Teléfono celular</label>
+                                                                            <label for="" class="control-label col-sm-2" >Teléfono celular</label>
                                                                             <div class="col-sm-10">
-                                                                                <input type="number" class="form-control input-sm" id="t_movil">
+                                                                                <div class="input-group">
+                                                                                    <span class="input-group-addon">+593</span>
+                                                                                    <input type="text" class="form-control input-sm" id="t_movil" maxlength="9"  onkeyup="FormvalidPacienteAdd()">
+                                                                                </div>
                                                                             </div>
                                                                         </div>
 
@@ -182,15 +184,21 @@
 
 <!--                                                                    Apoderado-->
                                                                         <div class="form-group hidden">
-                                                                            <label for="">Apoderado</label>
+                                                                            <label for=""  class="control-label col-sm-2">Apoderado</label>
                                                                             <input type="text" class="form-control" id="apoderado">
                                                                         </div>
 
 
                                                                         <div class="form-group">
-                                                                            <input type="button" class="btn btnhover btn-block" style="font-weight: bolder; color: green" id="guardar" value="Guardar">
+                                                                            <label for=""  class="control-label col-sm-2" >&nbsp;</label>
+                                                                            <div class="col-sm-10">
+                                                                                <button class="btn btnhover pull-right" style="font-weight: bolder; color: green" id="guardar" >
+                                                                                    Guardar
+                                                                                    <span class="fa fa-refresh btnSpinner hide"></span>
+                                                                                </button>
+                                                                            </div>
                                                                         </div>
-                                                            </form>
+                                                            </div>
                                                         <br>
                                                     </div>
                                             </div>

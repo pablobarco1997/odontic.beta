@@ -16,6 +16,7 @@
             <div class="box-body">
                 <div class="row">
                     <div class="form-group col-xs-12 col-md-12">
+                        <?php accessoModule("Directorio de pacientes"); ?>
                         <div class="col-lg-8 col-xs-12 col-md-6 col-sm-6 margenTopDiv pull-right">
                             <ul class="list-inline pull-right list_option">
                                 <li>
@@ -28,7 +29,7 @@
                                 </li>
                                 <li>
                                     <label>
-                                        <a id="imprimir_listPacientes" class="btnhover <?= (!PermitsModule(6,1)?"disabled_link3":"") ?>" style="padding: 5px; color: #333333" target="_blank" href="<?= DOL_HTTP .'/application/system/pacientes/directorio_paciente/export/export_pdf_directorio.php' ?>"><i class="fa fa-print"></i>   &nbsp;Imprimir Lista</a>
+                                        <a id="imprimir_listPacientes" class="btnhover <?= (!PermitsModule("Directorio de pacientes", "consultar")?"disabled_link3":"") ?>" style="padding: 5px; color: #333333" target="_blank" href="<?= DOL_HTTP .'/application/system/pacientes/directorio_paciente/export/export_pdf_directorio.php' ?>"><i class="fa fa-print"></i>   &nbsp;Imprimir Lista</a>
                                     </label>
                                 </li>
                                 <li>

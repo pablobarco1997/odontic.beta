@@ -176,5 +176,10 @@ window.onload =     boxloading($boxContentDirectorio, true);
 
 $(window).on("load", function() {
     boxloading($boxContentDirectorio, false, 1000);
+
+    if(!ModulePermission("Directorio de pacientes", "consultar")){
+        notificacion("Ud. No tiene permiso para consultar", "error");
+        return false;
+    }
 });
 
