@@ -39,7 +39,8 @@ if(isset($_POST['ajaxSend']) || isset($_GET['ajaxSend']))
                         $sql = "SELECT 
                             s.fk_doc, 
                             s.rowid AS id_login_2, 
-                            s.login_idusers_entity
+                            s.login_idusers_entity, 
+                            s.fk_perfil_entity as Perfil_users
                         FROM
                             tab_login_users s
                                 LEFT JOIN
@@ -74,6 +75,8 @@ if(isset($_POST['ajaxSend']) || isset($_GET['ajaxSend']))
                                 $_SESSION['logoClinica']            = $respuesta['logoClinica'];
                                 $_SESSION['login_entidad']          = $respuesta['login_entidad'];
 
+                                //perfil users
+                                $_SESSION['perfil_users']           = $result_abc->Perfil_users;
                                 //unique login users
                                 $_SESSION['users_unique_id']        = $result_abc->login_idusers_entity;
 
