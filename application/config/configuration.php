@@ -118,10 +118,14 @@
                     while ( $CitasConsult = $rsConsultCitas->fetchObject() ){
 
                         //cita icon de paciente
-                        if(file_exists(DOL_DOCUMENT.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$CitasConsult->icon)){
-
-                            $paciente_icon = "data: image/* ; base64, ".base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$CitasConsult->icon));
-                        }else{
+                        if($CitasConsult->icon!=""){
+                            if(file_exists(DOL_DOCUMENT.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$CitasConsult->icon)){
+                                $paciente_icon = "data: image/* ; base64, ".base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$CitasConsult->icon));
+                            }else{
+                                $paciente_icon = "data: image/* ; base64, ".base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/avatar_none.ico'));
+                            }
+                        }
+                        else{
                             //avatar icon
                             $paciente_icon = "data: image/* ; base64, ".base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/avatar_none.ico'));
                         }

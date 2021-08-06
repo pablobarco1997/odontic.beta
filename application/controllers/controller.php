@@ -578,12 +578,9 @@ function validSuperAdmin($idEntityLogin = ""){
 
 }
 
-function PermitsModule($idModule = "", $action = ""){
+function PermitsModule($nom_module="", $permiso="", $die=0){
 
-    global $user, $conf;
-
-    #CONECCIONA ENTIDADES
-    $cn = new CONECCION_ENTIDAD();
+    global $user, $conf, $db;
 
     /*
      * action Permisos
@@ -594,35 +591,138 @@ function PermitsModule($idModule = "", $action = ""){
      * 4 => eliminar
      * */
 
-    $valid = "";
+    if(validSuperAdmin($user->users_unique_id))
+        $admin = 1;
+    else
+        $admin = 0;
 
-    if(!$user->admin){
 
-        #Consulto el perfil nuevamente
-        $GetPerfil = $cn::CONNECT_ENTITY()->query("select fk_perfiles as idPerfil from tab_login_entity where rowid = ".$user->id_entidad_login." limit 1")->fetchObject()->idPerfil;
+    if(!$admin){
 
-        if($user->idPerfil!=0 && !empty($idModule) && !empty($action) && $GetPerfil!=0 ){
+        if(!is_string($nom_module) && !is_string($permiso)){
+            return false;
+        }
 
-            $query = "SELECT count(*) count FROM tab_permisos_user where fk_perfil_module = ".$GetPerfil." and fk_modulo = ".$idModule." and fk_action_permisos = ".$action." and numero_entity = ".$conf->EMPRESA->ENTIDAD;
-            $result = $cn::CONNECT_ENTITY()->query($query);
-            if($result){
-                if($result->rowCount()>0){
-                    if($result->fetchObject()->count == 1){
-                        $valid = true;
-                    }
-                }
+        $column = " m.name AS modulo,
+                    s.usuario,
+                    pn.name AS name_permiso,
+                    p.id_module,
+                    p.id_permissions ";
+
+        if($permiso != "" && $nom_module != ""){
+            $column = " count(*) ";
+        }
+
+        $sql_a = "SELECT 
+                    ".$column."
+                FROM
+                    tab_login_users s
+                        INNER JOIN
+                    tab_login_users_permissions p ON p.fk_perfiles = s.fk_perfil_entity
+                        INNER JOIN
+                    tab_login_permissions pn ON pn.rowid = p.id_permissions
+                        INNER JOIN
+                    tab_modulos_clinicos m ON m.rowid = p.id_module
+                        INNER JOIN
+                    tab_login_users_permissions_modulos prm ON prm.id_modulo = m.rowid
+                        AND prm.fk_perfil = p.fk_perfiles
+                WHERE
+                    s.rowid = $user->id 
+                    AND pn.name = '$permiso'
+                    AND replace(m.name,' ','') = replace('$nom_module',' ','')
+                GROUP BY m.rowid , pn.rowid";
+
+        if($die==1){
+//             print_r($sql_a); die();
+        }
+        $result = $db->query($sql_a);
+        if($result){
+            if($result->rowCount()>0){
+                $valid =  true;
             }else{
-                $valid = false;
+                $valid =  false;
             }
         }else{
-            $valid = false;
+            $valid =  false;
         }
+
 
     }else{
         $valid = true;
     }
 
     return $valid;
+}
+
+function accessoModule($nomb_module){
+
+    global $user, $db;
+
+    if(validSuperAdmin($user->users_unique_id))
+        $admin = 1;
+    else
+        $admin = 0;
+
+    //si no es administrador
+    if(!$admin){
+        //se comprueba que tenga permiso para acceder al modulo
+        $sql_m = "SELECT 
+                        mc.name, m.fk_perfil
+                    FROM
+                        tab_login_users_permissions_modulos m
+                            inner join 
+                        tab_login_users s on s.fk_perfil_entity = m.fk_perfil
+                            INNER JOIN
+                        tab_modulos_clinicos mc ON mc.rowid = m.id_modulo
+                    WHERE
+                        mc.name = '$nomb_module' AND s.rowid = $user->id
+                    group by mc.rowid";
+//        print_r($sql_m); die();
+        $result = $db->query($sql_m);
+        if($result->rowCount()==1){
+            $result_a = $result->fetchObject()->name;
+            if($result_a==$nomb_module){
+                return true;
+            }else{
+                errorAccessoDenegado();
+                return false;
+            }
+        }else{
+            errorAccessoDenegado();
+            return false;
+        }
+    }
+
+
+}
+
+function errorAccessoDenegado(){
+
+    print "<div class=\"error-page\">
+        <h2 class=\"headline text-red\">403</h2>
+
+        <div class=\"error-content\">
+          <h3><i class=\"fa fa-warning text-red\"></i> ACCESO DENEGADO</h3>
+
+          <p>
+            Ud. No tiene permiso asignado para este módulo
+          </p>
+
+          <form class=\" hide search-form\">
+            <div class=\"input-group\">
+              <input type=\"text\" name=\"search\" class=\"form-control\" placeholder=\"Search\">
+
+              <div class=\"input-group-btn\">
+                <button type=\"submit\" name=\"submit\" class=\"btn btn-danger btn-flat\"><i class=\"fa fa-search\"></i>
+                </button>
+              </div>
+            </div>
+            <!-- /.input-group -->
+          </form>
+        </div>
+      </div>";
+
+    die();
 }
 
 //se consulta la caja para que usuario puede realizar cobros de un plan de tratamiento

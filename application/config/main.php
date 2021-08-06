@@ -12,9 +12,10 @@
     /**Coneccion a la empresa o clinica dental asociada x el usuario*/
     require_once  DOL_DOCUMENT .'/application/system/conneccion/conneccion.php';
 
+    /**User class */
+    require_once  DOL_DOCUMENT .'/application/config/class.users.php';
 
     /** -------------------   MAIN  ----------------------------*/
-
     /** Informacion del servidor - priviligios o credenciales del servidor - REMOTO or LOCAL */
     #INFORMACION JSON PRIVILEGIOS SERVER
     $Server = json_decode( file_get_contents( DOL_DOCUMENT.'/application/config/privileges.json') , true );
@@ -34,20 +35,23 @@
 
     $entity   = new CONECCION_ENTIDAD();
     $conf     = new configuration();
-    $permisos = (object)[];#Obtiene los permisos asignados
 
     /** Usuario
      *  id => guarda el id del doctor que esta asociado al usuario
      *  id_entidad_login => guarda el id del login de la tabla principal global - db adminnub_schema_dental_entity_login - table : schema_dental_entity_login.tab_login_entity para poder actualizar la tabla
      *  name => nombre de usuario
      */
-    $user     = (object)array(
+
+    /**$user     = (object)array(
         "id"                => $_SESSION['id_users_2'],
         "name"              => $_SESSION['usuario'],
         "id_entidad_login"  => $_SESSION["login_entidad"],
         "idPerfil"          => $_SESSION["fk_perfil"],
         "admin"             => $_SESSION["admin"],
-    );
+        "users_unique_id"   => $_SESSION["users_unique_id"],
+        "perfil_users"      => $_SESSION["perfil_users"],
+    );**/
+    $user = new Users($db);
 
     /**Mensage de error global*/
     $messErr = "Ocurrió un error con la Operación consulte con Soporte";
@@ -113,8 +117,8 @@
     ); */
 
 
-// echo '<pre>'; print_r($user); die();
+    //echo '<pre>'; print_r($user); die();
 
-    #echo phpversion();
+    //echo phpversion();
 
 ?>
