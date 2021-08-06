@@ -3,7 +3,6 @@
 <?php
 
     $Year = date("Y");
-
     require_once DOL_DOCUMENT.'/application/system/reportes/view/modal_views_reporte.php';
 
 ?>
@@ -26,7 +25,7 @@
 
 </style>
 
-<div class="form-group col-xs-12 col-md-12 no-margin">
+<div class="form-group col-xs-12 col-md-12 no-margin <?= !PermitsModule("Inicio", "consultar")?"disabled_link3":"" ?>">
 
     <div class="form-group col-xs-12 col-md-12 col-lg-12 no-margin">
         <div class="form-group col-md-5 col-lg-5 col-sm-8 col-xs-12 no-margin">
@@ -96,7 +95,7 @@
 </div>
 
 
-<div class="form-group col-xs-12 col-md-12">
+<div class="form-group col-xs-12 col-md-12 <?= !PermitsModule("Inicio", "consultar")?"hide":"" ?>">
     <div class="form-group col-xs-12 col-md-12">
         <?php require_once DOL_DOCUMENT.'/application/system/reportes/view/highcharts_reportes.php'?>
     </div>

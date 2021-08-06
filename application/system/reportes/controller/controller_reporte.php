@@ -68,6 +68,12 @@ function Obtener_prestaciones_realizadas(){
 
     global  $db;
 
+    if(!PermitsModule("Inicio", "consultar")){
+        $Permits = " and 1<>1";
+    }else{
+        $Permits = "";
+    }
+
     $prestaciones_realizadas = [];
 
     $query = "SELECT 
@@ -84,7 +90,7 @@ function Obtener_prestaciones_realizadas(){
                 tab_conf_prestaciones c on c.rowid = d.fk_prestacion
                 
                 WHERE d.estadodet = 'R'
-                and year(b.fecha_create) = year(now()) 
+                and year(b.fecha_create) = year(now()) $Permits
                 group by d.fk_prestacion
                 order by round(sum(d.total), 2) desc
                 limit 10;";
@@ -115,6 +121,12 @@ function ObtenerPagoRecibidosMensuales(){
 
     global $db;
 
+    if(!PermitsModule("Inicio", "consultar")){
+        $Permits = " and 1<>1";
+    }else{
+        $Permits = "";
+    }
+
     $fetch = [];
 
     $query = "
@@ -125,7 +137,7 @@ function ObtenerPagoRecibidosMensuales(){
 FROM
     tab_pagos_independ_pacientes_det pd
 WHERE
-    YEAR(pd.feche_create) IN ((YEAR(pd.feche_create) - 1) , YEAR(pd.feche_create))
+    YEAR(pd.feche_create) IN ((YEAR(pd.feche_create) - 1) , YEAR(pd.feche_create)) $Permits
 GROUP BY YEAR(pd.feche_create) , MONTH(pd.feche_create)
 ORDER BY YEAR(pd.feche_create) , MONTH(pd.feche_create);";
     $result = $db->query($query);
@@ -175,6 +187,13 @@ ORDER BY YEAR(pd.feche_create) , MONTH(pd.feche_create);";
 function CargarConsultasReportes($date){
 
     global  $db;
+
+    if(!PermitsModule("Inicio", "consultar")){
+        $Permits = " and 1<>1";
+    }else{
+        $Permits = "";
+    }
+
     $object = new stdClass();
 
     $arr_date   = explode('-', $date);
@@ -183,20 +202,20 @@ function CargarConsultasReportes($date){
 
     //Pacientes Registrados depende de la fecha del filtro
     $fecha_pacientes = "  and tms between '$dateInicio' and '$dateFin'  ";
-    $pacientes = $db->query("SELECT count(*) as count FROM tab_admin_pacientes WHERE estado = 'A' and rowid > 0 $fecha_pacientes")->fetchObject()->count;
+    $pacientes = $db->query("SELECT count(*) as count FROM tab_admin_pacientes WHERE estado = 'A' and rowid > 0 $fecha_pacientes  $Permits")->fetchObject()->count;
     $object->n_pacientes = $pacientes;
 
     //planes de tratamiento activos y abonados
     $fecha_tratamiento = " and cast(fecha_create as date) between '$dateInicio' and '$dateFin' ";
-    $planesTratamientoActivos = $db->query("select count(*) as count from tab_plan_tratamiento_cab where estados_tratamiento in('A','S','F')  $fecha_tratamiento ")->fetchObject()->count;
+    $planesTratamientoActivos = $db->query("select count(*) as count from tab_plan_tratamiento_cab where estados_tratamiento in('A','S','F')  $fecha_tratamiento  $Permits")->fetchObject()->count;
     $object->n_tratamientos = $planesTratamientoActivos;
 
     //Citas canceladas o anuladas
-    $citas = $db->query("select count(*) as count from tab_pacientes_citas_det where fk_estado_paciente_cita in(9,7) and cast(fecha_cita as date) between '$dateInicio' and '$dateFin' ")->fetchObject()->count;
+    $citas = $db->query("select count(*) as count from tab_pacientes_citas_det where fk_estado_paciente_cita in(9,7) and cast(fecha_cita as date) between '$dateInicio' and '$dateFin'   $Permits")->fetchObject()->count;
     $object->citas_canceladas = $citas;
 
     //atendido
-    $atendidos = $db->query("select count(*) as count from tab_pacientes_citas_det where fk_estado_paciente_cita in(6) and cast(fecha_cita as date) between '$dateInicio' and '$dateFin' ")->fetchObject()->count;
+    $atendidos = $db->query("select count(*) as count from tab_pacientes_citas_det where fk_estado_paciente_cita in(6) and cast(fecha_cita as date) between '$dateInicio' and '$dateFin' $Permits ")->fetchObject()->count;
     $object->atendidos = $atendidos;
 
     return $object;
