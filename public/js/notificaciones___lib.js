@@ -151,6 +151,7 @@ if( $('#nuevoGuardarCitas').length > 0){
 function Notify_odontic(solo_numero_noti = false, tiempoReal=false) {
 
 
+
     if(solo_numero_noti==1){
 
         // const Object = {
@@ -201,11 +202,10 @@ function Notify_odontic(solo_numero_noti = false, tiempoReal=false) {
     }
 
     $('.remove_element_cita_agend').remove();
-    if($("#star_notificaciones_cargando").hasClass('hide')){
-        $("#star_notificaciones_cargando").removeClass('hide');
-    }else{
 
-    }
+    $('#start_noti_vacio').addClass('hide');
+    $("#star_notificaciones_cargando").addClass('hide');
+    
 
     var parametros = {
         'ajaxSend'  : 'ajaxSend',
@@ -236,6 +236,8 @@ function Notify_odontic(solo_numero_noti = false, tiempoReal=false) {
                     $("#start_noti_vacio").removeClass('hide');
                 }
             }
+
+            $("#star_notificaciones_cargando").addClass('hide');
         }
     });
 }
