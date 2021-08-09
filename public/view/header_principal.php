@@ -158,10 +158,5 @@
 <!--MODAL GLOBALES-->
 <?php include_once DOL_DOCUMENT .'/public/view/modal_glob.php'; ?>
 
-<!--LOADDING HTML CSS -->
-<div id="loaddinContent" class="conten-load" style="display: none;">
-    <div class="loadding"></div>
-</div>
-<!--END LOADDIN HTML CSCS-->
 
 

@@ -408,7 +408,7 @@ function SubirImagenes(Este,imageid,url)
             };
             if( Este.files.length > 0){     reader.readAsDataURL( Este.files[0] ); }
         }else{
-            notificacion("Error de Fichero, Solo admite Ficheros tipo imagenes .png", "error");
+            notificacion("Solo achivos png", "error");
         }
         // console.log(file);
     }else{

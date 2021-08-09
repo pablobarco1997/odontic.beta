@@ -1,6 +1,3 @@
-<!--NOTIFICACIONES -->
-
-<?php //echo '<pre>';  print_r($conf->NOTIFICACIONES->Glob_Notificaciones); die();  ?>
 
 
 <li class="dropdown messages-menu" >
@@ -13,12 +10,19 @@
     <ul class="dropdown-menu " id="menuNotificacion" style="width: 400px ;">
         <li class="header">  <b id="N_Notificaciones"></b> NOTIFICACIONES  </li>
 
+        <li class="star_notificaciones_cargando" id="star_notificaciones_cargando">
+            <a href="#">cargando...</a>
+        </li>
 
-<!--        clone templante notificacion de cita-->
+        <li class="start_noti_vacio hide" id="start_noti_vacio">
+            <a href="#">Ningún dato disponible</a>
+        </li>
+
+        <!--        clone templante notificacion de cita-->
         <li class="star_notificaciones hide" id="star_notificaciones_cita_agendada_clone">
             <a href="#">
                 <div class="pull-left" style="position: relative">
-                    <img src="<?= DOL_HTTP.'/logos_icon/logo_default/avatar_none.ico' ?>" class="img-circle notify_cita_img_paciente" title="Paciente" style="width: 70px; height: 70px; " alt="Paciente">
+                    <img src="<?= DOL_HTTP.'/logos_icon/logo_default/icon_avatar.svg' ?>" class="img-circle notify_cita_img_paciente" title="Paciente" style="width: 70px; height: 70px; " alt="Paciente">
                     <i style="
                                 position: absolute;
                                 border-radius: 100%;
@@ -51,11 +55,11 @@
             </a>
         </li>
 
-<!--        clone templante notificacion de confirmacion via email-->
+        <!--        clone templante notificacion de confirmacion via email-->
         <li class="star_notificaciones hide" id="star_noti_email_confirmacion_paciente">
             <a href="#">
                 <div class="pull-left" style="position: relative">
-                    <img src="<?= DOL_HTTP.'/logos_icon/logo_default/avatar_none.ico' ?>" class="img-circle notify_cita_img_paciente"  style="width: 70px; height: 70px; " >
+                    <img src="<?= DOL_HTTP.'/logos_icon/logo_default/icon_avatar.svg' ?>" class="img-circle notify_cita_img_paciente"  style="width: 70px; height: 70px; " >
                     <i style="
                                 position: absolute;
                                 border-radius: 100%;
@@ -95,14 +99,13 @@
 
 
 
-
-<!--    lista de notificaciones-->
+        <!--    lista de notificaciones-->
         <li>
             <ul class="menu " id="noti_list" style="max-height: 300px !important;">
             </ul>
         </li>
 
-        <li class="footer"><a href="#" class="btnhover">Mostrar Más</a></li>
+<!--        <li class="footer"><a href="#" class="btnhover">Mostrar Más</a></li>-->
     </ul>
 
 </li>

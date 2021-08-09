@@ -150,6 +150,7 @@ if( $('#nuevoGuardarCitas').length > 0){
 
 function Notify_odontic(solo_numero_noti = false, tiempoReal=false) {
 
+
     if(solo_numero_noti==1){
 
         // const Object = {
@@ -199,6 +200,13 @@ function Notify_odontic(solo_numero_noti = false, tiempoReal=false) {
         return true;
     }
 
+    $('.remove_element_cita_agend').remove();
+    if($("#star_notificaciones_cargando").hasClass('hide')){
+        $("#star_notificaciones_cargando").removeClass('hide');
+    }else{
+
+    }
+
     var parametros = {
         'ajaxSend'  : 'ajaxSend',
         'accion'    : 'notification_',
@@ -214,31 +222,26 @@ function Notify_odontic(solo_numero_noti = false, tiempoReal=false) {
         cache:false,
         async:true,
         complete: function (xhr, status) {
-
+            $("#star_notificaciones_cargando").addClass('hide');
         },
         success: function (response) {
-
             var push_data   = response['data'];
             var numero_push = response['N_noti'];
 
-            Htmlnotificacion( push_data, numero_push );
+            if(push_data['data'].length > 0){
+                $("#start_noti_vacio").addClass('hide');
+                Htmlnotificacion( push_data, numero_push );
+            }else{
+                if($("#start_noti_vacio").hasClass('hide')){
+                    $("#start_noti_vacio").removeClass('hide');
+                }
+            }
         }
     });
-
-    // $.get(url, paramt , function(data) {
-    //     var HTML = $.parseJSON(data);
-    //     if(HTML['error'] == ""){
-    //         Htmlnotificacion( HTML.data, HTML.N_noti );
-    //     }
-    // });
-
 }
 
 function Htmlnotificacion( push_data , n ) {
 
-    if($('.remove_element_cita_agend').length>0){
-        // $('.remove_element_cita_agend').remove();
-    }
 
     var array_notify = [];
     var ul_noti_list = $("#noti_list");
