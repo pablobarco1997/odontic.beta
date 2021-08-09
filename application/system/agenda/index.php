@@ -80,34 +80,21 @@ global $db, $user;
                         <div class="box-body">
 
                             <?php
-
                             accessoModule("Agenda");
-
-                            if(!empty($view))
-                            {
-                                switch ($view)
-                                {
+                            if(!empty($view)) {
+                                switch ($view) {
                                     case 'principal':
 
                                         if(isset($_GET['list'])){
-
                                             require_once DOL_DOCUMENT.'/application/system/agenda/view/principal.php';
-
                                         }else{
-
-                                            #Este es cuando modifican la url
                                             echo '<h2 style="color: red; font-weight: bolder; text-align: center"> No se encontro la vista , Consulte con soporte tecnico </h2>';
                                             die();
                                         }
-
                                         break;
-
                                     case 'agendadd':
-
                                         require_once DOL_DOCUMENT.'/application/system/agenda/view/agendadd.php';
-
                                         break;
-
                                     default:
                                         #Este es cuando modifican la url
                                         echo '<h2 style="color: red; font-weight: bolder; text-align: center"> No se encontro la vista , Consulte con soporte tecnico </h2>';

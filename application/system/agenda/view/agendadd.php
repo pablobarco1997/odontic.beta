@@ -76,15 +76,6 @@ if(isset($_GET['view']) && $_GET['view'] == 'agendadd'){
 
 ?>
 
-
-<style>
-
-    table{
-        margin-bottom: 50px !important;
-    }
-
-</style>
-
 <div class="row">
     <div class="form-group col-lg-12 col-xs-12 col-md-12">
         <div class="col-md-6 col-xs-12 pull-left hide">
