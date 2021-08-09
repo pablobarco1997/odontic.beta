@@ -100,8 +100,8 @@
                 $sql .= $user->id;
                 $sql .= ");";
 
-                $rs = $this->db->query($sql);
-                if ($rs) {
+                $result = $this->db->query($sql);
+                if ($result) {
                     return 'exito';
                 }else{
                     return 'error';

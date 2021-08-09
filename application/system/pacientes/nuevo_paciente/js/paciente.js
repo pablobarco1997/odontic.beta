@@ -37,24 +37,24 @@ function GuardarDatosPacientes()
     var refer        = $('#refer').val();
 
     var datos_paciente = {
-        'nombre'    : nombre,
-        'apellido'    : apellido,
-        'rud_dni'   : rud_dni,
-        'email'     : email,
-        'convenio'  : convenio,
-        'n_interno' : n_interno,
-        'sexo'      : sexo,
-        'fech_nacimit': fech_nacimit,
-        'ciudad'      : ciudad,
-        'comuna'      : comuna,
-        'direcc'      : direcc,
-        't_fijo'      : t_fijo,
+        'nombre'       : nombre,
+        'apellido'     : apellido,
+        'rud_dni'      : rud_dni,
+        'email'        : email,
+        'convenio'     : convenio,
+        'n_interno'    : n_interno,
+        'sexo'         : sexo,
+        'fech_nacimit' : fech_nacimit,
+        'ciudad'       : ciudad,
+        'comuna'       : comuna,
+        'direcc'       : direcc,
+        't_fijo'       : t_fijo,
         't_movil'      : t_movil,
-        'act_profec'  : act_profec,
-        'empleado'    : empleado,
-        'obsrv'       : obsrv,
-        'apoderado'   : apoderado,
-        'refer'       : refer,
+        'act_profec'   : act_profec,
+        'empleado'     : empleado,
+        'obsrv'        : obsrv,
+        'apoderado'    : apoderado,
+        'refer'        : refer,
     };
 
     var parametros = {
@@ -109,7 +109,7 @@ var FormvalidPacienteAdd = function(input = false){
     var nom      = $("#nombre");
     var ape      = $("#apellido");
     var ci       = $("#rud_dni");
-    var ciud     = $("#ciudad");
+    // var ciud     = $("#ciudad");
     var direc    = $("#direcc");
     var t_movil  = $("#t_movil");
     var email    = $("#email");
@@ -139,12 +139,13 @@ var FormvalidPacienteAdd = function(input = false){
     }else{
         ci.val(ci.val().replace(/[^0-9]/g, ''));
     }
-    if(ciud.val()==""){
-        ErroresData.push({
-            'document' : ciud,
-            'text' : 'Campo Obligatorio'
-        });
-    }if(direc.val()==""){
+    // if(ciud.val()==""){
+    //     ErroresData.push({
+    //         'document' : ciud,
+    //         'text' : 'Campo Obligatorio'
+    //     });
+    // }
+    if(direc.val()==""){
         ErroresData.push({
             'document' : direc,
             'text' : 'Campo Obligatorio'

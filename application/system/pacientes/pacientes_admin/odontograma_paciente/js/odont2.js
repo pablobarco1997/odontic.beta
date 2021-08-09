@@ -19,6 +19,5 @@ function Get_jquery_odontogramPlantram()
 if( $accionOdontograma == 'form_odont') //ACTUALIZAR ODONTOGRAMA FORMULARIO ODONTOGRAMA
 {
     /*imprimir odontograma*/
-    $("#imprimirOdontogramapdf").attr('href', $DOCUMENTO_URL_HTTP+'/application/system/pacientes/pacientes_admin/odontograma_paciente/export/exportpdf_odontogramaupdate.php?idp='+$id_paciente+'&idplant='+Get_jquery_odontogramPlantram());
-
+    // $("#imprimirOdontogramapdf").attr('href', $DOCUMENTO_URL_HTTP+'/application/system/pacientes/pacientes_admin/odontograma_paciente/export/exportpdf_odontogramaupdate.php?idp='+$id_paciente+'&idplant='+Get_jquery_odontogramPlantram());
 }

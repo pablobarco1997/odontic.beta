@@ -297,7 +297,7 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
                 .find('#ElementoPieza').attr('value', indexElement.prop('dataset').id);
 
         }
-        console.log(indexElement.prop('dataset').id);
+        // console.log(indexElement.prop('dataset').id);
     };
 
     function fetchOdontograma() {
@@ -322,7 +322,7 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
                 if(result['error'] == ""){
 
                     var dataOdont  = result['dataprincipal'];
-                    console.log(dataOdont);
+                    // console.log(dataOdont);
 
                     //recorrer piezas
                     $.each(dataOdont,  function (i, item) {
@@ -339,7 +339,7 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
 
                         if(img_status!="" && img_status!=null){
                             ElementoPieza.find('#imgStados').attr('src', img_status).removeClass('hide').attr('title', nom_status);
-                            console.log(ElementoPieza.find('#imgStados'));
+                            // console.log(ElementoPieza.find('#imgStados'));
                         }
 
                         $(ElementoPieza).find('.CaraDiv').children().each(function (i, div) {
@@ -363,10 +363,12 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
         $('div.CellDiv > img').attr('class','');
         $('div.CellDiv > img').attr('class','hide');
 
-        var resetCaras = {"vestibular":"true","distal":"true","palatino":"false","oclusal":"true","mesial":"false","lingual":"false"};
-
+        var resetCaras = ["vestibular","distal","palatino","oclusal","mesial","lingual"];
+        // console.log(resetCaras);
         $.each(resetCaras, function (i, item) {
-            $('div.selectCell').removeClass(i+'Activar');
+            var element = "."+item+"Activar";
+            $(element).removeClass(item+"Activar");
+            // $('div.selectCell').removeClass(i+'Activar');
         });
     }
 
@@ -410,7 +412,6 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
 
 
     var Aplicar_Estados = function(){
-
 
         if($(".SelectedTableEstado").length==0){
             notificacion("Debe seleccionar un Estado","question");
@@ -457,7 +458,6 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
 
         //recorro las piezas
         $(recorrer).each(function (i, itemPadre) {
-
             //recorro las caras selecionadas o  no selecionadas
             var label_selected = "";
             var objectCaras = {
@@ -474,7 +474,6 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
             $.each(carasSelected, function (i, itemCaras) {
                 //recorro las key activadas
                 $.each(objectCaras, function (key,value) {
-
                     var caraKey = '.'+key+'Activar'; //busco la clase activa por cada pieza y cara
                     if($(itemCaras).find(caraKey).length>0){
                         objectCaras[key]++;
@@ -482,7 +481,6 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
                     }
                 });
             });
-
             pieza.push({
                 'diente' : $(itemPadre).attr('id'),
                 'estado_diente': $(itemPadre).prop('dataset').id_estado_pieza||0,
@@ -498,7 +496,6 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
             });
 
         });
-
         return pieza;
     }
 
@@ -526,7 +523,6 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
             async:true,
             cache: false,
             success:function(resp) {
-
                 if(resp.error == ''){
                     error = true;
                     $('#observacionOpcional').val(null);
@@ -585,15 +581,21 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
 
     //refresh
     $("#refresh_odont").click(function () {
-        fetchOdontograma();
+        resetOdont();
         detallesOdontogramasEstados();
+        fetchOdontograma();
     });
 
     $(window).on('load', function () {
 
+        if(!ModulePermission('Odontograma', 'consultar')){
+            $(".picture-odontograma").addClass('hide');
+            notificacion('Ud. no tiene permiso para esta operación', 'error');
+            return false;
+        }
+
         fetchOdontograma();
         detallesOdontogramasEstados();
-        // resetOdont();
     });
 
 </script>

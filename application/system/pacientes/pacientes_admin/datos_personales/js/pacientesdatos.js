@@ -13,7 +13,7 @@ var FormvalidPacienteMod = function(input = false){
     var nom      = $("#nombre");
     var ape      = $("#apellido");
     var ci       = $("#rud_dni");
-    var ciud     = $("#ciudad");
+    // var ciud     = $("#ciudad");
     var direc    = $("#direcc");
     var t_movil  = $("#t_movil");
     var email    = $("#email");
@@ -43,12 +43,13 @@ var FormvalidPacienteMod = function(input = false){
     }else{
         ci.val(ci.val().replace(/[^0-9]/g, ''));
     }
-    if(ciud.val()==""){
-        ErroresData.push({
-            'document' : ciud,
-            'text' : 'Campo Obligatorio'
-        });
-    }if(direc.val()==""){
+    // if(ciud.val()==""){
+    //     ErroresData.push({
+    //         'document' : ciud,
+    //         'text' : 'Campo Obligatorio'
+    //     });
+    // }
+    if(direc.val()==""){
         ErroresData.push({
             'document' : direc,
             'text' : 'Campo Obligatorio'
@@ -127,7 +128,6 @@ function obtenerDatosP($id)
                 $('#refer').val(data['referencia']);
 
                 if($.trim( data['icon'] ) != ""){
-
                     $('#fileIcon').css('display',  'none');
                     var img = document.createElement('img'); //creo el elmento img
                     img.setAttribute('width', '140px'); //agrego attr y css
@@ -167,20 +167,16 @@ $('#file_icon').change(function(e){
 
     // var img = '<img src="" class="img-circle img-md img-sm" class="img-circle" width="107.16px" height="140px">';
     var $padre = $(this).parents('#imgpaciente');
-
     var fontIcon = $padre.find('#fileIcon');
     var Icon = $padre.find('#file_icon');
 
-    if($(this).val()!= "") //cuando tenga valores
-    {
+    //cuando tenga valores
+    if($(this).val()!= "") {
         $TieneImagenAsociada = true;
-
         var iconpaciente = $padre.find(".iconpaciente");
-
         if(iconpaciente.length >0){
             iconpaciente.remove();
         }
-
         fontIcon.css('display', 'none');
         var img = document.createElement('img'); //creo el elmento img
         img.setAttribute('width', '140px'); //agrego attr y css
@@ -188,42 +184,35 @@ $('#file_icon').change(function(e){
         img.setAttribute('class', 'iconpaciente'); //agrego setAttribute y css
         img.classList.add('img-circle'); //agrego setAttribute y css
         $padre.append(img); //lo agrego dentro del padre
-
         var iconpaciente = $padre.find(".iconpaciente");
 
         //compruebo si existe ese elemento
         if(iconpaciente.length > 0){
             SubirImagenes( this , iconpaciente , '');
-
             //si aparecece un mensaje de error entonces se ejecuta la funcion regresar
             if($('.swal2-show').length > 0 ){
                 invalic_Icon_default();
             }
 
         }else{
-
         }
-
     }else{
-
         $TieneImagenAsociada = false;
         invalic_Icon_default();
     }
 
-    if($(this).val()=="")
+    if($(this).val()==""){
         $TieneImagenAsociada=false;
+    }
 
 
 
-    // alert($TieneImagenAsociada);
     function  invalic_Icon_default(){
-
         var iconpaciente =  $padre.find('.iconpaciente');
-
-        if(iconpaciente.length > 0)
+        if(iconpaciente.length > 0){
             iconpaciente.remove();
-
-        var im = '<img src="'+$DOCUMENTO_URL_HTTP+'/logos_icon/logo_default/avatar_none.ico" alt="" width="140px"  height="140px" class="iconpaciente img-circle" id="imgClasica">';
+        }
+        var im = '<img src="'+$DOCUMENTO_URL_HTTP+'/logos_icon/logo_default/icon_avatar.svg" alt="" width="140px"  height="140px" class="iconpaciente img-circle" id="imgClasica">';
         $("#imgClasica").remove();
         $("#imgpaciente").append($(im));
         Icon.val(null);

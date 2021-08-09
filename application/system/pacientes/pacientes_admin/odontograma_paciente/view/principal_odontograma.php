@@ -33,6 +33,8 @@
 <!--    LISTA DE ODONTOGRAMA PRINCIPAL -->
     <?php
 
+        accessoModule("Odontograma");
+
         if($v == "listp")
         {
             $module = true;
@@ -46,12 +48,13 @@
                 <?php echo Breadcrumbs_Mod($titulo, $url_breadcrumb, $module) ?>
             </div>
         </div>
-<!--        OPCIONES ODONTOGRAMA-->
+
+        <!--opciones odontograma-->
         <div class="form-group col-md-12 col-xs-12">
             <label for="">LISTA DE COMPORTAMIENTOS</label>
             <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px; margin-left: 0px; background-color: #f4f4f4">
-                <li><a href="#contentFilter" data-toggle="collapse" style="color: #333333" class="btnhover btn btn-sm" id="fitrar_document" aria-expanded="true"> <b>  ▼ &nbsp;Filtrar <i></i> </b> </a></li>
-                <li> <a href="#add_odontograma" data-toggle="modal" class="btnhover btn btn-sm " style="color: #333333" id="createOdontograma"> <b> <i class="fa fa-plus-square"></i> Crear Odontograma  </b> </a> </li>
+                <li><a href="#contentFilter" data-toggle="collapse" style="color: #333333" class="btnhover btn btn-sm <?= (!PermitsModule('Odontograma','consultar')?'disabled_link3':'')?> " id="fitrar_document" aria-expanded="true"> <b>  ▼ &nbsp;Filtrar <i></i> </b> </a></li>
+                <li> <a href="#add_odontograma" data-toggle="modal" class="btnhover btn btn-sm <?= (!PermitsModule('Odontograma','agregar')?'disabled_link3':'')?>" style="color: #333333" id="createOdontograma"> <b> <i class="fa fa-plus-square"></i> Crear Odontograma  </b> </a> </li>
             </ul>
         </div>
 
@@ -138,12 +141,24 @@
         <div class="form-group col-md-12 col-xs-12 no-margin">
             <label for="">LISTA DE COMPORTAMIENTOS</label>
             <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px; margin-left: 0px; background-color: #f4f4f4">
-                <li><a href="#" id="imprimirOdontogramapdf" target="_blank" class=" btnhover btn-sm btn" style="font-weight: bolder; color: #333333 "> <i class="fa fa-print"></i> &nbsp;PDF  </a> </li>
+                <li><a href="#" id="imprimirOdontogramapdf" onclick="export_odontograma()"  class=" btnhover btn-sm btn" style="font-weight: bolder; color: #333333 "> <i class="fa fa-print"></i> &nbsp;PDF  </a> </li>
                 <li>
                     <a id="refresh_odont" class="btn" style="color: black">
                         <i class="fa fa-refresh"></i>
                     </a></li>
             </ul>
+
+            <script>
+
+                function export_odontograma() {
+                    if(!ModulePermission('Odontograma', 'consultar')){
+                        notificacion('Ud. no tiene permiso para esta operación', 'error');
+                        return false;
+                    }
+                    var urlexport = $DOCUMENTO_URL_HTTP+'/application/system/pacientes/pacientes_admin/odontograma_paciente/export/exportpdf_odontogramaupdate.php?idp='+$id_paciente+'&idplant='+Get_jquery_odontogramPlantram();
+                    window.open(urlexport, '_blank');
+                }
+            </script>
         </div>
 
         <div class="form-group col-md-12 col-xs-12">

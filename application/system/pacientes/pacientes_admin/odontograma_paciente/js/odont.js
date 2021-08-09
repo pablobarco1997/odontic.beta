@@ -100,6 +100,12 @@ if( $accionOdontograma == 'principal'){
     //delete odontograma estado E
     var Eliminar_odontograma = function (Element) {
 
+        if(!ModulePermission("Odontograma", "eliminar")){
+            notificacion("Ud. No tiene permiso para realizar esta Operación", "error");
+            return false;
+        }
+
+
         //fetch id
         var id              = Element.find('.odont_id').prop("dataset").id;
         var plantratamiento = Element.find('.odont_id').prop("dataset").tratamiento;
@@ -260,7 +266,7 @@ if( $accionOdontograma == 'principal'){
     $(".limpiar_busq_odont").click(function () {
 
         var parent = $("#contentFilter");
-        parent.find('input:not(#startDate_odont)').val(null);
+        parent.find('input').val(null);
         parent.find('select').val(null).trigger('change');
         odontolist();
 
@@ -312,7 +318,7 @@ if( $accionOdontograma == 'principal'){
                 'Año Actual': [moment().startOf('year'), moment().endOf('year')],
                 'Año Pasado': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
             }
-        });
+        }).val(null);
 
         $('.rango span').click(function() {
             $(this).parent().find('input').click();

@@ -338,11 +338,9 @@ var cargarRecursosInfo = function(){
 //         boxloading($boxHomeInicio ,true,1000);
 //     });
 
-$(document).ready(function () {
-
+$(window).on("onload", function () {
+    boxloading($boxHomeInicio ,true);
 });
-
-window.onload = boxloading($boxHomeInicio ,true);
 
 $(window).on("load", function() {
 

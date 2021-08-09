@@ -1,5 +1,5 @@
 
-<div class="form-group col-md-12 col-lg-12">
+<div class="form-group col-md-12 col-lg-12 no-padding">
     <div class="table-responsive">
         <h3 style="font-weight: bolder; font-size: 2rem">Información de Estados</h3>
         <table class="table" id="detalles_estados_odontograma" width="100%">

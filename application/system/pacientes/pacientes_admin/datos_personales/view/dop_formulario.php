@@ -13,7 +13,7 @@
                 <div class="form-group col-xs-12 col-md-4 col-lg-4">
                     <div style="width: 140px; height: 140px;" class="col-centered">
                         <label for="file_icon" id="imgpaciente" >
-                            <img src="<?=DOL_HTTP?>/logos_icon/logo_default/avatar_none.ico" alt="" width="140px"  height="140px" class="iconpaciente img-circle" id="imgClasica">
+                            <img src="<?=DOL_HTTP?>/logos_icon/logo_default/icon_avatar.svg" alt="" width="140px"  height="140px" class="iconpaciente img-circle" id="imgClasica">
                             <input type="file" id="file_icon" name="file_icon" style="display: none">
                         </label>
                     </div>
@@ -74,9 +74,9 @@
                     <input type="text" class="form-control" id="fech_nacimit" name="fech_nacimit">
                 </div>
 
-                <div class="form-group  col-xs-12 col-md-12">
+                <div class="form-group  col-xs-12 col-md-12 hide ">
                     <label for="">Ciudad</label>
-                    <input type="text" class="form-control" id="ciudad" name="ciudad" onkeyup="FormvalidPacienteMod()">
+                    <input type="text" class="form-control" id="ciudad" name="ciudad" >
                 </div>
 
                 <div class="form-group  col-xs-12 col-md-12 hidden">

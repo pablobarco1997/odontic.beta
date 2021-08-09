@@ -20,7 +20,7 @@
                         <div class="col-lg-8 col-xs-12 col-md-6 col-sm-6 margenTopDiv pull-right">
                             <ul class="list-inline pull-right list_option">
                                 <li>
-                                    <div class="checkbox btnhover" style="margin: 0px; padding: 5px">
+                                    <div class="checkbox btnhover <?= (!PermitsModule("Directorio de pacientes", "consultar")?"disabled_link3":"") ?>" style="margin: 0px; padding: 5px">
                                         <label>
                                             <input type="checkbox" id="checkPacienteDesact">
                                             <i class="fa fa-user-times"></i> Ver lista de pacientes desabilitados
@@ -51,7 +51,7 @@
                                 <div class="table-responsive">
                                     <table class="table  compact" id="table_direc" width="100%">
                                         <thead>
-                                            <tr>
+                                            <tr style="background-color: #f4f4f4">
                                                 <th width="2%">&nbsp;</th>
                                                 <th width="20%">Nombre</th>
                                                 <th width="10%">Dirección</th>

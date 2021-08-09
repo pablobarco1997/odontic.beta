@@ -3,7 +3,6 @@
             <div class="box box-solid">
                     <div class="box-header with-border">
                         <h4 class="no-margin"><span>
-                            <img src="<?= DOL_HTTP.'/logos_icon/logo_default/modificar-icon.png' ?>" width="20px" height="20px">
                             <b>Registrar Nuevo Paciente</b></span>
                         </h4>
                     </div>
@@ -17,11 +16,11 @@
                                             <ul class="list-inline pull-right col-md-12 col-xs-12" style="background-color: #f4f4f4;border-bottom: 0.6px solid #333333; padding: 3px">
                                                 <li>
                                                     <a class="btnhover btn btn-sm " id="carga_masv_pasiente" style="color: #333333" title="carga. Subida Masiva de Pacientes (excel)">
-                                                        <b><img src="<?= DOL_HTTP.'/logos_icon/logo_default/Excel_2013_23480.png' ?>" width="15px" height="15px"> Cargar Paciente Masivo</b>
+                                                        <b> <i class="fa fa-upload"></i> Subir excel </b>
                                                     </a>
                                                 </li>
-                                                <li> <a href="<?= DOL_HTTP.'/application/system/pacientes/nuevo_paciente/export/carga_masiva_pasientes.xlsx' ?>" title="Descarga de Plantilla (excel)" data-target="_blank" class="btnhover btn btn-sm " style="color: #333333">
-                                                        <b> <i class="fa fa-cloud-download control-label" style="font-size: 15px; color: #2b794d "></i> &nbsp; Descargar Plantilla</b>
+                                                <li> <a href="<?= DOL_HTTP.'/application/system/pacientes/nuevo_paciente/export/Subir paciente.xlsx' ?>" title="Descarga de Plantilla (excel)" data-target="_blank" class="btnhover btn btn-sm " style="color: #333333">
+                                                        <b> <i class="fa fa-download" ></i> Plantilla excel</b>
                                                     </a>
                                                 </li>
                                             </ul>
@@ -116,7 +115,7 @@
                                                                             </div>
                                                                         </div>
 
-                                                                        <div class="form-group">
+                                                                        <div class="form-group hide">
                                                                             <label for="" class="control-label col-sm-2">Ciudad</label>
                                                                             <div class="col-sm-10">
                                                                                 <input type="text" class="form-control input-sm" id="ciudad">

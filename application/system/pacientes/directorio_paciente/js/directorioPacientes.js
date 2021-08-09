@@ -5,14 +5,25 @@ $boxContentDirectorio = $("#boxprincipalDirectPaciente");
 function loadtabledirectPacien(estado)
 {
     $('#table_direc').DataTable({
-        searching: true,
-        ordering:false,
+        searching: false,
+        "ordering":false,
+        "serverSide": true,
+        // responsive: true,
         destroy:true,
+        scrollX: false,
+        // scrollY: 500,
+        lengthChange: false,
+        fixedHeader: true,
+        paging:true,
+        processing: true,
+        lengthMenu:[10],
         ajax:{
               url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/directorio_paciente/controller/directorio_paciente_controller.php',
               type:'POST',
               data:{'ajaxSend':'ajaxSend', 'accion':'direct_pacient_list', 'estado':estado},
               dataType:'json',
+              cache: false,
+              async:true
         },
         columnDefs:[
             {
@@ -132,7 +143,7 @@ $('#checkPacienteDesact').on('change', function() {
 // imprimir lista de pacientes mostrando en la tabla
 $('#imprimir_listPacientes').click(function(){
 
-    if(!ModulePermission(6,1)){
+    if(!ModulePermission("Directorio de pacientes", "consultar")){
 
         notificacion('Ud. No tiene permiso para consultar','error');
         return false;
@@ -157,8 +168,7 @@ $('#imprimir_listPacientes').click(function(){
 //Imprimir Ficha Del Paciente
 var ImprimirFicha = function(idpaciente){
 
-    if(!ModulePermission(6,1)){
-
+    if(!ModulePermission("Directorio de pacientes", "consultar")){
         notificacion('Ud. No tiene permiso para consultar','error');
         return false;
     }

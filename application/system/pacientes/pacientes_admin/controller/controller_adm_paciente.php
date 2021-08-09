@@ -96,18 +96,15 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             $resp  = array();
             $data  = array();
-
             $error = '';
             $id = GETPOST('id');
-
             if(!empty($id)){
                 $resp = $paciente->fectch_pacientes($id);
-                if(count($resp) == 0)
-                {
+                if(count($resp) == 0){
                     $error = 'Ocurrio un error No se Encontraron datos de este paciente, Consulte con soporte';
                 }else{
                     $data = $resp[0];
-                    if($data->icon!=""){
+                    if(!preg_match ("/\s /", $data->icon)){
                         if(file_exists(DOL_DOCUMENT.'/logos_icon/icon_logos_'.$conf->EMPRESA->ENTIDAD.'/'.$data->icon)){
                             $img64 = base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/icon_logos_'.$conf->EMPRESA->ENTIDAD.'/'.$data->icon));
                             $data->img_logo = 'data:image/png; base64, '.$img64;
@@ -725,6 +722,12 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 $date_cc_fin =  str_replace('/','-', $date_cc[1] );
             }
 
+            if(!PermitsModule("Odontograma", "consultar")){
+                $permits = " and 1<>1 ";
+            }else{
+                $permits = " and 1=1 ";
+            }
+
             $sql = "SELECT
                         dc.fecha,
                         dc.rowid, 
@@ -755,6 +758,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 $sql .= " and cast(dc.fecha as date) between '$date_cc_ini' and '$date_cc_fin' ";
             }
 
+            $sql .= $permits;
+
             $Total = $db->query($sql)->rowCount();
 
             $sql .= ' order by dc.numero desc';
@@ -783,7 +788,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     $url_updateOdont = DOL_HTTP.'/application/system/pacientes/pacientes_admin/index.php?view=odot&key='.KEY_GLOB.'&id='.tokenSecurityId($idpaciente).'&v=fordont'.$URL_idplantramiento;
 
 
-                    $delete = "<td><a class='btnhover btn btn-xs delete_odont_click' onclick='Eliminar_odontograma($(this))' style='font-weight: bolder; color: red'>
+                    $delete = "<td><a class='btnhover btn btn-xs delete_odont_click ".(!PermitsModule("Odontograma", "eliminar")?"disabled_link3":"")." ' onclick='Eliminar_odontograma($(this))' style='font-weight: bolder; color: red'>
                                         <input type='text' class='hidden odont_id' id='odont_id' value='".$ob->odontograma_id."' data-id='".$ob->odontograma_id."' data-tratamiento='".$ob->label."'>
                                         <i class='fa fa-trash'></i> ELIMINAR </a>
                                 </td>";
@@ -793,7 +798,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                     $opciones = "<table>
                                    <tr>
-                                       <td><a href='$url_updateOdont' class='btnhover btn btn-xs ' style='font-weight: bolder'> <i class='fa fa-edit'></i> ACTUALIZAR </a>     </td>
+                                       <td><a href='$url_updateOdont' class='btnhover btn btn-xs ".(!PermitsModule("Odontograma", "modificar")?"disabled_link3":"")." ' style='font-weight: bolder'> <i class='fa fa-edit'></i> ACTUALIZAR </a>     </td>
                                        $delete
                                    </tr> 
                                 </table>";
@@ -1590,6 +1595,12 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
         case "list_detalles_odont_estados":
 
+            if(!PermitsModule('Odontograma', 'consultar')){
+                $permits = " and 1<>1";
+            }else{
+                $permits = "";
+            }
+
             $data = array();
 
             $start  = $_POST['start'];
@@ -1606,7 +1617,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     d.fecha,
                     d.obsrvacion,
                     d.estado_anulado
-                    FROM tab_odontograma_paciente_det d where rowid > 0 ";
+                    FROM tab_odontograma_paciente_det d where rowid > 0 $permits";
 
             if(!empty($idtratamiento)){
                 $sql .= " and  d.fk_tratamiento = $idtratamiento ";
@@ -1627,21 +1638,22 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 while ($obj = $rs->fetchObject()){
 
                     $row = array();
-                    $observacion = "";
                     if(!empty($obj->obsrvacion)) {
-                        $observacion = ''.' ( ' . $obj->obsrvacion.' )';
+                        $observacion = "<b>observación:</b> ".$obj->obsrvacion;
+                    }else{
+                        $observacion = "";
                     }
 
                     if($obj->estado_anulado == 'A'){
                         $row[] = date("Y/m/d", strtotime($obj->fecha));
                         $row[] = $obj->fk_diente;
                         $row[] = str_replace(',',' , ', $obj->list_caras)  ;
-                        $row[] = $obj->estado .''.$observacion;
+                        $row[] = $obj->estado .'<span style="color: #0866a5; display: block" class="text-sm">'.$observacion.'</span>';
                         $row[] = "<a class='btn btn-xs' style='padding: 4px 8px; background-color: #a55759; color:#ffffff ' onclick='anular_estado_update($obj->rowid)'  >Anular</a>";
                     }
 
                     if($obj->estado_anulado == 'E'){
-                        $row[] = "<strike>".date("Y/m/d", strtotime($obj->fecha))."</strike>";
+                        $row[] = "<strike title='".date("Y/m/d", strtotime($obj->fecha))."'>".date("Y/m/d", strtotime($obj->fecha))."</strike>";
                         $row[] = "<strike> ".$obj->fk_diente." </strike>";
                         $row[] = "<strike>".str_replace(',',' , ', $obj->list_caras)."</strike>"  ;
                         $row[] = "<strike>".$obj->estado ." ".$observacion."</strike>";
@@ -1841,28 +1853,17 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             if($subaccion == 'eliminar_plantcab_preguntar')
             {
-                $sql1 = "SELECT  rowid,
+                $sql_a = "SELECT  rowid,
                             fk_cita,
                             estados_tratamiento,
                             CONCAT('Plan de Tratamiento: #', '', numero) numero,
                             edit_name, 
-                            
-                            (SELECT 
-                                    SUM(pg.amount) AS amount
-                                FROM
-                                    tab_pagos_independ_pacientes_det pg
-                                WHERE
-                                    pg.fk_plantram_cab = p.rowid
-                                        AND pg.fk_paciente = p.fk_paciente) AS saldo
-                
+                            (SELECT SUM(pg.amount) AS amount FROM tab_pagos_independ_pacientes_det pg WHERE pg.fk_plantram_cab = p.rowid AND pg.fk_paciente = p.fk_paciente) AS saldo
                          FROM tab_plan_tratamiento_cab p where p.rowid = $idplantcab and p.fk_paciente = $idpaciente limit 1;";
-                $rs1 = $db->query($sql1);
-
-//                print_r($sql1);
-//                die();
-                if( $rs1->rowCount() > 0 )
+                $result_ab = $db->query($sql_a);
+                if( $result_ab->rowCount() > 0 )
                 {
-                    $objectplantram = $rs1->fetchObject();
+                    $objectplantram = $result_ab->fetchObject();
 
                     if( $objectplantram->estados_tratamiento == 'E' ) #ANULADO O ELIMINADO
                     {
@@ -1946,7 +1947,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                         $acierto = 0; #negativo no se puede eliminar
                         $msgConfirm = "<div class='form-group col-lg-12 col-xs-12'>
-                                                <b>Error:</b> <br>
+                                                <b><i class='fa fa-warning'></i></b> 
                                                     <p>No se puede <b>anular</b> este plan de tratamiento  ". $prestacionesRealizadas ." ". $tieneSaldo ."</p>    
                                             </div>";
                     }
