@@ -127,7 +127,7 @@
                         }
                         else{
                             //avatar icon
-                            $paciente_icon = "data: image/* ; base64, ".base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/avatar_none.ico'));
+                            $paciente_icon = DOL_HTTP.'/logos_icon/logo_default/icon_avatar.svg';
                         }
 
                         //Fecha Time de citas

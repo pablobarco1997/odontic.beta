@@ -202,14 +202,7 @@ function Notify_odontic(solo_numero_noti = false, tiempoReal=false) {
     }
 
     $('.remove_element_cita_agend').remove();
-
-    $('#start_noti_vacio').addClass('hide');
-
-    if($("#star_notificaciones_cargando").hasClass('hide')){
-        $("#star_notificaciones_cargando").removeClass('hide');
-    }else{
-
-    }
+    $("#star_notificaciones_cargando").find('a').text('cargando...');
 
     var parametros = {
         'ajaxSend'  : 'ajaxSend',
@@ -226,7 +219,7 @@ function Notify_odontic(solo_numero_noti = false, tiempoReal=false) {
         cache:false,
         async:true,
         complete: function (xhr, status) {
-            $("#star_notificaciones_cargando").addClass('hide');
+            $("#star_notificaciones_cargando").find('a').text(null);
         },
         success: function (response) {
             var push_data   = response['data'];
@@ -241,7 +234,6 @@ function Notify_odontic(solo_numero_noti = false, tiempoReal=false) {
                 }
             }
 
-            $("#star_notificaciones_cargando").addClass('hide');
         }
     });
 }

@@ -11,7 +11,7 @@
         <li class="header">  <b id="N_Notificaciones"></b> NOTIFICACIONES  </li>
 
         <li class="star_notificaciones_cargando" id="star_notificaciones_cargando">
-            <a href="#">cargando...</a>
+            <a href="#"></a>
         </li>
 
         <li class="start_noti_vacio hide" id="start_noti_vacio">
