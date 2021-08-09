@@ -440,6 +440,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
         case 'notification_':
 
+
             $info           = [];
             $notification   = [];
             $validTime      = GETPOST('validTime');
@@ -515,6 +516,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                 }else{
 
+                    
                     //lista de notificaciones data
                     $fecha_time     = GETPOST('fecha_time');
                     $fecha_php      = !empty(GETPOST('fecha_time'))?GETPOST('fecha_time'):date("Y-m-d H:m:s");

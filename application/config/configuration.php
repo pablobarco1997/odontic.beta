@@ -112,7 +112,7 @@
 
 
 //                print_r($ConsultarCitas); die();
-                #Notificacion de citas - cada vez que se agenda una nueva cita
+                //Notificacion de citas - cada vez que se agenda una nueva cita
                 $rsConsultCitas = $db->query($ConsultarCitas);
                 if($rsConsultCitas->rowCount() > 0){
                     while ( $CitasConsult = $rsConsultCitas->fetchObject() ){
@@ -122,7 +122,7 @@
                             if(file_exists(DOL_DOCUMENT.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$CitasConsult->icon)){
                                 $paciente_icon = "data: image/* ; base64, ".base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$CitasConsult->icon));
                             }else{
-                                $paciente_icon = "data: image/* ; base64, ".base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/avatar_none.ico'));
+                                $paciente_icon = DOL_HTTP.'/logos_icon/logo_default/icon_avatar.svg';
                             }
                         }
                         else{
