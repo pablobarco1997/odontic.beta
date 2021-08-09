@@ -204,8 +204,12 @@ function Notify_odontic(solo_numero_noti = false, tiempoReal=false) {
     $('.remove_element_cita_agend').remove();
 
     $('#start_noti_vacio').addClass('hide');
-    $("#star_notificaciones_cargando").addClass('hide');
-    
+
+    if($("#star_notificaciones_cargando").hasClass('hide')){
+        $("#star_notificaciones_cargando").removeClass('hide');
+    }else{
+
+    }
 
     var parametros = {
         'ajaxSend'  : 'ajaxSend',
