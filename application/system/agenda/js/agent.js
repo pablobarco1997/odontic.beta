@@ -27,7 +27,7 @@ function loadtableAgenda() {
         "ordering":false,
         "serverSide": true,
         // responsive: true,
-        // destroy:true,
+        destroy:true,
         scrollX: false,
         // scrollY: 500,
         lengthChange: false,
@@ -41,14 +41,15 @@ function loadtableAgenda() {
             "data": {
                 'ajaxSend'             : 'ajaxSend',
                 'accion'               : 'listCitas',
-                'doctor'               : ($("#filtro_doctor").val()!="")?$("#filtro_doctor").val().toString():"",
-                'estados'              : ($("#filtroEstados").val()!="")?$("#filtroEstados").val().toString():"",
+                'doctor'               : $("#filtro_doctor").find(':selected').val(),
+                'estados'              : $("#filtroEstados").find(':selected').val(),
                 'fecha'                : $('.filtroFecha').val(),
                 'eliminada_canceladas' : ( ( $('#listcitasCanceladasEliminadas').is(':checked')==true) ? "checked" : "") ,
-                'buscar_xpaciente'     : ($('#buscarxPaciente').val()!="")?$('#buscarxPaciente').val().toString():"",
+                'buscar_xpaciente'     : $('#buscarxPaciente').find(':selected').val(),
                 'search_ncita'         : $('#n_citasPacientes').val(),
             },
             "dataType":'json',
+            "cache": false,
             "complete": function(xhr, status) {
                 boxTableLoad(ElemmentoContentload, false);
             }
@@ -83,7 +84,7 @@ function loadtableAgenda() {
         //      style:    'os',
         //      selector: 'td:first-child'
         // },
-         "language": {
+        "language": {
              "sProcessing":     "Procesando...",
              "sLengthMenu":     "Mostrar _MENU_ registros",
              "sZeroRecords":    "No se encontraron resultados",
@@ -129,62 +130,23 @@ function loadtableAgenda() {
 }
 
 function filtrarAgenda(validStatus="") {
-
-
     var ElemmentoContentload = $("#tableAgenda");
-
-    boxTableLoad(ElemmentoContentload, true);
-
-    var  table      = $("#tableAgenda").DataTable();
-    var  accion     = "listCitas";
-    var  ajaxSend   = "ajaxSend";
-
-    var info = table.page.info();
-
-    console.log(info);
-
-    var url = $DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php";
-    var newUrl = url + '?' +
-        'accion='+accion+
-        '&ajaxSend='+ajaxSend+
-        '&doctor='+(($("#filtro_doctor").val()!="")?$("#filtro_doctor").val().toString():"")+
-        '&estados='+( ($("#filtroEstados").val()!="")?$("#filtroEstados").val().toString():"")+
-        '&fecha='+$('.filtroFecha').val()+
-        '&eliminada_canceladas='+(( $('#listcitasCanceladasEliminadas').is(':checked')==true) ? "checked" : "") +
-        '&buscar_xpaciente='+(($('#buscarxPaciente').val()!="")?$('#buscarxPaciente').val().toString():"") +
-        '&search_ncita='+$('#n_citasPacientes').val();
-
-    // if(validStatus!=""||validStatus=="reload"){
-    //     newUrl += '&start2='+info['start']+'&validSatus=1';
-    // }
-
-    table.ajax.url(newUrl).load();
-
+    loadtableAgenda();
 }
 
 //Numero de citas
 function NOTIFICACION_CITAS_NUMEROS()
 {
-
     var parameters = {
         "ajaxSend": "ajaxSend",
         "accion"  : "numero_citas_pacientes_hoy",
     };
-
     var url = $DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php";
-
     $.get(url , parameters , function(data) {
-
         var datos = $.parseJSON(data);
-
         $("#numCitas").text( datos.result );
 
     });
-
-    // setInterval(function(){
-    //
-    // },50000)
-
     $.get(url , parameters , function(data) {
         var datos = $.parseJSON(data);
         $("#numCitas").text( datos.result );
@@ -625,30 +587,6 @@ function UpdateCitasCommentAdicional(iddetcita)
     }
 }
 
-//buscar pacientes habilitados o desabilitados
-$('#buscarxPaciente').select2({
-    placeholder: 'buscar pacientes' ,
-    language: languageEs,
-    ajax:{
-        url: $DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php",
-        dataType: "json",
-        data: function (params) {
-            var query = {
-                search: params.term,
-                ajaxSend:'ajaxSend',
-                accion:'pacientes_activodesact'
-            };
-            return query;
-        },
-        processResults: function (data) {
-            return {
-                results: data.items
-            };
-        }
-    }
-});
-
-
 
 
 //APLICAR FILTRO DE BUSQUEDA O LIMPIAR
@@ -812,12 +750,9 @@ $('#notificar_email-modal').on('show.bs.modal', function() {
 window.onload =  boxloading($boxContent, true);
 
 $(window).on("load", function() {
+
     boxloading($boxContent, true, 1000);
-    $('.filtrar_doctor').select2({
-        placeholder: 'Seleccionar un doctor',
-        // allowClear:true,
-        language:'es',
-    });
+
     $('#pacienteCita').select2({
         placeholder: 'Pacientes',
         // allowClear: true,
@@ -832,6 +767,30 @@ $(window).on("load", function() {
         notificacion('Ud. notiene permiso para consultar', 'error');
     }
 
-    setTimeout(()=>{loadtableAgenda();},1000);
+    //buscar pacientes habilitados o desabilitados
+    $('#buscarxPaciente').select2({
+        placeholder: 'buscar pacientes' ,
+        language: languageEs,
+        minimumInputLength: 2,
+        ajax:{
+            url: $DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php",
+            dataType: "json",
+            data: function (params) {
+                var query = {
+                    search: params.term,
+                    ajaxSend:'ajaxSend',
+                    accion:'pacientes_activodesact'
+                };
+                return query;
+            },
+            processResults: function (data) {
+                return {
+                    results: data.items
+                };
+            }
+        }
+    });
+
+    loadtableAgenda();
 
 });

@@ -43,10 +43,8 @@ if($rs->rowCount() > 0)
 $opcionEspecialidad = ""; // especialidades
 $sql = "SELECT * FROM tab_especialidades_doc;";
 $rs = $db->query($sql);
-if($rs->rowCount() > 0)
-{
-    while ($obj = $rs->fetchObject())
-    {
+if($rs->rowCount() > 0){
+    while ($obj = $rs->fetchObject()){
         $opcionEspecialidad .= "<option value='$obj->rowid'>$obj->nombre_especialidad</option>";
     }
 }
@@ -54,10 +52,8 @@ if($rs->rowCount() > 0)
 $opcionOdont = ""; //odontologos
 $sql = "SELECT rowid , nombre_doc , apellido_doc , if(estado = 'A' , 'Activo' , 'Inactivo') as iestado FROM tab_odontologos WHERE estado = 'A';";
 $rs = $db->query($sql);
-if($rs->rowCount() > 0)
-{
-    while ($objodont = $rs->fetchObject())
-    {
+if($rs->rowCount() > 0){
+    while ($objodont = $rs->fetchObject()){
         $opcionOdont .= "<option value='$objodont->rowid' > ". $objodont->nombre_doc ."  ". $objodont->apellido_doc  ."  </option>";
     }
 }
@@ -174,130 +170,5 @@ if(isset($_GET['view']) && $_GET['view'] == 'agendadd'){
     </div>
 </div>
 
-
-<!--
-<div class="row hidden">
-    <div class="form-group col-md-12 col-lg-12 col-xs-12">
-        <div class="table-responsive">
-
-            <div style="width: 1490px !important;">
-                <table class="table table-striped" width="100%">
-                    <thead>
-                        <tr>
-                            <th colspan="6">
-                                <ul class="list-inline pull-left">
-                                    <li>  <a href="#" id="addCloneCitas" class="btn btnhover text-bold disabled" disabled style="color:#333333; background-color: #F8F9F9"> + agregar más de una cita </a></li>
-                                </ul>
-
-                                <ul class="list-inline pull-right">
-                                    <li>  <a href="#" id="masCitasPacient" disabled class="btn btnhover text-bold disabled"  style="color:#333333; background-color: #F8F9F9" title="ingresar mas citas para el mismo paciente">  ingresar mas citas para el mismo paciente </a></li>
-                                </ul>
-
-                            </th>
-                        </tr>
-                        <tr>
-                            <th></th>
-                            <th width="20%" class="text-center">ESPECIALIDAD</th>
-                            <th width="20%" class="text-center">DOCTOR</th>
-                            <th width="20%" class="text-center">DURACIÓN</th>
-                            <th width="20%" class="text-center">FECHA CITA</th>
-                            <th width="20%" class="text-center">HORA CITA</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        <tr class="template-index hide " id="template-index">
-                            <td > <span id="clone-eliminarow " class="disabled disabled_link3" style="padding: 5px"> <i class="fa fa-trash fa-2x"></i> </span> </td>
-                            <td>
-                                <select id="clone-especialidad" class="form-control optionSelect2 select2_max_ancho">
-                                    <option value=""></option>
-                                    <?= $opcionEspecialidad; ?>
-                                </select>
-                            </td>
-
-                            <td>
-                                <select id="clone-odont" class="form-control optionSelect2 select2_max_ancho">
-                                    <option value=""></option>
-                                    <?= $opcionOdont;?>
-                                </select>
-                            </td>
-                            <td>
-                                <select  id="clone-duraccion" class="form-control optionSelect2 select2_max_ancho">
-                                    <option value=""></option>
-                                    <?= $duracion; ?>
-                                </select>
-                            </td>
-                            <td>
-                                <div class="form-group date2">
-                                    <div class="input-group date" data-provide="datepicker">
-                                        <input type="text" class="form-control " id="clone-fecha" readonly="">
-                                        <div class="input-group-addon">
-                                            <span class="fa fa-calendar"></span>
-                                        </div>
-                                    </div>
-                                    <small class="msg-error" style="color: red"></small>
-                                </div>
-                            </td>
-                            <td>
-                                <select  id="clone-hora" class="form-control optionSelect2 select2_max_ancho">
-                                    <option value=""></option>
-                                    <?= $horaCita;  ?>
-                                </select>
-                            </td>
-                        </tr>
-
-                        <tr id="detalle-citas-index-0" class=" detalle_citas detalle-citas-index-0" data-id="0">
-                            <td > <span name="eliminrow[0].det" style="padding: 5px" class="disabled disabled_link3"> <i  class="fa fa-trash-o fa-2x"></i> </span> </td>
-                            <td>
-                                <select id="" name="especialida[0].det" class="form-control optionSelect2 select2_max_ancho opcionEspecialidad ">
-                                    <option value=""></option>
-                                    < ?= $opcionEspecialidad; ?>
-                                </select>
-                            </td>
-
-                            <td>
-                                <select id="" name="odont[0].det" class="form-control optionSelect2 select2_max_ancho opcionOdont">
-                                    <option value=""></option>
-                                    < ?= $opcionOdont;?>
-                                </select>
-                            </td>
-                            <td>
-                                <select  id="" name="duraccion[0].det" class="form-control optionSelect2 select2_max_ancho duracion">
-                                    <option value=""></option>
-                                    < ?= $duracion; ?>
-                                </select>
-                            </td>
-                            <td>
-                                <div class="form-group date2">
-                                    <div class="input-group date" data-provide="datepicker">
-                                        <input type="text" class="form-control fechaIni" name="fecha[0].det" id="inputFecha" readonly="">
-                                        <div class="input-group-addon">
-                                            <span class="fa fa-calendar"></span>
-                                        </div>
-                                    </div>
-                                    <small class="msg-error" style="color: red"></small>
-                                </div>
-                            </td>
-                            <td>
-                                <select  id="" name="hora[0].det" class="form-control optionSelect2 select2_max_ancho horaCita">
-                                    <option value=""></option>
-                                    < ?= $horaCita;  ?>
-                                </select>
-                            </td>
-                        </tr>
-
-                    </tbody>
-                </table>
-
-            </div>
-        </div>
-    </div>
-    <div class="form-group col-xs-12 col-md-12">
-        <div class="col-md-12 col-xs-12">
-            <input type="button" class="btn btnhover btn-block" style="font-weight: bolder; color: green" id="guardar-citas" value="Guardar">
-        </div>
-        <br><br><br><br><br>
-    </div>
-</div> -->
 
 <script src="<?= DOL_HTTP ?>/application/system/agenda/js/agentcreate.js"></script>

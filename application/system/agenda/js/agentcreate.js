@@ -421,11 +421,6 @@ function Consultar_CitasHorus_(fecha, hora, duracion, fk_doc)
 
 function GuardarCitas(btn){
 
-    if(!ModulePermission("Agenda","agregar")){
-        notificacion('ud. no tiene permiso para Agendar', 'error');
-        return false;
-    }
-
     boxloading($boxContent,true);
     var datos_citas = getdatoscitas();
     if(invalic_puedoGuardar() > 0){

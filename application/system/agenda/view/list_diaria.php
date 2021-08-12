@@ -118,27 +118,19 @@
                 </div>
             </div>
 
-            <div class="form-group col-md-3 col-sm-12 col-xs-12">
+            <div class="form-group col-md-4 col-sm-12 col-xs-12">
                 <label for="">Doctor(a)</label>
-                <select name="filtro_doctor" id="filtro_doctor" style="width: 100%" multiple class="filtrar_doctor form-control   " >
-                    <?php
-                        $sql = "SELECT rowid , nombre_doc , apellido_doc , if(estado = 'A' , 'Activo' , 'Inactivo') as iestado FROM tab_odontologos where estado in('A' , 'E') ;";
-                        $rs = $db->query($sql);
-                        if($rs->rowCount() > 0){
-                            while ($obj = $rs->fetchObject()){
-                                $nombOdontologos = $obj->nombre_doc ."  ". $obj->apellido_doc;
-                                print "<option value='$obj->rowid'> ".($nombOdontologos)." </option>";
-                            }
-                        }
-                    ?>
+                <select name="filtro_doctor" id="filtro_doctor" style="width: 100%"  class="filtrar_doctor form-control  " >
+                    <option value=""></option>
                 </select>
             </div>
 
             <div class="form-group col-md-4 col-sm-12 col-xs-12">
                 <label for="">Estado de citas</label>
-                <select name="" id="filtroEstados"  style="width: 100%" class="form-control  filtrar_estados " multiple>
+                <select name="filtroEstados" id="filtroEstados"  style="width: 100%" class="form-control  filtrar_estados " >
+                    <option value=""></option>
                     <?php
-                        $sql = "SELECT * FROM tab_pacientes_estado_citas;";
+                        $sql = "SELECT rowid, text FROM tab_pacientes_estado_citas;";
                         $rs = $db->query($sql);
                         if($rs->rowCount() > 0){
                             while ($obj = $rs->fetchObject()){
@@ -149,16 +141,16 @@
                 </select>
             </div>
 
-            <div class=" form-group col-md-2 col-sm-12 col-xs-12">
-                <label for="">buscar N. Cita</label>
-                <input type="text" class="form-control" id="n_citasPacientes" style="width: 100%" placeholder="Ingrese numero de cita ">
+            <div class=" form-group col-md-1 col-sm-12 col-xs-12">
+                <label for=""># Cita</label>
+                <input type="text" class="form-control input-sm" id="n_citasPacientes" style="width: 100%" placeholder="numero">
             </div>
         </div>
 
         <div class="row">
-            <div class=" form-group col-md-6 col-xs-12 ">
+            <div class=" form-group col-md-4 col-xs-12 ">
                 <label for="">buscar Pacientes</label>
-                <select name="buscarxPaciente" id="buscarxPaciente" style="width: 100%" multiple class="form-control  buscarxPaciente "></select>
+                <select name="buscarxPaciente" id="buscarxPaciente" style="width: 100%" class="form-control  buscarxPaciente "></select>
             </div>
         </div>
 
@@ -173,6 +165,38 @@
         </div>
     </div>
 
+    <script>
+
+        $(window).on('load', function () {
+
+            $("[name='filtro_doctor']").select2({
+                placeholder: 'buscar Doctor(a)' ,
+                language: languageEs,
+                allowClear: true,
+                minimumInputLength: 2,
+                ajax:{
+                    url: $DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php",
+                    dataType: "json",
+                    data: function (params) {
+                        var query = {
+                            search: params.term,
+                            ajaxSend:'ajaxSend',
+                            accion:'search_doctor'
+                        };
+                        return query;
+                    },
+                    processResults: function (data) {
+                        return {
+                            results: data.items
+                        };
+                    }
+                }
+            });
+
+        });
+
+    </script>
+
 </div>
 
 <style>
@@ -184,7 +208,7 @@
 
 <div class="form-group col-md-12 col-xs-12 col-sm-12 col-lg-12" >
     <div class="table-responsive" style="width: 100%; ">
-        <table class="table tableAgenda compact" id="tableAgenda" width="100%" >
+        <table class="table tableAgenda compact table-hover" id="tableAgenda" width="100%" >
             <thead  style="background-color: #f4f4f4; border-bottom: 1px solid #333333" id="headAgendaDiaria">
                 <tr id="cabezeraListAgenda" class="cabezeraListAgenda " >
                     <th class="text-left " width="3%">

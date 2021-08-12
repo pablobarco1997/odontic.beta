@@ -20,29 +20,36 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
     {
         case 'create_cita_paciente':
 
-            #die();
+            if(!PermitsModule("Agenda","agregar")){
+                $permits = false;
+            }else{
+                $permits = true;
+            }
+
             $error = "";
 
-            $row = GETPOST('datos');
+            if($permits==true){
+                $array = GETPOST('datos');
+                $agenda->fk_paciente    = $array['fk_paciente'];
+                $agenda->comentario     = $array['comment'];
+                $agenda->fk_login_users = $array->id; #USUARIO LOGEADO
+                $agenda->detalle        = $array['detalle'];
 
-            $agenda->fk_paciente    = $row['fk_paciente'];
-            $agenda->comentario     = $row['comment'];
-            $agenda->fk_login_users = $user->id; #USUARIO LOGEADO
-            $agenda->detalle        = $row['detalle'];
-
-            $result = $agenda->GenerarCitas();
-
-            if($result > 0){ //me retorna el id
-                $log->log($result, $log->crear, 'Se registro una cita Numero: '.$result, 'tab_pacientes_citas_det');
-            }else{ //caso contrario query 
-                $log->log(0, $log->crear, 'Ocurrió un error para el registro de una cita', 'tab_pacientes_citas_det', $result);
-                $error = "Ocurrió un error al  generar la cita , consulte con soporte tecnico";
+                $result = $agenda->GenerarCitas();
+                if($result > 0){ //me retorna el id
+                    $log->log($result, $log->crear, 'Se registro una cita Numero: '.$result, 'tab_pacientes_citas_det');
+                }else{ //caso contrario query
+                    $log->log(0, $log->crear, 'Ocurrió un error para el registro de una cita', 'tab_pacientes_citas_det', $result);
+                    $error = "Ocurrió un error al  generar la cita , consulte con soporte tecnico";
+                }
+            }else{
+                $error = "Ud. No tiene permiso para esta Operación";
             }
+
 
             $output = [
               'error' => $error
             ];
-
             echo json_encode($output);
 
             break;
@@ -583,45 +590,52 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             echo json_encode($output);
             break;
 
-            #busca los pacientes habilitados y desavilitados
+        //busca los pacientes habilitados y desavilitados
         case 'pacientes_activodesact':
-
-//            $hablitados    = GETPOST('habilitado');
-//            $desabilitado  = GETPOST('desabilitado');
-
             $search = GETPOST('search');
-
-            $result = [];
+            $items = [];
             $sqlpaciente = "SELECT rowid , concat(nombre,' ',apellido) as nom FROM tab_admin_pacientes estado where rowid  > 0 ";
             if($search!=""){
                 $sqlpaciente .= " and concat(nombre,' ',apellido) like '%$search%' ";
             }
             $sqlpaciente .= " limit 10";
-
-//            if($hablitados=="true"||$desabilitado=="true")
-//            {
-//                if($hablitados=="true"){
-//                    $sqlpaciente .= " and estado = 'A' ";
-//                }
-//                if($desabilitado=="true"){
-//                    $sqlpaciente .= " and estado = 'E' ";
-//                }
-//            }else{
-//                $sqlpaciente .= " and rowid = 0";
-//            }
-//            print_r($sqlpaciente);
-            $rs = $db->query($sqlpaciente);
-            if($rs && $rs->rowCount()>0){
-                while ($obj = $rs->fetchObject() ){
-                    $result[] = array( 'id' => $obj->rowid , 'text' => $obj->nom );
+            $result = $db->query($sqlpaciente);
+            if($result && $result->rowCount()>0){
+                while ($obj = $result->fetchObject() ){
+                    $items[] = array( 'id' => $obj->rowid , 'text' => $obj->nom );
                 }
             }
 
             $output = [
-                'items' => $result
+                'items' => $items
             ];
-//            print_r($result); die();
+            echo json_encode($output);
+            break;
 
+
+        //buscar doctores(a)
+        case 'search_doctor':
+
+            $search = GETPOST('search');
+            $sql = "select rowid as id,  concat(nombre_doc,' ',apellido_doc) as name_doctor from tab_odontologos where concat(nombre_doc,' ',apellido_doc) like '%".$search."%' and estado='A' ";
+            $sql .= " limit 10";
+            $result = $db->query($sql);
+            if($result){
+                if($result->rowCount()>0){
+                    $array = $result->fetchAll(PDO::FETCH_ASSOC);
+                    foreach ($array as $value){
+                        $item[] = array('id' => $value['id'], 'text' => $value['name_doctor'] );
+                    }
+                }else{
+                    $item = [];
+                }
+            }else{
+                $item = [];
+            }
+
+            $output = [
+                'items' => $item
+            ];
             echo json_encode($output);
             break;
 
