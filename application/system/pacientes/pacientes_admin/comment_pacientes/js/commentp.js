@@ -1,90 +1,119 @@
 
 
 //window onload
-window.onload = boxloading($boxContentViewAdminPaciente ,true);
+$(window).on('onload', function () {
+
+    boxloading($boxContentViewAdminPaciente ,true);
+});
 
 
-$Ultimo_iddocument = 0;
-function  ajax_load_comment_time(text, subaccion, scroll = false) {
+function commentlist(){
+
+    var paramts = {
+       'accion': 'listComment',
+       'ajaxSend': 'ajaxSend',
+       'paciente_id': $id_paciente
+    };
+
+    $("#refresh_comment").find("span").addClass('btnSpinner');
+
+    var table =  $('#list_Comentarios_asociados').DataTable({
+        searching: false,
+        "ordering":false,
+        "serverSide": true,
+        // responsive: true,
+        destroy:true,
+        scrollX: false,
+        // scrollY: 500,
+        lengthChange: false,
+        fixedHeader: true,
+        paging:true,
+        processing: true,
+        lengthMenu:[ 5 ],
+        ajax: {
+            url: $DOCUMENTO_URL_HTTP +'/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
+            type:'POST',
+            data: paramts,
+            async:true,
+            cache:false,
+            dataType:'json',
+            complete: function(xhr, status){
+                $("#refresh_comment").find("span").removeClass('btnSpinner');
+            }
+        },
+        columnDefs:[
+            {
+                targets:1,
+                render:function (data, type, row, meta) {
+                    var date = '<span style="display: block; color: grey; margin-left: 10px" class="">'+row["date"]+'</span>';
+                    var user = '<span style="display: block; margin-left: 10px" class=""><b>usuario:</b> '+row["usuario"]+'</span>';
+                    var msg  = '<div class="direct-chat-text" style="margin-left: 5px !important;">' +
+                        '           <a style="color: black; white-space: pre-wrap; display: block; ">'+(row['msg'])+'</a>' +
+                        '       </div>';
+
+                    var dom = date + user + msg;
+                    return dom;
+                }
+            }
+        ],
+        "language": {
+            "sProcessing":     "Procesando...",
+            "sLengthMenu":     "Mostrar _MENU_ registros",
+            "sZeroRecords":    "No se encontraron resultados",
+            "sEmptyTable":     "Ningún dato disponible en esta tabla",
+            "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+            "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+            "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+            "sInfoPostFix":    "",
+            "sSearch":         "Buscar:",
+            "sUrl":            "",
+            "sInfoThousands":  ",",
+            "oPaginate": {
+                "sFirst":    "Primero",
+                "sLast":     "Último",
+                "sNext":     "Siguiente",
+                "sPrevious": "Anterior"
+            },
+            "oAria": {
+                "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+            }
+        },
+        "infoCallback": function (settings, start, end, max, total, pre){
+            return "Mostrando registros del "+ start +" al "+ end +"<br>de un total de "+total+ " registros.";
+        }
+    }).on( 'length.dt', function ( e, settings, len ) { // cambiar
+        // $("#refresh_comment").find("span").addClass('btnSpinner');
+    }).on( 'page.dt', function ( e, settings, len ) { // cambiar
+        // $("#refresh_comment").find("span").addClass('btnSpinner');
+    });
+
+}
+
+
+function  ajax_load_comment_time(text) {
 
     $.ajax({
         url: $DOCUMENTO_URL_HTTP +'/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
         type:'GET',
         data: {
             'ajaxSend':'ajaxSend',
-            'accion': 'comecent_doct_paciente',
+            'accion': 'comecent_doct_paciente_crearte',
             'idPaciente': $id_paciente,
             'text':text,
-            'subaccion': subaccion,
-            'id_ultimo' :$Ultimo_iddocument
+            'subaccion': "agregar"
         },
         async:true,
         cache:false,
         dataType:'json',
-        success: function(resp) {
-            var comment_html = "";
-            if(resp.error == '') {
-                if(resp.numero > 0) {
-                    var $comentario = resp.data;
-                    var a = 0;
-                    $Ultimo_iddocument = resp.ultimoid;
-                    while (a <= $comentario.length -1)
-                    {
-                        var text          = ($comentario[a]['text'] == "") ? "&nbsp;" : $comentario[a]['text'];
-                        var doctor        = $comentario[a]['doctor'];
-                        var url_icon      = $comentario[a]['icon'];
-                        var fechaComment  = $comentario[a]['fecha'];
-
-                        if(a ==  $comentario.length -1)
-                        {
-                            comment_html += '' +
-                                '<div class="direct-chat-msg" id="loadMensage">\n' +
-                                '<div class="direct-chat-info clearfix">\n' +
-                                '<span class="direct-chat-name pull-left">'+ doctor +'</span>\n' +
-                                ' <span class="direct-chat-timestamp pull-right">'+ fechaComment +'</span>\n' +
-                                ' </div>\n' +
-                                '\n' +
-                                ' <img class="direct-chat-img" src="' + url_icon + '" alt="message user image">\n' +
-                                '\n' +
-                                ' <div class="direct-chat-text">\n' +
-                                '   <a style="color: black" >'+ text +'</a>\n' +
-                                ' </div>\n' +
-                                '\n' +
-                                ' </div>';
-
-                        }else{
-                            comment_html += '' +
-                                '<div class="direct-chat-msg" >\n' +
-                                '<div class="direct-chat-info clearfix">\n' +
-                                '<span class="direct-chat-name pull-left">'+ doctor +'</span>\n' +
-                                '<span class="direct-chat-timestamp pull-right">' +fechaComment+ '</span>\n' +
-                                '</div>\n' +
-                                '\n' +
-                                '  <img class="direct-chat-img" src="' + url_icon + '" alt="message user image">\n' +
-                                '\n' +
-                                '  <div class="direct-chat-text">\n' +
-                                '       <a style="color: black">'+ text +'</a>\n' +
-                                '</div>\n' +
-                                '\n' +
-                                '</div>';
-                        }
-                        a++;
-                    }
-                    $('#chatUpdate').html(comment_html);
-                    if(resp['ultimo'] == true) {
-                        document.getElementById('loadMensage').scrollIntoView();
-                    }
-                    if(scroll==true){
-                        document.getElementById('loadMensage').scrollIntoView();
-                    }
-                }
-
-                if($('.direct-chat-msg').length == 0){
-                    $('#chatUpdate').html(  '<h3 class="text-center">No hay ningún comentario para este paciente</h3>' )
-                }
-                if(resp.numero == 0) {
-                    $('#chatUpdate').html(  '<h3 class="text-center">No hay ningún comentario para este paciente</h3>' )
-                }
+        complete: function(xhr, status){
+            $("#refresh_comment") .find("span").removeClass('btnSpinner');
+        },
+        success: function(response) {
+            if(response['error']!=''){
+                notificacion(response['error'], 'error');
+            }else{
+                commentlist();
             }
         }
 
@@ -93,24 +122,30 @@ function  ajax_load_comment_time(text, subaccion, scroll = false) {
 
 $("#comment").click(function() {
 
-    if(!ModulePermission('Comentarios Administrativos', 'consultar')){
+    if(!ModulePermission('Comentarios Administrativos', 'agregar')){
         notificacion('Ud. No tiene permiso para esta Operación', 'error');
         return false;
     }
-
     var text = $("#texto_comment").val();
-    ajax_load_comment_time(text, "agregar", true);
+    ajax_load_comment_time(text);
     $("#texto_comment").val(null);
 });
 
+$("#refresh_comment").click(function () {
+
+    if(!$("#refresh_comment").find("span").hasClass('btnSpinner')){
+        $("#refresh_comment").find("span").addClass('btnSpinner');
+    }
+    commentlist();
+});
 
 $(window).on("load", function() {
 
-    ajax_load_comment_time(null, "consultar");
-
-    // setInterval(function() {
-    //     ajax_load_comment_time(null, "consultar");
-    // },3500);
-
+    commentlist();
     boxloading($boxContentViewAdminPaciente ,false, 1000);
+
+    if(!ModulePermission('Comentarios Administrativos', 'consultar')){
+        notificacion('Ud. No tiene permiso para consultar', 'error');
+        return false;
+    }
 });

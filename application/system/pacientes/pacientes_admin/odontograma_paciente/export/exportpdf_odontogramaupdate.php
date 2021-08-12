@@ -83,11 +83,18 @@ if($rslist&&$rslist->rowCount()>0)
     while ($ob = $rslist->fetchObject())
     {
         $row= array();
+
+        if($ob->obsrvacion!=""){
+            $observ = "<br><small style='color: #0866a5; display: block;'><b>observación:</b> ".$ob->obsrvacion." </small>";
+        }else{
+            $observ="";
+        }
+
         if($ob->estado_anulado=='A'){
             $row[] = date('Y/m/d', strtotime($ob->fecha));
             $row[] = $ob->fk_diente;
             $row[] = $ob->list_caras;
-            $row[] = $ob->estado;
+            $row[] = $ob->estado. "" .$observ;
         }
 
 
@@ -95,7 +102,7 @@ if($rslist&&$rslist->rowCount()>0)
             $row[] = "<strike>".date("Y/m/d", strtotime($ob->fecha))."</strike>";
             $row[] = "<strike> ".$ob->fk_diente." </strike>";
             $row[] = "<strike>".$ob->list_caras."</strike>"  ;
-            $row[] = "<strike>".$ob->estado ." ".$observacion."</strike>";
+            $row[] = "<strike>".$ob->estado ." ".$observ."</strike>";
         }
 
         $detalle_odontologicos[] = $row;

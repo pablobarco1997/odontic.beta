@@ -13,6 +13,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
     switch ($accion)
     {
+        //recaudaciones
         case 'listpagos_indepent':
 
 
@@ -64,6 +65,13 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
         case 'realizar_pago_independiente':
 
+
+            if(!PermitsModule('Recaudaciones', 'agregar')){
+                $permits = false;
+            }else{
+                $permits = true;
+            }
+
             $datos           = GETPOST('datos');
             $tipo_pago       = GETPOST('tipo_pago');
             $n_fact_bolet    = GETPOST('n_fact_bolet');
@@ -79,21 +87,23 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $datosp['observ']       = $observa;
 
             //se valida la caja asociado a un usuario
-            //tiene qeu estar en estado Abierto
-            //no
+            //tiene qeu estar en estado Abierto no
             // C cerrada
             // E eliminada
-            $consultar_caja_usuario = ConsultarCajaUsers($user->id);
-            if($consultar_caja_usuario['error']==""){
 
-                $respuesta = realizar_PagoPacienteIndependiente( $datosp, $idpaciente, $idplancab );
-                if($respuesta == 1){
+            if($permits==true){
+                $consultar_caja_usuario = ConsultarCajaUsers($user->id);
+                if($consultar_caja_usuario['error']==""){
+                    $respuesta = realizar_PagoPacienteIndependiente( $datosp, $idpaciente, $idplancab );
+                    if($respuesta == 1){
+                    }else{
 
+                    }
                 }else{
-
+                    $respuesta = "Este usuario no tiene asociada una caja <br> <b>No puede realizar esta Operación</b> <br> ".$consultar_caja_usuario['error'];
                 }
             }else{
-                $respuesta = "Este usuario no tiene asociada una caja <br> <b>No puede realizar esta Operación</b> <br> ".$consultar_caja_usuario['error'];
+                $respuesta = "Ud. No tiene permisos para realizar esta Operación";
             }
 
             $Output = [
@@ -424,6 +434,13 @@ function list_pagos_independientes($idpaciente = 0, $Filtros = array())
 
     global  $db , $conf;
 
+
+    if(!PermitsModule('Recaudaciones', 'consultar')){
+        $consultar = " and 1<>1 ";
+    }else{
+        $consultar = " and 1=1 ";
+    }
+
     $data = array();
 
     $Total = 0;
@@ -459,7 +476,8 @@ function list_pagos_independientes($idpaciente = 0, $Filtros = array())
         $sql_a .= " and (select count(*) from tab_plan_tratamiento_det d where d.fk_plantratam_cab=ct.rowid and d.estadodet='R')  "; //plan de tratamiento con prestaciones realizadas
     }
 
-//    print_r($sql_a); die();
+    $sql_a .= $consultar;
+
     $sql_a .= " order by ct.rowid desc";
     $Total =  $db->query($sql_a)->rowCount();
     if($start || $length){

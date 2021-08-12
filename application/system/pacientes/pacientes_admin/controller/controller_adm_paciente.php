@@ -104,7 +104,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     $error = 'Ocurrio un error No se Encontraron datos de este paciente, Consulte con soporte';
                 }else{
                     $data = $resp[0];
-                    if(!preg_match ("/\s /", $data->icon)){
+                    $iconstring = (string)$data->icon;
+                    if(!empty($iconstring)){
                         if(file_exists(DOL_DOCUMENT.'/logos_icon/icon_logos_'.$conf->EMPRESA->ENTIDAD.'/'.$data->icon)){
                             $img64 = base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/icon_logos_'.$conf->EMPRESA->ENTIDAD.'/'.$data->icon));
                             $data->img_logo = 'data:image/png; base64, '.$img64;
@@ -427,125 +428,117 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             echo json_encode($output);
             break;
 
-        case "comecent_doct_paciente":
+        case "comecent_doct_paciente_crearte":
 
-            $error = "";
-            $numeroFilas = 0;
-            $data = array();
-
-            $ultimo_id_mysql = 0;
-            $last_msg    = false;
-
-
-            if(!PermitsModule('Comentarios Administrativos', 'consultar')){
-
-            }
-
-            $ultimo_id   = GETPOST("id_ultimo");
             $text        = GETPOST("text");
             $idPaciente  = GETPOST("idPaciente");
+            $idUser      = $user->id;
             $subaccion   = GETPOST('subaccion');
-            $iddocSesion = $_SESSION['id_user'];
 
             //cuando se ingresa un comentario
             if($subaccion == "agregar") {
-                $sql = "INSERT INTO tab_comentarios_odontologos (`fk_odontologos`, `comentario`, `fk_paciente`) VALUES ($iddocSesion, '$text', $idPaciente);";
-                $rs = $db->query($sql);
-                if($rs) {
-                    $sql1   = "SELECT c.tms as date, c.rowid, (select concat(o.nombre_doc , ' ' , o.apellido_doc) FROM tab_odontologos o where o.rowid = c.fk_odontologos) doc , 
-                                  (select icon FROM tab_odontologos o where o.rowid = c.fk_odontologos) as icon ,
-                                  c.comentario
-                                  FROM tab_comentarios_odontologos c WHERE c.fk_paciente = $idPaciente order by  c.rowid asc ";
-                    $acce   = $db->query($sql1);
-                    if($acce->rowCount() > 0) {
-                        while ($obj = $acce->fetchObject()) {
-                            $imgbase64="";
-                            if(file_exists(DOL_HTTP.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$obj->icon)){
-                                $url = DOL_HTTP.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$obj->icon;
-                                $imgbase64 = base64_encode(file_get_contents($url));
-                                $imgbase64 = 'data:image/png; base64, '.$imgbase64;
-                            }else{
-                                $url = DOL_HTTP.'/logos_icon/logo_default/avatar_none.ico';
-                                $imgbase64 = base64_encode(file_get_contents($url));
-                                $imgbase64 = 'data:image/png; base64, '.$imgbase64;
-                            }
-
-                            $data[] = array(
-                                "icon"   => $imgbase64,
-                                "doctor" => $obj->doc,
-                                "text"   => ($obj->comentario == "") ? "" : $obj->comentario,
-                                "fecha"  => $obj->date
-                            );
-                        }
-
-                        $numeroFilas = $acce->rowCount();
+                    $sql_a = "INSERT INTO tab_comentarios_odontologos (`fk_users_athor`, `comentario`, `fk_paciente`) VALUES ($idUser, '$text', $idPaciente);";
+                    $result_a = $db->query($sql_a);
+                    if($result_a){
+                        $error = "";
+                        $idLast = $db->lastInsertId('tab_comentarios_odontologos');
+                        $log->log($idLast, $log->crear, 'Se ha registrado un comentario codigo64: '.base64_encode($idLast).' user: '.$user->name, 'tab_comentarios_odontologos');
+                    }else{
+                        $log->log(0, $log->error, 'Ha Ocurrido un error con la Operación crear Comentario. User: '.$user->name, 'tab_comentarios_odontologos', $sql_a);
+                        $error = $messErr;
                     }
-
-                    $error = "";
-                }else{
-                    $error = "Ocurrio un error no se pudo guardar el comentario, consulte con soporte";
-                }
-
+            }else{
+                $error = "Error de parametros de entrada consulte con Soporte";
             }
 
-            if($subaccion == "consultar") #consulto ultimo en caso ya se guardo
-            {
-                $sql1   = "SELECT c.tms as date, c.rowid,  (select concat(o.nombre_doc , ' ' , o.apellido_doc) FROM tab_odontologos o where o.rowid = c.fk_odontologos) doc , 
-                                  (select icon FROM tab_odontologos o where o.rowid = c.fk_odontologos) as icon ,
-                                  c.comentario
-                                  FROM tab_comentarios_odontologos c WHERE c.fk_paciente = $idPaciente order by  c.rowid asc ";
-                $acce   = $db->query($sql1);
-                if($acce->rowCount() > 0) {
-                    while ($obj = $acce->fetchObject()) {
-
-                        $imgbase64="";
-                        if(file_exists(DOL_HTTP.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$obj->icon)){
-                            $url = DOL_HTTP.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$obj->icon;
-                            $imgbase64 = base64_encode(file_get_contents($url));
-                            $imgbase64 = 'data:image/png; base64, '.$imgbase64;
-                        }else{
-                            $url = DOL_HTTP.'/logos_icon/logo_default/avatar_none.ico';
-                            $imgbase64 = base64_encode(file_get_contents($url));
-                            $imgbase64 = 'data:image/png; base64, '.$imgbase64;
-                        }
-
-                        $data[] = array(
-                            "icon"       => $imgbase64,
-                            "doctor"     => $obj->doc,
-                            "text"       => ($obj->comentario == "") ? "" : $obj->comentario,
-                            "ultimo_id"  => $obj->rowid,
-                            "fecha"      => GET_DATE_SPANISH( $obj->date ) ,
-                        );
-                    }
-
-                    $numeroFilas = $acce->rowCount();
-                    $error = '';
-                }
-
-                #consulto el ultimo id
-                $sqlUltimoId = "SELECT MAX(rowid) as ultimo_id FROM tab_comentarios_odontologos WHERE fk_paciente = $idPaciente limit 1";
-                $rsultimo    = $db->query($sqlUltimoId);
-                if($rsultimo->rowCount() > 0)
-                {
-                    $ultimo_id_mysql = $rsultimo->fetchObject()->ultimo_id;
-                    if($ultimo_id_mysql > $ultimo_id ) #el id principal es mayor que el ultimo entonces se ingreso uno nuevo
-                    {
-                        $last_msg = true;
-                    }
-                }
-            }
 
             $output = [
-                'error'  => $error       ,
-                'data'   => $data        ,
-                'numero' => $numeroFilas ,
-                'ultimo' => $last_msg    ,
-                'ultimoid' => $ultimo_id_mysql    ,
+                'error'  => $error,
             ];
-
             echo json_encode($output);
-
             break;
+
+        case 'listComment':
+
+
+            if(!PermitsModule('Comentarios Administrativos', 'consultar')){
+                $permits = " and 1<>1";
+            }else{
+                $permits = " and 1=1";
+            }
+
+            $id = GETPOST('paciente_id');
+            $start = GETPOST('start');
+            $length = GETPOST('length');
+
+            $datos = [];
+
+            $sql = "SELECT 
+                        c.tms AS date,
+                        c.rowid,
+                        c.comentario, 
+                        s.usuario , 
+                        '' as icon
+                    FROM
+                        tab_comentarios_odontologos c
+                        inner join 
+                        tab_login_users s on s.rowid = c.fk_users_athor
+                    WHERE
+                        c.fk_paciente = $id";
+            $sql .= $permits;
+            $sql .= " ORDER BY c.rowid desc ";
+            $total = $db->query($sql)->rowCount();
+
+            if($start || $length)
+                $sql.=" LIMIT $start,$length ";
+
+            $result = $db->query($sql);
+            if($result){
+                if($result->rowCount()>0){
+                    $fetch = $result->fetchAll(PDO::FETCH_ASSOC);
+                    if(count($fetch)>0){
+                        foreach ($fetch as $item){
+
+                            $icon = str_replace(' ', '', $item['icon']);
+                            if(!empty($icon)){
+                                if(file_exists(DOL_HTTP.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$item['icon'])){
+                                    $url = DOL_HTTP.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$item['icon'];
+                                    $imgbase64 = base64_encode(file_get_contents($url));
+                                    $imgbase64 = 'data:image/png; base64, '.$imgbase64;
+                                }else{
+                                    $url = DOL_HTTP.'/logos_icon/logo_default/icon_avatar.svg';
+                                    $imgbase64 = $url;
+                                }
+                            }else{
+                                $url = DOL_HTTP.'/logos_icon/logo_default/icon_avatar.svg';
+                                $imgbase64 = $url;
+                            }
+
+                            $row = [];
+                            $row[] = "<img class='direct-chat-img img-sm' src='$imgbase64'>";
+                            $row[] = "";
+
+                            $row['icon']    = $icon;
+                            $row['usuario'] = $item['usuario'];
+                            $row['msg']     = $item['comentario'];
+                            $row['date']    = GET_DATE_SPANISH($item['date']).' '.date('H:m:s', strtotime($item['date']));
+                            $datos[]        = $row;
+
+                        }
+                    }
+                }
+            }
+
+
+            $output = [
+                "data"            => $datos,
+                "recordsTotal"    => $total,
+                "recordsFiltered" => $total
+
+            ];
+            echo json_encode($output);
+            break;
+
 
         case "list_informacion_doc":
 
@@ -642,7 +635,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $nombre_paciente = GETPOST("nom_paciente");
 
 
-            $sql_a    = "SELECT * FROM tab_odontograma_paciente_cab WHERE fk_tratamiento = $fk_tratamiento and fk_paciente = $idpaciente";
+            $sql_a    = "SELECT * FROM tab_odontograma_paciente_cab WHERE fk_tratamiento = $fk_tratamiento and fk_paciente = $idpaciente and estado_odont='A' ";
             $result_a = $db->query($sql_a);
             $valid    = $result_a->rowCount();
             if($valid>0){
@@ -668,7 +661,9 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             }
 
             $output = [
-              'error' => $error , 'lasidOdont' => $lastidOdontogramacab
+                'error'      => $error ,
+                'lasidOdont' => $lastidOdontogramacab ,
+                'idpa'       => tokenSecurityId($idpaciente),
             ];
 
             echo json_encode($output);
@@ -798,7 +793,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                     $opciones = "<table>
                                    <tr>
-                                       <td><a href='$url_updateOdont' class='btnhover btn btn-xs ".(!PermitsModule("Odontograma", "modificar")?"disabled_link3":"")." ' style='font-weight: bolder'> <i class='fa fa-edit'></i> ACTUALIZAR </a>     </td>
+                                       <td class='".(($ob->estado_odont=='E')?"disabled_link3":"")." '><a href='$url_updateOdont' class='btnhover btn btn-xs ".(!PermitsModule("Odontograma", "modificar")?"disabled_link3":"")." ' style='font-weight: bolder'> <i class='fa fa-edit'></i> ACTUALIZAR </a>     </td>
                                        $delete
                                    </tr> 
                                 </table>";
@@ -841,7 +836,6 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $error = "";
 
             $id = GETPOST('id');
-
             $sql_b = "Select * from tab_odontograma_paciente_cab where rowid = ".$id;
             $result_b = $db->query($sql_b);
             if($result_b){
@@ -1649,7 +1643,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         $row[] = $obj->fk_diente;
                         $row[] = str_replace(',',' , ', $obj->list_caras)  ;
                         $row[] = $obj->estado .'<span style="color: #0866a5; display: block" class="text-sm">'.$observacion.'</span>';
-                        $row[] = "<a class='btn btn-xs' style='padding: 4px 8px; background-color: #a55759; color:#ffffff ' onclick='anular_estado_update($obj->rowid)'  >Anular</a>";
+                        $row[] = "<a class='btn btn-xs  ".((!PermitsModule('Odontograma', 'eliminar')?"disabled_link3":""))." ' style='padding: 4px 8px; background-color: #a55759; color:#ffffff ' onclick='anular_estado_update($obj->rowid)'  >Anular</a>";
                     }
 
                     if($obj->estado_anulado == 'E'){
@@ -1680,7 +1674,6 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
         case 'nuevo_odontograma_detalle':
 
             $error= '';
-
             $informacion_detalle = GETPOST('info');
 
             $datos['fk_diente']         = $informacion_detalle['fk_diente'];
@@ -1689,8 +1682,6 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $datos['fk_trataminto']     = $informacion_detalle['fk_trataminto'];
             $datos['observacion']       = $informacion_detalle['observacion'];
             $datos['labelCaras']        = explode(' ', $informacion_detalle['labelCaras']);
-
-//            print_r($datos['caras_json'] ); die();
 
             $paciente->fk_diente                = $datos['fk_diente'];
             $paciente->json_caras               = $datos['caras_json'];
@@ -1719,20 +1710,19 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $fk_plantratamiento    =   GETPOST('fk_tratamiento');
             $fk_paciente           =   GETPOST('idpaciente');
 
-//            print_r($datos); die();
-            $sql1 = "SELECT * FROM tab_odontograma_update WHERE fk_tratamiento = $fk_plantratamiento and fk_paciente = $fk_paciente";
-            $rs1 = $db->query($sql1);
+            $sql_a = "SELECT * FROM tab_odontograma_update WHERE fk_tratamiento = $fk_plantratamiento and fk_paciente = $fk_paciente";
+            $result_a = $db->query($sql_a);
 
-//            print_r($datos); die();
             #si es mayor a 0 ose hay datos , eliminos los datos anteriores y ingreso los nuevo datos
-
-            if($rs1->rowCount()>0)
+            if($result_a->rowCount()>0)
             {
-                $sql2 = "DELETE FROM `tab_odontograma_update` WHERE rowid > 0 and fk_tratamiento = $fk_plantratamiento and fk_paciente = $fk_paciente";
-                $rs2  = $db->query($sql2);
+                $odong = $result_a->fetchObject()->rowid;
+                $log->log($fk_plantratamiento, $log->crear, 'Se ha creado nuevo registro de Odontograma update del Plan de Tratamiento:#'.$fk_plantratamiento, 'tab_odontograma_update');
 
-                if($rs2){
+                $sql_b = "DELETE FROM `tab_odontograma_update` WHERE rowid > 0 and fk_tratamiento = $fk_plantratamiento and fk_paciente = $fk_paciente";
+                $result_b  = $db->query($sql_b);
 
+                if($result_b){
                     for ($i =0; $i <= count($datos) -1; $i++){
 
                         $val = $datos[$i];
@@ -1741,18 +1731,18 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         $json_caras     = $val['caras'];
                         $fk_estadopieza = $val['estado_diente'];
 
-                        $sql3 = "INSERT INTO `tab_odontograma_update` (`fk_diente`, `json_caras`, `type_hermiarcada`, `fk_estado_pieza`, `fk_tratamiento`, `fk_paciente`)";
-                        $sql3 .= "VALUES(";
-                        $sql3 .= "'$fkdiente' , ";
-                        $sql3 .= "'".json_encode($json_caras)."' , ";
-                        $sql3 .= "'no hay momentaneo' , ";
-                        $sql3 .= "'$fk_estadopieza' , ";
-                        $sql3 .= "'$fk_plantratamiento' , ";
-                        $sql3 .= "'$fk_paciente' ";
-                        $sql3 .= ")";
-                        $rs3 = $db->query($sql3);
+                        $sql_c = "INSERT INTO `tab_odontograma_update` (`fk_diente`, `json_caras`, `type_hermiarcada`, `fk_estado_pieza`, `fk_tratamiento`, `fk_paciente`)";
+                        $sql_c .= "VALUES(";
+                        $sql_c .= "'$fkdiente' , ";
+                        $sql_c .= "'".json_encode($json_caras)."' , ";
+                        $sql_c .= "'no hay momentaneo' , ";
+                        $sql_c .= "'$fk_estadopieza' , ";
+                        $sql_c .= "'$fk_plantratamiento' , ";
+                        $sql_c .= "'$fk_paciente' ";
+                        $sql_c .= ")";
+                        $result_c = $db->query($sql_c);
 
-                        if(!$rs3){
+                        if(!$result_c){
                             $error += "Ocurrió un problema con la Operación, contacte con soporte tecnico";
                         }
                     }
@@ -1763,7 +1753,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             }else{ #caso contrario ingreso por primera vez
 
-                for ($i =0; $i <= count($datos) ; $i++){
+                for ($i =0; $i <= count($datos)-1; $i++){
 
                     $val = $datos[$i];
 
@@ -1771,25 +1761,22 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     $json_caras     = $val['caras'];
                     $fk_estadopieza = $val['estado_diente'];
 
-                    $sql3 = "INSERT INTO `tab_odontograma_update` (`fk_diente`, `json_caras`, `type_hermiarcada`, `fk_estado_pieza`, `fk_tratamiento`, `fk_paciente`)";
-                    $sql3 .= "VALUES(";
-                    $sql3 .= "'$fkdiente' , ";
-                    $sql3 .= "'".json_encode($json_caras)."' , ";
-                    $sql3 .= "'no hay momentaneo' , ";
-                    $sql3 .= "'$fk_estadopieza' , ";
-                    $sql3 .= "'$fk_plantratamiento' , ";
-                    $sql3 .= "'$fk_paciente' ";
-                    $sql3 .= ")";
-                    $rs3 = $db->query($sql3);
+                    $sql_d = "INSERT INTO `tab_odontograma_update` (`fk_diente`, `json_caras`, `type_hermiarcada`, `fk_estado_pieza`, `fk_tratamiento`, `fk_paciente`)";
+                    $sql_d .= "VALUES(";
+                    $sql_d .= "'$fkdiente' , ";
+                    $sql_d .= "'".json_encode($json_caras)."' , ";
+                    $sql_d .= "'no hay momentaneo' , ";
+                    $sql_d .= "'$fk_estadopieza' , ";
+                    $sql_d .= "'$fk_plantratamiento' , ";
+                    $sql_d .= "'$fk_paciente' ";
+                    $sql_d .= ")";
+                    $result_d = $db->query($sql_d);
 
-                    if(!$rs3){
+                    if(!$result_d){
                         $error += "Ocurrió un problema con la Operación, contacte con soporte tecnico";
                     }
                 }
-
             }
-
-//            print_r($json_caras); die();
 
             $output = [
                 'error' => $error

@@ -499,7 +499,14 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
         return pieza;
     }
 
-    $('#aplicar_estado_odont').click(Aplicar_Estados);
+    $('#aplicar_estado_odont').click(function () {
+
+        if(!ModulePermission('Odontograma', 'modificar')){
+            notificacion('Ud. No tiene permiso para esta Operación', 'error');
+            return false;
+        }
+        Aplicar_Estados();
+    });
 
     //funciones para agregar y actualizar el odontograma
     function adddetalle(fk_diente, datosPiezas, fk_estadoDiente, labelCaras){
@@ -513,6 +520,7 @@ $dataNumeroDientes['inferior_derecha_inferior_izquierda'] = [48,47,46,45,44,43,4
             'fk_trataminto'      :  get("idplantram"),
             'observacion'        :  $("#observacionUpdateStado").val(),
             'labelCaras'         :  labelCaras,
+            //'idOdontograma'      : "< ?//= GETPOST('') ?>//"
         };
 
         $.ajax({

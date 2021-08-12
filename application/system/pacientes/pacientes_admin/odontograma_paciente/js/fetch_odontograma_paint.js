@@ -546,6 +546,11 @@ if($accionOdontograma == 'form_odont')
     function anular_estado_update(id)
     {
 
+        if(!ModulePermission('Odontograma', 'eliminar')){
+            notificacion('Ud. No tiene permiso para realizar esta Operación','error');
+            return false;
+        }
+
         var table = $("#detalles_estados_odontograma").DataTable();
         var tablebox = $("#detalles_estados_odontograma");
         boxTableLoad(tablebox, true);

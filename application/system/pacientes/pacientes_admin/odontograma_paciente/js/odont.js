@@ -128,7 +128,6 @@ if( $accionOdontograma == 'principal'){
                     cache:false,
                     dataType:'json',
                     complete: function(xhr, status){
-
                     },
                     success:function (response) {
                         if(response.error==""){
@@ -188,10 +187,13 @@ if( $accionOdontograma == 'principal'){
         FormValidationCrearOdontograma();
     });
 
-    /*CREAR EL ODONTOGRAMA*/
+    /*crear Odontograma*/
     $('#crear_odontograma').on('click', function() {
 
-        // alert( $id_paciente );
+        if(!ModulePermission('Odontograma','agregar')){
+            notificacion('Ud. No tiene permiso para esta Operación', 'error');
+            return false;
+        }
 
         if(FormValidationCrearOdontograma()==false){
             return false;
@@ -225,10 +227,7 @@ if( $accionOdontograma == 'principal'){
                     var idplantram = $('#tratamientoSeled').find(':selected').val();
                     crearDetalleOdontograma(resp.lasidOdont, idplantram);
                     notificacion('Información Actualizada', 'success');
-                    setTimeout(function() {
-                        location.reload(true);
-                    }, 1500);
-
+                    window.location = $DOCUMENTO_URL_HTTP + "/application/system/pacientes/pacientes_admin/index.php?view=odot&key="+$keyGlobal+"&id="+(resp.idpa)+"&v=fordont&idplantram="+parametros.fk_tratamiento;
                 }else{
                     $('#msg_errores_odontogram').html(resp.error);
                     setTimeout(function() {
