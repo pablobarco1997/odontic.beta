@@ -49,11 +49,22 @@ $Active="documento_clinicos";
 
                     <script>
                         $boxContentDocumento = $("#boxContentDocumento");
+
+                        $(window).on('onload', function () {
+                            boxloading($boxContentDocumento, true);
+                        });
+
+                        $(window).on('load', function () {
+                            boxloading($boxContentDocumento, false, 1000);
+                        });
+
                     </script>
 
                     <div class="box-body">
                         <div class="form-group form-group col-xs-12 col-md-12">
                             <?php
+
+                                accessoModule('Documentos clinicos');
                                 if(isset($view)) {
                                     if($view != ""){
                                         include_once DOL_DOCUMENT.'/application/system/documentos_clinicos/view/'.$view.'.php';;

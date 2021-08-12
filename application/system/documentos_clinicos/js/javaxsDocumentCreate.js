@@ -451,5 +451,7 @@ $(window).on("load", function() {
     boxloading($boxContentDocumento,false, 1000);
     $idFormDocument           = $("#ContentForm").find("form").attr("id");
 
-    notificacion("Debe Ingresar un nombre al Formulario Clinico", "question");
+    setTimeout(function () {
+        notificacion("Debe Ingresar un nombre al Formulario Clinico", "question");
+    }, 1000);
 });

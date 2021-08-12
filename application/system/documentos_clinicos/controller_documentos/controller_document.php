@@ -10,7 +10,7 @@ if( (isset($_POST['ajaxSend']) && isset($_POST['accion'])) || (isset($_GET['ajax
     require_once DOL_DOCUMENT .'/application/config/main.php';
     require_once DOL_DOCUMENT .'/application/system/pacientes/class/class_paciente.php';
 
-    global $db, $conf, $messErr;
+    global $db, $conf, $messErr, $log;
 
 
     if(isset($_POST['accion']) || isset($_GET['accion']))
@@ -23,6 +23,12 @@ if( (isset($_POST['ajaxSend']) && isset($_POST['accion'])) || (isset($_GET['ajax
 
             case "list_informacion_doc":
 
+                if(!PermitsModule('Documentos clinicos', 'consultar')){
+                    $permits = " and 1<>1";
+                }else{
+                    $permits = " and 1=1";
+                }
+
                 $data           = array();
                 $idpaciente     = GETPOST('idpaciente');
                 $bsq_documento  = GETPOST('bsq_documento');
@@ -33,10 +39,8 @@ if( (isset($_POST['ajaxSend']) && isset($_POST['accion'])) || (isset($_GET['ajax
                     $dateff_fin = str_replace('/','-', explode('-',$fecha_create)[1]);
                 }
 
-                $permisoConsultar = (!PermitsModule(4,1))?" and 1<>1 ":"";
-
                 $sql  = "SELECT rowid , nombre_documento , Descripcion, id_table_form_document, datecreate FROM tab_documentos_clinicos where id_table_form_document != '' ";
-                $sql .= $permisoConsultar;
+                $sql .= $permits;
 
                 if(!empty($fecha_create)){
                     $sql .= " and cast(datecreate as date) between '$dateff_ini' and '$dateff_fin' ";
@@ -45,7 +49,6 @@ if( (isset($_POST['ajaxSend']) && isset($_POST['accion'])) || (isset($_GET['ajax
                     $sql .= " and rowid = ".$bsq_documento;
                 }
 
-                $sql .= " ";
                 $result = $db->query($sql);
                 if($result){
                     if($result->rowCount()>0){
@@ -256,31 +259,78 @@ if( (isset($_POST['ajaxSend']) && isset($_POST['accion'])) || (isset($_GET['ajax
 
             case "DocumentosForm":
 
+                if(!PermitsModule('Documentos clinicos', 'consultar')){
+                    $primetrs = " and 1<>1 ";
+                }else{
+                    $primetrs = " and 1=1 ";
+                }
+
                 $error =  "";
                 $data  = array();
+                $total = 0;
                 $idtableDocument = GETPOST("idtableDocument");
                 $iddoc           = GETPOST("iddoc");
+                $paciente_doccum = GETPOST("paciente_doccum");
+                $emitido         = GETPOST("emitido");
+                $numero          = GETPOST("numero");
 
-                if(!empty($idtableDocument))
-                {
+                if(!empty($idtableDocument)){
+
+                    $start  = $_POST['start'];
+                    $length = $_POST['length'];
+
                     $sql = "SELECT 
-                            id_registro_form , name_documn , id_documn_clinico, date_create
-                        FROM
-                            tab_documentos_clinicos_data";
+                                td.id_registro_form,
+                                td.name_documn,
+                                td.id_documn_clinico,
+                                td.date_create, 
+                                concat(p.nombre,' ', p.apellido) as paciente
+                            FROM
+                                tab_documentos_clinicos_data td
+                                    LEFT JOIN
+                                tab_admin_pacientes p ON p.rowid = td.fk_paciente";
                     $sql .= " where  id_documn_clinico = ".$iddoc;
+                    $sql .= $primetrs;
+
+                    if($paciente_doccum!="")
+                        $sql .= " and p.rowid = ".$paciente_doccum;
+
+                    if($emitido!=""){
+                        $emitido = explode('-', $emitido);
+                        $emitido1 = date('Y-m-d', strtotime(str_replace('/','-', $emitido[0])));
+                        $emitido2 = date('Y-m-d', strtotime(str_replace('/','-', $emitido[1])));
+                        $sql .= " and cast(td.date_create as date) between '$emitido1' and '$emitido2' ";
+                    }
+
+                    if($numero!="")
+                        $sql .= " and td.id_registro_form like '%$numero%' ";
+
+
+                    $sql .= " order by id_registro_form desc ";
+
+//                    print_r($sql); die();
+                    $total = $db->query($sql)->rowCount();
+                    if($start || $length){
+                        $sql.=" LIMIT $start,$length ";
+                    }
                     $result = $db->query($sql);
-                    if($result)
-                    {
-                        if($result->rowCount()>0)
-                        {
-                            while ($object = $result->fetchObject())
-                            {
+                    if($result){
+                        if($result->rowCount()>0){
+                            while ($object = $result->fetchObject()){
+
+                                if($object->paciente != ""){
+                                    $nomp = "<span class='text-sm' style='color: #0866a5; display: block'><b>Paciente:</b>".($object->paciente)."</span>";
+                                }else{
+                                    $nomp = "";
+                                }
+
                                 $rows = array();
                                 $rows[] = "";
-                                $rows[] = "DOCUMENTO_INFO_".str_pad($object->id_registro_form, 7, "0", STR_PAD_LEFT). " ";
-                                $rows[] = date("Y/m/d H:m:s", strtotime($object->date_create));
+                                $rows[] = "DOCUMENTO_INFO_".str_pad($object->id_registro_form, 6, "0", STR_PAD_LEFT). " ".$nomp;
+                                $rows[] = date("Y/m/d", strtotime($object->date_create));
                                 $rows[] = "";
                                 $rows['idInfoDoc'] =  $object->id_registro_form; //id de registro documento
+                                $rows['number'] =  "DOCUMENTO_INFO_".str_pad($object->id_registro_form, 6, "0", STR_PAD_LEFT);
                                 $data[] = $rows;
                             }
                         }
@@ -288,10 +338,50 @@ if( (isset($_POST['ajaxSend']) && isset($_POST['accion'])) || (isset($_GET['ajax
                 }
 
 
-                $outuput = [
-                    'data' => $data,
-                ];
-                echo json_encode($outuput);
+
+                $output = array(
+                    "data"            => $data,
+                    "recordsTotal"    => $total,
+                    "recordsFiltered" => $total
+                );
+
+                echo json_encode($output);
+                break;
+
+
+            case 'asociar_pacientes_document':
+
+                $error = "";
+
+                $id_list     = GETPOST('id');
+                $id_paciente = GETPOST('idpaciente');
+
+                if($id_paciente != ""){
+                    $error = "Seleccione un paciente";
+                }
+
+                $nompaciente = getnombrePaciente($id_paciente);
+                $nompaciente = $nompaciente->nombre." ".$nompaciente->apellido;
+
+                $sql = "UPDATE `tab_documentos_clinicos_data` SET `fk_paciente`='$id_paciente' WHERE `id_registro_form` in($id_list)";
+                $result = $db->query($sql);
+                if($result){
+                    $error = "";
+                    $id_list = explode(',', $id_list );
+                    foreach ($id_list as $valueid){
+                        $num  = "DOCUMENTO_INFO_".str_pad($valueid, 6, "0", STR_PAD_LEFT);
+                        $desc = "Se modifico el registro ".$num.". Documento Asociado al paciente: ".$nompaciente;
+                        $log->log($valueid, $log->modificar, $desc, "tab_documentos_clinicos_data");
+                    }
+                }else{
+                    $error = $messErr;
+                }
+
+                $output = array(
+                    "error" => $error,
+                );
+
+                echo json_encode($output);
                 break;
 
             /////////////////**************************/////////////////////////////////////////
@@ -387,18 +477,13 @@ if( (isset($_POST['ajaxSend']) && isset($_POST['accion'])) || (isset($_GET['ajax
 
             /////////////////**************************/////////////////////////////////////////
             case "eleminar_Registro_Doc_Data":
-
                 //tab_documentos_clinicos_data
-
                 $error = "";
-
                 $iddocData = GETPOST("id");
                 $result = $db->query("DELETE FROM `tab_documentos_clinicos_data` WHERE `id_registro_form`=$iddocData ");
-
                 if(!$result){
                     $error = $messErr;
                 }
-
                 $outuput = [
                     "error" => $error,
                 ];
@@ -525,158 +610,12 @@ if( (isset($_POST['ajaxSend']) && isset($_POST['accion'])) || (isset($_GET['ajax
                 echo json_encode($outuput);
                 break;
 
+
         }
     }
 }
 
 
-//ID Ficha clinica document - 1
-function create_fichaClinica( $dataPrincipal = array() )
-{
-
-    global $db, $conf;
-
-    $sqlNuevoUpdate = "INSERT INTO tab_documentos_ficha_clinica(";
-    $sqlNuevoUpdate .= "   nombre_apellido";
-    $sqlNuevoUpdate .= " , cedula_pasaporte";
-    $sqlNuevoUpdate .= " , fecha_nacimiento";
-    $sqlNuevoUpdate .= " , lugar_nacimiento";
-    $sqlNuevoUpdate .= " , estado_civil";
-    $sqlNuevoUpdate .= " , n_hijos";
-    $sqlNuevoUpdate .= " , sexo";
-    $sqlNuevoUpdate .= " , edad";
-    $sqlNuevoUpdate .= " , ocupacion";
-    $sqlNuevoUpdate .= " , direccion_domicilio";
-    $sqlNuevoUpdate .= " , emergencia_call_a";
-    $sqlNuevoUpdate .= " , emergencia_telefono";
-    $sqlNuevoUpdate .= " , telefono_convencional";
-    $sqlNuevoUpdate .= " , operadora";
-    $sqlNuevoUpdate .= " , celular";
-    $sqlNuevoUpdate .= " , email";
-    $sqlNuevoUpdate .= " , twiter";
-    $sqlNuevoUpdate .= " , lugar_trabajo";
-    $sqlNuevoUpdate .= " , telefono_trabajo";
-    $sqlNuevoUpdate .= " , posee_seguro";
-    $sqlNuevoUpdate .= " , motivo_consulta";
-    $sqlNuevoUpdate .= " , tiene_enfermedades";
-    $sqlNuevoUpdate .= " , otras_enfermedades";
-
-    $sqlNuevoUpdate .= " , esta_algun_tratamiento_medico";
-    $sqlNuevoUpdate .= " , cual_tratamiento_medico";
-
-    $sqlNuevoUpdate .= " , tiene_problema_hemorragico";
-    $sqlNuevoUpdate .= " , cual_problema_hemorragico";
-
-    $sqlNuevoUpdate .= " , alergico_medicamento";
-    $sqlNuevoUpdate .= " , cual_alergico_medicamento";
-
-    $sqlNuevoUpdate .= " , toma_medicamento";
-    $sqlNuevoUpdate .= " , cual_toma_medicamento";
-
-    $sqlNuevoUpdate .= " , esta_embarazada";
-    $sqlNuevoUpdate .= " , cual_esta_embarazada";
-
-    $sqlNuevoUpdate .= " , enfermedades_hereditarias";
-    $sqlNuevoUpdate .= " , cual_enfermedades_hereditarias";
-
-    $sqlNuevoUpdate .= " , que_toma_ult_24horass";
-    $sqlNuevoUpdate .= " , resistente_medicamento";
-    $sqlNuevoUpdate .= " , hemorragia_bucales";
-    $sqlNuevoUpdate .= " , complicacion_masticar";
-    $sqlNuevoUpdate .= " , habitos_consume";
-
-    $sqlNuevoUpdate .= ")";
-    $sqlNuevoUpdate .= "VALUES(";
-
-    $sqlNuevoUpdate .= "  '$dataPrincipal->doc_nombre_apellido'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_cedula'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_fecha_nc'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_lugar_n'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_estado_civil'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_hijos_n'";
-    $sqlNuevoUpdate .= ", '".json_encode($dataPrincipal->sexo)."'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_edad'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_ocupacion'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_domicilio'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_emergencia_call_a'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_emergencia_telef'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_telef_convencional'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_operadora'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_celular'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_email'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_twiter'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_lugar_trabajo'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_telef_trabajo'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_q_seguro_posee'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_motivo_consulta'";
-
-    $sqlNuevoUpdate .= ", '".json_encode($dataPrincipal->enfermedades)."'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_otras_enferm'";
-
-    $sqlNuevoUpdate .= ", '". json_encode($dataPrincipal->segui_tratamiento) ."'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_tratmient_descrip'";
-
-    $sqlNuevoUpdate .= ", '". json_encode($dataPrincipal->problemas_hemorragicos) ."'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_descrip_hemorragicos'";
-
-    $sqlNuevoUpdate .= ", '". json_encode($dataPrincipal->alergico_medicamento) ."'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_descrip_alergia'";
-
-    $sqlNuevoUpdate .= ", '". json_encode($dataPrincipal->toma_medicamento_frecuente) ."'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_descrip_medicamento'";
-
-    $sqlNuevoUpdate .= ", '". json_encode($dataPrincipal->embarazada) ."'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_descrip_embarazada'";
-
-    $sqlNuevoUpdate .= ", '". json_encode($dataPrincipal->enferm_hederitarias) ."'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_descript_hederitaria'";
-
-    $sqlNuevoUpdate .= ", '$dataPrincipal->q_medicina_tomo_24h_ultima'";
-    $sqlNuevoUpdate .= ", '$dataPrincipal->doc_resistente_medicamento'";
-
-    $sqlNuevoUpdate .= ", '". json_encode($dataPrincipal->hemorragias_bocales) ."'";
-
-    $sqlNuevoUpdate .= ", '". json_encode($dataPrincipal->complicaciones_masticar) ."'";
-
-    $sqlNuevoUpdate .= ", '". json_encode($dataPrincipal->abitos_consume) ."'";
-
-
-    $sqlNuevoUpdate .= ")";
-
-    $rs = $db->query($sqlNuevoUpdate);
-
-    if(!$rs){
-        return 'Error no se pudo guardar el documento Ficha clinica';
-    }else{
-        return '';
-    }
-
-}
-
-function fetch_set_document($tyoedocmm = "", $iddocumdet = "")
-{
-    global  $db , $conf;
-
-    $dataPrincipal= array();
-
-    //FICHA CLINICA
-    if($tyoedocmm == 1)
-    {
-        $sql = "SELECT * FROM tab_documentos_ficha_clinica where rowid = " . $iddocumdet;
-        $rs  = $db->query($sql);
-
-        if($rs->rowCount() > 0)
-        {
-            while ($Obj = $rs->fetchObject())
-            {
-                $dataPrincipal = $Obj;
-            }
-        }
-    }
-
-    return $dataPrincipal;
-
-}
 
 
 

@@ -72,15 +72,17 @@
         </div>
     </div>
 
-    <div class="form- col-md-12 col-xs-12">
+    <div class="form-group col-md-12 col-xs-12">
         <?php
             include_once DOL_DOCUMENT.'/application/system/documentos_clinicos/form_documentos/'.$nameDirectDocumento.'/'.$object->element_text.'.html';
         ?>
     </div>
 
     <div class="form-group col-md-12 col-xs-12">
-        <div style="width: 800px" class="col-centered">
-            <button class="btn btn-block btn-success" id="btnImprimir">Guardar</button>
+        <div style="width: 780px" class="col-centered">
+            <button class="btn" id="btnGuardar" style="float: right; color: green; font-weight: bold">Guardar
+                <span class="fa fa-refresh btnSpinner hide"></span>
+            </button>
         </div>
     </div>
 
@@ -196,6 +198,8 @@
         FormInfo.append("iddclin",   "<?= $idDoc ?>");
         FormInfo.append("idmod",     "<?= $idModi ?>");
 
+        button_loadding($("#btnGuardar"),true);
+
         $.ajax({
             url:$DOCUMENTO_URL_HTTP + '/application/system/documentos_clinicos/controller_documentos/controller_document.php',
             type: "POST",
@@ -204,9 +208,13 @@
             processData:false,
             contentType:false,
             cache:false,
+            async: true,
             error: function (xhr, status) {
                 
-            }, 
+            },
+            complete: function(xhr, status){
+                button_loadding($("#btnGuardar"),false);
+            },
             success:function (resp) {
                 if(resp['error']!=''){
                     notificacion(resp['error'], 'error');
@@ -223,7 +231,7 @@
     }
 
 
-    $("#btnImprimir").on("click", function() {
+    $("#btnGuardar").on("click", function() {
 
         var Elementos = FetchName();
 

@@ -137,6 +137,18 @@ $("#crearDocumentClinico").click(function() {
     }
 });
 
+
+function crearOdontograma(){
+
+    if(!ModulePermission('Documentos clinicos','agregar')){
+        notificacion('Ud. No tiene permiso para realizar esta Operación', 'error');
+        return false;
+    }
+
+    var url = $DOCUMENTO_URL_HTTP + "/application/system/documentos_clinicos/index.php?view=createform_regist";
+    window.open(url);
+}
+
 $(".aplicar").click(function() {
     cargarlistdocummclini();
 });
@@ -214,57 +226,6 @@ $(document).ready(function() {
 });
 
 
-/*
-if( $acciondocummAsociado == "listdocumment")
-{
-
-    //creas un documento para el paciente - admin - en este caso este es un script para Fichas clinicas
-    //En esta opcion uno puede seleccionar cualquier documento que este creado listo para guardar ya sea una ficha clinica o ficha odontogrma etc
-    $('#crearDocumentClinico').click(function() {
-
-        if($('#documento_').find('option:selected').val() != 0 || $('#documento_').find('option:selected').val() != "")
-        {
-
-            var idtypedoc = $('#documento_').find('option:selected').val(); //#id tipo del documento
-            var urlDocument = $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/?view=docummclin&key=' + $keyGlobal + '&id='+ Get_jquery_URL('id') +'&v=docum_clin&dt='+idtypedoc;
-            // alert(urlDocument);
-            window.location = urlDocument;
-
-        }else{
-
-            notificacion('Debe selecionar un documento', 'error');
-        }
-
-    });
-
-
-
-} */
-
-
-/*
-
-if($acciondocummAsociado == "docum_clin") //Docoumentos clinicos
-{
-
-    var iddocumentfk     = 0; //El id del documento  creado
-    var idtipodocumentfk = 0; //El id del tipo de documento  creado
-
-    idtipodocumentfk = Get_jquery_URL('dt');  //tipo
-    iddocumentfk     = Get_jquery_URL('iddocmnt'); // id documento
-
-
-    if(idtipodocumentfk == 1) //FICHA  CLINICA
-    {
-        if(iddocumentfk > 0)
-        {
-            setDocumentMod_fichaClinica( idtipodocumentfk , iddocumentfk );
-        }
-    }
-
-}  */
-
-
 //OBTENER EL ID DE UNA URL CON JQUERY         ----------------------------------------
 function Get_jquery_URL(Getparam)
 {
@@ -280,5 +241,10 @@ window.onload =  boxloading($boxContentDocumento,true);
 $(window).on("load", function() {
 
     boxloading($boxContentDocumento,false,1500);
+
+    if(!ModulePermission('Documentos clinicos', 'consultar')){
+        notificacion('Ud. No tiene permiso para consultar', 'error');
+        return false;
+    }
 
 });
