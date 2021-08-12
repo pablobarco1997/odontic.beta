@@ -30,7 +30,7 @@
                     <input type="password" class="input"  style="font-size: 1.4rem" id="pass" required>
                 </div>
             </div>
-<!--            <a href="#">Forgot Password?</a>-->
+            <a href="#" class="" style="margin: 15px 5px 0px 0px; font-size: 1.5rem">¿Olvidó su contraseña?</a>
             <input type="button" class="btn_login_style" value="Login" id="btn_logearse">
         </div>
     </div>

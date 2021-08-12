@@ -27,7 +27,7 @@ if(isset($_SESSION['is_open']))
     <link rel="stylesheet" href="<?php echo DOL_HTTP .'/public/bower_components/font-awesome/css/font-awesome.min.css'?>">
     <!--Ionicons -->
     <link rel="stylesheet" href="<?php echo DOL_HTTP .'/public/bower_components/Ionicons/css/ionicons.min.css'?>">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    <!--<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">-->
     <link rel="shortcut icon" href="<?=DOL_HTTP.'/application/system/login/img/odontic_ico.png';?>" type="image/x-icon" >
     <script src="../../../public/bower_components/jquery/dist/jquery.js"></script>
     <script src="../../../public/bower_components/bootstrap/dist/js/bootstrap.js"></script>
@@ -38,7 +38,7 @@ if(isset($_SESSION['is_open']))
 </head>
 <style>
     *{
-        font-family: 'Roboto', sans-serif;
+        font-family: Cambria;
         font-size: small;
     }
 </style>
