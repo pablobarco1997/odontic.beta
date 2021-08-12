@@ -20,6 +20,8 @@ if(isset($_GET['v'])){
     die();
 }
 
+
+
 ?>
 
 <div class="box box-solid">
@@ -32,6 +34,8 @@ if(isset($_GET['v'])){
 
     <div class="box-body">
         <div class="form-group form-group col-xs-12 col-md-12">
+
+            <?php  accessoModule('Usuarios') ?>
 
             <div class="form-group col-centered col-xs-12 col-md-11 col-lg-10 col-sm-12" style="margin-top: 30px">
                 <div class="form-group col-md-12 col-xs-12">

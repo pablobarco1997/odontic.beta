@@ -1062,7 +1062,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $error ="";
 
             if($cual == 'list'){
-                $permisoConsultar = (!PermitsModule(14,1))?0:1;
+                $permisoConsultar = (!PermitsModule('Usuarios','consultar'))?0:1;
 
                 if($permisoConsultar){
                     $data = infolistUsuarios($cual,$idusuMod);

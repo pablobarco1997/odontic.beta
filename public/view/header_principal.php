@@ -60,11 +60,8 @@
     <link rel="stylesheet" href="<?php echo DOL_HTTP .'/public/css/css_global/lib_glob_style.css'?>">
     <!-- Bootstrap Color Picker -->
     <link rel="stylesheet" href="<?= DOL_HTTP .'/public/bower_components/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css'?>">
-    <!--link jquery ui css-->
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.css"  />
 
     <!--script import-->
-
     <!-- jQuery 3 -->
     <script src="<?php echo DOL_HTTP.'/public/bower_components/jquery/dist/jquery.js'?>"></script>
     <!-- Bootstrap 3.4 -->
@@ -93,20 +90,18 @@
     <script src="<?php echo DOL_HTTP .'/public/js/notificaciones___lib.js' ?>"></script>
     <!--color picker-->
     <script src="<?php echo DOL_HTTP .'/public/bower_components/bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js'?>"></script>
-    <!--Jqueyr UI-->
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
 
 
     <!--google Font 2-->
     <!--<link rel="preconnect" href="https://fonts.gstatic.com">-->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+<!--    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">-->
 
     <style>
 
 
         *{
-            @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap');
-            font-family: 'Roboto', sans-serif;
+            /*@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap');*/
+            font-family: Cambria;
             font-size: small;
             /*font-family: 'Baloo Da 2', cursive;*/
         }
@@ -128,21 +123,23 @@
             font-size: large;
             font-weight: bold;
         }
-
+        .swal2-title{
+            font-family: Cambria !important;
+            /*font-family: 'Baloo Da 2', cursive;*/
+        }
         h3{
             font-size: small;
-            font-family: 'Roboto', sans-serif;
+            font-family: Cambria;
             /*font-family: 'Baloo Da 2', cursive;*/
         }
-
         h5{
             font-size: small;
+            font-family: Cambria;
             /*font-family: 'Baloo Da 2', cursive;*/
         }
-
         div{
             font-size: small;
-            font-family: 'Roboto', sans-serif;
+            font-family: Cambria;
             /*font-family: 'Baloo Da 2', cursive;*/
         }
 

@@ -131,7 +131,7 @@
 <li class="<?= $Permissions_documentosClinicos['Active'] ?>"><a href="<?= $Permissions_documentosClinicos['url'] ?>"><i class="fa fa fa-briefcase"></i><span <?= $stylefontSmall ?>>Documentos clinicos</span></a></li>
 
 <!--MODULO DE TAREAS CLINICAS-->
-<li class="<?= $Permissions_TareasClinicas['Active'] ?>"><a href="<?= $Permissions_TareasClinicas['url'] ?>"><i class="fa fa-calendar"></i><span <?= $stylefontSmall ?> >Tareas Clinicas</span></a></li>
+<li class="<?= $Permissions_TareasClinicas['Active'] ?> hidden"><a href="<?= $Permissions_TareasClinicas['url'] ?>"><i class="fa fa-calendar"></i><span <?= $stylefontSmall ?> >Tareas Clinicas</span></a></li>
 
 <!--MODULO CONFIGURACIONES-->
 <li class="treeview <?= $Permissions_configuration['Active'] ?> <?= (!empty($Permissions_configuration['Active'])?"menu-open":"")?> " style="cursor: pointer">

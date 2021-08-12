@@ -1,7 +1,7 @@
 
 var languageEs =  {
     inputTooShort: function(args) {
-        return "Por favor, introduzca 1 caracter.";
+        return "Por favor, introduzca "+(args.minimum)+" caracter.";
     },
     inputTooLong: function(args) {
         return "introduzca mas datos";
@@ -323,6 +323,7 @@ function buscarpacientes(input = false) {
     }
 }
 
+
 //Notificaciones
 function notificacion(mensage, accion)
 {
@@ -408,7 +409,7 @@ function SubirImagenes(Este,imageid,url)
             };
             if( Este.files.length > 0){     reader.readAsDataURL( Este.files[0] ); }
         }else{
-            notificacion("Solo achivos png", "error");
+            notificacion("Solo achivos png <br> Más Información Consulte con Soporte", "error");
         }
         // console.log(file);
     }else{
@@ -728,7 +729,7 @@ function  boxTableLoad(Element = false, load=false) {
             setTimeout(()=>{
                 // Element.find('.table_load_id').remove();
                 Element.parents('.table-responsive').removeClass('disabled_link3');
-            },500);
+            },300);
         }
 
     }
