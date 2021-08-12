@@ -10,6 +10,7 @@ var FormvalidPacienteMod = function(input = false){
 
     const errmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
+
     var nom      = $("#nombre");
     var ape      = $("#apellido");
     var ci       = $("#rud_dni");
@@ -61,7 +62,9 @@ var FormvalidPacienteMod = function(input = false){
             'text' : 'Campo Obligatorio'
         });
     }else{
-        t_movil.val(t_movil.val().replace(/[^1-9]/g, ''));
+        if( ((/^[1-9]\d*$/).test(t_movil.val())) == false){ //si el primer caracter es 0
+            t_movil.val(t_movil.val().replace(/^[0-9]\d*$/, '')); //renplaso el primer 0 de la primera posicion
+        }
         if(t_movil.val().length!=9){
             ErroresData.push({
                 'document' : t_movil,
@@ -127,7 +130,7 @@ function obtenerDatosP($id)
                 $('#apoderado').val(data['apoderado']);
                 $('#refer').val(data['referencia']);
 
-                if($.trim( data['icon'] ) != ""){
+                if($.trim(data['img_logo']) != ""){
                     $('#fileIcon').css('display',  'none');
                     var img = document.createElement('img'); //creo el elmento img
                     img.setAttribute('width', '140px'); //agrego attr y css

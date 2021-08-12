@@ -157,7 +157,9 @@ var FormvalidPacienteAdd = function(input = false){
             'text' : 'Campo Obligatorio'
         });
     }else{
-        t_movil.val(t_movil.val().replace(/[^1-9]/g, ''));
+        if( ((/^[1-9]\d*$/).test(t_movil.val())) == false){ //si el primer caracter es 0
+            t_movil.val(t_movil.val().replace(/^[0-9]\d*$/, '')); //renplaso el primer 0 de la primera posicion
+        }
         if(t_movil.val().length!=9){
             ErroresData.push({
                 'document' : t_movil,
