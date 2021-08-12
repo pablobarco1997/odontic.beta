@@ -61,6 +61,8 @@ global $db, $user;
                 <div class="box-body">
                     <div class="form-group form-group col-xs-12 col-md-12">
                         <?php
+
+                        accessoModule('Cajas Clinicas');
                         if(isset($view)) {
                             if($view != ""){
                                 include_once DOL_DOCUMENT.'/application/system/operacion/cajas_clinicas/view/'.$view.'.php';

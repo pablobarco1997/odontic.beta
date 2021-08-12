@@ -15,20 +15,19 @@ $modulo = true;
         <?= Breadcrumbs_Mod($titulo, $url_breadcrumbs, $modulo); ?>
 
         <label for="">LISTA DE COMPORTAMIENTOS</label>
-        <ul class="list-inline" style="background-color: #f4f4f4; border-bottom: 0.6px solid #333333; padding: 3px">
+        <ul class="list-inline" style="background-color: #f4f4f4; border-bottom: 0.6px solid #333333; padding: 3px; margin-left: 0px">
             <li><a href="#contentFilter" data-toggle="collapse" style="color: #333333" class="btnhover btn btn-sm " id="fitrar_document"> <b>  ▼ &nbsp;Filtrar <i></i> </b> </a></li>
-            <li><a href="<?= DOL_HTTP.'/application/system/operacion/cajas_clinicas/index.php?view=all_cajas_abiertas_clinicas&key='.$_GET['key'] ?>" style="color: #333333" class="btnhover btn btn-sm  "> <b> Cajas Abiertas </b> </a></li>
         </ul>
     </div>
 
-    <div class="form-group col-xs-12 col-md-12 col-lg-12 collapse" id="contentFilter" aria-expanded="true" style="">
+    <div class="form-group col-xs-12 col-md-12 col-lg-12 collapse" id="contentFilter" aria-expanded="true" style="margin-bottom: 0px">
         <div class="col-md-12 col-xs-12 col-lg-12" style="background-color: #f4f4f4; padding-top: 15px">
             <div class="form-group col-md-12 col-xs-12 col-lg-12"> <h3 class="no-margin"><span>Filtrar Cuentas Cajas</span></h3> </div>
 
         </div>
     </div>
 
-    <div class="form-group col-xs-12 col-md-12">
+    <div class="form-group col-xs-12 col-md-12" style="margin-top: 10px">
         <span style=" color: #eb9627">
                         <i class="fa fa-info-circle"></i>
                                     Si desea eliminar un pago de una caja cerrada este es eliminada de dicha caja
@@ -135,7 +134,6 @@ $modulo = true;
             id: id,
             callback: function () {
                 boxloading($boxContentCajasClinicas, true);
-
                 $.ajax({
                     url: $DOCUMENTO_URL_HTTP + '/application/system/operacion/cajas_clinicas/controller/caja_controller.php',
                     delay:1000,
@@ -279,6 +277,11 @@ $modulo = true;
     });
 
     function apertura_Caja_Date(){
+
+        if(!ModulePermission('Cajas Clinicas','agregar')){
+            notificacion('Ud. No tiene permiso para esta Operación', 'error');
+            return false;
+        }
 
         if(form_validar_apertura_caja() == false){
             return false;
@@ -437,6 +440,9 @@ $modulo = true;
 
     $(window).on('load', function () {
 
+        if(!ModulePermission('Cajas Clinicas','consultar')){
+            notificacion('Ud. No tiene permiso para Consultar', 'error');
+        }
         boxloading($boxContentCajasClinicas, true, 1000);
 
     });

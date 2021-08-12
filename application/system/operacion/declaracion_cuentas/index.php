@@ -63,6 +63,9 @@ global $db, $user;
                 <div class="box-body">
                     <div class="form-group form-group col-xs-12 col-md-12">
                         <?php
+
+                            accessoModule('Declarar Cuentas');
+
                             if(isset($view)) {
                                 if($view != ""){
                                     include_once DOL_DOCUMENT.'/application/system/operacion/declaracion_cuentas/view/'.$view.'.php';

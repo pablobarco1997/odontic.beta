@@ -97,9 +97,11 @@ $modulo = false;
                     <div class="form-group">
                         <label for="" class="control-label col-sm-1">&nbsp;</label>
                         <div class="col-sm-9">
-                            <input type="button" class="btn btnhover btn-block " style="font-weight: bolder; color: green; " id="nuevoGuardarCuentaFinanciero" value="Guardar">
+                            <button class="btn btnhover pull-right" style="font-weight: bolder; color: green; " id="nuevoGuardarCuentaFinanciero" >
+                                Guardar
+                                <span class="fa fa-refresh btnSpinner hide"></span>
+                            </button>
                         </div>
-<!--                        <div class="center-block" style="width: 70%"></div>-->
                     </div>
                 </div>
 
@@ -199,6 +201,11 @@ $modulo = false;
     };
 
     $("#nuevoGuardarCuentaFinanciero").click(function () {
+
+        if(!ModulePermission('Declarar Cuentas', 'agregar')){
+            notificacion('Ud. No tiene permiso para realizar esta Operación', 'error');
+            return false;
+        }
 
         if(!validationCuentas()){
             return false;

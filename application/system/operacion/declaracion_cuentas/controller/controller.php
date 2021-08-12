@@ -88,7 +88,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
         case 'list_all_cuentas':
 
 
-            if(!PermitsModule(29,1 ))
+            if(!PermitsModule('Declarar Cuentas','consultar' ))
                 $PermisoConsultar = " 1<>1 ";
             else
                 $PermisoConsultar = " 1=1 ";

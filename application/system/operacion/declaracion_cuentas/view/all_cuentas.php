@@ -13,13 +13,13 @@ $modulo = true;
     <div  class="form-group col-md-12 col-xs-12">
         <?= Breadcrumbs_Mod($titulo, $url_breadcrumbs, $modulo); ?>
         <label for="">LISTA DE COMPORTAMIENTOS</label>
-        <ul class="list-inline" style="background-color: #f4f4f4; border-bottom: 0.6px solid #333333; padding: 3px">
+        <ul class="list-inline" style="background-color: #f4f4f4; border-bottom: 0.6px solid #333333; padding: 3px; margin-left: 0px">
             <li><a href="#contentFilter" data-toggle="collapse" style="color: #333333" class="btnhover btn btn-sm " id="fitrar_document"> <b>  ▼ &nbsp;Filtrar <i></i> </b> </a></li>
             <li><a href="<?= DOL_HTTP.'/application/system/operacion/declaracion_cuentas/index.php?view=add_declarar_cuenta&key='.KEY_GLOB ?>" style="color: #333333" class="btnhover btn btn-sm  "> <b> Crear cuenta </b> </a></li>
         </ul>
     </div>
 
-    <div class="form-group col-xs-12 col-md-12 col-lg-12 collapse" id="contentFilter" aria-expanded="true" style="">
+    <div class="form-group col-xs-12 col-md-12 col-lg-12 collapse" id="contentFilter" aria-expanded="true" style="margin-bottom: 0px">
         <div class="col-md-12 col-xs-12 col-lg-12" style="background-color: #f4f4f4; padding-top: 15px">
             <div class="form-group col-md-12 col-xs-12 col-lg-12"> <h3 class="no-margin"><span>Filtrar Cuentas</span></h3> </div>
 
@@ -57,7 +57,7 @@ $modulo = true;
         </div>
     </div>
 
-    <div class="form-group col-xs-12 col-md-12">
+    <div class="form-group col-xs-12 col-md-12" style="margin-top: 10px">
         <div class="table-responsive">
             <table class="table table-condensed " width="100%"  id="all_Cuenta" >
                 <thead style="background-color: #f4f4f4; ">
@@ -96,7 +96,10 @@ $modulo = true;
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" id="guardarEditNameCuen" onclick=""> Guardar </button>
+                    <button type="button" class="btn text-bold " style="color: green" id="guardarEditNameCuen" onclick="">
+                        Guardar
+                        <span class="fa fa-refresh btnSpinner hide"></span>
+                    </button>
                 </div>
             </div>
 
@@ -134,6 +137,8 @@ $modulo = true;
                     'saldo'                : $('#Fn_saldo').val(),
 
                 },
+                "cache": false,
+                "async": true,
                 "dataType":'json',
                 "complete": function(xhr, status) {
 
@@ -241,13 +246,17 @@ $modulo = true;
 
     $("#guardarEditNameCuen").click(function () {
 
+        if(!ModulePermission('Declarar Cuentas', 'modificar')){
+             notificacion('Ud. No tiene permiso para realizar esta Operación', 'error');
+            return false;
+        }
+
         if(cuenta_id == 0 || name_edit_cuenta == ""){
             notificacion("Ocurrio un error parámetros de búsqueda\n Consulte con soporte");
             return false;
         }else{
 
-            $("#modal_modificar_name_cuenta").modal("hide");
-
+            button_loadding( $("#guardarEditNameCuen"), true);
             $.ajax({
                 url:$DOCUMENTO_URL_HTTP + '/application/system/operacion/declaracion_cuentas/controller/controller.php',
                 type:'POST',
@@ -260,18 +269,19 @@ $modulo = true;
                 },
                 dataType:'json',
                 cache:false,
-                async:false,
+                async:true,
                 complete:function(xhr, status){
-
+                    button_loadding( $("#guardarEditNameCuen"), false);
                 },
                 success:function (responce) {
                     if(responce['results']['error']!=""){
                         notificacion(responce['results']['error'], "error");
                     }else{
+                       $("#modal_modificar_name_cuenta").modal("hide");
                        setTimeout(()=>{
                            notificacion("Actualizado", "success");
-                           var DataTable = $("#all_Cuenta").DataTable();
-                           DataTable.ajax.reload(null, false);
+                               var DataTable = $("#all_Cuenta").DataTable();
+                               DataTable.ajax.reload(null, false);
                        },500);
                     }
                 }
@@ -281,6 +291,11 @@ $modulo = true;
     });
 
     function desactivarActivarCuenta(Elemento, ad) {
+
+        if(!ModulePermission('Declarar Cuentas', 'eliminar')){
+            notificacion('Ud. No tiene permiso para realizar esta Operación', 'error');
+            return false;
+        }
 
         var subaccion = "";
         var cuenta_id = Elemento.prop("dataset").idcuenta;
@@ -325,6 +340,10 @@ $modulo = true;
             }
         });
     }
+
+    $(window).on('onload', function () {
+        boxloading($boxContentCuentasDeclaracion, true);
+    });
 
     $(window).on('load', function () {
 
@@ -382,7 +401,10 @@ $modulo = true;
         $("#Fn_tipo").select2({
             placeholder: 'Seleccione una opción',
             allowClear:true
-        })
+        });
+
+        boxloading($boxContentCuentasDeclaracion, false, 1000);
+
     });
 
 </script>

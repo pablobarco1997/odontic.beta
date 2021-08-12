@@ -92,7 +92,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
 
         case 'list_cajas_abiertas':
 
-            if(!PermitsModule(30,1 ))
+            if(!PermitsModule('Cajas Clinicas','consultar'))
                 $PermisoConsultar = " 1<>1 ";
             else
                 $PermisoConsultar = " 1=1 ";
@@ -226,8 +226,13 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
 
         case 'cerrar_caja':
 
-            $error = "";
+            if(!PermitsModule('Cajas Clinicas', 'modificar')){
+                $permits = false;
+            }else{
+                $permits = true;
+            }
 
+            $error = "";
             $id_ope_caja = GETPOST('id_ope_caja');
 
             if($id_ope_caja==""){
@@ -237,6 +242,9 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
                 $error = "Ocurrio un error con los parametros de entrada\nConsulte con soporte";
             }
 
+            if($permits==false){
+                $error = "Ud. No tiene permiso para esta Operación";
+            }
 
             $question = "";
 
@@ -261,7 +269,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
                     $object_caja = $result->fetchObject();
 
                     //se valida si no es super administrador
-                    if(!$user->admin){
+                    $admin = validSuperAdmin($user->users_unique_id);
+                    if(!$admin){
                         if($user->id != $object_caja->id_user_caja){
                             $error = "Ud. no tiene permiso para cerrar esta caja<br>Solo usuario asignado o administrador";
                         }
