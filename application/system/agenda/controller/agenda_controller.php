@@ -32,7 +32,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 $array = GETPOST('datos');
                 $agenda->fk_paciente    = $array['fk_paciente'];
                 $agenda->comentario     = $array['comment'];
-                $agenda->fk_login_users = $array->id; #USUARIO LOGEADO
+                $agenda->fk_login_users = $user->id; #USUARIO LOGEADO
                 $agenda->detalle        = $array['detalle'];
 
                 $result = $agenda->GenerarCitas();
