@@ -7,13 +7,11 @@ var table2 = null;
 var listLaboratorios = function () {
 
     table =  $("#laboratorio_list").DataTable({
-
         searching: false,
         ordering:false,
         destroy:true,
         serverSide:true,
         processing:true,
-
         ajax:{
             url: $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php',
             type:'POST',
@@ -21,6 +19,8 @@ var listLaboratorios = function () {
                 'ajaxSend':'ajaxSend',
                 'accion': 'list_laboratorios',
             } ,
+            async: true,
+            cache: false,
             dataType:'json',
         },
         columnDefs:[
@@ -488,7 +488,7 @@ var tableDinamicPrestacion = function(table=""){
     var thead = "";
 
     if(table=="PrestacionesXlaboratorio") {
-        thead += "<thead>";
+        thead += "<thead style=\"background-color: #ecf1ff\">";
             thead += "<tr>";
                 thead += "<th>&nbsp;</th>";
                 thead += "<th>Prestación</th>";
@@ -502,18 +502,18 @@ var tableDinamicPrestacion = function(table=""){
     }
 
     if(table=="PagosRealizado"){
-        thead += "<thead>";
+        thead += "<thead style=\"background-color: #ecf1ff\">";
             thead += "<tr>";
                 thead += "<th>&nbsp;</th>";
-                thead += "<th>Fecha de Pago</th>";
-                thead += "<th># Pago</th>";
-                thead += "<th># P. Tratamiento</th>";
+                thead += "<th>Emitido</th>";
+                thead += "<th>#Pago</th>";
+                thead += "<th>Plan Tratamiento</th>";
                 thead += "<th>Paciente</th>";
-                thead += "<th>Prestación</th>";
+                thead += "<th>Prestación/Servicio</th>";
                 thead += "<th>users autor</th>";
                 thead += "<th>Costo de Clinica</th>";
                 thead += "<th>Precio de Cliente</th>";
-                thead += "<th>Total pagado</th>";
+                thead += "<th>Abonado</th>";
             thead += "</tr>";
         thead += "</thead>";
 
@@ -522,17 +522,17 @@ var tableDinamicPrestacion = function(table=""){
     }
 
     if(table=="tratamientosPrestaciones"){
-        thead += "<thead>";
+        thead += "<thead style=\"background-color: #ecf1ff\">";
             thead += "<tr>";
                 thead += "<th>&nbsp;</th>";
-                thead += "<th>Fecha de P. Tratamiento</th>";
-                thead += "<th>Tratamiento</th>";
-                thead += "<th>Prestación</th>";
+                thead += "<th>Emitido</th>";
+                thead += "<th>Plan de Tratamiento</th>";
+                thead += "<th>Prestación/Servicio</th>";
                 thead += "<th>Paciente</th>";
                 thead += "<th>Pieza</th>";
-                thead += "<th>Estado de Tratamiento</th>";
-                thead += "<th>Saldo Prestación</th>"; // valor de la prestacion x Tratamiento
-                thead += "<th>Pagado o cancelado x Paciente</th>";
+                thead += "<th>Estado</th>";
+                thead += "<th>Total</th>"; // valor de la prestacion x Tratamiento
+                thead += "<th>Abonado</th>";
             thead += "</tr>";
         thead += "</thead>";
 

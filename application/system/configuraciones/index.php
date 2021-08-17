@@ -115,21 +115,22 @@ if(isset($_GET['view']))
                     case 'document_assoct':
                         include_once DOL_DOCUMENT.'/application/system/configuraciones/view/document_assoct.php';
                     break;
-                    case 'add_perfil_users':
-                        include_once DOL_DOCUMENT.'/application/system/configuraciones/view/add_perfil_users.php';
-                        break;
 
                     //new
                     case 'odontologos':
                         include_once DOL_DOCUMENT.'/application/system/configuraciones/view/add_doctor_dentist.php';
                         break;
-
                     case 'admin_users':
                         include_once DOL_DOCUMENT.'/application/system/configuraciones/view/add_usuarios.php';
                         break;
+                    case 'especialidades':
+                        include_once DOL_DOCUMENT . '/application/system/configuraciones/view/addespecialidades.php';
+                        break;
+                    case 'servicios':
+                        include_once DOL_DOCUMENT . '/application/system/configuraciones/view/add_prestaciones_servicios.php';
+                        break;
 
                     default:
-
                         break;
                 }
             }

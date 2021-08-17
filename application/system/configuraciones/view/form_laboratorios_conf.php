@@ -104,7 +104,7 @@ if($result && $result->rowCount()>0){
 
                 <div class="form-group col-md-12 col-lg-12 col-xs-12">
                     <ul class="list-inline" style="border-bottom: 1px solid #333333; border-top: 1px solid #333333; padding: 3.5px">
-                        <li><a href="#addModificarLaboratorio" class="btnhover " id="crearLaboratorio" data-toggle="modal"  style="font-weight: bolder; color: #333333; "> &nbsp;&nbsp;<i class="fa fa-list"></i> &nbsp;  crear Laboratorio</a></li>
+                        <li><a href="#addModificarLaboratorio" class="btnhover btn " id="crearLaboratorio" data-toggle="modal"  style="font-weight: bolder; color: #333333; "> &nbsp;&nbsp;<i class="fa fa-list"></i> &nbsp;  crear Laboratorio</a></li>
                         <li> </li>
                     </ul>
                 </div>
@@ -113,12 +113,14 @@ if($result && $result->rowCount()>0){
                 <div class="form-group col-md-12 col-lg-12 col-xs-12">
                     <div class="table-responsive">
                         <table class="table table-striped" id="laboratorio_list" width="100%">
-                            <thead>
-                                <th>&nbsp;</th>
-                                <th>Laboratorio</th>
-                                <th>Información Adicional</th>
-                                <th>Prestaciones Realizadas x Mes ( <?= DateSpanish("", date('m')); ?> ) </th>
-                                <th>Estado</th>
+                            <thead style="background-color: #ecf1ff">
+                                <tr>
+                                    <th>&nbsp;</th>
+                                    <th>Laboratorio</th>
+                                    <th>Información Adicional</th>
+                                    <th>Abono Prestaciones Realizadas  ( <?= DateSpanish("", date('m')); ?> ) </th>
+                                    <th>Estado</th>
+                                </tr>
                             </thead>
                         </table>
                         <br><br><br>
@@ -199,16 +201,16 @@ if($result && $result->rowCount()>0){
 
                     <div class="form-group col-md-12 col-lg-12 col-xs-12">
                         <ul class="list-inline" style="border-bottom: 1px solid #333333; border-top: 1px solid #333333; padding: 3.5px">
-                            <li><a href="#ModalPrestacion_LaboratorioClinico" data-toggle="modal" class="btnhover " id=""  style="font-weight: bolder; color: #333333; "> &nbsp;&nbsp;<i class="fa fa-clipboard"></i> &nbsp;  Agregar o Modificar Prestación &nbsp;</a></li>
-                            <li><a href="#" class="btnhover " id=""  style="font-weight: bolder; color: #333333; " onclick="tableDinamicPrestacion('PrestacionesXlaboratorio')" > &nbsp;<i class="fa fa-files-o"></i> Prestaciones x Laboratorio &nbsp;</a> </li>
-                            <li><a href="#" class="btnhover " id=""  style="font-weight: bolder; color: #333333; " onclick="tableDinamicPrestacion('PagosRealizado')" > &nbsp; <i class="fa fa-bar-chart"></i> (Pagos o Abonos) Realizados &nbsp;</a> </li>
-                            <li><a href="#" class="btnhover " id=""  style="font-weight: bolder; color: #333333; " onclick="tableDinamicPrestacion('tratamientosPrestaciones')" > &nbsp; <i class="fa fa-bar-chart"></i>Pedidos del Laboratorio</a> </li>
-                            <li><a href="#FiltrarAgenda" class="btnhover " id=""  style="font-weight: bolder; color: #333333; " data-toggle="collapse" > &nbsp;<i class="fa fa-search"></i> Filtrar Información &nbsp;</a> </li>
+                            <li><a href="#ModalPrestacion_LaboratorioClinico" data-toggle="modal" class="btnhover btn" id=""  style="font-weight: bolder; color: #333333; "> &nbsp;&nbsp;<i class="fa fa-clipboard"></i> &nbsp;  Agregar o Modificar Prestación &nbsp;</a></li>
+                            <li><a href="#" class="btnhover btn" id=""  style="font-weight: bolder; color: #333333; " onclick="tableDinamicPrestacion('PrestacionesXlaboratorio')" > &nbsp;<i class="fa fa-files-o"></i> Prestaciones por Laboratorio &nbsp;</a> </li>
+                            <li><a href="#" class="btnhover btn" id=""  style="font-weight: bolder; color: #333333; " onclick="tableDinamicPrestacion('PagosRealizado')" > &nbsp; <i class="fa fa-bar-chart"></i> (Pagos o Abonos) Realizados &nbsp;</a> </li>
+                            <li><a href="#" class="btnhover btn" id=""  style="font-weight: bolder; color: #333333; " onclick="tableDinamicPrestacion('tratamientosPrestaciones')" > &nbsp; <i class="fa fa-bar-chart"></i>Pedidos del Laboratorio</a> </li>
+                            <li><a href="#FiltrarAgenda" class="btnhover btn" id=""  style="font-weight: bolder; color: #333333; " data-toggle="collapse" > &nbsp;<i class="fa fa-search"></i> Filtrar Información &nbsp;</a> </li>
                         </ul>
                     </div>
 
                     <div class="form-group col-md-8 col-lg-8 col-xs-12 margin-bottom">
-                        <table id="informacionPrestacion" class="none" style="display: none;" width="100%">
+                        <table id="informacionPrestacion" class="none table" style="display: none;" width="100%">
                             <tr style="border-top: 1px solid #e2e2e2">
                                 <td style="width: 25%; font-weight: bolder">Nombre Laboratorio:</td>
                                 <td id="nameLab" style="padding-left: 10px"></td>
@@ -229,9 +231,9 @@ if($result && $result->rowCount()>0){
                         <br>
                     </div>
 
-                    <div id="FiltrarAgenda" class="form-group col-xs-12 col-md-12 collapse" aria-expanded="true" style="">
+                    <div id="FiltrarAgenda" class="form-group col-xs-12 col-md-12 collapse" aria-expanded="true" style="margin-bottom: 0px">
                         <div class="form-group col-md-12 col-xs-12" style="background-color: #f4f4f4; padding: 25px">
-                            <h3 class="no-margin"><span>Filtrar Prestaciones x Laboratorio</span></h3>
+                            <h3 class="no-margin"><span>Filtrar Prestaciones por Laboratorio</span></h3>
                             <div class="row">
 
                                 <div class="form-group col-md-4 col-sm-12 col-xs-12">
@@ -471,8 +473,8 @@ if($result && $result->rowCount()>0){
 
                     <div class="form-group col-md-12 col-lg-12 col-xs-12">
                         <ul class="list-inline" style="border-bottom: 1px solid #333333; border-top: 1px solid #333333; padding: 3.5px">
-                            <li><a href="#FiltrarAgenda" class="btnhover " id=""  style="font-weight: bolder; color: #333333; " data-toggle="collapse" > &nbsp;<i class="fa fa-search"></i> Filtrar Información &nbsp;</a> </li>
-                            <li><a href="#ModalMarcarSolicitud" data-toggle="modal" class="btnhover " id="MarcarSolicitudShow"  style="font-weight: bolder; color: #333333; " > <i class="fa fa-ticket"></i> Marcar una Solicitud</a></li>
+                            <li><a href="#FiltrarAgenda" class="btnhover btn" id=""  style="font-weight: bolder; color: #333333; " data-toggle="collapse" > &nbsp;<i class="fa fa-search"></i> Filtrar Información &nbsp;</a> </li>
+                            <li><a href="#ModalMarcarSolicitud" data-toggle="modal" class="btnhover btn" id="MarcarSolicitudShow"  style="font-weight: bolder; color: #333333; " > <i class="fa fa-ticket"></i> Marcar una Solicitud</a></li>
                         </ul>
                     </div>
 
@@ -498,7 +500,7 @@ if($result && $result->rowCount()>0){
                         <br>
                     </div>
 
-                    <div id="FiltrarAgenda" class="form-group col-xs-12 col-md-12 collapse" aria-expanded="true" style="">
+                    <div id="FiltrarAgenda" class="form-group col-xs-12 col-md-12 collapse" aria-expanded="true" style="margin-bottom: 0px">
                         <div class="form-group col-md-12 col-xs-12" style="background-color: #f4f4f4; padding: 25px">
                             <h3 class="no-margin"><span>Filtrar Prestaciones x Laboratorio</span></h3>
                             <div class="row">
@@ -537,8 +539,8 @@ if($result && $result->rowCount()>0){
                                 <thead>
                                     <tr style="background-color: #f4f4f4;">
                                         <th>&nbsp;</th>
-                                        <th width="20%">Fecha de P. Tratamiento</th>
-                                        <th width="20%">Tratamiento</th>
+                                        <th width="10%">Emitido</th>
+                                        <th width="30%">Plan de Tratamiento</th>
                                         <th width="20%">Paciente</th>
                                         <th width="20%">Prestación</th>
                                         <th width="20%">Doctor(a) Encargado</th>

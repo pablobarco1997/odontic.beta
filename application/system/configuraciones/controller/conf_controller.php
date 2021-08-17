@@ -7,7 +7,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
     require_once DOL_DOCUMENT. '/application/config/main.php'; //el main contiene la sesion iniciada
     require_once DOL_DOCUMENT.'/application/config/conneccion_entidad.php'; //Coneccion entidad
 
-    global   $db, $conf, $user, $global;
+    global   $db, $conf, $user, $global, $log;
 
 
     $accion = GETPOST('accion');
@@ -796,23 +796,26 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
         case 'eleminar_prestacion':
 
-            $error = '';
-            $idprestacion = GETPOST("id");
-            $Status = GETPOST("statusPrestacion");
+            $error   = '';
+            $id      = GETPOST("id");
+            $Status  = GETPOST("statusPrestacion");
 
             if($Status=='A')
                 $StaLabel = "Activar";
             else
                 $StaLabel = "Desactivar";
 
-            $tieneAsociado = 0;
-
-            $sqlConsult = "SELECT * FROM tab_conf_prestaciones WHERE rowid = '$idprestacion' ";
-            $rsConsult = $db->query($sqlConsult);
-            if($rsConsult && $rsConsult->rowCount()>0){
-                $result = $db->query("UPDATE `tab_conf_prestaciones` SET `estado`='".$Status."' WHERE `rowid`=$idprestacion;");
-                if(!$result){
-                    $error = 'Ocurrion un error con la Operación: '.$StaLabel.' Prestación';
+            $sql_a = "SELECT * FROM tab_conf_prestaciones WHERE rowid = '$id' ";
+            $result_a = $db->query($sql_a);
+            if($result_a && $result_a->rowCount()>0){
+                $object_a = $result_a->fetchObject();
+                $result_a = $db->query("UPDATE `tab_conf_prestaciones` SET `estado`='".$Status."' WHERE `rowid`=$id;");
+                if(!$result_a){
+                    $error = 'Ocurrion un error con la Operación: '.$StaLabel.' Prestación '.$object_a->descripcion;
+                    $desc = $error;
+                    $log->log(0, $log->error, $desc, 'tab_conf_prestaciones', '');
+                }else{
+                    $log->log($id, $log->modificar, 'Se ha actualizado el registro. Prestación: '.$object_a->descripcion. ' ha estado '.$StaLabel, 'tab_conf_prestaciones');
                 }
             }else{
                 $error = 'Ocurrio un error con la Operación: No se encontro la prestación Asignada';
@@ -2449,20 +2452,17 @@ function listaPrestacionesLaboratorioDinamic($table, $idlab, $searchLab = '', $o
     if($table=="PagosRealizado"){
 
         $sqlp = "select 
-                    p.fk_pago_cab as idpagocab, 
-                    cast(p.feche_create as date) as dateff_pago, 
+            p.fk_pago_cab as idpagocab, 
+            cast(p.feche_create as date) as dateff_pago, 
+            (select concat('Plan de Tratamiento: # ',t.numero) as nom from tab_plan_tratamiento_cab t where t.rowid = p.fk_plantram_cab) as p_tratamiento , 
+            c.descripcion as prestacion, 
+            (select concat(d.nombre,' ',d.apellido) from tab_admin_pacientes d where d.rowid = 
+                    (select t.fk_paciente from tab_plan_tratamiento_cab t where t.rowid = p.fk_plantram_cab)) as paciente , 
                     
-                    (select ifnull(t.edit_name , concat('Plan de Tratamiento: # ',t.numero)) as nom from tab_plan_tratamiento_cab t where t.rowid = p.fk_plantram_cab) as p_tratamiento , 
-                    
-                    c.descripcion as prestacion, 
-                    
-                    (select concat(d.nombre,' ',d.apellido) from tab_admin_pacientes d where d.rowid = 
-							(select t.fk_paciente from tab_plan_tratamiento_cab t where t.rowid = p.fk_plantram_cab)) as paciente , 
-							
-                    (select s.usuario from tab_login_users s where s.rowid = p.fk_usuario) as users , 
-                    round(p.amount, 2) as  amount , 
-                    round(c.costo_x_clinica, 2) as costo_x_clinica, 
-                    round(c.precio_paciente, 2) as precio_paciente
+            (select s.usuario from tab_login_users s where s.rowid = p.fk_usuario) as users , 
+            round(p.amount, 2) as  amount , 
+            round(c.costo_x_clinica, 2) as costo_x_clinica, 
+            round(c.precio_paciente, 2) as precio_paciente
              FROM
                 tab_pagos_independ_pacientes_det p , 
                 tab_conf_prestaciones c 
@@ -2496,7 +2496,7 @@ function listaPrestacionesLaboratorioDinamic($table, $idlab, $searchLab = '', $o
                 $rows = array();
                 $rows[] = "";
                 $rows[] = date("Y/m/d", strtotime($object->dateff_pago));
-                $rows[] = 'PAG_'.str_pad($object->idpagocab, 6, "0", STR_PAD_LEFT);
+                $rows[] = 'P_'.str_pad($object->idpagocab, 6, "0", STR_PAD_LEFT);
                 $rows[] = $object->p_tratamiento;
                 $rows[] = $object->paciente;
                 $rows[] = $object->prestacion;
@@ -2516,8 +2516,7 @@ function listaPrestacionesLaboratorioDinamic($table, $idlab, $searchLab = '', $o
         $sqltra = "Select
 	                cast(pc.fecha_create as date ) as dateff_tratam , 
                     lb.name as laboratorio , 
-                    if(pc.edit_name != '' , pc.edit_name  , 
-                            (select concat('Plan de Tratamiento',' #',pc.numero) from tab_plan_tratamiento_cab pc where pc.rowid = pd.fk_plantratam_cab) ) as trata_num ,
+                    (select concat('Plan de Tratamiento',' #',pc.numero) from tab_plan_tratamiento_cab pc where pc.rowid = pd.fk_plantratam_cab) as trata_num ,
                     cp.descripcion as prestacion, 
                     (select concat(ap.nombre,' ', ap.apellido) from tab_admin_pacientes ap where ap.rowid = pc.fk_paciente) as paciente , 
                     if(pd.fk_diente=0,'',pd.fk_diente) as pieza , 

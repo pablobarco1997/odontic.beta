@@ -100,7 +100,10 @@ function load_table_prestaciones() {
         ajax:{
             url: $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php',
             type:'POST',
-            data:{'ajaxSend':'ajaxSend', 'accion':'list_prestaciones'},
+            data:{
+                'ajaxSend':'ajaxSend',
+                'accion':'list_prestaciones'
+            },
             dataType:'json',
         },
 
@@ -377,7 +380,6 @@ function nuevoUpdateConvenio(subaccion)
 
 /*Modifca la categoria de la prestacion*/
 function nuevoUpdateCategoria(){
-
     var subaccion ='';
     var id = $('#conf_cat_prestaciones').find(':selected').val();
 
@@ -386,12 +388,10 @@ function nuevoUpdateCategoria(){
     }else{
         subaccion = 'modificar';
     }
-
     if(subaccion == 'nuevo'){
         $('#nomb_cat').val(null);
         $('#descrip_cat').val(null);
     }
-
     if(subaccion == 'modificar'){
 
         $.ajax({

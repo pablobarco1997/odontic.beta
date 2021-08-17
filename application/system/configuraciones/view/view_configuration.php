@@ -5,9 +5,15 @@
 <ul class="list-group itemConf" style="font-weight: bolder; border-radius: none; list-style: none">
 
     <li class="">
-        <a href="<?= DOL_HTTP .'/application/system/configuraciones/index.php?view=form_prestaciones'; ?>" class="btn btn-block" style="color: #1e282c; text-align: left">
+        <a href="<?= DOL_HTTP .'/application/system/configuraciones/index.php?view=servicios&v=list'; ?>" class="btn btn-block" style="color: #1e282c; text-align: left">
             <i class="fa fa-wrench"></i> &nbsp;&nbsp;
-            Configurar Prestaciones
+            Conf. Prestaciones Servicios
+        </a>
+    </li>
+    <li class="">
+        <a href="<?= DOL_HTTP .'/application/system/configuraciones/index.php?view=especialidades&v=list'; ?>" class="btn btn-block" style="color: #1e282c; text-align: left">
+            <i class="fa fa-wrench"></i> &nbsp;&nbsp;
+            Conf. Especialidades
         </a>
     </li>
     <li class="disabled_link3 hide">

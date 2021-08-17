@@ -299,33 +299,32 @@
 
         function perfil($db, $idUsuario, $url, $directorio_url)
         {
-            $sql = "SELECT * FROM tab_odontologos WHERE rowid = $idUsuario limit 1";
-            $result_abc = $db->query($sql);
 
+            //usuario asociado
+            $users = [];
+            $sqlusu = "SELECT usuario , passwords , passwor_abc , fk_doc , cedula FROM tab_login_users where rowid = ".$idUsuario." limit 1";
+            $rsusu  = $db->query($sqlusu);
+            if($rsusu && $rsusu->rowCount()){
+                $obus = $rsusu->fetchObject();
+                $users = array(
+                    "name"        => $obus->usuario,
+                    "passwords"   => $obus->passwords,
+                    "passwor_abc" => $obus->passwor_abc,
+                    "cedula"      => $obus->cedula
+                );
+            }
+            $sql = "SELECT * FROM tab_odontologos WHERE rowid = $obus->fk_doc limit 1";
+            $result_abc = $db->query($sql);
             if($result_abc->rowCount() > 0){
-                $Obj = $result_abc->fetchObject();
-                $img = $url."/logos_icon/logo_default/doct-icon.ico"; //Icon por default
-                if(!empty($Obj->icon)){
-                    $img = $url."/logos_icon/".$directorio_url."/".$Obj->icon;
-                }
-                //usuario asociado
-                $users = [];
-                $sqlusu = "SELECT usuario , passwords , passwor_abc , fk_doc , cedula FROM tab_login_users where fk_doc = ".$Obj->rowid;
-                $rsusu  = $db->query($sqlusu);
-                if($rsusu && $rsusu->rowCount()){
-                    while ($obus = $rsusu->fetchObject()){
-                        $users = array(
-                            "name"        => $obus->usuario,
-                            "passwords"   => $obus->passwords,
-                            "passwor_abc" => $obus->passwor_abc,
-                            "cedula"      => $obus->cedula
-                        );
-                    }
+                $obj = $result_abc->fetchObject();
+                $img = $url."/logos_icon/logo_default/icon_avatar.svg"; //icon_avatar.svg
+                if(!empty($obj->icon)){
+                    $img = $url."/logos_icon/".$directorio_url."/".$obj->icon;
                 }
                 $data = (object)array(
-                    "id"        => $Obj->rowid,
-                    "nombre"    => $Obj->nombre_doc,
-                    "apellido"  => $Obj->apellido_doc,
+                    "id"        => $obj->rowid,
+                    "nombre"    => $obj->nombre_doc,
+                    "apellido"  => $obj->apellido_doc,
                     "icon"      => $img,
                     "users"     => $users
                 );

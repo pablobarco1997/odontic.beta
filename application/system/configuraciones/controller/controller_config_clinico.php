@@ -13,7 +13,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
     //obtengo las clases de las entidades y conecciones
     $entidades = new CONECCION_ENTIDAD();
 
-    global   $db, $conf, $user, $global, $log;
+    global   $db, $conf, $user, $global, $log, $messErr;
 
 
     $accion = GETPOST('accion');
@@ -297,6 +297,314 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
                 "recordsFiltered" => $resultado['total']
             );
 
+            echo json_encode($output);
+            break;
+
+        case 'especialidades_list':
+
+            if(!PermitsModule('Especialidades', 'consultar')){
+                $permits = " 1<>1 ";
+            }else{
+                $permits = " 1=1 ";
+            }
+
+            $search         = GETPOST('search');
+            $datos          = [];
+            $Total          = 0;
+            $start          = $_POST["start"];
+            $length         = $_POST["length"];
+
+
+            $sql = "SELECT rowid , nombre_especialidad as nomb , descripcion, cast(tms as date) as dateesp FROM tab_especialidades_doc";
+            $sql .= " WHERE $permits";
+            if($search['value'] != ''){
+                $text = $search['value'];
+                $sql .= " and nombre_especialidad like '%$text%'  ";
+            }
+            $sqlTotal = $sql;
+            $sql .= " order by rowid desc";
+            if($start || $length){
+                $sql.=" LIMIT $start,$length;";
+            }
+
+            $Total = $db->query($sqlTotal)->rowCount();
+            $result = $db->query($sql);
+            if($result){
+                if($result->rowCount()>0){
+                    while ($object = $result->fetchObject()){
+
+                        if($object->descripcion){
+                            $desc = "<span class='text-sm' style='display: block; color: #0a568c' ><b>Desc: </b>".$object->descripcion."</span>";
+                        }else{
+                            $desc = "";
+                        }
+
+                        $rows = [];
+                        $rows[] = date("Y/m/d", strtotime($object->dateesp));
+                        $rows[] = $object->nomb.$desc;
+                        $rows[] = "";
+                        $rows['id'] = $object->rowid;
+                        $datos[] = $rows;
+                    }
+                }
+            }
+
+            $output = array(
+                "data"            => $datos,
+                "recordsTotal"    => $Total,
+                "recordsFiltered" => $Total
+            );
+
+            echo json_encode($output);
+            break;
+
+        case 'newEspecialidad':
+
+            $id = GETPOST('id');
+
+            if(empty($id)){
+                if(!PermitsModule('Especialidades', 'consultar')){
+                    $permits = "Ud. No tiene permiso para realizar esta Operación";
+                }else{
+                    $permits = "";
+                }
+            }else{
+                if(!PermitsModule('Especialidades', 'modificar')){
+                    $permits = "Ud. No tiene permiso para realizar esta Operación";
+                }else{
+                    $permits = "";
+                }
+            }
+
+            if($permits!=""){
+                $error = $permits;
+            }else{
+                $error = "";
+            }
+
+//            print_r($error); die();
+            if($error==""){
+                $name = GETPOST('especialidad');
+                $desc = GETPOST('desc');
+
+                if(empty($id)){
+                    $array = array($name, $user->id , $desc);
+                    $sql = "INSERT INTO `tab_especialidades_doc` (`nombre_especialidad`, `fk_user`, `descripcion`) VALUES (?, ?, ?);";
+                    $stmt = $db->prepare($sql);
+                    $result = $stmt->execute($array);
+                    if($result){
+                        $idlast = $db->lastInsertId('tab_especialidades_doc');
+                        $log->log($idlast , $log->crear, 'Se ha creado nueva especialidad '.$name,'tab_especialidades_doc');
+                    }else{
+                        $log->log(0, $log->error, 'Ha Ocurrido un error con la creación de la especialidad: '.$name,'tab_especialidades_doc', $stmt->errorInfo()[2]);
+                        $error = $messErr;
+                    }
+                }else{
+                    $array = array($name, $desc, $id);
+                    $sql  = "UPDATE `tab_especialidades_doc` SET `nombre_especialidad`=?, `descripcion`=? WHERE `rowid`=? ;";
+                    $stmt = $db->prepare($sql);
+                    $result = $stmt->execute($array);
+                    if($result){
+                        $idlastmod = $id;
+                        $log->log($idlastmod, $log->modificar, 'Se ha modificado un registro. Especialidad '.$name,'tab_especialidades_doc');
+                    }else{
+                        $log->log(0, $log->error, 'Ha Ocurrido un error con la modificación de la especialidad: '.$name,'tab_especialidades_doc', $stmt->errorInfo()[2]);
+                        $error = $messErr;
+                    }
+                }
+            }
+
+            $output = array(
+                "error" => $error
+            );
+
+            echo json_encode($output);
+            break;
+
+
+        case 'fetchespecialidad':
+
+            $fetch  = array();
+            $id     = GETPOST('id');
+            $error  = "";
+            $sql    = "select nombre_especialidad, descripcion, rowid as id from tab_especialidades_doc where rowid = $id";
+            $result = $db->query($sql);
+            if($result){
+                if($result->rowCount()>0){
+                    $fetch = $result->fetchAll(PDO::FETCH_ASSOC);
+                    $fetch = $fetch[0];
+                }
+            }else{
+                $error = "no hay datos";
+            }
+
+            $output = array(
+                "error" => $error,
+                "fetch" => $fetch
+            );
+            echo json_encode($output);
+            break;
+
+
+        case 'servicioList':
+
+            if(!PermitsModule('Prestaciones','consultar')){
+                $permits = " 1<>1 ";
+            }else{
+                $permits = " 1=1 ";
+            }
+
+            $Total = 0;
+            $datos = array();
+
+            $start          = $_POST["start"];
+            $length         = $_POST["length"];
+            $search         = GETPOST('search');
+            $search         = $search['value'];
+
+            $sql = "SELECT
+                        p.rowid as idserv,  
+                        p.tms  , 
+                        p.descripcion , 
+                        p.valor , 
+                        c.nombre_cat, 
+                        p.estado
+                    FROM
+                        tab_conf_prestaciones p
+                        left join
+                        tab_conf_categoria_prestacion c on c.rowid = p.fk_categoria
+                    where $permits";
+
+            if(!empty($search)){
+                $sql .= " and p.descripcion like '%".$search."%' ";
+            }
+            $sql .= " order by p.rowid desc ";
+            $Total = $db->query($sql)->rowCount();
+
+            if($start || $length){
+                $sql.=" LIMIT $start,$length;";
+            }
+
+            $result = $db->query($sql);
+            if($result){
+                if($result->rowCount()>0){
+
+                    $all = $result->fetchAll(PDO::FETCH_ASSOC);
+                    foreach ($all as $item){
+                        $rows = [];
+                        $rows[] = date('Y/m/d', strtotime($item['tms']));
+                        $rows[] = $item['descripcion'];
+                        $rows[] = $item['nombre_cat'];
+                        $rows[] = number_format($item['valor'], 2, '.','');
+                        if($item['estado']=='A'){
+                            $rows[] = "<span class='text-sm' style='background-color: #D5F5E3; color: green; font-weight: bolder; padding: 1px 5px'>Activo</span>";
+                        }else{
+                            $rows[] = "<span class='text-sm' style='background-color: #FADBD8; color: red; font-weight: bolder; padding: 1px 5px'>Inactivo</span>";
+                        }
+                        $rows[] = "";
+                        $rows['estado'] = $item['estado'];
+                        $rows['idserv'] = $item['idserv'];
+
+                        $datos[] = $rows;
+                    }
+                }
+            }
+
+            $output = array(
+                "data"            => $datos,
+                "recordsTotal"    => $Total,
+                "recordsFiltered" => $Total
+            );
+            echo json_encode($output);
+            break;
+
+        case 'fetchCategoria':
+
+            $error = "";
+            $fetch = [];
+            $sql = "select rowid as id , nombre_cat as text from tab_conf_categoria_prestacion ";
+            $result = $db->query($sql);
+            if($result){
+               if($result->rowCount()>0){
+                   $fetch = $result->fetchAll(PDO::FETCH_ASSOC);
+                   $fetch = $fetch;
+               }
+            }else{
+                $fetch = [];
+            }
+
+            $output = array(
+                "error" => $error,
+                "fetch" => $fetch,
+            );
+            echo json_encode($output);
+            break;
+
+        case 'newUpdateServicioProducto':
+
+            $id = GETPOST('id');
+
+            if(!PermitsModule('Prestaciones', 'agregar')){
+                $error = "Ud. No tiene permiso para realizar esta Operación";
+            }else{
+                $error = "";
+            }
+
+            $datos['codigo']     = GETPOST('codigo');
+            $datos['clasi']      = GETPOST('clasi');
+            $datos['nomb']       = GETPOST('nomb');
+            $datos['valor']      = GETPOST('valor');
+            $datos['infoadi']    = GETPOST('infoadi');
+            $datos['iva']        = GETPOST('iva');
+
+//            print_r($datos); die();
+            if(empty($error)){
+                if(empty($id)){ //nuevo
+                    $result = newCrearServicio($id, $datos , true, false);
+                }else{ //modificar
+                    $result = newCrearServicio($id, $datos, false, true);
+                }
+
+                if($result == -1){
+                    $error = "Ocurrio un problema con la Operación";
+                }
+            }else{
+
+            }
+
+//            die();
+
+            $output = array(
+                "error" => $error,
+            );
+            echo json_encode($output);
+            break;
+
+        case 'fetchServiciosProd':
+
+            $error = "";
+            $fetch = [];
+            $id = GETPOST('id');
+            $sql = "select codigo, fk_categoria, descripcion, valor, explicacion, iva, estado from tab_conf_prestaciones where rowid = '".$id."' ";
+            $result = $db->query($sql);
+            if($result){
+                if($result->rowCount()>0){
+                    $all = $result->fetchAll(PDO::FETCH_ASSOC);
+                    $fetch = $all[0];
+                    if($fetch['estado'] == 'E'){
+                        $error = 'Se encuentra en estado inactivo';
+                    }
+                }else{
+                    $error = 'No hay datos';
+                }
+            }else{
+                $error = 'No hay datos';
+            }
+
+            $output = array(
+                "error" => $error,
+                "fetch" => $fetch,
+            );
             echo json_encode($output);
             break;
 
@@ -711,5 +1019,59 @@ function perfiles_lis(){
 
     return $resultFinal;
 }
+
+function newCrearServicio($id = "", $datos, $new=false, $mod=false){
+
+    global $db, $user, $log;
+
+
+    $codigo   = $datos['codigo'];
+    $clasi    = $datos['clasi'];
+    $nomb     = $datos['nomb'];
+    $valor    = $datos['valor'];
+    $infoadi  = $datos['infoadi'];
+    $iva      = $datos['iva'];
+
+    if($new==true){
+        $array = array($codigo , $nomb,  $user->id, 0,$clasi, 0, $valor, 0, 0, date("Y-m-d H:m:s"), 'A', $infoadi, $iva);
+        $sql    = "INSERT INTO `tab_conf_prestaciones`(`codigo`, `descripcion`,`fk_user`,`fk_convenio`,`fk_categoria`,`fk_laboratorio`,`valor`,`costo_x_clinica`,`precio_paciente`,`date_cc`,`estado`,`explicacion`,`iva`)";
+        $sql   .= " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        $stmt   = $db->prepare($sql);
+        $result = $stmt->execute($array);
+        if($result){
+            $idlast = $db->lastInsertId('tab_conf_prestaciones');
+            $desc = 'Se ha registrado nueva prestación servicio: '.$nomb;
+            $log->log($idlast, $log->crear, $desc, 'tab_conf_prestaciones');
+        }else{
+            $log->log(0, $log->error, 'Ha ocurrido un error con la creación de la prestación: '.$nomb, 'tab_conf_prestaciones', $stmt->errorInfo()[2]);
+
+            return -1;
+        }
+
+    }
+
+    if($mod==true){
+
+        $array = array($nomb, 0, $clasi, 0, $valor, 0, 0, $infoadi, $iva, $codigo, $id);
+        $sql  = " UPDATE `tab_conf_prestaciones` ";
+        $sql .= " SET ";
+        $sql .= " `descripcion` = ?,`fk_convenio` = ?,`fk_categoria` = ?,`fk_laboratorio` = ?,`valor` = ?,`costo_x_clinica` = ?,`precio_paciente` = ?,`explicacion` = ?,`iva` = ? ,`codigo` = ? ";
+        $sql .= " WHERE `rowid` = ?; ";
+        $stmt   = $db->prepare($sql);
+        $result = $stmt->execute($array);
+        if($result){
+            $idlast = $id;
+            $desc   = 'Se Actualizo la prestación servicio: '.$nomb;
+            $log->log($idlast, $log->crear, $desc, 'tab_conf_prestaciones');
+        }else{
+            $log->log(0, $log->error, 'Ha ocurrido un error con la operación modificar de la prestación: '.$nomb, 'tab_conf_prestaciones', $stmt->errorInfo()[2]);
+            return -1;
+        }
+
+    }
+
+    return "";
+}
+
 
 ?>
