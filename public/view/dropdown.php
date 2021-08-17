@@ -11,31 +11,37 @@
 
         <?php include_once  DOL_DOCUMENT .'/public/view/notificaciones_lib.php'?>
 
-<!--        end notificaciones-->
+        <!--end notificaciones-->
 
         <li class="dropdown user user-menu">
             <!-- Menu Toggle Button -->
             <a href="#" class="dropdown-toggle" data-toggle="dropdown" >
                 <!-- The user image in the navbar-->
-                <!--<img src="< ?= $conf->PERFIL->icon ?> " class="user-image" alt="User Image">-->
-                <i class="fa fa-user"></i>
+                <img src="<?= DOL_HTTP."/logos_icon/logo_default/icon_avatar.svg" ?>" class="user-image" alt="User Image">
                 <!-- hidden-xs hides the username on small devices so only the image appears. -->
-                <span class="hidden-xs hide"><?= ($conf->PERFIL->id!=0)?$conf->PERFIL->nombre:""  ?></span>
-                <span class="hidden-xs"><?= ($conf->PERFIL->id!=0)?$user->name:""  ?></span>
+                <?php
+                    if($conf->PERFIL->id != 0){
+                        $odoctname = $conf->PERFIL->nombre.' '.$conf->PERFIL->apellido;
+                    }else{
+                        $odoctname = '';
+                    }
+                ?>
+                <span class="hidden-xs hide"><?= $odoctname ?></span>
+                <span class="hidden-xs"><?= $user->name ?></span>
             </a>
 
+            <!--dropdown Menu-->
             <ul class="dropdown-menu">
                 <!-- The user image in the menu -->
                 <li class="user-header" style="background-color: #212f3d">
-                <!--<img src="< ?php //echo $conf->PERFIL->icon ; ?> " class="img-circle" alt="User Image">-->
-                    <i class="fa fa-4x fa-user" style="color: #f6f6f6"></i>
+                <img src="<?= DOL_HTTP."/logos_icon/logo_default/icon_avatar.svg" ?>" class="img-circle" alt="User Image">
+<!--                    <i class="fa fa-4x fa-user" style="color: #f6f6f6"></i>-->
                     <p>
-                        <?php echo $user->name ?>
                         <small style="font-weight: bolder"><?= ($conf->PERFIL->id!=0)?"Doctor(a): ".$conf->PERFIL->nombre ." ".$conf->PERFIL->apellido:"" ?></small>
                     </p>
                 </li>
                 <!-- Menu Body -->
-                <li class="user-body">
+                <li class="user-body hide">
                     <div class="row">
 
                     </div>

@@ -28,10 +28,10 @@
     $Permissions_configuration = array(
         'url'     => array(
                 'principal'       => array('url' => DOL_HTTP .'/application/system/configuraciones/index.php?view=principal' , 'Active_subMod' => (isset($_GET['view']) && $_GET['view'] == 'principal') ? 'Active_link_subM' : ''),
-                'prestaciones'    => array('url' => DOL_HTTP .'/application/system/configuraciones/index.php?view=form_prestaciones' , 'Active_subMod' => (isset($_GET['view']) && $_GET['view'] == 'form_prestaciones') ? 'Active_link_subM' : ''),
+                'prestaciones'    => array('url' => DOL_HTTP .'/application/system/configuraciones/index.php?view=servicios&v=list' , 'Active_subMod' => (isset($_GET['view']) && $_GET['view'] == 'servicios') ? 'Active_link_subM' : ''),
                 'descuento'       => array('url' => DOL_HTTP .'/application/system/configuraciones/index.php?view=form_convenios_desc' , 'Active_subMod' => (isset($_GET['view']) && $_GET['view'] == 'form_convenios_desc') ? 'Active_link_subM' : ''),
                 'odontolog'       => array('url' => DOL_HTTP .'/application/system/configuraciones/?view=odontologos&v=list' , 'Active_subMod' => (isset($_GET['view']) && $_GET['view'] == 'odontologos') ? 'Active_link_subM' : ''),
-                'especialidades'  => array('url' => DOL_HTTP .'/application/system/configuraciones/index.php?view=form_gestion_odontologos_especialidades&v=specialties' , 'Active_subMod' => (isset($_GET['v']) && $_GET['v'] == 'specialties') ? 'Active_link_subM' : ''),
+                'especialidades'  => array('url' => DOL_HTTP .'/application/system/configuraciones/index.php?view=especialidades&v=list' , 'Active_subMod' => (isset($_GET['view']) && $_GET['view'] == 'especialidades') ? 'Active_link_subM' : ''),
                 'users'           => array('url' => DOL_HTTP .'/application/system/configuraciones/?view=admin_users&v=list' , 'Active_subMod' => (isset($_GET['view']) && $_GET['view'] == 'admin_users') ? 'Active_link_subM' : ''),
                 'laboratorios'    => array('url' => DOL_HTTP .'/application/system/configuraciones/index.php?view=form_laboratorios_conf&v=laboratorios' , 'Active_subMod' => (isset($_GET['view']) && $_GET['view'] == 'form_laboratorios_conf') ? 'Active_link_subM' : ''),
         ),
@@ -143,9 +143,9 @@
 
     <!--SUB MENUS-->
     <ul class="treeview-menu" <?= (!empty($Permissions_configuration['Active'])?"style=\"display: block\"":"") ?> >
-        <li><a href="<?= $Permissions_configuration['url']['principal']['url'] ?>"  class="<?= $Permissions_configuration['url']['principal']['Active_subMod'] ?>"  <?= $stylefontSmall ?>> Configuraciones Clinicas</a></li>
+        <li class="hidden"><a href="<?= $Permissions_configuration['url']['principal']['url'] ?>"  class="<?= $Permissions_configuration['url']['principal']['Active_subMod'] ?>"  <?= $stylefontSmall ?>> Configuraciones Clinicas</a></li>
         <li><a href="<?= $Permissions_configuration['url']['prestaciones']['url'] ?>"  class="<?= $Permissions_configuration['url']['prestaciones']['Active_subMod'] ?>"  <?= $stylefontSmall ?>>Prestaciones</a></li>
-        <li><a href="<?= $Permissions_configuration['url']['descuento']['url'] ?>"  class="<?= $Permissions_configuration['url']['descuento']['Active_subMod'] ?> disabled_link3"  <?= $stylefontSmall ?>>Descuento</a></li>
+        <li class="hidden"><a href="<?= $Permissions_configuration['url']['descuento']['url'] ?>"  class=" <?= $Permissions_configuration['url']['descuento']['Active_subMod'] ?> disabled_link3"  <?= $stylefontSmall ?>>Descuento</a></li>
         <li><a href="<?= $Permissions_configuration['url']['odontolog']['url'] ?>"  class="<?= $Permissions_configuration['url']['odontolog']['Active_subMod'] ?>"  <?= $stylefontSmall ?>>Odontologos</a></li>
         <li><a href="<?= $Permissions_configuration['url']['especialidades']['url'] ?>"  class="<?= $Permissions_configuration['url']['especialidades']['Active_subMod'] ?>"  <?= $stylefontSmall ?>>Especialidades</a></li>
         <li><a href="<?= $Permissions_configuration['url']['users']['url'] ?>"  class="<?= $Permissions_configuration['url']['users']['Active_subMod'] ?>"  <?= $stylefontSmall ?>>  Usuarios</a></li>

@@ -12,10 +12,10 @@
             }
         ?>
         <span class="logo-lg">
-            <h3 style="display: inline-block"><?= $conf->EMPRESA->INFORMACION->nombre ?></h3>&nbsp;<img width="48px" src="<?= !empty($conf->EMPRESA->INFORMACION->logo) ? $logo_entity :  $logo_entity ?>" alt="">
+            <h3 style="display: inline-block"><?= $conf->EMPRESA->INFORMACION->nombre ?></h3>&nbsp;<img width="48px" src="<?= DOL_HTTP."/logos_icon/logo_default/app_ia_odontic.svg" ?>" alt="">
         </span>
         <span class="logo-mini">
-            <img width="50px" height="50px" src="<?= !empty($conf->EMPRESA->INFORMACION->logo) ? $logo_entity :  $logo_entity ?>" alt="">
+            <img width="50px" height="50px" src="<?= DOL_HTTP."/logos_icon/logo_default/app_ia_odontic.svg" ?>" alt="">
         </span>
     </a>
 
