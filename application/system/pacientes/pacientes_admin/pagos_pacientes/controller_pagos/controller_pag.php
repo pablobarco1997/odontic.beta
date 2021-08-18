@@ -447,10 +447,6 @@ function list_pagos_independientes($idpaciente = 0, $Filtros = array())
     $start          = GETPOST("start");
     $length         = GETPOST("length");
 
-
-    $imgbase64 = "data: image/*; base64, ".base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/ahorrar-dinero.png'));
-    $imgbase64ico = "data: image/*; base64, ".base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/cita-medica.ico'));
-
     $sql_a = "SELECT 
                     cast(ct.fecha_create as date) fecha_create,       
                     ct.rowid  as idplantratamiento, 

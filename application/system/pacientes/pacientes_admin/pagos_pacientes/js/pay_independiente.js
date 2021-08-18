@@ -463,7 +463,9 @@ $('#btnApagar').click(function() {
                 $("#t_pagos").val(null).trigger('change');
                 $("#n_factboleta").val(null);
                 $("#descripObserv").val(null);
-                $('.Abonar').click();
+                $('.Abonar').val(0).trigger('keyup');
+                $('#totalPrestacion').text("0.00");
+                $('#monto_pag').text("0.00");
             }else{
                 notificacion(respuesta.error, 'error');
             }
