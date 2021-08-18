@@ -468,7 +468,9 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
                         p.descripcion , 
                         p.valor , 
                         c.nombre_cat, 
-                        p.estado
+                        p.estado, 
+                        (select l.name from tab_conf_laboratorios_clinicos as l where l.rowid = p.fk_laboratorio) as lab , 
+                        p.fk_laboratorio
                     FROM
                         tab_conf_prestaciones p
                         left join
@@ -491,9 +493,15 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
 
                     $all = $result->fetchAll(PDO::FETCH_ASSOC);
                     foreach ($all as $item){
+
+                        if($item['fk_laboratorio']!=0){
+                            $lab = "<span class='text-sm' style='display: block;color: #0866a5'><i class='fa fa-flask' title='Laboratorio'></i> ".$item['lab']."</span>";
+                        }else{
+                            $lab = "";
+                        }
                         $rows = [];
                         $rows[] = date('Y/m/d', strtotime($item['tms']));
-                        $rows[] = $item['descripcion'];
+                        $rows[] = $item['descripcion'].$lab;
                         $rows[] = $item['nombre_cat'];
                         $rows[] = number_format($item['valor'], 2, '.','');
                         if($item['estado']=='A'){

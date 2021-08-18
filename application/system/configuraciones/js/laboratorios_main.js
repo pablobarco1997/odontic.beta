@@ -133,19 +133,19 @@ var FormaValidLaboratorio = function(revalid=false) {
     if( RgxVacio.test(nombre_laboratorio.val()) ){
         Error.push({
             'Dom' : nombre_laboratorio ,
-            'msgerr' : 'No puede Ingresar campo vacio'
+            'msgerr' : 'Campo requerido'
         });
     }
     if( RgxVacio.test(direccion_laboratorio.val()) ){
         Error.push({
             'Dom' : direccion_laboratorio ,
-            'msgerr' : 'No puede Ingresar campo vacio'
+            'msgerr' : 'Campo requerido'
         });
     }
     if( RgxVacio.test(telefono_laboratorio.val()) ){
         Error.push({
             'Dom' : telefono_laboratorio ,
-            'msgerr' : 'No puede Ingresar campo vacio'
+            'msgerr' : 'Campo requerido'
         });
     }
 
@@ -183,25 +183,25 @@ var FormValidarPrestacion = function(){
     if( catprestacion.find(":selected").val() == "" ){
         Error.push({
             'Dom' : catprestacion ,
-            'msgerr' : 'Debe selecionar una opción'
+            'msgerr' : 'Campo Obligatorio'
         });
     }
     if( RgxVacio.test(nameprestacion.val()) ){
         Error.push({
             'Dom' : nameprestacion ,
-            'msgerr' : 'No puede Ingresar campo vacio'
+            'msgerr' : 'Campo Obligatorio'
         });
     }
     if( RgxVacio.test(costo.val()) ){
         Error.push({
             'Dom' : costo ,
-            'msgerr' : 'No puede Ingresar campo vacio'
+            'msgerr' : 'Campo Obligatorio'
         });
     }
     if( RgxVacio.test(precio.val()) ){
         Error.push({
             'Dom' : precio ,
-            'msgerr' : 'No puede Ingresar campo vacio'
+            'msgerr' : 'Campo Obligatorio'
         });
     }
 
@@ -211,11 +211,20 @@ var FormValidarPrestacion = function(){
     {
         var msg   = document.createElement('small');
         var Dom   = Error[i]['Dom'];
-        $(msg)
-            .html(Error[i]['msgerr']+"<br>")
-            .addClass("msg_err_name_document_prestacion")
-            .css('color', 'red')
-            .insertAfter(Dom);
+
+        console.log(Dom);
+        if( $(Dom)[0].nodeName == 'SELECT'){
+            $(msg)
+                .html(Error[i]['msgerr']+"<br>")
+                .addClass("msg_err_name_document_prestacion")
+                .css('color', 'red').insertAfter($(Dom).parent().find('span:eq(0)'));
+        }else {
+            $(msg)
+                .html(Error[i]['msgerr']+"<br>")
+                .addClass("msg_err_name_document_prestacion")
+                .css('color', 'red')
+                .insertAfter(Dom);
+        }
     }
 
     if(Error.length>0)
@@ -293,21 +302,31 @@ $("#crearPresatacionAsoLabo").on("click", function() {
         'idp': $("[name='modificarPrestacionLab']:checked").val()
     };
 
+    button_loadding($("#crearPresatacionAsoLabo"), true);
+
     $.ajax({
         url:$DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php',
         type:'POST',
         data: parametros  ,
         dataType:'json' ,
-        async:false,
+        async:true,
+        cache:false,
+        complete:function(xhr , status){
+            button_loadding($("#crearPresatacionAsoLabo"), false);
+        },
         success: function (resp){
             if(resp['error'] == ''){
-                notificacion('Información Actualizada', 'success');
                 $("#ModalPrestacion_LaboratorioClinico").modal("hide");
                 var table = $("#prestacionLaboratorio").DataTable();
                 table.ajax.reload();
+
+                setTimeout(function () {
+                    notificacion('Información Actualizada', 'success');
+                }, 500);
             }else {
                 notificacion(resp['error'], 'error');
             }
+            button_loadding($("#crearPresatacionAsoLabo"), false);
         }
     });
 
@@ -346,6 +365,7 @@ function NuevoModificarLaboratorio(idLaboratorio = 0, sub){
         data: parametros  ,
         dataType:'json' ,
         async:false,
+        cache:false,
         success: function (resp){
             if(resp['error'] == ''){
                 notificacion('Información Actualizada', 'success');
