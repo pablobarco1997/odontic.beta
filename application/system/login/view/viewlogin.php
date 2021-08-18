@@ -1,6 +1,18 @@
 
 <link rel="stylesheet" href="css/login.css">
-<link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">
+
+<style>
+    *{
+        font-family: 'Roboto', sans-serif;
+        font-size: small;
+    }
+   
+</style>
 
 <div class="container">
 
@@ -31,7 +43,7 @@
                 </div>
             </div>
             <a href="#" class="" style="margin: 15px 5px 0px 0px; font-size: 1.5rem">¿Olvidó su contraseña?</a>
-            <input type="button" class="btn_login_style" value="Login" id="btn_logearse">
+            <input type="button" class="btn_login_style" value="Login" style="font-weight: bold" id="btn_logearse">
         </div>
     </div>
 </div>

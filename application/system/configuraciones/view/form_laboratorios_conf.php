@@ -332,7 +332,7 @@ if($result && $result->rowCount()>0){
                                             </select>
                                         </div>
                                         <div class="form-group">
-                                            <button type="button" class="btn btn-success pull-right" id="selecionLab"> Aceptar </button>
+                                            <button type="button" class="btn pull-right" style="font-weight: bold; color: green;" id="selecionLab"> Aceptar </button>
                                         </div>
                                     </div>
                                 </div>
@@ -365,27 +365,25 @@ if($result && $result->rowCount()>0){
                                                     <select name="catprestacion" id="catprestacion" class="" style="width: 100%" onchange="FormValidarPrestacion()">
                                                         <option value=""></option>
                                                         <?php
-                                                        $sql = "SELECT * FROM tab_conf_categoria_prestacion;";
-                                                        $rs = $db->query($sql);
-                                                        if($rs->rowCount() > 0 )
-                                                        {
-                                                            while ($row =  $rs->fetchObject())
-                                                            {
-                                                                print  "<option value='$row->rowid'>$row->nombre_cat</option>";
+                                                            $sql_a = "SELECT rowid, nombre_cat  FROM tab_conf_categoria_prestacion;";
+                                                            $result_a = $db->query($sql_a);
+                                                            if($result_a->rowCount() > 0 ){
+                                                                while ($object_a =  $result_a->fetchObject()){
+                                                                    print  "<option value='$object_a->rowid'>$object_a->nombre_cat</option>";
+                                                                }
                                                             }
-                                                        }
                                                         ?>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label class="control-label col-sm-3">prestación</label>
+                                                <label class="control-label col-sm-3">Prestación/Servicio</label>
                                                 <div class="col-sm-7">
                                                     <input type="text" class="form-control" id="name_prestacion" onkeyup="FormValidarPrestacion()">
                                                 </div>
                                             </div>
                                             <div class="form-group">
-                                                <label class="control-label col-sm-3">costo x clinica</label>
+                                                <label class="control-label col-sm-3">Costo Clinico</label>
                                                 <div class="col-sm-7">
                                                     <input type="text" class="form-control" id="costo_prestacion" onkeyup="FormValidarPrestacion()">
                                                 </div>
@@ -399,7 +397,9 @@ if($result && $result->rowCount()>0){
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <button type="button" class="btn btn-success pull-right" id="crearPresatacionAsoLabo"> Guardar </button>
+                                        <button type="button" class="btn pull-right" style="font-weight: bold; color: green" id="crearPresatacionAsoLabo"> Guardar
+                                            <span class="fa fa-refresh btnSpinner hide"></span>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -479,7 +479,7 @@ if($result && $result->rowCount()>0){
                     </div>
 
                     <div class="form-group col-md-8 col-lg-8 col-xs-12 margin-bottom">
-                        <table id="informacionPrestacion" class="none" style="display: none;" width="100%">
+                        <table id="informacionPrestacion" class="none table" style="display: none;" width="100%">
                             <tr style="border-top: 1px solid #e2e2e2">
                                 <td style="width: 25%; font-weight: bolder">Nombre Laboratorio:</td>
                                 <td id="nameLab" style="padding-left: 10px"></td>
@@ -717,7 +717,7 @@ if($result && $result->rowCount()>0){
 
                             var Realizado = function() {
 
-                                alert(1);
+                                // alert(1);
                                 var parametrs = {
                                     'accion'        : 'realizarPrestacion',
                                     'ajaxSend'      : 'ajaxSend',
