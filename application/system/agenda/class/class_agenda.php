@@ -26,17 +26,20 @@ class admin_agenda{
     var $tratam_situaccion = '';
 
     #PLAN TRATAMIENTO DET
-    var $tramdet_fk_tramcab = '';
-    var $tramdet_fk_prestacion = '';
-    var $tramdet_fk_diente = '';
-    var $tramdet_jsoncaras = '';
-    var $tramdet_subtotal = '';
-    var $tramdet_desconvenio = '';
-    var $tramdet_descadicional = '';
-    var $tramdet_total = '';
-    var $tramdet_cantidad = '';
-    var $tramdet_detencion = '';
-    var $tramdet_fk_usuario = '';
+    var $tramdet_fk_tramcab     = "";
+    var $tramdet_fk_prestacion  = "";
+    var $tramdet_fk_diente      = "";
+    var $tramdet_jsoncaras      = "";
+    var $tramdet_subtotal       = "";
+    var $tramdet_desconvenio    = "";
+    var $tramdet_descadicional  = "";
+    var $tramdet_total          = "";
+    var $tramdet_cantidad       = "";
+    var $tramdet_detencion      = "";
+    var $tramdet_fk_usuario     = "";
+    var $tramdet_precio_serv    = "";
+    var $tramdet_costo_serv     = "";
+    var $tramdet_iva_serv       = "";
 
     public function __construct($db)
     {
@@ -148,40 +151,46 @@ class admin_agenda{
     }
 
     #crear plan de tratamiento detalle
-    public function create_plantratamientodet($idLaboratorio = 0)
+    public function create_plantratamientodet($idLaboratorio = 0, $nomServicio="")
     {
+        global $log;
 
         $error = '';
-
         $descAdicional = !empty($this->tramdet_descadicional) ? $this->tramdet_descadicional : 0.00;
 
-        $sql  = "INSERT INTO tab_plan_tratamiento_det  (`fk_plantratam_cab`, `fk_prestacion`, `fk_diente`, `json_caras`, `sub_total`, `desc_convenio`, `desc_adicional`, `total`, `cantidad`, detencion, fk_usuario, fk_laboratorio) ";
+        $sql  = "INSERT INTO tab_plan_tratamiento_det  (`fk_plantratam_cab`, `fk_prestacion`, `fk_diente`, `json_caras`, `sub_total`, `desc_convenio`, `desc_adicional`, `total`, `cantidad`, detencion, fk_usuario, fk_laboratorio, precio_u, costo, iva) ";
         $sql .= "VALUES(";
         $sql .= " ".$this->tramdet_fk_tramcab." , ";
         $sql .= " ".$this->tramdet_fk_prestacion." , ";
         $sql .= " ".$this->tramdet_fk_diente." , ";
         $sql .= " '".json_encode($this->tramdet_jsoncaras)."' , ";
         $sql .= " ".$this->tramdet_subtotal." , ";
-        $sql .= " ".$this->tramdet_desconvenio." , ";
+        $sql .= " 0 , "; //descuentoConvenio
         $sql .= " ".$descAdicional." , ";
         $sql .= " ".$this->tramdet_total." , ";
         $sql .= " ".$this->tramdet_cantidad." , ";
         $sql .= " '".$this->tramdet_detencion."' ,  "; #detencion permanente - permanente
         $sql .= " ".$this->tramdet_fk_usuario." ,  ";
-        $sql .= " ".$idLaboratorio."  ";
-//        $sql .= " '".(($idLaboratorio>0)?'P':'')."' ";
+        $sql .= " ".$idLaboratorio." ,  ";
+        $sql .= " ".$this->tramdet_precio_serv." ,  "; //precio
+        $sql .= " ".$this->tramdet_costo_serv." ,  "; //costo
+        $sql .= " ".$this->tramdet_iva_serv."  "; //iva
         $sql .= ");";
 
-//        print_r($sql); die();
-        $rs = $this->db->query($sql);
-        if(!$rs){
+        $result = $this->db->query($sql);
+        if(!$result){
             $error = 'Ocurrió un error con la Operacion guardar detalle, Consulte con soporte Técnico';
+        }else{
+            $idlast =  $this->db->lastInsertId("tab_plan_tratamiento_det");
         }
 
-        #SE ACTUALIZA LA FECHA DE LA CITA CADA VEZ QUE HAY UN CAMBIO EN EL SISTEMA DEL MODULO PLAN DE TRATAMIENTO
-        if($rs){
+        //Se actualiza la fecha actual al plan de tratamiento 'ultima cita'
+        if($result){
+
             $sqlUpDatePlantram = "UPDATE `tab_plan_tratamiento_cab` SET `ultima_cita`= now() WHERE `rowid`= ".$this->tramdet_fk_tramcab."  ";
-            $rs = $this->db->query($sqlUpDatePlantram);
+            $this->db->query($sqlUpDatePlantram);
+
+            $log->log($idlast , $log->modificar, "Se agrego un nuevo registro Prestación/Servicio: ".$nomServicio." | Plan de tratamiento N. ".str_pad($this->tramdet_fk_tramcab, 6, "0", STR_PAD_LEFT) , 'tab_plan_tratamiento_det');
         }
 
         return $error;

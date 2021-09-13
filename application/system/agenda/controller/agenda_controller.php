@@ -380,7 +380,6 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
         /*CREAR PLAN DE TRATAMIENTO DETALLE*/
         case "nuevoUpdatePlanTratamientoDetalle":
 
-//            die();
             $error = '';
             #id del plan de tratamiento cabezera
             $idplantratamiento = GETPOST("idtratamiento");
@@ -393,12 +392,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $detencion         = GETPOST('detencion');
 
 
-            if( $idplantratamiento != "" || $idplantratamiento > 0 && $idpaciente != 0)
-            {
-//                print_r($idplantratamiento);
-//                echo '<br>';
-//                print_r($idpaciente);
-//                die();
+            if( $idplantratamiento != "" || $idplantratamiento > 0 && $idpaciente != 0){
 
                 #nuevo detalle
                 if( $subaccion == 'create' ){
@@ -406,17 +400,22 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     foreach ($datos as $key => $item)
                     {
 
-                        $agenda->tramdet_fk_tramcab = $idplantratamiento;
+                        $prestacion = getnombrePrestacionServicio($item['prestacion']);
+
+                        $agenda->tramdet_fk_tramcab     = $idplantratamiento;
                         $agenda->tramdet_fk_prestacion  = $item['prestacion'];
                         $agenda->tramdet_fk_diente      = $item['iddiente']; # id diente
                         $agenda->tramdet_jsoncaras      = $item['pieza']; # caras seleccionadas matris de caras seleccionadas
-                        $agenda->tramdet_subtotal    = $item['subtotal'];
-                        $agenda->tramdet_desconvenio = $item['descConvenio'];
+                        $agenda->tramdet_subtotal       = $item['subtotal'];
+                        $agenda->tramdet_desconvenio    = $item['descConvenio'];
                         $agenda->tramdet_descadicional  = $item['descAdicional'];
                         $agenda->tramdet_total          = $item['total'];
-                        $agenda->tramdet_cantidad   = $item['cantidad'];
-                        $agenda->tramdet_detencion  = $detencion; #DETENCION TEMPORAL O PERMANENTE
-                        $agenda->tramdet_fk_usuario = $conf->login_id; #EL USUARIO QUE LA CREO
+                        $agenda->tramdet_cantidad       = $item['cantidad'];
+                        $agenda->tramdet_detencion      = $detencion; #DETENCION TEMPORAL O PERMANENTE
+                        $agenda->tramdet_fk_usuario     = $user->id; #EL USUARIO QUE LA CREO
+                        $agenda->tramdet_costo_serv     = $prestacion->costo_x_clinica;
+                        $agenda->tramdet_precio_serv    = $prestacion->precio_paciente;
+                        $agenda->tramdet_iva_serv       = $prestacion->iva;
 
                         #Obtengo el id del laboratorio
                         $idLab                      = 0;
@@ -427,12 +426,10 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                             $idLab = $objectLab->rowid;
                         }
 
-                        $error = $agenda->create_plantratamientodet($idLab);
-
+                        $nomServicio = $prestacion->descripcion;
+                        $error = $agenda->create_plantratamientodet($idLab, $nomServicio);
                     }
-
 //                    die();
-
                 }
 
 //                die();
@@ -461,7 +458,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
 
             }else{
-                $error = 'Ocurrió un error , no se pudo obtener los parametros asignados para crear el detalle de este tratamiento, Consulte con soporte Técnico';
+                $error = 'Ocurrió un error , no se pudo obtener los parámetros asignados para crear el detalle de este tratamiento, Consulte con soporte Técnico';
             }
 
 //            print_r($error); die();
@@ -478,7 +475,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $error = '';
 
             $idpaciente            = GETPOST("idpaciente");
-            $idcita                = GETPOST('idcita');  #id de la cita detalle
+            $idcita                = GETPOST('idcita');  //id de la cita detalle
             $asunto                = GETPOST("asunto");
             $from                  = GETPOST("from");
             $to                    = GETPOST("to");
@@ -491,12 +488,11 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $dateProgram           = date('Y-m-d', strtotime(str_replace('/','-',$programar_email->date_program)));
 
 
-            #Obtengo el objeto conpleto de la cita
+            //obtengo el objeto conpleto de la cita
             $sqlCitadet     = "SELECT * FROM tab_pacientes_citas_det WHERE rowid = $idcita limit 1";
             $rsuCita = $db->query($sqlCitadet)->fetchObject();
             $rowCitasObject = $rsuCita;
-
-            #GENERAR TOKEN E INFORMACION DE LA CLINICA
+            //Generar token de Formulario Clinica
 
             /*
                 'id_cita'      => id de la cita                                     , 0
@@ -507,9 +503,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 'token'        => Token para validar los formularios                , 5
             */
 
-
+            //Solo correos de envios al instante
             //se utiliza para validar los formularios que se envian
-
             //elimino todos los token asociados a esta citas para volver a recrearlos
             $db->query("DELETE FROM `tab_noti_token_confirmacion` WHERE `fk_cita_agendada`= $idcita; ");
 
@@ -815,6 +810,100 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $output =[
                 'error' => $error
             ];
+            echo json_encode($output);
+            break;
+
+
+
+        case 'fetch_cita_now':
+
+            $error = "";
+            $fetch = array();
+            $idCita = GETPOST("idCita");
+
+            $sql = "SELECT 
+                    rowid,
+                    fk_pacient_cita_cab AS id_paciente,
+                    fk_doc as id_doc, 
+                    fk_especialidad AS id_especialidad,
+                    duracion,
+                    fecha_cita,
+                    hora_cita,
+                    hora_inicio,
+                    hora_fin
+                FROM
+                    tab_pacientes_citas_det
+                WHERE
+                    rowid = ".$idCita;
+            $result = $db->query($sql);
+            if($result){
+                if($result->rowCount()>0){
+                    $fetch = $result->fetchAll(PDO::FETCH_ASSOC);
+                    $fetch = $fetch[0];
+                }else{
+                    $error = "Ocurrió un error con la Operación. No se pudo obtener información";
+                }
+            }else{
+                $error = "Ocurrió un error con la Operación. No se pudo obtener información";
+            }
+
+            $output = array(
+                'error' => $error,
+                'fetch' => $fetch
+            );
+            echo json_encode($output);
+            break;
+
+        case 'reagendar_cita_paciente':
+
+            $error = "";
+            if(!PermitsModule("Agenda", "modificar")){
+                $permits = false;
+            }else{
+                $permits = true;
+            }
+
+            $fecha     = date("Y-m-d", strtotime(str_replace('/','-', GETPOST("fecha"))));
+            $hora      = GETPOST("hora");
+            $duracion  = GETPOST("duracion");
+            $fk_doc    = GETPOST("fk_doc");
+
+            $fechaInicio = date("Y-m-d H:i:s", strtotime("$fecha $hora:00"));
+            $fechaFin    = strtotime("+$duracion minute", strtotime($fechaInicio));
+
+            $horaFin     = date("H:i:s", $fechaFin);
+            $horaInicio  = $hora.":00";
+
+//            print_r(date("Y-m-d H:i:s", strtotime($fecha." ".$horaFin)) ); die();
+            if($permits){
+                $idCita             = GETPOST("idCita");
+                $validarHoraFecha   = validarFechaHoraCita($idCita);
+                if($validarHoraFecha){ //true
+
+                    if(date("Y-m-d H:i:s", strtotime($fechaInicio)) < date("Y-m-d H:i:s")){
+                        $error = "Fecha menor a la Actual ".date("Y/m/d H:i:s", strtotime($fechaInicio));
+                    }
+
+                    if(empty($error)){
+
+                         $fechaCita = date("Y-m-d H:i:s", strtotime($fecha." ".$horaFin));
+                         $sql    = "UPDATE `tab_pacientes_citas_det` SET `fecha_cita`='$fechaCita', `hora_cita`='$horaInicio', `hora_inicio`='$horaInicio', `hora_fin`='$horaFin' WHERE `rowid`='$idCita';";
+                         $result = $db->query($sql);
+                         if($result){
+                             $date = date("Y/m/d H:i:s", strtotime($fechaCita));
+                             $log->log($idCita, $log->modificar, "Se a actualizado la cita Numero: $idCita | Nueva fecha de Agendamiento ".$date, 'tab_pacientes_citas_det');
+                         }
+                    }
+                }else{
+                    $error = "Ya se encuentra agendada una cita con esta fecha seleccionada ".GETPOST('fecha')." hora: ".GETPOST('hora');
+                }
+            }else{
+                $error = "Ud. No tiene permiso para realizar esta Operación";
+            }
+
+            $output = array(
+                'error' => $error,
+            );
             echo json_encode($output);
             break;
     }
@@ -1663,6 +1752,50 @@ function boxsizingMenssaje( $datosEmail = array() ){
 
 //    print_r($box); die();
     return $box;
+
+}
+
+
+function validarFechaHoraCita($idCita){
+
+    global $db;
+
+    $fecha       = "";
+    $duracion    = "";
+    $hora        = "";
+    $fk_doc      = "";
+    $fechaFin    = "";
+    $fechaInicio = "";
+    $horaFin     = "";
+    $horaInicio  = "";
+
+    $fecha     = date("Y-m-d", strtotime(str_replace('/','-', GETPOST("fecha"))));
+    $hora      = GETPOST("hora");
+    $duracion  = GETPOST("duracion");
+    $fk_doc    = GETPOST("fk_doc");
+
+    $fechaInicio = "$fecha $hora:00";
+    $fechaFin    = strtotime("+$duracion minute", strtotime($fechaInicio));
+
+    $horaFin     = date("H:i:s", $fechaFin);
+    $horaInicio  = $hora.":00";
+
+    $sql = "SELECT rowid,  fk_doc, fecha_cita, hora_cita, hora_inicio, hora_fin  
+                         FROM tab_pacientes_citas_det WHERE fk_doc = $fk_doc 
+                    and cast(fecha_cita as date)   = '$fecha'
+                    and hora_inicio <= '$horaFin'
+                    and hora_fin    >= '$horaInicio'
+                    and fk_estado_paciente_cita not in(7,9)
+             and rowid not in($idCita)";
+
+    $result = $db->query($sql);
+    if($result->rowCount() > 0) {
+        $response = false;
+    }else{
+        $response = true;
+    }
+
+    return $response;
 
 }
 

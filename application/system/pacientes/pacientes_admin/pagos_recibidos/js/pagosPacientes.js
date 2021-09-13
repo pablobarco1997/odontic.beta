@@ -24,13 +24,6 @@ if($accionPagospacientes = "pagos_particular")
                 dataType:'json',
             },
             columnDefs:[
-                // {
-                //     targets:0,
-                //     render:function(data, type, row) {
-                //         var idpago = row[8];
-                //         return "<input type='checkbox' class='custom-checkbox-myStyle' value='"+idpago+"' >";
-                //     }
-                // },
                 {
                     targets:8,
                     render: function (data, type, row) {
@@ -192,7 +185,7 @@ if($accionPagospacientes = "pagos_particular")
 
     var FiltrosPagosxPacientes = function() {
 
-        var  table = $("#pag_particular").DataTable();
+        var  table      = $("#pag_particular").DataTable();
         var  accion     = "list_pagos_particular";
         var  ajaxSend   = "ajaxSend";
 
@@ -262,6 +255,32 @@ var PrintPagosParticulares = function(idTratamiento){
 $(document).ready(function() {
 
     list_pagos_particulares();
+    $('#busquedaxTratamiento').select2({
+        placeholder: 'buscar plan de tratamiento',
+        allowClear:true,
+        language: languageEs,
+        minimumInputLength:1,
+        ajax:{
+            url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
+            type: "POST",
+            dataType: 'json',
+            async:false,
+            data:function (params) {
+                var query = {
+                    accion: 'filtrarPlantratamientoSearchSelect2',
+                    ajaxSend:'ajaxSend',
+                    paciente_id: $id_paciente,
+                    search: params.term,
+                };
+                return query;
+            },
+            delay: 500,
+            processResults:function (data) {
+                return data;
+            }
+        }
+    });
+
 });
 
 

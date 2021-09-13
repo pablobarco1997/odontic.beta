@@ -70,7 +70,7 @@
                 <div class="form-group">
                     <div class="checkbox  <?= !PermitsModule("Agenda", "consultar")?"disabled_link3":"" ?>">
                         <a href="#" class="btn btnhover" style="color: #333333" onclick="ImprimirCitasAgendadas()">
-                            <b>Imprimir Citas Agendadas &nbsp;<i class="fa fa-print"></i></b>
+                            <b>Agendadas PDF &nbsp;<i class="fa fa-print"></i></b>
                         </a>
                     </div>
                 </div>

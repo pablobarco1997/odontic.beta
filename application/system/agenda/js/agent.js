@@ -162,7 +162,7 @@ function fa_refresh_agenda() {
     }
 
     filtrarAgenda();
-    Notify_odontic(1, false)
+    Notify_odontic(1, false);
 }
 
 
@@ -246,7 +246,7 @@ function EstadosCitas(idestado, idcita, html, idpaciente) //Comprotamientos de l
             UpdateEstadoCita(idestado, idcita, html, textEstado );
             break;
 
-        case 8:
+        case 8: //confirmado por whatsapp
 
             $("#number_whasap").text(html.data("telefono"));
             var number = html.data("telefono");
@@ -258,6 +258,11 @@ function EstadosCitas(idestado, idcita, html, idpaciente) //Comprotamientos de l
                 .attr('onclick', 'UpdateEstadoCita('+idestado+','+idcita+','+'0'+','+"'textEstado'"+')')
                 .attr('href','https://wa.me/'+number+'?text=hola');
 
+            break;
+
+        case 12: //Cambio de fecha
+
+            FechaCitaCambio(idcita);
             break;
 
         default:
@@ -332,20 +337,20 @@ function notificaionEmail($idPaciente, $idcita, idestado, idcita )
             url: $DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php",
             type:'POST',
             data:{
-                'ajaxSend': 'ajaxSend',
-                'accion': 'envio_email_notificacion',
-                'idpaciente':$idPaciente,
-                'idcita' : $idcita,
-
-                'asunto': $('#asunto_email').val(),
-                'from': $('#de_email').val(),
-                'to': $('#para_email').val(),
-                'subject': ($('#titulo_email').val()).replace(/(["'])(.*?)\1/g,' '),
-                'message': ($('#messge_email').val()).replace(/(["'])(.*?)\1/g,' '),
-                'programar_email': JSON.stringify(programarEmail),
+                'ajaxSend'          : 'ajaxSend',
+                'accion'            : 'envio_email_notificacion',
+                'idpaciente'        : $idPaciente,
+                'idcita'            : $idcita,
+                'asunto'            : $('#asunto_email').val(),
+                'from'              : $('#de_email').val(),
+                'to'                : $('#para_email').val(),
+                'subject'           : ($('#titulo_email').val()).replace(/(["'])(.*?)\1/g,' '),
+                'message'           : ($('#messge_email').val()).replace(/(["'])(.*?)\1/g,' '),
+                'programar_email'   : JSON.stringify(programarEmail),
             },
             dataType:'json',
             async: false,
+            cache: false,
             complete: function(xhr, status){
                 $('#emailEspere').text(null);
 
@@ -624,6 +629,96 @@ function limpiarInpust(){
     $("#n_citasPacientes").val(null);
 }
 
+function  FechaCitaCambio(idcita) {
+
+    $("#iddetCitas").val(null);
+    $("#iddetCitas").attr('data-cita', '');
+    $.ajax({
+        url: $DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php" ,
+        type:"POST",
+        data:{
+            "ajaxSend"  :"ajaxSend",
+            "accion"    :"fetch_cita_now",
+            "idCita"    : idcita
+        },
+        dataType:"json",
+        async:true,
+        cache:false,
+        beforeSend: function(){
+            boxloading($boxContent, true);
+            $("#iddetCitas").val(idcita);
+        },
+        complete: function (xhr, status) {
+            boxloading($boxContent, false, 1000);
+        }, 
+        success:function (response) {
+
+            $("#modalCambioFechaCitas").modal("show");
+            $("#modalCambioFechaCitas").find("input, select").val(null).trigger("change");
+
+            var fetch = response['fetch'];
+            $("#iddetCitas").attr('data-cita', JSON.stringify(fetch));
+        }
+    });
+
+}
+
+function reagendarCitas(Elemento) {
+
+    var Element   =  $(Elemento);
+    var padre     =  Element.parents('#modalCambioFechaCitas');
+
+    var parametrs =  [];
+
+    if( padre.find('[name="iddetCitas"]').prop('dataset').cita != "" ){
+        parametrs = JSON.parse(padre.find('[name="iddetCitas"]').prop('dataset').cita);
+    }
+
+    var idCita    =  parametrs.rowid; //id cita
+    var fecha     =  padre.find("#reagendar_fecha_cita").val();
+    var duracion  =  padre.find("#reagendar_duracion").find(":selected").val();
+    var hora      =  padre.find("#reagendar_hora_cita").find(":selected").val();
+    var fk_doc    =  parametrs.id_doc;
+
+    // console.log(fk_doc);
+
+    var result = false;
+    $.ajax({
+        url: $DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php" ,
+        type:"POST",
+        data:{
+            "ajaxSend"  :"ajaxSend",
+            "accion"    :"reagendar_cita_paciente",
+            "idCita"    : idCita,
+            "fecha"     : fecha,
+            "hora"      : hora,
+            "duracion"  : duracion,
+            "fk_doc"    : fk_doc
+        },
+        dataType:"json",
+        async:false,
+        cache:false,
+        beforeSend: function(){
+            boxloading($boxContent, true);
+        }, complete: function (xhr, status) {
+            boxloading($boxContent, false, 1000);
+        },success:function (response) {
+            // console.log(response);
+            if(response.error!=""){
+                notificacion(response.error, 'error');
+            }else{
+                $("#modalCambioFechaCitas")
+                    .modal("hide");
+
+                result = true;
+            }
+        }
+    });
+
+    return result;
+
+}
+
 var ImprimirCitasAgendadas = function(filter=false){
 
     if(!ModulePermission("Agenda","consultar")){
@@ -751,6 +846,8 @@ window.onload =  boxloading($boxContent, true);
 
 $(window).on("load", function() {
 
+    var Dateadd = new Date();
+
     boxloading($boxContent, true, 1000);
 
     $('#pacienteCita').select2({
@@ -789,6 +886,48 @@ $(window).on("load", function() {
                 };
             }
         }
+    });
+
+
+    $('[name="reagendar_fecha_cita"]').daterangepicker({
+        minDate : new Date(Dateadd.getFullYear(), Dateadd.getMonth(), Dateadd.getDate()),
+        locale: {
+            format: 'YYYY/MM/DD' ,
+            daysOfWeek: [
+                "Dom",
+                "Lun",
+                "Mar",
+                "Mie",
+                "Jue",
+                "Vie",
+                "Sáb"
+            ],
+            monthNames: [
+                "Enero",
+                "Febrero",
+                "Marzo",
+                "Abril",
+                "Mayo",
+                "Junio",
+                "Julio",
+                "Agosto",
+                "Septiembre",
+                "Octubre",
+                "Noviembre",
+                "Diciembre"
+            ],
+        },
+        singleDatePicker: true,
+        showDropdowns: true,
+        autoclose: true,
+        // "drops": "button",
+        pickerPosition: "bottom-left"
+    });
+
+    $(".reagendar_select").select2({
+        placeholder: 'Seleccione una opción',
+        allowClear:true,
+        language: languageEs
     });
 
     loadtableAgenda();

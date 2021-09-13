@@ -1,6 +1,6 @@
 
 <!--CONFIRMACION DE CITA EMAIL-->
-<div id="notificar_email-modal" class="modal fade" role="dialog" data-backdrop="static" >
+<div id="notificar_email-modal" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false" >
     <div class="modal-dialog">
 
             <!-- Modal content-->
@@ -11,6 +11,26 @@
                 </div>
                 <div class="modal-body">
                     <div class="form-horizontal">
+
+                        <div class="form-group">
+                            <label for="" class="control-label col-sm-3">Programa e-mail <small>(opcional)</small></label>
+                            <div class="col-sm-7">
+                                <table class="table" width="100%" style="border-collapse: collapse">
+                                    <tr class="checked_programar">
+                                        <td > <span><input type="checkbox"  id="emailConfirmacion_programar" title="Programar E-mail de Confirmación" style="margin-top: 10px"></span> </td>
+
+                                        <td id="validar_td_fecha_program_email_confirm">
+                                            <div class="input-group date disabled_link3" disabled="disabled" data-provide="datepicker">
+                                                <input type="text" class="form-control disabled_link3" name="" id="date_programa_email_confirm" readonly="">
+                                                <div class="input-group-addon">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
 
                         <div class="form-group">
                             <label for="" class="control-label col-sm-3">Asunto</label>
@@ -48,25 +68,6 @@
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="" class="control-label col-sm-3">Programa e-mail <small>(opcional)</small></label>
-                            <div class="col-sm-7">
-                                <table class="table" width="100%" style="border-collapse: collapse">
-                                    <tr class="checked_programar">
-                                        <td > <span><input type="checkbox"  id="emailConfirmacion_programar" title="Programar E-mail de Confirmación" style="margin-top: 10px"></span> </td>
-
-                                        <td id="validar_td_fecha_program_email_confirm">
-                                            <div class="input-group date disabled_link3" disabled="disabled" data-provide="datepicker">
-                                                <input type="text" class="form-control disabled_link3" name="" id="date_programa_email_confirm" readonly="">
-                                                <div class="input-group-addon">
-                                                    <span class="fa fa-calendar"></span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
 
                         <div class="form-group" >
                             <label for="" class="control-label col-sm-3">&nbsp;&nbsp;</label>
@@ -150,6 +151,85 @@
                 </div>
             </div>
 
+        </div>
+
+    </div>
+</div>
+
+
+<?php
+
+$duracion = "";
+$Minh = array();
+$minhours = 0;
+for ($min = 0; $min <= 10; $min++){
+    $minhours += 15;
+    $Minh[] = "<option value='".$minhours."'>$minhours .min</option>";
+}
+$duracion = implode(" ", $Minh);
+
+
+$horaCita = "";
+$hoursAxu = array();
+for ($h = 8; $h <= 23; $h++){
+
+    $min15 = 0;
+    for ($m = 0; $m <= 3; $m++){
+
+        $hourString = date('H:i',strtotime($h.':'.$min15));
+        $hoursAxu[] = "<option value='".$hourString."'>$hourString</option>";
+        $min15 += 15;
+    }
+}
+$horaCita = implode(" ", $hoursAxu);
+
+?>
+
+<!--MODAL CAMBIO DE FECHA-->
+<div id="modalCambioFechaCitas"  class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-sm" style="margin: 2% auto; width: 30%">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header modal-diseng">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" id=""><span>Cambio de fecha</span></h4>
+                <input type="hidden" id="iddetCitas" name="iddetCitas" value="">
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-xs-12 col-md-12">
+                        <label for="#">Nueva Fecha de Cita</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" value="" name="reagendar_fecha_cita" id="reagendar_fecha_cita" readonly>
+                            <div class="input-group-addon">
+                                <span class="fa fa-calendar"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12 col-md-12">
+                        <label for="#">Duración</label>
+                        <select name="reagendar_duracion" class="form-control reagendar_select" id="reagendar_duracion" style="width: 100%">
+                            <option value=""></option>
+                            <?= $duracion ?>
+                        </select>
+                    </div>
+                    <div class="col-xs-12 col-md-12">
+                        <label for="#">Hora de Cita</label>
+                        <select name="reagendar_hora_cita" class="form-control reagendar_select" id="reagendar_hora_cita" style="width: 100%">
+                            <option value=""></option>
+                            <?= $horaCita ?>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn text-blue " style="font-weight: bold" data-dismiss="modal"> Cancelar </button>
+                <button type="button" class="btn " style="color: green; font-weight: bold" onclick="reagendarCitas(this)" >
+                    Guardar
+                    <span class="fa fa-refresh btnSpinner"></span>
+                </button>
+            </div>
         </div>
 
     </div>

@@ -383,6 +383,7 @@ function datepickerCloneOrigin(html){
         singleDatePicker: true,
         showDropdowns: true,
         autoclose: true,
+        "drops": "up",
         pickerPosition: "bottom-left"
     });
 
@@ -485,28 +486,33 @@ $(document).ready(function() {
     $('#agndar_paciente').select2({
         placeholder:'Pacientes',
         allowClear: true ,
-        language: 'es'
+        language: 'es',
+        dropdownParent: $("body")
     });
     $('[name="especialida[0].det"]').select2({
         placeholder:"Seleccione una opción",
         allowClear: true,
-        language:"es"
+        language:"es",
+        dropdownParent: $("body")
     });
     $('[name="odont[0].det"]').select2({
         placeholder:"Seleccione una opción",
         allowClear: true,
-        language:"es"
+        language:"es",
+        dropdownParent: $("body")
     });
     $('[name="duraccion[0].det"]').select2({
         placeholder:"Seleccione una opción",
         allowClear: true,
-        language:"es"
+        language:languageEs,
+        dropdownParent: $("body")
     });
 
     $('[name="hora[0].det"]').select2({
         placeholder:"Seleccione una opción",
         allowClear: true,
-        language:"es"
+        language:"es",
+        dropdownParent: $("body")
     }).on('change', function() {
         ConsultarDateNow( $('[name="fecha[0].det"]').val() , $('[name="hora[0].det"]').find(':selected').val() );
     });
