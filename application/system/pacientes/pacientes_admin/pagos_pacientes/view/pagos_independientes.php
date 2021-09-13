@@ -135,7 +135,9 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
                      <tr>
                          <th colspan="6">LISTA DE PRESTACIONES  <span style="color: #0866a5"> <?= strtoupper($n_plantram) ?> </span> </th>
                          <th style="text-align: right; padding: 5px !important;">
-                             <button class="btn btn-sm" title="Refresh detalle" id="refresh_detalles_pagos_pacientes" onclick="listaprestacionesApagar()"> Actualizar <span class="fa fa-refresh btnSpinner hide"> </span> </button>
+                             <button class="btn btn-sm" title="Refresh detalle" id="refresh_detalles_pagos_pacientes" onclick="listaprestacionesApagar()"> Actualizar
+                                 <span class="fa fa-refresh btnSpinner hide"> </span>
+                             </button>
                          </th>
                         </tr>
                      <tr style="background-color: #f0f0f0">

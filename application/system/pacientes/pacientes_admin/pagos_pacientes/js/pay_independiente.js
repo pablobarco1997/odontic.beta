@@ -130,7 +130,7 @@ function listaprestacionesApagar()
                 boxloading($boxContentViewAdminPaciente, false, 1000);
             },
             cache: false,
-            async: false,
+            async: true,
             dataType:'json',
         },
         language:{
@@ -436,9 +436,9 @@ $('#btnApagar').click(function() {
         return false;
     }
 
-    if(cajaUsuario()==false){
-        notificacion("Este usuario no tiene asociada una caja <br> <b>No puede realizar esta Operación</b>", "question");
-    }
+    // if(cajaUsuario()==false){
+    //     notificacion("Este usuario no tiene asociada una caja <br> <b>No puede realizar esta Operación</b>", "question");
+    // }
 
     var datos = fetch_apagar();
     $.ajax({

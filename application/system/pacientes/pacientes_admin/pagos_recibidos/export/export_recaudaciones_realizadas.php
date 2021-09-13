@@ -147,9 +147,9 @@ $pdf .= "<br><table  width=\"100%\" class=\"tables\" style='border-collapse: col
 
             $pdf .= '</tr>';
 
-            $Abonado    = (double)$value['abonado'];
-            $Pendiente  = (double)$value['pendiente'];
-            $Total      = (double)$value['total_prestacion'];
+            $Abonado    += (double)$value['abonado'];
+            $Pendiente  += (double)$value['pendiente'];
+            $Total      += (double)$value['total_prestacion'];
 
 
         }

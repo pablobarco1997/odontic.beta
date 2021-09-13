@@ -144,6 +144,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 $sqlP .= " LIMIT $start,$length;";
             }
 
+            $Total = $db->query($sqlTotal)->rowCount();
+
             $resultP = $db->query($sqlP)->fetchAll(PDO::FETCH_ASSOC);
 
             if(count($resultP)>0){
@@ -236,15 +238,10 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                             foreach ($detalle as $itemdet){
                                 $data[] = $itemdet;
                             }
-                            $Total++;
                         }
                     }
                 }
-
             }
-
-
-//            print_r($data); die();
 
             $Output = [
                 "data" => $data,

@@ -472,7 +472,7 @@ function GuardarGastos($id, $datos,  $create=false,  $update=false){
     if(!empty($datos['date_pago'])){
         $date_pago          = date('Y-m-d', strtotime($datos['date_pago']));
     }else{
-        $date_pago          = "";
+        $date_pago          = "000-00-00";
     }
     $asociar_caja       = $datos['asociar_caja'];
     $monto_gastos       = $datos['monto_gastos'];
