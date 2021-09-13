@@ -1,7 +1,7 @@
 
     <div id="FiltrarPagoPacientes" class="form-group col-xs-12 col-md-12 collapse" aria-expanded="true" style="margin-bottom: 0px;">
         <div class="form-group col-md-12 col-xs-12" style="background-color: #f4f4f4; padding: 25px; ">
-            <h3 class="no-margin"><span>Filtrar Pagos de Pacientes</span></h3>
+            <h3 class=""><span>Filtrar Pagos de Pacientes</span></h3>
             <div class="row">
                 <div class="form-group col-md-2 col-sm-12 col-xs-12">
                     <label for="">Número</label>
@@ -23,45 +23,16 @@
                     </select>
                 </div>
                 <div class="form-group col-md-7 col-sm-12 col-xs-12">
-                    <label for="">busqueda x Plan de Tratamiento</label>
+                    <label for="">busqueda por Plan de Tratamiento</label>
                     <select name="" class="form-control " id="busquedaxTratamiento" style="width: 100%">
                         <option value=""></option>
-                        <?php
-
-                        $sql1 = "SELECT 
-                                        t.rowid,
-                                        IFNULL(t.edit_name,
-                                                CONCAT('Plan de tratamiento # ', t.numero)) AS editnum,
-                                        (SELECT 
-                                                CONCAT('Paciente: ', p.nombre, ' ', p.apellido)
-                                            FROM
-                                                tab_admin_pacientes p
-                                            WHERE
-                                                p.rowid = t.fk_paciente) AS nompaciente, 
-                                        ifnull((select o.nombre_doc from tab_odontologos o where o.rowid = t.fk_doc), '') as odontolg
-                                    FROM
-                                        tab_plan_tratamiento_cab t
-                                    WHERE fk_paciente = ".$idPaciente ." and estados_tratamiento in('A', 'S') ";
-                        $rs1 = $db->query($sql1);
-                        if($rs1->rowCount() > 0)
-                        {
-                            while ($ob1 =  $rs1->fetchObject()) {
-                                $doctor_asignado = "Dr(a) no asignado";
-                                if(trim($ob1->odontolg) != '')
-                                    $doctor_asignado = "Dr(a) ".$ob1->odontolg;
-
-                                print '<option value="'.$ob1->rowid.'">'.$ob1->editnum.' &nbsp;&nbsp; '. $doctor_asignado .' &nbsp;&nbsp; '.$ob1->nompaciente.'  </option>';
-                            }
-                        }
-
-                        ?>
                     </select>
                 </div>
             </div>
 
             <div class="row">
                 <div class="form-group col-md-3 col-sm-12 col-xs-12">
-                    <label for="">busqueda x N. Documento</label>
+                    <label for="">busqueda por N. Documento</label>
                     <input type="text" class="form-control" name="n_x_documento" id="n_x_documento">
                 </div>
             </div>

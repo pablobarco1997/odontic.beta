@@ -153,6 +153,7 @@ $(window).on('load', function () {
                 type: "POST",
                 dataType: 'json',
                 async:false,
+                cache: false,
                 data:function (params) {
                     var query = {
                         accion: 'filtrarPlantratamientoSearchSelect2',

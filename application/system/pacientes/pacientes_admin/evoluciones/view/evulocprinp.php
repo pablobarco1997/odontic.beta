@@ -9,18 +9,13 @@
 ?>
 
 <script>
-
     $accion_evol = "<?= $accion ?>";
-
 </script>
 
 <div class="form-group col-xs-12 col-md-12 col-lg-12">
 
-
     <?php
-
         accessoModule('Evoluciones');
-
         //Evoluciones Principal
         if(isset($_GET['v']) && $_GET['v'] == 'list_evul')
         {
@@ -74,14 +69,11 @@
                 <table class="table" id="list_evoluprinpl" width="100%">
                     <thead style="background-color: #f4f4f4">
                         <tr>
-                            <th>Emitido</th>
-                            <th>Plan de Tratamiento</th>
-                            <th>Prestación</th>
-                            <th>Pieza</th>
-                            <th>Estado de Pieza</th>
-                            <th>Doctor(a) Encargado</th>
-                            <th>observación</th>
-                            <th>Caras</th>
+                            <th width="3%">Emitido</th>
+                            <th width="10%">Prestación</th>
+                            <th width="10%">Estado de Pieza</th>
+                            <th width="25%">observación</th>
+                            <th width="10%">Caras</th>
                         </tr>
                     </thead>
                 </table>

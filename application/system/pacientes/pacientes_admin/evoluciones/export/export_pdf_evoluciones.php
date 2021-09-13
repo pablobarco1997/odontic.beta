@@ -55,67 +55,78 @@ $NombrePaciente = null;
 
 $data = [];
 $sqlEvul = "SELECT 
-                        concat('Plan de Tratamiento ', 'N. ', c.numero) plantram ,
-                        concat('<b>edit:</b> ',c.edit_name) as edit_name , 
-                        ev.fecha_create fechaevul ,
-                        cp.descripcion as presstacion, 
-                        ev.fk_diente as diente , 
-                        (select concat( o.nombre_doc , ' ', o.apellido_doc ) from tab_odontologos o where o.rowid = ev.fk_doctor) as doct , 
-                        ev.observacion , 
-                        ifnull((select odes.descripcion from tab_odontograma_estados_piezas odes where odes.rowid = ev.estado_diente), 'Estado no asignado' )as estadodiente , 
-                        ev.json_caras
-                    FROM
-                        tab_evolucion_plantramiento ev , 
-                        tab_plan_tratamiento_cab c , 
-                        tab_plan_tratamiento_det d , 
-                        tab_conf_prestaciones cp
-                    WHERE
-                        ev.fk_plantram_cab = c.rowid and 
-                        ev.fk_plantram_det = d.rowid and 
-                        d.fk_prestacion = cp.rowid and 
-                    
-                         ".$datos['idpaciente'];
+            (select concat(a.nombre, ' ', a.apellido) as nom from tab_admin_pacientes a where a.rowid = c.fk_paciente) as paciente_nom ,  
+            concat('Plan de Tratamiento ', 'N. ', c.numero) plantram ,
+            concat('<b>edit:</b> ',c.edit_name) as edit_name , 
+            ev.fecha_create fechaevul ,
+            cp.descripcion as presstacion, 
+            ev.fk_diente as diente , 
+            (select concat( o.nombre_doc , ' ', o.apellido_doc ) from tab_odontologos o where o.rowid = ev.fk_doctor) as doct , 
+            ev.observacion , 
+            ifnull((select odes.descripcion from tab_odontograma_estados_piezas odes where odes.rowid = ev.estado_diente), 'Estado no asignado' )as estadodiente , 
+            ev.json_caras
+        FROM
+            tab_evolucion_plantramiento ev , 
+            tab_plan_tratamiento_cab c , 
+            tab_plan_tratamiento_det d , 
+            tab_conf_prestaciones cp
+        WHERE
+            ev.fk_plantram_cab = c.rowid and 
+            ev.fk_plantram_det = d.rowid and 
+            d.fk_prestacion = cp.rowid ";
 if( !empty( $datos['idplan'] ) ){
     $sqlEvul .= " and ev.fk_plantram_cab =  " . $datos['idplan'] . "  ";
 }
+if( !empty($datos['idpaciente']) ){
+    $sqlEvul .= " and c.fk_paciente = ".$datos['idpaciente']. " ";
+}else{
+    $sqlEvul .= " and c.fk_paciente = 0 "; //no muestro nada
+}
+
 if( !empty( $datos['date']  ) ){
     $datex1 = str_replace('/','-', explode('-',$datos['date'])[0]);
     $datex2 = str_replace('/','-', explode('-',$datos['date'])[1]);
     $sqlEvul .= " and cast(ev.fecha_create as date) between '".$datex1."' and '".$datex2."' ";
 }
-//print_r($sqlEvul); die();
+
+
 $rsevol = $db->query($sqlEvul);
 if( $rsevol && $rsevol->rowCount() > 0){
     while ( $objevol =   $rsevol->fetchObject() ) {
+
+        $NombrePaciente = $objevol->paciente_nom;
 
         $edit = "<small  style='display: block; color: blue'><br>".$objevol->edit_name."</small>";
 
         $cadena_caras = array();
         $caras = json_decode($objevol->json_caras);
 
-        $cadena_caras[] = ($caras->vestibular=="true") ? "vestibular" : "";
-        $cadena_caras[] = ($caras->distal=="true") ? "distal" : "";
-        $cadena_caras[] = ($caras->palatino=="true") ? "palatino" : "";
-        $cadena_caras[] = ($caras->oclusal=="true") ? "oclusal" : "";
-        $cadena_caras[] = ($caras->lingual=="true") ? "lingual" : "";
+        $cadena_caras[] = ($caras->vestibular=="true")  ? "vestibular"  : "";
+        $cadena_caras[] = ($caras->distal=="true")      ? "distal"      : "";
+        $cadena_caras[] = ($caras->palatino=="true")    ? "palatino"    : "";
+        $cadena_caras[] = ($caras->oclusal=="true")     ? "oclusal"     : "";
+        $cadena_caras[] = ($caras->lingual=="true")     ? "lingual"     : "";
+
+        if($edit==""){
+            $edit = "";
+        }
+
+
+        $Pieza = "<br><small style='color: blue'>Pieza: ".(($objevol->diente!=0)?$objevol->diente:'No asignado')."</small>";
 
         $row   = array();
         $row[] = date('Y/m/d', strtotime($objevol->fechaevul) );
-        $row[] = $objevol->plantram." ".$edit;
-        $row[] = $objevol->presstacion;
-        $row[] = ($objevol->diente!=0)?$objevol->diente:'No asignado';
-        $row[] = $objevol->estadodiente;
-        $row[] = $objevol->doct;
-        $row[] = "<p style='color:blue; ' title='".$objevol->observacion."' >".((strlen($objevol->observacion)>50)?substr($objevol->observacion,0,50)." ...":$objevol->observacion)."</p>";
-        $row[] = "<small class='text-blue text-sm'>". (implode(', ', array_filter( $cadena_caras )))." </small> ";  ;
+        $row[] = $objevol->presstacion.$Pieza."<br><small style='color: blue'>".$objevol->plantram."</small>";
+        $row[] = $objevol->estadodiente."<br><small style='color: blue'>Doctor(a): ".$objevol->doct."</small>";
+        $row[] = "<small style='color: blue'>".$objevol->observacion."</small>";
+        $row[] = "<small style='color: blue'>". (implode(', ', array_filter( $cadena_caras )))." </small> ";  ;
 
         $data[] = $row;
 
     }
 }
 
-#echo '<pre>';print_r($data); die();
-
+//print_r($sqlEvul); die();
 
 $pdf .= '<style>
             .tables {
@@ -141,21 +152,18 @@ $pdf .= '
     <table class="tables" width="100%" style="margin-top: 25px" >';
     $pdf .= '<thead>
                 <tr style="background-color: #f0f0f0">
-                    <th class="tables" colspan="8">Evoluciones Realizadas</th>
+                    <th class="tables" colspan="5">Evoluciones Realizadas</th>
                 </tr>
                 <tr style="background-color: #f0f0f0">
-                    <th class="tables" colspan="8" style="text-align: left">Paciente:  '.$NombrePaciente.'</th>
+                    <th class="tables" colspan="5" style="text-align: left">Paciente:  '.$NombrePaciente.'</th>
                        
                 </tr>
                 <tr style="background-color: #f0f0f0">
-                    <th class="tables">Emitido</th>
-                    <th class="tables">Plan de Tratamiento</th>
-                    <th class="tables">Prestación</th>
-                    <th class="tables">Pieza</th>
-                    <th class="tables">Estado de Pieza</th>
-                    <th class="tables">Doctor(a) Encargado</th>
-                    <th class="tables">Observación</th>
-                    <th class="tables">Caras</th>
+                    <th class="tables" width="8%">Emitido</th>
+                    <th class="tables" width="20%">Prestación</th>
+                    <th class="tables" width="15%">Estado de Pieza</th>
+                    <th class="tables" width="25%">Observación</th>
+                    <th class="tables" width="10%">Caras</th>
                 </tr>   
              </thead>';
 

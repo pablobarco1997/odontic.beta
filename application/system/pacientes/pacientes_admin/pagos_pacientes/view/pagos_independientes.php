@@ -5,8 +5,6 @@
 
 global $db, $user;
 
-
-
 $showCaja = ConsultarCajaUsers($user->id);
 
 if($showCaja['error']!=""){
@@ -19,6 +17,7 @@ if($showCaja['error']!=""){
 //LISTA PRINCIPAL DE PAGOS DE PACIENTES
 if(isset($_GET['v']) && $_GET['v'] == 'paym')
 {
+
 ?>
 
     <div class="form-group col-xs-12 col-md-12 col-lg-12 no-margin collapse " id="contentFilter" aria-expanded="true" style="">
@@ -133,17 +132,20 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
          <div class="table-responsive">
              <table class="table-condensed table" id="ApagarlistPlantratmm" width="100%" >
                  <thead >
-                     <tr style="background-color: #f0f0f0">
-                         <th colspan="7">LISTA DE PRESTACIONES  <span> <?= strtoupper($n_plantram) ?> </span> </th>
-                     </tr>
                      <tr>
-                         <th width="5%">
+                         <th colspan="6">LISTA DE PRESTACIONES  <span style="color: #0866a5"> <?= strtoupper($n_plantram) ?> </span> </th>
+                         <th style="text-align: right; padding: 5px !important;">
+                             <button class="btn btn-sm" title="Refresh detalle" id="refresh_detalles_pagos_pacientes" onclick="listaprestacionesApagar()"> Actualizar <span class="fa fa-refresh btnSpinner hide"> </span> </button>
+                         </th>
+                        </tr>
+                     <tr style="background-color: #f0f0f0">
+                         <th width="1%">
                              <span class="custom-checkbox-myStyle hide">
 								<input type="checkbox" id="checkeAllCitas">
 								<label for="checkeAllCitas"></label>
 							</span>
                          </th>
-                         <th width="35%">Prestaciones</th>
+                         <th width="40%">Prestaciones</th>
                          <th width="10%">Total</th>
                          <th width="10%">Abonado</th>
                          <th width="10%">Pendiente</th>
@@ -154,8 +156,8 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
 
                  <tfoot style="background-color: #f0f0f0">
                     <tr>
-                        <td colspan="5" class="text-right">&nbsp;</td>
-                        <td colspan="1" class="" style="font-weight: bolder">TOTAL RECAUDADO:</td>
+                        <td colspan="4" class="text-right">&nbsp;</td>
+                        <td colspan="2" class="" align="right" style="font-weight: bolder">TOTAL RECAUDADO:</td>
                         <td colspan="1" class="text-center" style="font-weight: bolder; text-align: left" >
                             <span id="totalPrestacion" style="padding: 5px; border-radius: 5px; font-weight: bolder; background-color: #f0f0f0; text-align: left">0.00</span>
                         </td>
@@ -191,9 +193,9 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
                  </div>
 
                  <div class="form-group">
-                     <label for=""  class="control-label col-sm-4 col-md-4 col-xs-12"> observación ( <small>opcional</small> ): </label>
+                     <label for=""  class="control-label col-sm-4 col-md-4 col-xs-12"> Descripción: </label>
                      <div class="col-sm-6 col-md-6 col-xs-12">
-                         <textarea id="descripObserv" class="form-control" rows="2" style="resize: vertical"></textarea>
+                         <textarea id="descripObserv" class="form-control" placeholder="opcional" rows="2" style="resize: vertical"></textarea>
                      </div>
                  </div>
 

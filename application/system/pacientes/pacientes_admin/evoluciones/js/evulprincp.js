@@ -93,6 +93,7 @@ function AppExporPrint(){
         return false;
     }
 
+
     var exporturl = $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/evoluciones/export/export_pdf_evoluciones.php?idpaciente='+$id_paciente;
     exporturl += '&idplant='+$('#filt_plantram').find(':selected').val()+'&date='+$("#startDateEvoluciones").val();
     window.open(exporturl, '_blank');

@@ -53,53 +53,42 @@ $idpaciente   = GETPOST('idpac');
 $idpago       = GETPOST('npag');
 
 $queryCabPag = "SELECT 
-          cast(fecha as  date) as fecha , 
+          cast(pay.fecha as  date) as fecha , 
           n_fact_boleta ,
           observacion ,
-          (select c.descripcion from tab_tipos_pagos c where c.rowid = fk_tipopago) as tp
-      FROM tab_pagos_independ_pacientes_cab where  rowid = $idpago; ";
+          b.nom
+          FROM 
+          tab_pagos_independ_pacientes_cab pay 
+             left join
+          tab_bank_operacion b on b.rowid = pay.fk_tipopago
+      where  pay.rowid = $idpago; ";
 $dataPagosCab   = $db->query($queryCabPag)->fetchObject();
 
 
+
 $queryDetPag = "SELECT 
-   concat('AGR_',d.rowid) AS codpag ,
-    (SELECT 
-            c.descripcion
-        FROM
-            tab_conf_prestaciones c
-        WHERE
-            c.rowid = d.fk_prestacion) AS prestacion,
-    (SELECT 
-            IFNULL(dt.fk_diente, ' ')
-        FROM
-            tab_plan_tratamiento_det dt
-        WHERE
-            dt.rowid = d.fk_plantram_det) AS diente,
-    d.amount
+	d.fk_prestacion,
+	d.fk_plantratam_cab as id_tratamiento , 
+	p.descripcion as nom, 
+    d.fk_diente as pieza , 
+    d.cantidad , 
+    d.precio_u as precioU , 
+    (d.total_tc*d.desc_adicional/100) as descuento , 
+    (total_tc - (d.total_tc*d.desc_adicional/100)) as Subtotal , 
+    sum(pd.amount) as monto_abonado
 FROM
-    tab_pagos_independ_pacientes_det d
+    (select *, (d.sub_total*d.cantidad) as total_tc from tab_plan_tratamiento_det d) as d 
+		inner join 
+	(select * from tab_pagos_independ_pacientes_det pd) as pd on pd.fk_plantram_det = d.rowid 
+		inner join 
+	tab_conf_prestaciones p on p.rowid = d.fk_prestacion
 WHERE
-    d.fk_paciente = $idpaciente
-        AND d.fk_pago_cab = $idpago";
+      pd.fk_pago_cab = $idpago
+group by pd.fk_plantram_det";
 
-$rsDet = $db->query($queryDetPag);
-if($rsDet && $rsDet->rowCount()>0){
-
-    while ($dp = $rsDet->fetchObject()){
-
-        $prestacion = null;
-
-        if($dp->diente==0){
-            $prestacion = "&nbsp;&nbsp;&nbsp;&nbsp;".$dp->prestacion;
-        }else{
-            $prestacion = "&nbsp;&nbsp;&nbsp;&nbsp;".$dp->prestacion ." ". "<img src='".DOL_HTTP."/logos_icon/logo_default/diente.png' width='10px' height='10px' > ".$dp->diente;
-        }
-        $dataPagosDet[] = (object)array(
-              'codpag'   => $dp->codpag,
-              'prestacion' => $prestacion,
-              'amount'     => $dp->amount,
-        );
-    }
+$result = $db->query($queryDetPag);
+if($result && $result->rowCount()>0){
+    $dataPagosDet = $result->fetchAll(PDO::FETCH_ASSOC);
 }
 
 //echo '<pre>'; print_r($dataPagosCab); die();
@@ -109,9 +98,8 @@ $objectInfoPaciente = getnombrePaciente($idpaciente);
 $pdf .= '<style>
                 
             .tables {  }
-            .theader{ border: 1px solid black;}
-            .detalle{ border: 1px solid black;  padding: 1px !important;}
-            /*.listdetalle tr:nth-child(even){background-color: #f2f2f2;}*/
+            .theader{ padding: 4px}
+            .detalle{ border-bottom: 1px solid #f0f0f0;  padding: 1px !important;}
             
         </style>';
 
@@ -120,7 +108,7 @@ $pdf .= '<br>
         <table width="100%" class="tables" style="margin-top: 20px">
             
             <tr>
-                <td><b><h3>COMPROBANTE DE RECAUDACIÓN</h3></b></td>
+                <td><b><h2>COMPROBANTE DE RECAUDACIÓN</h2></b></td>
                 <td align="right" > <span> </td>
             </tr>
         </table>';
@@ -130,16 +118,8 @@ $pdf .= '<br>
 $pdf .= '<br>';
 $pdf .= '<table width="100%" class="tables">
             <tr>
-                <td>
+                <td width="60%">
                     <table width="100%" class="tables">
-                        <tr>
-                            <td class="" style="width: 20%"><b>Paciente:</b></td> 
-                            <td class="" style="text-align: left"> '.($objectInfoPaciente->nombre.' '.$objectInfoPaciente->apellido).' </td> 
-                        </tr>
-                        <tr>
-                            <td class="" style="width: 20%"><b>C.I.:</b></td> 
-                            <td class="" style="text-align: left"> '.($objectInfoPaciente->ruc_ced).' </td> 
-                        </tr>
                         <tr>
                             <td class="" style="width: 20%"><b>Clinica:</b></td> 
                             <td class="" style="text-align: left"> '.$InformacionEntity->nombre.' </td> 
@@ -156,25 +136,27 @@ $pdf .= '<table width="100%" class="tables">
                             <td class="" style="width: 20%"><b>E-mail:</b></td>
                             <td class="">'.$InformacionEntity->email.'</td>
                         </tr>
-                        <tr>
+                        <!--
+                        <tr style="display: none">
                             <td class="" style="width: 20%"><b>Descripción:</b></td>
                             <td class="">'.$dataPagosCab->observacion.'</td>
                         </tr>
+                        -->
                     </table> 
                 </td>
                 
-                <td>
+                <td width="40%">
                     <table width="100%" class="tables">
                         <tr>
-                            <td align="center">
+                            <td align="center" style="width: 30%">
                                 <span><b>Fecha </b></span>
                                 <hr>
-                                <span>'.$dataPagosCab->fecha.'</span>
+                                <span>'.date('Y/m/d', strtotime($dataPagosCab->fecha)).'</span>
                             </td>
                         </tr>
                         <tr>
-                            <td align="center">
-                                <span><b>Nº de Comprobante</b></span>
+                            <td align="center" style="width: 30%">
+                                <span><b>Nº de Factura</b></span>
                                 <hr>
                                 <span>'.$dataPagosCab->n_fact_boleta.'</span>
                             </td>
@@ -182,41 +164,111 @@ $pdf .= '<table width="100%" class="tables">
                     </table>
                 </td>
             </tr>
+            
+            <tr>
+                <td style="width: 60%">
+                    <table class="tables" width="100%">
+                        <tr>
+                            <td colspan="2" >
+                                <b><p style="color: #1e3762">Cliente</p></b>
+                            </td>
+                        </tr>
+                        <tr>
+                        <td class="" style="width: 20%"><b>Paciente:</b></td> 
+                            <td class="" style="text-align: left"> '.($objectInfoPaciente->nombre.' '.$objectInfoPaciente->apellido).' </td> 
+                        </tr>
+                        <tr>
+                            <td class="" style="width: 20%"><b>C.I.:</b></td> 
+                            <td class="" style="text-align: left"> '.($objectInfoPaciente->ruc_ced).' </td> 
+                        </tr>
+                        <tr>
+                            <td class="" style="width: 20%"><b>Dirección:</b></td> 
+                            <td class="" style="text-align: left"> '.($objectInfoPaciente->direccion).' </td> 
+                        </tr>
+                    </table>
+                </td>
+                
+                <td style="width: 40%"></td>
+            </tr>
            
         </table>';
 
 $pdf .= ' <br><br>
     <table width="100%" class="tables listdetalle" style="border-collapse: initial" >
-        <thead>
-            <tr class="theader" style="background-color: #f0f0f0">
-                <th class="theader">Nº AGR</th>
-                <th class="theader">PRESTACIONES</th>
-                <th class="theader">ABONO</th>
-            </tr>
-        </thead>
+            <thead>
+                <tr class="theader" style="background-color: #f0f0f0">
+                    <th class="theader">Descripción</th>
+                    <th class="theader" align="right">Cantidad</th>
+                    <th class="theader" align="right">P.Unitario</th>
+                    <th class="theader" align="right">Descuento</th>
+                    <th class="theader" align="right">Sub. Total</th>
+                    <th class="theader" align="right">Abonado</th>
+                </tr>
+            </thead>
         <tbody>';
 
-        $amountTotal = 0;
+//echo '<pre>';print_r($dataPagosDet); die();
+
+        $subTotal = 0;
+        $descuento = 0;
+        $abonado = 0;
+        $iva = 0;
         foreach ($dataPagosDet as $key => $item) {
 
+            $pieza = ($item['pieza']!=0)?"<small style='color: #1e3762; font-weight: bold'>Pieza: ".$item['pieza']."</small>":"";
+            $servcio = $item['nom']."<br>".$pieza;
 
             $pdf.= '<tr>
-                          <td  class="detalle">'.$item->codpag.'</td>
-                          <td  class="detalle">'.$item->prestacion.'</td>
-                          <td  class="detalle">'.(number_format($item->amount,2,'.',',')).'</td>  
+                          <td  class="detalle">'.$servcio.'</td>
+                          <td  class="detalle" align="right">'.number_format($item['cantidad'], 2, '.', '').'</td>
+                          <td  class="detalle" align="right">'.number_format($item['precioU'], 2, '.', '').'</td>
+                          <td  class="detalle" align="right">'.number_format($item['descuento'], 2, '.', '').'</td>
+                          <td  class="detalle" align="right">'.number_format($item['Subtotal'], 2, '.', '').'</td>
+                          <td  class="detalle" align="right">'.number_format($item['monto_abonado'],2,'.','').'</td>  
                     </tr>';
 
 
-            $amountTotal += (double)$item->amount;
+            $subTotal  += (double)$item['Subtotal'];
+            $descuento += (double)$item['descuento'];
+            $abonado   += (double)$item['monto_abonado'];
+            $iva       += (double)0.00;
         }
-
-        $pdf .= '<tr> 
-                    <td  class="detalle" colspan="2"> <b>TOTAL PAGOS</b> </td> 
-                    <td  class="detalle"><b> '.(number_format($amountTotal,2,'.',',')).' </b></td> 
-                </tr>';
-
 $pdf .='</tbody>
     </table>';
+
+        $pdf .= "<table width='100%'>";
+            $pdf .= "<tr>";
+            $pdf .= "<td width='50%'>&nbsp;</td>";
+            $pdf .= "<td width='50%'>
+                                    <table width='100%' class='tables'>
+                                        <tr>
+                                            <td>Sub. Total</td> 
+                                            <td style='text-align: right'>$subTotal</td>
+                                        </tr>
+                                         <tr>
+                                            <td>Descuento</td> 
+                                            <td style='text-align: right'>$descuento</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Iva</td> 
+                                            <td style='text-align: right'>0.00</td>
+                                        </tr>
+                                        <tr>
+                                            <td style='color: #1e3762; '><h4>Abonado</h4></td> 
+                                            <td style='color: #1e3762;text-align: right;'>
+                                                <h4>".($abonado)."</h4>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><h4>Total</h4></td> 
+                                            <td style='text-align: right'>
+                                                <h4>".($subTotal - $descuento)."</h4>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>";
+            $pdf .= "</tr>";
+        $pdf .= "</table>";
 
 $header = ' 
     <table width="100%" style="vertical-align: bottom;  font-size: 10pt; color: black;">
@@ -238,7 +290,7 @@ $header = '
     ';
 
 ob_end_clean();
-$mpdf=new mPDF('c','LETTER','12px','',
+$mpdf=new mPDF('c','LETTER','14px','',
     12, //left
     12, // right
     40, //top

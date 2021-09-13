@@ -56,16 +56,19 @@ if(empty($idplantratamiento)){
     die();
 }
 
+$paciente_nomb = $db->query("select  (select concat(a.nombre, ' ', a.apellido) as nom from tab_admin_pacientes a where a.rowid = ct.fk_paciente) as paciente
+ from tab_plan_tratamiento_cab ct where rowid = $idplantratamiento")->fetchObject()->paciente;
 
-$n_tratamiento = $db->query("select ifnull(c.edit_name, concat('Plan de Tratamiento #', c.numero)) as nom from tab_plan_tratamiento_cab c where c.rowid = $idplantratamiento")->fetchObject()->nom;
+$n_tratamiento = $db->query("select concat('Plan de Tratamiento N. ', c.numero) as nom from tab_plan_tratamiento_cab c where c.rowid = $idplantratamiento")->fetchObject()->nom;
 
 $sql = "SELECT 
     cast(pc.fecha as date) as date, 
-	concat('Plan de Tratamiento #',' ',td.fk_plantratam_cab) as n_tratamiento,
-	concat(p.descripcion , if(td.fk_diente!=0,concat('  Pieza: ',td.fk_diente),'') ) as prestacion, 
+	concat('Plan de Tratamiento: ',' ',td.fk_plantratam_cab) as n_tratamiento,
+	p.descripcion as prestacion, 
+	if(td.fk_diente!=0,concat('Pieza: ',td.fk_diente),'') as pieza, 
 	round(td.total,2) as total_prestacion, 
     round(sum(pd.amount),2)  abonado , 
-    if(round(td.total,2)=round(sum(pd.amount),2), 'Prestación Cancelada', 'Pendiente') as estado, 
+    if(td.estadodet = 'A', 'Pendiente', if(td.estadodet = 'P' , 'En Proceso', if(td.estadodet = 'R' , 'Realizada' , ''))) as estado, 
     if(round(td.total,2)>round(sum(pd.amount),2), (round(td.total,2)-round(sum(pd.amount),2)),0) as  pendiente,
     (select t.nom from tab_bank_operacion t where t.rowid = pc.fk_tipopago) as tipo_p
 FROM
@@ -92,8 +95,8 @@ $data = $result->fetchAll(PDO::FETCH_ASSOC);
 $pdf .= '<style>
                 
             .tables {  }
-            .theader{ border: 1px solid black;}
-            .detalle{ border: 1px solid black;  padding: 1.3px !important;}
+            .theader{ padding: 5px}
+            .detalle{ border-bottom: 1px solid #f0f0f0;  padding: 3px 5px !important;}
             /*.listdetalle tr:nth-child(even){background-color: #f2f2f2;}*/
             
         </style>';
@@ -102,47 +105,61 @@ $pdf .= '<br>
         <table width="100%" class="tables" style="margin-top: 20px">
             
             <tr>
-                <td><b><h3>PAGOS REALIZADOS DEL '.(strtoupper($n_tratamiento)).' </h3></b></td>
+                <td COLSPAN="1"><b><h3>DETALLES DE PAGOS REALIZADOS DEL <span style="color: #1e3762">'.(strtoupper($n_tratamiento)).'</span> </h3></b></td>
                 <td align="right" > <span> </td>
+            </tr>
+            <tr>
+             <td COLSPAN="1"><b><h3>PACIENTE: <span style="color: #1e3762">'.(strtoupper($paciente_nomb)).'</span> </h3></b></td>   
             </tr>
         </table>';
 
 $pdf .= "<br><table  width=\"100%\" class=\"tables\" style='border-collapse: collapse'>";
     $pdf .= "<thead>";
         $pdf .= "<tr style='background-color: #f0f0f0'>";
-            $pdf .= "<th class='theader'>Fecha</th>";
-            $pdf .= "<th class='theader'>Prestación</th>";
-            $pdf .= "<th class='theader'>Total</th>";
-            $pdf .= "<th class='theader'>Abonado</th>";
-            $pdf .= "<th class='theader'>Pendiente</th>";
-            $pdf .= "<th class='theader'>Forma</th>";
-            $pdf .= "<th class='theader'>Estado</th>";
+            $pdf .= "<th class='theader' width='6%' >Emitido</th>";
+            $pdf .= "<th class='theader' width='40%'>Prestación/Servicios</th>";
+            $pdf .= "<th class='theader' width='8%' style='text-align: right'>Total</th>";
+            $pdf .= "<th class='theader' width='8%' style='text-align: right'>Abonado</th>";
+            $pdf .= "<th class='theader' width='8%' style='text-align: right'>Pendiente</th>";
+            $pdf .= "<th class='theader' width='10%' style='text-align: center'>Forma de Pago</th>";
+            $pdf .= "<th class='theader' width='10%' style='text-align: right'>Estado</th>";
         $pdf .= "</tr>";
     $pdf .= "</thead>";
 
     $pdf .= '<tbody>';
 
+    $Abonado    = 0;
+    $Pendiente  = 0;
+    $Total      = 0;
+
         foreach ($data as $k => $value){
 
+            $pieza = (!empty($value['pieza']))?"<br><small style='display: block; color: #1e3762; font-weight: bold'>".$value['pieza']."</small>":"";
+
             $pdf .= '<tr>';
-                    $pdf .= '<td class="detalle">'.(str_replace('-','/', $value['date'])).'</td>';
-                    $pdf .= '<td class="detalle">'.$value['prestacion'].'</td>';
-                    $pdf .= '<td class="detalle">'.$value['total_prestacion'].'</td>';
-                    $pdf .= '<td class="detalle">'.$value['abonado'].'</td>';
-                    $pdf .= '<td class="detalle">'.$value['pendiente'].'</td>';
-                    $pdf .= '<td class="detalle">'.$value['tipo_p'].'</td>';
-
-                    if($value['estado']=='Prestación Cancelada'){
-                        $pdf .= '<td class="detalle"> <span style="background-color: #ccff99">'.$value['estado'].'</span></td>';
-                    }else{
-
-                        $pdf .= '<td class="detalle">'.$value['estado'].'</td>';
-                    }
+                    $pdf .= '<td class="detalle" width="6%">'.(str_replace('-','/', $value['date'])).'</td>';
+                    $pdf .= '<td class="detalle" width="40%">'.$value['prestacion'].$pieza.'</td>';
+                    $pdf .= '<td class="detalle" style=\'text-align: right\' width="8%">'.$value['total_prestacion'].'</td>';
+                    $pdf .= '<td class="detalle" style=\'text-align: right\' width="8%">'.$value['abonado'].'</td>';
+                    $pdf .= '<td class="detalle" style=\'text-align: right\' width="10%">'.$value['pendiente'].'</td>';
+                    $pdf .= '<td class="detalle" style=\'text-align: right\' width="10%">'.strtoupper($value['tipo_p']).'</td>';
+                    $pdf .= '<td class="detalle" style=\'text-align: right\'>'.$value['estado'].'</td>';
 
             $pdf .= '</tr>';
 
+            $Abonado    = (double)$value['abonado'];
+            $Pendiente  = (double)$value['pendiente'];
+            $Total      = (double)$value['total_prestacion'];
+
 
         }
+
+        $pdf .= "<tr>";
+            $pdf .= "<td class='detalle' style='text-align: right' colspan='2'><b>Total:</b></td>";
+            $pdf .= "<td class='detalle' style='text-align: right'  ><b>".number_format($Total, 2, '.', '')."</b></td>";
+            $pdf .= "<td class='detalle' style='text-align: right'  ><b>".number_format($Abonado, 2, '.', '')."</b></td>";
+            $pdf .= "<td class='detalle' style='text-align: right'  ><b>".number_format($Pendiente, 2, '.', '')."</b></td>";
+        $pdf .= "</tr>";
 
     $pdf .= '</tbody>';
 $pdf .= "</table>";
@@ -171,7 +188,7 @@ $header = '
     ';
 
 ob_end_clean();
-$mpdf=new mPDF('c','LETTER','12px','',
+$mpdf=new mPDF('c','LETTER','13px','',
     12, //left
     12, // right
     40, //top
@@ -197,7 +214,7 @@ $mpdf->SetTitle('Recaudaciones Realizadas' );
 $mpdf->WriteHTML($body.$pdf);
 
 
-$mpdf->Output('Recaudaciones Realizadas.pdf', 'I');
+$mpdf->Output('Pagos Paciente.pdf', 'I');
 
 
 ?>

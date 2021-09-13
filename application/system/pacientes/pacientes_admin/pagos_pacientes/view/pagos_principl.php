@@ -14,7 +14,7 @@ if(isset($_GET['v'])){
     }
 
 }else{
-    echo "Error de parametros de entrada Consulte con Soporte";
+    echo "Error de parámetros de entrada Consulte con Soporte";
     die();
 }
 

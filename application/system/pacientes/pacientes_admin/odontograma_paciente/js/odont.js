@@ -111,7 +111,7 @@ if( $accionOdontograma == 'principal'){
         var plantratamiento = Element.find('.odont_id').prop("dataset").tratamiento;
 
         if(id==0 || id==""){
-            notificacion("Ocurrio un error de parametros de entrada, Consulte con soporte", "error");
+            notificacion("Ocurrio un error de parámetros de entrada, Consulte con soporte", "error");
             return false;
         }
 

@@ -220,7 +220,7 @@
     function  DeleteCorreo(correo_id="") {
 
         if(correo_id==""){
-            notificacion('Ocurrio un error de parametros consulte con soporte Tecnico', 'error');
+            notificacion('Ocurrio un error de parámetros consulte con soporte Tecnico', 'error');
             return false;
         }
 
@@ -248,7 +248,7 @@
     function  To_EstadoAnulado(correo_id="") {
 
         if(correo_id==""){
-            notificacion('Ocurrio un error de parametros consulte con soporte Tecnico', 'error');
+            notificacion('Ocurrio un error de parámetros consulte con soporte Tecnico', 'error');
             return false;
         }
 

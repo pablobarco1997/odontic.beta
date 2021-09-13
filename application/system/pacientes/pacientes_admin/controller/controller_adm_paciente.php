@@ -448,7 +448,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         $error = $messErr;
                     }
             }else{
-                $error = "Error de parametros de entrada consulte con Soporte";
+                $error = "Error de parámetros de entrada consulte con Soporte";
             }
 
 
@@ -888,10 +888,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     IFNULL((SELECT cf.nombre_conv FROM tab_conf_convenio_desc cf WHERE cf.rowid = tc.fk_convenio), 'convenio no asignado') convenio,
                     IFNULL((SELECT cf.valor FROM tab_conf_convenio_desc cf WHERE cf.rowid = tc.fk_convenio),0) valorConvenio ,
                     tc.edit_name as edit_name , 
-                    
                     -- ABONADO
                     (SELECT round(sum(pd.amount),2) saldo FROM tab_pagos_independ_pacientes_det pd where pd.fk_plantram_cab = tc.rowid and pd.fk_paciente = $idpaciente) abonado_cab , 
-                    
                     tc.observacion, 
                     tc.estados_tratamiento
                     
@@ -923,15 +921,19 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         pd.fk_diente AS diente,
                         cp.descripcion AS prestacion,
                         pd.fk_prestacion AS fk_prestacion,
-                        format(pd.sub_total, 2) AS subtotal,
+                        round(pd.precio_u, 2) AS precio,
                         pd.cantidad , 
+                        round((pd.total * (case pd.iva
+								when 12 then 0.12 
+								else 0
+								end)), 2) as iva , 
                         pd.desc_convenio AS descconvenio,
                         pd.desc_adicional AS descadicional,
                         pd.json_caras,
                         pd.total,
                         pd.estadodet , 
                         pd.fk_usuario , 
-                        ifnull((SELECT usuario FROM tab_login_users s where s.fk_doc = pd.fk_usuario limit 1),'') as usuario_creator , 
+                        ifnull((SELECT usuario FROM tab_login_users s where s.rowid = pd.fk_usuario limit 1),'') as usuario_creator , 
                         ifnull((SELECT concat(s.nombre_doc ,' ', s.apellido_doc) as doc FROM tab_odontologos s where s.rowid = pd.realizada_fk_dentista limit 1),'') as usuario_realizado , 
                         pd.estado_pay as estado_pago, 
                         ifnull((select l.name from tab_conf_laboratorios_clinicos l where l.rowid = cp.fk_laboratorio),'') as laboratorio
@@ -941,8 +943,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     WHERE
                         pd.fk_prestacion = cp.rowid
                         AND pd.fk_plantratam_cab = ".$idtratamiento." order by pd.rowid desc";
+//            print_r($sqltransdet); die();
             $rsd = $db->query($sqltransdet);
-
             if($rsd->rowCount() > 0 ){
                 while ($obdet = $rsd->fetchObject()){
                     $objetoDet[] = $obdet;
@@ -972,20 +974,21 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     c.rowid,
                     c.descripcion,
                     c.valor,
+                    c.precio_paciente, 
+                    c.costo_x_clinica, 
+                    c.iva, 
                     IFNULL((SELECT  d.nombre_conv FROM tab_conf_convenio_desc d WHERE d.rowid = c.fk_convenio), '') AS convenio,
                     IFNULL((SELECT  d.valor FROM tab_conf_convenio_desc d WHERE d.rowid = c.fk_convenio), 0) convenio_valor
                 FROM
-                    tab_conf_prestaciones c where  rowid > 0";
+                    tab_conf_prestaciones c where 1=1";
 
             if(!empty($idprest)){
                 $sql .= " and c.rowid = $idprest";
             }
 
             $rs = $db->query($sql);
-            if ($rs->rowCount()>0)
-            {
+            if ($rs->rowCount()>0){
                 while ($obj = $rs->fetchObject()){
-
                     $productos = $obj;
                 }
             }
@@ -996,9 +999,9 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
         case 'list_tratamiento':
 
             if(!PermitsModule("Planes de Tratamientos", "consultar")){
-                $permits = " and 1<>1";
+                $permits = "  1<>1";
             }else{
-                $permits = " and 1=1";
+                $permits = "  1=1";
             }
 
             $Total          = 0;
@@ -1007,9 +1010,18 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             $idplantmiento            = GETPOST('idplantmiento');
             $idpaciente               = GETPOST('idpaciente');
+            $fecha_range              = (GETPOST('fecha_range')!="")?explode('-', GETPOST('fecha_range')):"";
+
+            //estado
+            $estadoslist = array();
             $estadotram               = GETPOST('mostrar_anulados');
             $estadoMostrarFinalizados = GETPOST('mostrar_finalizados');
-            $fecha_range              = (GETPOST('fecha_range')!="")?explode('-', GETPOST('fecha_range')):"";
+
+            if(!empty($estadotram)){ //anulado
+                $estadoslist[] = "'E'";
+            }if(!empty($estadoMostrarFinalizados)){ //finalizado
+                $estadoslist[] = "'F'";
+            }
 
 
             $dataprincipal = array();
@@ -1030,24 +1042,20 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         tc.fk_paciente AS idpaciente,
                         tc.fk_cita AS idCitas,
                         tc.fecha_create , 
-                        ifnull((select round(sum(pd.amount),2) as saldoAbonado from tab_pagos_independ_pacientes_det pd where pd.fk_plantram_cab = tc.rowid),0) as saldo_abonado
-                        
-                    FROM tab_plan_tratamiento_cab tc , tab_admin_pacientes ap
-                        where 
-                        tc.fk_paciente = ap.rowid 
+						sum(pd.abonado) as abonado
+                   FROM 
+                    tab_plan_tratamiento_cab tc 
+						inner join
+                    tab_admin_pacientes ap on ap.rowid = tc.fk_paciente
+						left join
+                    (select pd.fk_plantram_cab as id_tratamiento, round(pd.amount, 2) as abonado from tab_pagos_independ_pacientes_det pd) as pd on pd.id_tratamiento = tc.rowid
+                    where  $permits
                    ";
-
             $sql .= " and tc.fk_paciente = ".$idpaciente." ";
-            if(!empty($estadotram) || !empty($estadoMostrarFinalizados)) {
-                if( $estadotram == 'si'){
-                    $sql .= " and tc.estados_tratamiento = 'E' "; #anulado
-                }
-                if( $estadoMostrarFinalizados== 'si'){
-                    $sql .= " and tc.estados_tratamiento = 'F' "; #Finalizados
-                }
-            }
-
-            if($estadotram=='no' && $estadoMostrarFinalizados == 'no'){
+            if(count($estadoslist)>0) { //filtrado por estados
+                $estadoslist = implode(",", $estadoslist);
+                $sql .= " and tc.estados_tratamiento in($estadoslist) ";
+            }else{ //Mostrando default estado Activos o saldo asociado
                 $sql .= " and tc.estados_tratamiento in('A', 'S')"; #tratamientos con saldos y Activos
             }
 
@@ -1061,9 +1069,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 $sql .= " and cast(tc.fecha_create as date) between cast('$fechaIni' as date) and cast('$fechaFin' as date) ";
             }
 
-            $sql .= $permits;
-            $sql .= " order by tc.rowid desc";
-//            echo '<pre>';print_r($sql);die();
+            $sql .= "group by tc.rowid  order by tc.rowid desc";
 
             $sqlTotal = $sql;
 
@@ -1113,8 +1119,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     $row[] = $ob->fecha_create; #fecha de creacion del plan de tratamiento
                     $row[] = $ob->estados_tratamiento; #estado plan de tratamiento
                     $row[] = str_pad($ob->idCitas, 6, "0", STR_PAD_LEFT); #cita asociada numero
-                    $row['saldoAbonado'] = $ob->saldo_abonado;
-                    $row['img_ico_cita'] = "data: image/*; base64, ".base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/cita-medica.ico'));
+                    $row['saldoAbonado'] = $ob->abonado;
+//                    $row['img_ico_cita'] = "data: image/*; base64, ".base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/cita-medica.ico'));
 
                     $dataprincipal[] = $row;
 
@@ -1342,7 +1348,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 if( $obj->estado_pay == 'PA'){
                     $error = 'No puede Eliminar esta prestación <br><b>' .$obj->prestacion .'</b><br> se encuentra <i class="fa fa-dollar"></i> pagada';
                 }
-                #COMPRUEBO EL ESTADO EN ESTA PRESTACION TIENE SALDO - O  ABONADO
+                #COMPRUEBO EL ESTADO EN ESTA PRESTACION TIENE SALDO   ABONADO
                 if( $obj->estado_pay == 'PS'){
                     $error = 'No puede Eliminar esta prestación <br><b>' .$obj->prestacion .'</b><br> tiene <i class="fa fa-dollar"></i> saldo asociado comprueba en el modulo de pagos de este plan de tratamiento ';
                 }
@@ -1366,11 +1372,14 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     # A PRESTACION ACTIVA
                     # R PRESTACION REALIZADA
                     if( ($obj->estadodet == 'A' || $obj->estadodet == 'R' || $obj->estado_pay  == 'PE')  ){
-                         $sqldelUp = "DELETE FROM tab_plan_tratamiento_det WHERE rowid ='$iddetplant' and fk_plantratam_cab = $idCabplant;";
-                         $rsDelUp  = $db->query($sqldelUp);
-
+                         $delete   = "DELETE FROM tab_plan_tratamiento_det WHERE rowid ='$iddetplant' and fk_plantratam_cab = $idCabplant;";
+                         $result_d  = $db->query($delete);
+                         if($result_d){
+                             $prestacionDesc = getnombrePrestacionServicio($obj->fk_prestacion)->descripcion;
+                             $log->log($iddetplant, $log->eliminar, 'Ud. ha eliminado un registros del Plan de Tratamiento N.'.str_pad($idCabplant,6, "0", STR_PAD_LEFT)." | Prestación/Servio: ".$prestacionDesc, 'tab_plan_tratamiento_det');
+                         }
                     }else{
-                        $error = '<p style="color:  red; font-weight: bolder"> Ocurrio un error no se puede eliminar esta prestacion compruebe en que estado se encuentra la prestación , o consulte con Soporte Tecnico</p> ';
+                        $error = '<p style="color:  red; font-weight: bolder"> Ocurrió un error no se puede eliminar esta prestación compruebe en que estado se encuentra la prestación. Consulte con Soporte Técnico</p> ';
                     }
                 }
 
@@ -1389,6 +1398,15 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
         //FINALIZAR EL PLAN DE TRATAMIENTO
         case 'finalizar_plantramento':
 
+            if(!PermitsModule("Planes de Tratamientos", "modificar")){
+                $output = [
+                    'error'     =>  "Ud. no tiene permiso para realizar esta operación",
+                    'consultar' =>  "<span style='color: red; display: block'><i class='fa fa-warning'></i> Ud. no tiene permiso para realizar esta operación</span>"
+                ];
+                echo json_encode($output);
+                die();
+            }
+
             $consultar = "";
             $error     = "";
             #un de plan de tratamiento solo se puede finalizar si esta tiene todas las  prestaciones pagadas
@@ -1403,7 +1421,11 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             //Finalizar Plan de tratamiento
             if($subaccion == 'finalizar_plantram'){
+
+                $odontologo = $db->query("Select fk_doc From tab_plan_tratamiento_cab where rowid = ".$idplantram)->fetchObject()->fk_doc;
+
                 $sql2 = "SELECT 
+                        c.numero , 
                         c.rowid,
                         (SELECT cp.descripcion FROM tab_conf_prestaciones cp WHERE cp.rowid = d.fk_prestacion) AS labelprestacion,
                         d.estado_pay,
@@ -1420,9 +1442,11 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                 $puedeFinalizar = "";
                 $invalic = 0;
+                $nomb_tratamiento = "";
                 $prestaciones_pendientes = []; #PRESTACIONES QUE AUN NO ESTAN PAGADAS
                 $prestaciones_saldo      = []; #PRESTACIONES QUE TIENE SALDO ( OSEA UNA PARTE PAGADA )
                 $prestacion_Norealizada  = []; #PRESTACIONES QUE AUN NO ESTAN REALIZADA
+
 
                 if($rs2 && $rs2->rowCount()>0)
                 {
@@ -1445,12 +1469,14 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                          * */
                         if($obprestFinal->estadodet == 'A' || $obprestFinal->estadodet == 'P'){
                             if($obprestFinal->estadodet == 'A') //pendiente
-                                $prestacion_Norealizada[] = $obprestFinal->labelprestacion ."&nbsp;&nbsp; <span style='color: #488cd5'>(En Proceso)</span>";
-                            if($obprestFinal->estadodet == 'P')
                                 $prestacion_Norealizada[] = $obprestFinal->labelprestacion ."&nbsp;&nbsp; <span style='color: #008000'>(Pendiente)</span>";
+                            if($obprestFinal->estadodet == 'P')
+                                $prestacion_Norealizada[] = $obprestFinal->labelprestacion ."&nbsp;&nbsp; <span style='color: #488cd5'>(En Proceso)</span>";
 
                             $invalic++;
                         }
+
+                        $nomb_tratamiento = "Plan de tratamiento N. ".$obprestFinal->numero;
                     }
                 }else{
                     $error = "No hay prestaciones";
@@ -1461,8 +1487,12 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                     $error = 'no puede finalizar este tratamiento';
 
-                    $puedeFinalizar .= '<b>No puede finalizar este Plan de tratamiento </b>';
+                    $puedeFinalizar .= '<h3 style="font-size: 2rem">Ud. No puede Finalizar '.$nomb_tratamiento.'</h3>';
                     $consultar .= '<br>'.$puedeFinalizar;
+
+                    if($odontologo==0){
+                        $consultar .= "<p><b>No tiene asociado un Doctor(a) a cargo</b></p>";
+                    }
 
                     if(count($prestaciones_pendientes) > 0)
                     {
@@ -1516,7 +1546,6 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 'error'     => $error,
                 'consultar' => $consultar
             ];
-
             echo  json_encode($output);
             break;
 
@@ -1843,7 +1872,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 $sql_a = "SELECT  rowid,
                             fk_cita,
                             estados_tratamiento,
-                            CONCAT('Plan de Tratamiento: #', '', numero) numero,
+                            CONCAT('Plan de Tratamiento: N.', '', numero) numero,
                             edit_name, 
                             (SELECT SUM(pg.amount) AS amount FROM tab_pagos_independ_pacientes_det pg WHERE pg.fk_plantram_cab = p.rowid AND pg.fk_paciente = p.fk_paciente) AS saldo
                          FROM tab_plan_tratamiento_cab p where p.rowid = $idplantcab and p.fk_paciente = $idpaciente limit 1;";
@@ -1864,16 +1893,18 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                         if( $objectplantram->fk_cita  > 0 ) #asociado a una cita
                         {
-                            $msgConfirm = "<b>Confimar:</b> Este <b>" . $nametram . "</b> esta asociado a una cita <br>
+                            $titulo = "<h3 style=\"font-size: 2rem\">Este ". $nametram ." esta asociado a una o varias citas</h3>";
+                            $msgConfirm = " $titulo
                                                 <b>Continuar con la Anulación</b><br>
                                                 <small><b>Si plan de tratamiento esta asociado a un Odontograma Este Tambien se Eliminara</b></small>";
                         }
 
                         if( $objectplantram->fk_cita  == 0 )
                         {
-                            $msgConfirm = "<b>Confimar:</b> Desa Anulación este <b>" . $nametram . "</b> <br>
+                            $titulo = "<h3 style=\"font-size: 2rem\">Anulación de este " . $nametram . "</h3>";
+                            $msgConfirm = "$titulo
                                                 <b>Continuar con la Anulación</b><br>
-                                                <small><b>Si plan de tratamiento esta asociado a un Odontograma Este tambien se Eliminara</b></small>";
+                                                <span style='display: block'> <i class='fa fa-info-circle'></i> Si el Plan de Tratamiento está asociado a un Odontograma. Este también se Eliminara</small>";
                         }
                     }
 
@@ -1922,7 +1953,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     }
                     if( $objPlanCab->saldo > 0 ){
                         $puedeAnular++;
-                        $tieneSaldo .= " Tiene Saldo Asociado <i class='fa fa-dollar'> </i> ".$objPlanCab->saldo ;
+                        $tieneSaldo .= " Tiene Saldo Asociado <i class='fa fa-dollar'> </i> ".number_format($objPlanCab->saldo, 2,'.', '');
                     }
 
                     if($objPlanCab->estados_tratamiento == 'F'){
@@ -2077,7 +2108,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $idOdontol = GETPOST('idOdontol');
 
             if($idTratamiento=="" || $idTratamiento==0)
-                $error = "Ocurrio un error  obteniendo los parametros <br> <b>Vuelva a intentarlo o consulte con soporte Tecnico</b>";
+                $error = "Ocurrio un error  obteniendo los parámetros <br> <b>Vuelva a intentarlo o consulte con soporte Tecnico</b>";
             if($idOdontol=="" || $idOdontol == 0)
                 $error = "Ocurrio un error con la Operación <br> No se identifica el profecional a cargo selecionado <br> compruebe la información o consulte con soporte ";
 
@@ -2310,8 +2341,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 dt.estadodet ,
                 ROUND(dt.total, 2) AS totalprestacion , 
                 ifnull(round(sum(pd.amount),2),0) as abonado, 
-                (select t.nom from tab_bank_operacion t where t.rowid = pd.fk_tipopago) as forma_pago
-                
+                (select t.nom from tab_bank_operacion t where t.rowid = pd.fk_tipopago) as forma_pago ,
+                (select s.usuario from tab_login_users s where s.rowid = pc.id_login) user_athor
             FROM
                 tab_conf_prestaciones            as cp ,
                 tab_plan_tratamiento_cab         as ct ,
@@ -2326,26 +2357,30 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 AND cp.rowid            = dt.fk_prestacion
                 AND pd.fk_plantram_det  = $iddetalle 
                 AND ct.fk_paciente      = $idpaciente
-                AND ct.rowid            = $idcabtranmiento
-                ";
+                AND ct.rowid            = $idcabtranmiento";
             $query .= " group by dt.rowid, pd.rowid  ";
 
             if($start || $length){
                 $query .= " LIMIT $start,$length;";
             }
             $Total = $db->query($query)->rowCount();
-
             $result = $db->query($query);
             if($result){
                 if($result->rowCount()>0){
                     $resultData = $result->fetchAll(PDO::FETCH_ASSOC);
                         foreach ($resultData as $value){
 
+                            if($value['user_athor']!="")
+                                $user_author = "<small class='text-blue' style='display: block'> usuario autor: ".$value['user_athor']."</small>";
+                            else
+                                $user_author = "";
+
+
                             $row = [];
-                            $row[] = $value['emitido'];
+                            $row[] = date("Y/m/d", strtotime($value['emitido']));
                             $row[] = $value['forma_pago'];
-                            $row[] = 'P_'.str_pad($value['rowid'], 6, "0", STR_PAD_LEFT);;
-                            $row[] = $value['n_fact_boleta'];
+                            $row[] = 'P_'.str_pad($value['rowid'], 6, "0", STR_PAD_LEFT);
+                            $row[] = $value['n_fact_boleta'].$user_author;
                             $row[] = number_format($value['abonado'],2,'.','');
 
                             $data[] = $row;
@@ -2739,11 +2774,9 @@ function evoluc_listprincpl($datos)
                         tab_plan_tratamiento_det d , 
                         tab_conf_prestaciones cp
                     WHERE
-                        ev.fk_plantram_cab = c.rowid and 
-                        ev.fk_plantram_det = d.rowid and 
-                        d.fk_prestacion = cp.rowid and 
-                    
-                         ";
+                        ev.fk_plantram_cab  = c.rowid and 
+                        ev.fk_plantram_det  = d.rowid and 
+                        d.fk_prestacion     = cp.rowid and ";
     $sqlevolucprip .= " ev.fk_paciente =  " . $datos['idpaciente'] . "  ";
 
     if( !empty( $datos['idplan'] ) ){
@@ -2760,8 +2793,9 @@ function evoluc_listprincpl($datos)
 
     $sqlTotal = $sqlevolucprip;
 
-    if($start || $length)
+    if($start || $length){
         $sqlevolucprip.=" LIMIT $start,$length;";
+    }
 
 
     $resultTotal = $db->query($sqlTotal);
@@ -2771,7 +2805,7 @@ function evoluc_listprincpl($datos)
     if( $rsevol && $rsevol->rowCount() > 0){
         while ( $objevol =   $rsevol->fetchObject() ) {
 
-            $edit = "<small class='text-blue' style='display: block'>".$objevol->edit_name."</small>";
+//            $edit = "<small class='text-blue' style='display: block'>".$objevol->edit_name."</small>";
 
             $cadena_caras = array();
             $caras = json_decode($objevol->json_caras);
@@ -2782,13 +2816,20 @@ function evoluc_listprincpl($datos)
             $cadena_caras[] = ($caras->oclusal=="true") ? "oclusal" : "";
             $cadena_caras[] = ($caras->lingual=="true") ? "lingual" : "";
 
+            $Pieza = ($objevol->diente!=0)?$objevol->diente:"No asignado";
+
+            $Servicio = "<div class='col-md-12 col-xs-12 no-padding'>
+                            <span style='display: block' class='text-sm' >".$objevol->presstacion."</span>
+                            <span style='display: block' class='text-sm text-blue' >Pieza: ".$Pieza."</span>
+                            <span style='display: block' class='text-sm text-blue' >".$objevol->plantram."</span>
+                        </div>";
+
+            $doct = "<span style='display: block' class='text-sm text-blue' title='Doctor(a) encargado ".$objevol->doct." '>Doctor(a): ".$objevol->doct."</span>";
+
             $row   = array();
             $row[] = date('Y/m/d', strtotime($objevol->fechaevul) );
-            $row[] = $objevol->plantram." ".$edit;
-            $row[] = "<small class='text-blue text-sm'>".$objevol->presstacion."</small>";
-            $row[] = ($objevol->diente!=0)?$objevol->diente:'No asignado';
-            $row[] = $objevol->estadodiente;
-            $row[] = $objevol->doct;
+            $row[] = $Servicio;
+            $row[] = $objevol->estadodiente." ".$doct;
             $row[] = "<p class='text-blue text-sm' title='".$objevol->observacion."' >".((strlen($objevol->observacion)>50)?substr($objevol->observacion,0,50)." ...":$objevol->observacion)."</p>";
             $row[] = "<small class='text-blue text-sm'>". (implode(', ', array_filter( $cadena_caras )))." </small> ";  ;
 

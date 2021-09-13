@@ -120,7 +120,17 @@ function listaprestacionesApagar()
                     'accion'     : 'listaprestaciones_apagar',
                     'idpaciente' : $id_paciente,
                     'idplantram' : Get_jquery_URL('idplantram'),
-                },
+            },
+            beforeSend: function(){
+                button_loadding($("#refresh_detalles_pagos_pacientes"), true);
+                boxloading($boxContentViewAdminPaciente, true);
+            },
+            complete: function(){
+                button_loadding($("#refresh_detalles_pagos_pacientes"), false);
+                boxloading($boxContentViewAdminPaciente, false, 1000);
+            },
+            cache: false,
+            async: false,
             dataType:'json',
         },
         language:{
@@ -207,28 +217,26 @@ $('#checkeAllCitas').change(function(){
 function IngresarValorApagar(html , xComportamiento)
 {
     var erro_invalic = 0;
+    if( xComportamiento == 'checkebox'){
 
-    // console.log(html.parents('tr'));
-
-    if( xComportamiento == 'checkebox')
-    {
         var padre          =  html.parents('tr');
         var TotalPrest     =  padre.find('.total_apagar').text();
         var Abonado        =  padre.find('.Abonado').text();
         var Abonar         =  padre.find('.Abonar');
-        var error_apagar   = padre.find('.error_pag');
+        var error_apagar   =  padre.find('.error_pag');
         var Pendiente      =  padre.find('.Pendiente').text();
         var AbonarAux      = 0;
 
 
         //Si pendiente es 0
         if(parseFloat(Pendiente) == parseFloat(0)){
+            alert(Pendiente);
             AbonarAux = parseFloat(TotalPrest);
             Abonar.val(AbonarAux.toFixed(2));
         }
 
         // Si pendiente es mayor a 0
-        if(parseFloat(Pendiente) > parseFloat(0)){
+        if(Pendiente > 0){
             AbonarAux = parseFloat(Pendiente);
             Abonar.val(AbonarAux.toFixed(2));
         }
@@ -432,9 +440,7 @@ $('#btnApagar').click(function() {
         notificacion("Este usuario no tiene asociada una caja <br> <b>No puede realizar esta Operación</b>", "question");
     }
 
-    button_loadding($('#btnApagar'), true);
     var datos = fetch_apagar();
-
     $.ajax({
         url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/pagos_pacientes/controller_pagos/controller_pag.php',
         delay:250,
@@ -452,8 +458,13 @@ $('#btnApagar').click(function() {
         dataType: 'json',
         async: true,
         cache:false,
+        beforeSend: function(){
+            boxloading($boxContentViewAdminPaciente, true);
+            button_loadding($('#btnApagar'), true);
+        },
         complete: function(xhr, status){
             button_loadding($('#btnApagar'), false);
+            boxloading($boxContentViewAdminPaciente, false, 1000);
         },
         success: function( respuesta ){
             if(respuesta.error == 1){
@@ -469,7 +480,7 @@ $('#btnApagar').click(function() {
             }else{
                 notificacion(respuesta.error, 'error');
             }
-
+            boxloading($boxContentViewAdminPaciente, false, 1000);
             button_loadding($('#btnApagar'), false);
         }
 
