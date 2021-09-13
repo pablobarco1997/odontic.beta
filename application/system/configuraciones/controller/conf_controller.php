@@ -828,68 +828,54 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             echo json_encode($output);
             break;
 
-        case 'nuevoCategoriaPrestacion':
+        case 'guardarClasification':
 
-            $error     ='';
-            $idCat     = GETPOST('idCat');
+            $error     = "";
+            $idCat     = GETPOST('id');
             $nombeCat  = GETPOST('label');
             $descrip   = GETPOST('descrip');
             $subaccion = GETPOST('subaccion');
 
-//            print_r($subaccion); die();
+            $return_id = "";
             if($subaccion == 'nuevo'){
-
                 if(!empty(trim($nombeCat))){
                     $sql = "INSERT INTO `tab_conf_categoria_prestacion` (`nombre_cat`, `descrip`) VALUES ('$nombeCat', '$descrip');";
                     $rs = $db->query($sql);
                     if(!$rs){
                         $error = 'Ocurrio un error con la Operacion crear Categoria';
+                        $idlast = 0;
+                        $log->log($idlast, $log->error, 'ha ocurrido un error con la creación de clasificación '.$nombeCat.' Prestaciones/Servicios', 'tab_conf_categoria_prestacion', $sql);
+                    }else{
+                        $idlast = $db->lastInsertId('tab_conf_categoria_prestacion');
+                        $log->log($idlast, $log->crear, 'Se ha registrado nueva clasificación '.$nombeCat.' Prestaciones/Servicios', 'tab_conf_categoria_prestacion');
+                        $return_id = $idlast;
                     }
                 }else{
                     $error = 'Ocurrio un error, no recibo ningun nombre de la categoria';
                 }
-
             }
 
 
             if($subaccion == 'modificar'){
-
                 if(!empty(trim($nombeCat))){
                     $sql = "UPDATE `tab_conf_categoria_prestacion` SET `nombre_cat`='$nombeCat', `descrip`='$descrip' WHERE `rowid`='$idCat';";
+//                    print_r($sql); die();
                     $rs = $db->query($sql);
                     if(!$rs){
                         $error = 'Ocurrio un error con la Operacion Modificar Categoria';
+                    }else{
+                        $idlast = $idCat;
+                        $log->log($idlast, $log->crear, 'Se ha modificado el registro. Clasificación '.$nombeCat.' Prestaciones/Servicios', 'tab_conf_categoria_prestacion');
+                        $return_id = $idlast;
                     }
                 }else{
                     $error = 'Ocurrio un error, no recibo ningun nombre de la categoria ';
                 }
             }
-
-            $datos = array();
-            if($subaccion == 'consultar'){
-
-                $sql = "SELECT * FROM tab_conf_categoria_prestacion WHERE rowid = $idCat";
-                $rs  = $db->query($sql);
-
-                if($rs && $rs->rowCount() > 0){
-
-                    while ($obj = $rs->fetchObject()){
-                        $datos = $obj;
-                    }
-
-                }
-
-                if(!$rs){
-                    $error = 'Ocurrio un error al consultar la categoria , a Modificar';
-                }
-
-            }
-
             $output = [
-                'error' => $error,
-                'datos' => $datos
+                'error'     => $error,
+                'return_id' => $return_id
             ];
-
             echo json_encode($output);
             break;
 

@@ -95,6 +95,9 @@
 
     $NavSearchPacientes = NavSearchPacientes();
 
+
+    date_default_timezone_set('America/Guayaquil');
+
     /** PERMISOS DE USUARIO
      * obtengo los permisos de usuario asociados con el usuario
      */
@@ -117,7 +120,7 @@
     ); */
 
 
-    //echo '<pre>'; print_r($user); die();
+//    echo '<pre>'; print_r($conf); die();
 
     //echo phpversion();
 

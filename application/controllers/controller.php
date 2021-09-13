@@ -200,7 +200,6 @@ function getnombreDentiste($id=''){
     return $objeto;
 }
 
-
 function getnombrePaciente($id=''){
 
     global $db, $conf;
@@ -208,6 +207,25 @@ function getnombrePaciente($id=''){
     $objeto = array();
 
     $sql = "SELECT * FROM tab_admin_pacientes WHERE rowid = $id";
+    $rs = $db->query($sql);
+
+    if($rs->rowCount()>0)
+    {
+        while ($ob = $rs->fetchObject()){
+            $objeto = $ob;
+        }
+    }
+
+    return $objeto;
+}
+
+function getnombrePrestacionServicio($id=''){
+
+    global $db, $conf;
+
+    $objeto = array();
+
+    $sql = "SELECT * FROM tab_conf_prestaciones WHERE rowid = $id";
     $rs = $db->query($sql);
 
     if($rs->rowCount()>0)
@@ -363,7 +381,6 @@ function Breadcrumbs_Mod( $titulo, $url, $module )
             $CountBread = $_SESSION['breadcrumbsAcu'];
 
         }
-//        echo '<pre>'; print_r($_SESSION['breadcrumbs']); die();
 
     }
 
@@ -373,17 +390,13 @@ function Breadcrumbs_Mod( $titulo, $url, $module )
 
 
         $Breadcrumbs .= '<ul style="list-style: none; " class="list-inline" >';
-
-                    $Breadcrumbs .= '<li><a href="'.DOL_HTTP.'/index.php?view=inicio" style="font-size: small; font-weight: lighter;  color: #212f3d" title="inicio"  > <i class="fa fa-dashcube"></i> </a></li>';
-        for( $i = 0; $i <= $CountBread; $i++ )
-        {
-            if(isset($Breadcrumbs_Mod[$i])) //verifico si existe o hay valores
-            {
+                    $Breadcrumbs .= '<li> <small> <a href="'.DOL_HTTP.'/index.php?view=inicio" class="text-blue" style="font-weight: lighter;  color: #212f3d;" title="inicio"  ><i class="fa fa-dashcube"></i></a></small></li>';
+        for( $i = 0; $i <= $CountBread; $i++ ){
+            if(isset($Breadcrumbs_Mod[$i])){
                 if($i==0){
-                    $Breadcrumbs .= '<li><a href=" '. $Breadcrumbs_Mod[$i]['url'] .'" style="font-size: small; font-weight: lighter;  color: #212f3d" title="'. $Breadcrumbs_Mod[$i]['titulo'] .'"  > '. $Breadcrumbs_Mod[$i]['titulo'] .' </a></li>';
+                    $Breadcrumbs .= '<li><small><a href=" '. $Breadcrumbs_Mod[$i]['url'] .'" class="text-blue" style="font-weight: lighter;  color: #212f3d" title="'. $Breadcrumbs_Mod[$i]['titulo'] .'">'.$Breadcrumbs_Mod[$i]['titulo'].'</a></small></li>';
                 }else{
-                    $Breadcrumbs .= '<li><a href=" '. $Breadcrumbs_Mod[$i]['url'] .'" style="font-size: small; font-weight: lighter;  color: #212f3d" title="'. $Breadcrumbs_Mod[$i]['titulo'] .'"  > / &nbsp;&nbsp;'. $Breadcrumbs_Mod[$i]['titulo'] .' &nbsp;</a></li>';
-
+                    $Breadcrumbs .= '<li><small><a href=" '. $Breadcrumbs_Mod[$i]['url'] .'" class="text-blue" style="font-weight: lighter;  color: #212f3d" title="'. $Breadcrumbs_Mod[$i]['titulo'] .'"  >| &nbsp; '.$Breadcrumbs_Mod[$i]['titulo'] .' </a> </small>  </li>';
                 }
             }
         }
@@ -748,12 +761,17 @@ function ConsultarCajaUsers($id_users=0){
                 WHEN cp.estado = 'C' THEN 'Caja Cerrada'
                 WHEN cp.estado = 'E' THEN 'Caja Eliminada'
             ELSE 'Caja no asignada' 
-        END as estado_caja
-            
+        END as estado_caja , 
+        concat(dc.n_cuenta,' ',dc.name_acount,' Dir.',dc.to_caja_direccion) as name_caja,
+        s.usuario , 
+        dc.rowid as id_cuenta, 
+        dc.n_cuenta
     FROM
         tab_login_users s 
         left join
         tab_ope_cajas_clinicas cp on cp.id_user_caja = s.rowid
+        inner join 
+        tab_ope_declare_cuentas dc on dc.rowid = cp.id_caja_cuenta
     where 
         cp.estado = 'A'
         and cp.date_cierre is null
@@ -815,5 +833,19 @@ function string_comillas_delet($string_c = ""){
         return false;
     }
 }
+
+
+function getnombFormaPago($id){
+    global  $db;
+    $query   = "select nom, rowid as id from tab_bank_operacion where rowid = $id";
+    $result  = $db->query($query);
+    if($result && $result->rowCount()>0) {
+        $object = $result->fetchObject();
+        return $object->nom;
+    }else{
+        return 0;
+    }
+}
+
 
 ?>

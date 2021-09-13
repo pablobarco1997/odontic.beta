@@ -471,6 +471,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
                         p.estado, 
                         (select l.name from tab_conf_laboratorios_clinicos as l where l.rowid = p.fk_laboratorio) as lab , 
                         p.fk_laboratorio
+                        ,c.rowid as fk_cat
+                        ,p.costo_x_clinica, p.precio_paciente
                     FROM
                         tab_conf_prestaciones p
                         left join
@@ -495,15 +497,23 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
                     foreach ($all as $item){
 
                         if($item['fk_laboratorio']!=0){
-                            $lab = "<span class='text-sm' style='display: block;color: #0866a5'><i class='fa fa-flask' title='Laboratorio'></i> ".$item['lab']."</span>";
+                            $lab = "<span class='text-sm' style='display: block;color: #0866a5' title='Laboratorio'><i class='fa fa-flask' title='Laboratorio'></i> ".$item['lab']."</span>";
                         }else{
                             $lab = "";
                         }
+
+                        if($item["nombre_cat"]!=""){
+                            $cat = "<span class='text-sm' style='display: block;color: #0866a5' title='clasificación'><i class='fa fa-check-square' title='clasificación'></i> ".$item["nombre_cat"]." </span>";
+                        }else{
+                            $cat = "";
+                        }
+
                         $rows = [];
                         $rows[] = date('Y/m/d', strtotime($item['tms']));
-                        $rows[] = $item['descripcion'].$lab;
-                        $rows[] = $item['nombre_cat'];
-                        $rows[] = number_format($item['valor'], 2, '.','');
+                        $rows[] = $item['descripcion'].$lab.$cat;
+//                        $rows[] = $item['nombre_cat'];
+                        $rows[] = number_format($item['costo_x_clinica'], 2, '.',''); //costo clinico
+                        $rows[] = number_format($item['precio_paciente'], 2, '.',''); //precio
                         if($item['estado']=='A'){
                             $rows[] = "<span class='text-sm' style='background-color: #D5F5E3; color: green; font-weight: bolder; padding: 1px 5px'>Activo</span>";
                         }else{
@@ -530,7 +540,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
 
             $error = "";
             $fetch = [];
-            $sql = "select rowid as id , nombre_cat as text from tab_conf_categoria_prestacion ";
+            $sql = "select rowid as id , nombre_cat as text, descrip as descp from tab_conf_categoria_prestacion ";
             $result = $db->query($sql);
             if($result){
                if($result->rowCount()>0){
@@ -552,11 +562,6 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
 
             $id = GETPOST('id');
 
-            if(!PermitsModule('Prestaciones', 'agregar')){
-                $error = "Ud. No tiene permiso para realizar esta Operación";
-            }else{
-                $error = "";
-            }
 
             $datos['codigo']     = GETPOST('codigo');
             $datos['clasi']      = GETPOST('clasi');
@@ -564,17 +569,35 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
             $datos['valor']      = GETPOST('valor');
             $datos['infoadi']    = GETPOST('infoadi');
             $datos['iva']        = GETPOST('iva');
+            $datos['costo']      = GETPOST('costo');
+            $datos['laboratorio']  = GETPOST('laboratorio');
 
 //            print_r($datos); die();
             if(empty($error)){
                 if(empty($id)){ //nuevo
-                    $result = newCrearServicio($id, $datos , true, false);
+                    if(!PermitsModule('Prestaciones', 'agregar')){
+                        $error = "Ud. No tiene permiso para realizar esta Operación";
+                    }else{
+                        $error = "";
+                    }
+                    if($error == ""){
+                        $result = newCrearServicio($id, $datos , true, false);
+                        if($result == -1){
+                            $error = "Ocurrio un problema con la Operación";
+                        }
+                    }
                 }else{ //modificar
-                    $result = newCrearServicio($id, $datos, false, true);
-                }
-
-                if($result == -1){
-                    $error = "Ocurrio un problema con la Operación";
+                    if(!PermitsModule('Prestaciones', 'modificar')){
+                        $error = "Ud. No tiene permiso para realizar esta Operación";
+                    }else{
+                        $error = "";
+                    }
+                    if($error == ""){
+                        $result = newCrearServicio($id, $datos, false, true);
+                        if($result == -1){
+                            $error = "Ocurrio un problema con la Operación";
+                        }
+                    }
                 }
             }else{
 
@@ -593,7 +616,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
             $error = "";
             $fetch = [];
             $id = GETPOST('id');
-            $sql = "select codigo, fk_categoria, descripcion, valor, explicacion, iva, estado from tab_conf_prestaciones where rowid = '".$id."' ";
+            $sql = "select codigo, fk_categoria, descripcion, valor, explicacion, iva, estado, costo_x_clinica, fk_laboratorio from tab_conf_prestaciones where rowid = '".$id."' ";
             $result = $db->query($sql);
             if($result){
                 if($result->rowCount()>0){
@@ -615,6 +638,37 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
             );
             echo json_encode($output);
             break;
+
+
+        case 'delete_clasificacion_servicio':
+
+            if(!PermitsModule('Prestaciones', 'eliminar')){
+                $permits = false;
+            }else{
+                $permits = true;
+            }
+
+            $id = GETPOST('id_servicio');
+            $error = "";
+
+            if($permits==true){
+                $sql = "DELETE FROM `tab_conf_categoria_prestacion` WHERE `rowid`='$id'";
+                $result = $db->query($sql);
+                if($result){
+                    $log->log($id, $log->eliminar, 'Se ha Eliminado un registro de clasificación de Prestación/Servicio', 'tab_conf_categoria_prestacion');
+                }else{
+                    $error = $messErr;
+                }
+            }else{
+                $error = "Ud. No tiene permiso para esta Operación";
+            }
+
+            $output = array(
+                "error" => $error,
+            );
+            echo json_encode($output);
+            break;
+
 
     }
 
@@ -1039,9 +1093,11 @@ function newCrearServicio($id = "", $datos, $new=false, $mod=false){
     $valor    = $datos['valor'];
     $infoadi  = $datos['infoadi'];
     $iva      = $datos['iva'];
+    $costo    = $datos['costo'];
+    $laboratorio    = $datos['laboratorio'];
 
     if($new==true){
-        $array = array($codigo , $nomb,  $user->id, 0,$clasi, 0, $valor, 0, 0, date("Y-m-d H:m:s"), 'A', $infoadi, $iva);
+        $array = array($codigo , $nomb,  $user->id, 0,$clasi, $laboratorio, $valor, $costo, $valor, date("Y-m-d H:m:s"), 'A', $infoadi, $iva);
         $sql    = "INSERT INTO `tab_conf_prestaciones`(`codigo`, `descripcion`,`fk_user`,`fk_convenio`,`fk_categoria`,`fk_laboratorio`,`valor`,`costo_x_clinica`,`precio_paciente`,`date_cc`,`estado`,`explicacion`,`iva`)";
         $sql   .= " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)";
         $stmt   = $db->prepare($sql);
@@ -1060,7 +1116,7 @@ function newCrearServicio($id = "", $datos, $new=false, $mod=false){
 
     if($mod==true){
 
-        $array = array($nomb, 0, $clasi, 0, $valor, 0, 0, $infoadi, $iva, $codigo, $id);
+        $array = array($nomb, 0, $clasi, $laboratorio, $valor, $costo, $valor, $infoadi, $iva, $codigo, $id);
         $sql  = " UPDATE `tab_conf_prestaciones` ";
         $sql .= " SET ";
         $sql .= " `descripcion` = ?,`fk_convenio` = ?,`fk_categoria` = ?,`fk_laboratorio` = ?,`valor` = ?,`costo_x_clinica` = ?,`precio_paciente` = ?,`explicacion` = ?,`iva` = ? ,`codigo` = ? ";

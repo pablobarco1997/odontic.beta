@@ -10,7 +10,7 @@ if(isset($_GET['v'])){
     }
 }else{
     $v = '';
-    echo 'Ocurrio un error. Parametros de entrada, Consulte con soporte';
+    echo 'Ocurrio un error. Parámetros de entrada, Consulte con soporte';
 }
 
 ?>
@@ -22,12 +22,17 @@ if(isset($_GET['v'])){
     <div class="box-header with-border">
         <div class="form-group col-xs-12 col-sm-12 col-md-12 no-margin no-padding">
             <h4 class="no-margin"><span><b>
-                        Especialidades   </b></span></h4>
+                        Prestación/Servicios   </b></span></h4>
         </div>
     </div>
 
     <div class="box-body">
-        <?php accessoModule('Prestaciones');  ?>
+
+        <?php
+
+            accessoModule('Prestaciones');
+
+        ?>
 
         <div class="form-group form-group col-xs-12 col-md-12">
             <div class="form-group col-centered col-xs-12 col-md-11 col-lg-10 col-sm-12" style="margin-top: 30px">
@@ -58,8 +63,9 @@ if(isset($_GET['v'])){
                                     <tr style="background-color: #f4f4f4">
                                         <th width="10%">Emtido</th>
                                         <th width="30%">Descripción</th>
-                                        <th width="15%">Categoría</th>
+<!--                                        <th width="15%">Categoría</th>-->
                                         <th width="5%">Costo</th>
+                                        <th width="5%">Precio</th>
                                         <th width="3%">Estado</th>
                                         <th width="3%"></th>
                                     </tr>
@@ -99,7 +105,7 @@ if(isset($_GET['v'])){
                                 },
                                 columnDefs: [
                                     {
-                                        targets:5,
+                                        targets:4,
                                         render:function (data, type, row, meta) {
                                             var idrow = row["idserv"];
                                             var urlidmod = $DOCUMENTO_URL_HTTP+"/application/system/configuraciones/index.php?view=servicios&v=add&id="+idrow;
@@ -199,6 +205,7 @@ if(isset($_GET['v'])){
                         function mod_prestacion(Element){
                             boxloading($boxContentConfiguracion,true);
                             if(!ModulePermission('Prestaciones', 'modificar')){
+                                boxloading($boxContentConfiguracion,false,1000);
                                 notificacion('Ud. No tiene permiso para realizar esta Operación', 'error');
                                 return false;
                             }
@@ -226,20 +233,20 @@ if(isset($_GET['v'])){
                     if($v == 'add'){
                 ?>
 
-                        <div id="clasificacion_modal" class="modal fade" role="dialog" data-backdrop="static">
+                        <div id="clasificacion_modal" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
                             <div class="modal-dialog">
 
                                 <!-- Modal content-->
                                 <div class="modal-content">
                                     <div class="modal-header modal-diseng">
                                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                        <h4 class="modal-title" ><span>Clasificación de Servicio</span></h4>
+                                        <h4 class="modal-title" ><span>Clasificación de Servicio</span> <span></span> </h4>
                                     </div>
                                     <div class="modal-body">
 
                                         <div style="padding: 10px">
                                             <div class="form-group">
-                                                <small style="color:#eb9627; font-weight: bolder "> <i class="fa fa-info-circle"></i> nombre de clasificación</small>
+                                                <small style="color:#0866a5; font-weight: bolder "> <i class="fa fa-info-circle"></i> Crear Clasificación de Prestaciones/Servicios</small>
                                             </div>
                                             <div class="form-group">
                                                 <label for="">Nombre</label>
@@ -247,14 +254,16 @@ if(isset($_GET['v'])){
                                             </div>
                                             <div class="form-group">
                                                 <label for="">Descripción (opcional)</label>
-                                                <textarea name="" class="form-control input-sm" id="clasificacion_desc_modal" rows="3"></textarea>
+                                                <textarea name="" class="form-control input-sm" id="clasificacion_desc_modal" rows="3" style="resize: vertical"></textarea>
                                             </div>
 
                                         </div>
 
                                     </div>
                                     <div class="modal-footer">
-                                        <a href="#" class="btn btnhover" style="font-weight: bolder; color: green" id="NewModClasificacion">Aceptar</a>
+                                        <button href="#" class="btn btnhover" style="font-weight: bolder; color: green" id="NewModClasificacion" onclick="GuardarClasification()">Aceptar
+                                            <span class="fa fa-refresh btnSpinner hide"></span>
+                                        </button>
                                     </div>
                                 </div>
 
@@ -277,33 +286,49 @@ if(isset($_GET['v'])){
                                         <label for="" class="control-label col-sm-3">Clasificación:</label>
                                         <div class="col-sm-7">
                                             <div class="input-group">
-                                                <select name="clasificacion_serv" id="clasificacion_serv" class="form-control" style="width: 100%">
+                                                <select name="clasificacion_serv" id="clasificacion_serv" class="form-control  " style="width: 100%" onchange="FormValidcrearServicio()">
                                                     <option value=""></option>
                                                 </select>
-                                                <span class="input-group-addon" style="cursor: pointer" data-toggle="modal" data-target="#clasificacion_modal" onclick="nuevoUpdateCategoria()"><i class="fa fa-plus"></i></span>
-                                                <span class="input-group-addon" style="cursor: pointer" data-toggle="modal" data-target="#ModaleliminarConfCatDesc" onclick="eliminar_categoria_desc_prestacion('categoria')"><i class="fa fa-minus"></i></span>
+                                                <span class="input-group-addon" style="cursor: pointer" data-toggle="modal" data-target="#clasificacion_modal" ><i class="fa fa-plus"></i></span>
+                                                <span class="input-group-addon" style="cursor: pointer" data-toggle="modal" onclick="deleteCategoria()"><i class="fa fa-minus"></i></span>
                                             </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="" class="control-label col-sm-3">Asociar Laboratorio:</label>
+                                        <div class="col-sm-7">
+                                            <small class="text-blue">Puede asociar un laboratorio (opcional)</small>
+                                            <select name="asociarLaboratorio" id="asociarLaboratorio" class="form-control  " style="width: 100%" >
+                                                <option value=""></option>
+                                                <?php
+                                                $result = $db->query("select rowid, concat(name ,' Dir. ', direccion) as nom from tab_conf_laboratorios_clinicos where estado = 'A' ")->fetchAll(PDO::FETCH_ASSOC);
+                                                foreach ($result as $value){
+                                                    print "<option value='".$value['rowid']."'>".$value['nom']."</option>";
+                                                }
+                                                ?>
+                                            </select>
                                         </div>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="" class="control-label col-sm-3">Nombre:</label>
                                         <div class="col-sm-7">
-                                            <input type="text" name="nomb_serv" id="nomb_serv" class="form-control" onkeyup="FormValidcrearServicio()">
+                                            <input type="text" name="nomb_serv" id="nomb_serv" class="form-control  " onkeyup="FormValidcrearServicio()">
                                         </div>
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="" class="control-label col-sm-3">valor:</label>
+                                        <label for="" class="control-label col-sm-3">Costo:</label>
                                         <div class="col-sm-7">
-                                            <input type="text" name="valor_serv" id="valor_serv" class="form-control" onkeyup="FormValidcrearServicio()">
+                                            <input type="text" name="costo_serv" id="costo_serv" class="form-control  " onkeyup="FormValidcrearServicio()">
                                         </div>
                                     </div>
 
                                     <div class="form-group">
-                                        <label for="" class="control-label col-sm-3">Información Adicional:</label>
+                                        <label for="" class="control-label col-sm-3">Precio:</label>
                                         <div class="col-sm-7">
-                                            <textarea name="infoad_serv" id="infoad_serv" cols="30" rows="3" class="form-control" style="resize: vertical" onkeyup="FormValidcrearServicio()"></textarea>
+                                            <input type="text" name="valor_serv" id="valor_serv" class="form-control  " onkeyup="FormValidcrearServicio()">
                                         </div>
                                     </div>
 
@@ -314,6 +339,13 @@ if(isset($_GET['v'])){
                                                 <option value="0" >(opcional)</option>
                                                 <option value="12" >12%</option>
                                             </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="" class="control-label col-sm-3">Información Adicional:</label>
+                                        <div class="col-sm-7">
+                                            <textarea name="infoad_serv" id="infoad_serv" cols="30" rows="3" class="form-control" style="resize: vertical" ></textarea>
                                         </div>
                                     </div>
 
@@ -337,10 +369,39 @@ if(isset($_GET['v'])){
                             var id = "<?= (isset($_GET['id'])?$_GET['id']:"")?>";
 
                             var FormValidcrearServicio = function(){
-
+                                var errores = [];
+                                var form    = $(".conf_form_servicios");
+                                if(form.find('[name="codigo_serv"]').val()==""){
+                                    errores.push({
+                                        document: form.find('[name="codigo_serv"]'), msg:'Campo obligatorio'
+                                    });
+                                }if(form.find('[name="nomb_serv"]').val()==""){
+                                    errores.push({
+                                        document: form.find('[name="nomb_serv"]'), msg:'Campo obligatorio'
+                                    });
+                                }if(form.find('[name="costo_serv"]').val()==""){
+                                    errores.push({
+                                        document: form.find('[name="costo_serv"]'), msg:'Campo obligatorio'
+                                    });
+                                }if(form.find('[name="valor_serv"]').val()==""){
+                                    errores.push({
+                                        document: form.find('[name="valor_serv"]'), msg:'Campo obligatorio'
+                                    });
+                                }if(form.find('[name="clasificacion_serv"]').find(":selected").val()==""){
+                                    errores.push({
+                                        document: form.find('[name="clasificacion_serv"]'), msg:'Campo obligatorio'
+                                    });
+                                }
+                                $(".servicio_msg_errores").remove();
+                                $.each(errores, function (i, item) {
+                                    var msg_error = document.createElement('small');
+                                    $(msg_error).addClass("servicio_msg_errores");
+                                    item.document.parents('.col-sm-7')
+                                        .append($(msg_error).text(item.msg).css('color', 'red'));
+                                });
                             };
 
-                            function  fetchCategorias() {
+                            function  fetchCategorias(id="") {
                                 boxloading($boxContentConfiguracion, true);
                                 var url = $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/controller_config_clinico.php';
                                 $.get(url,{accion:"fetchCategoria", ajaxSend:"ajaxSend"})
@@ -348,56 +409,88 @@ if(isset($_GET['v'])){
                                         var response = $.parseJSON(data);
                                         var form  = $(".conf_form_servicios");
                                         var select = form.find('[name="clasificacion_serv"]');
-                                        $("#clasificacion_serv").select2({
+                                        select.empty()
+                                            .append('<option></option>');
+                                        select.select2({
                                             placeholder:'Seleccione un opción',
                                             allowClear: true,
                                             data: response['fetch'],
                                             language: languageEs
                                         });
+
+                                        if(id!=""){
+                                            select.val(id).trigger('change');
+                                        }else{
+                                            select.val(null).trigger('change');
+                                        }
                                     })
                                     .always(function () {
                                         boxloading($boxContentConfiguracion, false, 1000);
                                     });
                             }
-                            
-                            function nuevoUpdateCategoria(){
-                                var subaccion ='';
-                                var id = $('#conf_cat_prestaciones').find(':selected').val();
-
-                                if(id  == ''){
-                                    subaccion = 'nuevo';
-                                }else{
-                                    subaccion = 'modificar';
-                                }
-                                if(subaccion == 'nuevo'){
-                                    $('#nomb_cat').val(null);
-                                    $('#descrip_cat').val(null);
-                                }
-                                if(subaccion == 'modificar'){
-
-                                    $.ajax({
-                                        url: $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php',
-                                        type:'POST',
-                                        data: { 'accion':'nuevoCategoriaPrestacion', 'ajaxSend':'ajaxSend', 'subaccion': 'consultar' ,'label': $('#nomb_cat').val(), 'descrip': $('#descrip_cat').val(), 'idCat': id } ,
-                                        dataType:'json',
-                                        async:true,
-                                        cache: false,
-                                        success:function(resp) {
-                                            if(resp.error == ""){
-                                                $('#nomb_cat').val(resp.datos.nombre_cat);
-                                                $('#descrip_cat').val(resp.datos.descrip);
-
-                                            }else {
-                                            }
-                                        }
-                                    });
-                                }
-                            }
 
                             $("#clasificacion_modal").on("show.bs.modal", function (ev) {
                                 $('#clasificacion_nomb_modal').val(null);
                                 $('#clasificacion_desc_modal').val(null);
+                                console.log($('[name="clasificacion_serv"]').find(":selected").val());
+                                if( $('[name="clasificacion_serv"]').find(":selected").val() != ""){
+                                    $(this)
+                                        .find(".modal-title")
+                                        .find('span:eq(1)')
+                                        .text(' modificar');
+
+                                    var array = $('[name="clasificacion_serv"]').select2('data');
+
+                                    $("#clasificacion_nomb_modal").val(array[0].text);
+                                    $("#clasificacion_desc_modal").val(array[0].descp);
+
+                                }else{
+                                    $(this)
+                                        .find(".modal-title")
+                                        .find('span:eq(1)')
+                                        .text(' nuevo');
+                                }
                             });
+
+                            function GuardarClasification(){
+
+                                if( $('[name="clasificacion_serv"]').find(':selected').val() != "")
+                                    idclasi = $('[name="clasificacion_serv"]').find(':selected').val();
+                                else
+                                    idclasi = 0;
+
+                                var paramtrs = {
+                                    'accion': 'guardarClasification',
+                                    'ajaxSend': 'ajaxSend',
+                                    'id': idclasi,
+                                    'label': $("#clasificacion_nomb_modal").val(),
+                                    'descrip': $("#clasificacion_desc_modal").val(),
+                                    'subaccion': ((idclasi==0)?'nuevo':'modificar')
+                                };
+                                var btn = $("#NewModClasificacion");
+                                button_loadding(btn, true);
+                                $.ajax({
+                                    url: $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/conf_controller.php',
+                                    type:'POST',
+                                    data: paramtrs,
+                                    dataType:'json',
+                                    async: true,
+                                    cache: false,
+                                    complete: function(xhr, status){
+                                        // button_loadding(btn, false);
+                                    },
+                                    success: function (response) {
+                                        // console.log(response);
+                                        if(response.error != ""){
+                                            notificacion(response.error , 'error');
+                                        }else{
+                                            $("#clasificacion_modal").modal('hide');
+                                            fetchCategorias(response.return_id);
+                                        }
+                                        button_loadding(btn, false);
+                                    }
+                                });
+                            }
 
                             var fetch_datos = function (mod=false) {
 
@@ -408,9 +501,11 @@ if(isset($_GET['v'])){
                                 var valor   = Element.find('#valor_serv');
                                 var infoadi = Element.find('#infoad_serv');
                                 var iva     = Element.find('#iva_serv');
+                                var costo   = Element.find('#costo_serv');
+                                var laboratorio = Element.find('#asociarLaboratorio');
 
                                 var paramtrs = [];
-                                paramtrs.push(codigo.val(), clasi.find(':selected').val(), nomb.val(), valor.val(), infoadi.val(), iva.find(':selected').val() );
+                                paramtrs.push(codigo.val(), clasi.find(':selected').val(), nomb.val(), valor.val(), infoadi.val(), iva.find(':selected').val(), costo.val(), laboratorio.find(':selected').val() );
 
                                 if(mod==true){
                                     boxloading($boxContentConfiguracion, true);
@@ -428,7 +523,12 @@ if(isset($_GET['v'])){
                                             iva.val(response['iva']).trigger('change');
                                             nomb.val(response['descripcion']);
                                             valor.val(response['valor']);
+                                            costo.val(response['costo_x_clinica']);
                                             infoadi.val(response['explicacion']);
+                                            laboratorio.val(response['fk_laboratorio']).trigger('change');
+
+                                            //select clasificacion/categoria
+                                            fetchCategorias(response['fk_categoria']);
                                         })
                                         .always(function () {
                                             boxloading($boxContentConfiguracion, false, 1000);
@@ -450,6 +550,8 @@ if(isset($_GET['v'])){
                                     'valor'     : fetch[3],
                                     'infoadi'   : fetch[4],
                                     'iva'       : fetch[5],
+                                    'costo'     : fetch[6],
+                                    'laboratorio' : fetch[7],
                                 };
                                 button_loadding($("#btnGuardarServicio"), true);
                                 $.ajax({
@@ -477,13 +579,60 @@ if(isset($_GET['v'])){
 
                             }
 
+                            var deleteCategoria = function () {
+                                var id = $('[name="clasificacion_serv"]').find(':selected').val();
+                                var object = {
+                                    id: id,
+                                    callback: function () {
+                                        boxloading($boxContentConfiguracion, true);
+                                        var paramtrs = {
+                                            accion   : 'delete_clasificacion_servicio',
+                                            ajaxSend : 'ajaxSend',
+                                            id_servicio : $('[name="clasificacion_serv"]').find(':selected').val()};
+                                        $.ajax({
+                                            url: $DOCUMENTO_URL_HTTP + '/application/system/configuraciones/controller/controller_config_clinico.php',
+                                            delay:1000,
+                                            type: 'POST',
+                                            data: paramtrs ,
+                                            async:true,
+                                            cache:false,
+                                            dataType:'json',
+                                            complete: function(xhr, status){
+                                                boxloading($boxContentConfiguracion, false, 1000);
+                                            },
+                                            success:function (response) {
+                                                    boxloading($boxContentConfiguracion, false, 1000);
+                                                if(response.error!=""){
+                                                    notificacion(response.error, 'error');
+                                                }else{
+                                                    notificacion("Información Actualizado", 'success');
+                                                    fetchCategorias();
+                                                }
+                                            }
+                                        });
+                                    }
+                                };
+                                notificacionSIoNO("Eliminar Prestación/Servicio",null, object);
+                            };
+
+
                             $(window).on('load', function () {
 
-                                fetchCategorias();
-
-                                if(id!=""){
+                                if(id!=""){ //modificar
                                     fetch_datos(true);
+                                }else {
+                                    //nueva prestacion/servicio
+                                    fetchCategorias();
                                 }
+
+                                $('[name="costo_serv"]').maskMoney({precision:2,thousands:'', decimal:'.',allowZero:true,allowNegative:true, defaultZero:true,allowEmpty: true});
+                                $('[name="valor_serv"]').maskMoney({precision:2,thousands:'', decimal:'.',allowZero:true,allowNegative:true, defaultZero:true,allowEmpty: true});
+
+                                $("#asociarLaboratorio").select2({
+                                    placeholder:'opcional',
+                                    language:languageEs,
+                                    allowClear:true,
+                                })
                             });
                         </script>
 

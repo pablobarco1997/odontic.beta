@@ -1067,7 +1067,7 @@ function AddPerfil(Element){
     if(url != ""){
         window.location = url;
     }else{
-        notificacion('Ocurrio un error de parametros de entrada', 'error');
+        notificacion('Ocurrio un error de parámetros de entrada', 'error');
     }
 }
 
