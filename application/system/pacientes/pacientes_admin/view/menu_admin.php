@@ -51,7 +51,7 @@
             ];
 
             $array_PagosRealizados = (object)[
-                'url'     => DOL_HTTP.'/application/system/pacientes/pacientes_admin/index.php?view=pagrealipricp&key='.KEY_GLOB.'&id='.tokenSecurityId($idPaciente).'&v=pagospartic',
+                'url'     => DOL_HTTP.'/application/system/pacientes/pacientes_admin/index.php?view=pagos_pacientes&key='.KEY_GLOB.'&id='.tokenSecurityId($idPaciente).'&v=pagos',
                 'active'  =>  ($VISTAS == "pagrealipricp") ? "ActivaLista" : "",
                 'permiso' => ''
             ];

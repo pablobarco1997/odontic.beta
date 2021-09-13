@@ -34,8 +34,8 @@ function  listplaneTratamiento(){
                 'ajaxSend'               : 'ajaxSend',
                 'accion'                 : 'list_tratamiento',
                 'idpaciente'             : $id_paciente,
-                'mostrar_anulados'       : ($('#mostrarAnuladosPlantram').prop('checked') == true) ? 'si': 'no',
-                'mostrar_finalizados'    : ($('#mostaraFinalizados').prop('checked') == true) ? 'si': 'no',
+                'mostrar_anulados'       : ($('#mostrarAnuladosPlantram').prop('checked') == true) ? 'si': '',
+                'mostrar_finalizados'    : ($('#mostaraFinalizados').prop('checked') == true) ? 'si': '',
                 'idplantmiento'          : $('#filtrPlantram').find(':selected').val(),
                 'fecha_range'            : $('.filtroFecha').val(),
 
@@ -239,9 +239,17 @@ if($accion == "principal")
             return false;
         }
 
-        attrChangAsociarCitas(null);
-        CrearPlanTratamientoIndependienteDependiente(null, true);
+        var object = {
+            callback: function () {
+                CrearPlanTratamientoIndependienteDependiente(null, true);
+            }
+        };
+
+        notificacionSIoNO("¿Crear Plan de Tratamiento en blanco?",null, object);
+
     });
+
+
 
     //Se puede asociar varias citas a un plan de tratamiento
     $('#CrearPlanTratamientoPlantram').click(function() {
@@ -772,7 +780,7 @@ $('#asociar_profecional_').on('click', function() {
     var id = $("#PlantTratamientoAsociOdont").val();
 
     if(id == "" ){
-        notificacion('Ocurrio un error de parametros , consulte con soporte','question');
+        notificacion('Ocurrio un error de parámetros , consulte con soporte','question');
         return false;
     }
 

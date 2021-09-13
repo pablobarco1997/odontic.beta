@@ -1,7 +1,12 @@
-
+<style>
+    input{
+        border: none;
+        outline: none;
+    }
+</style>
 
 <!-- Modal Add Plan tratamiento-->
-<div id="detdienteplantram" class="modal fade" role="dialog" data-backdrop="static">
+<div id="detdienteplantram" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog modal-lg" style="width: 80% ">
 
         <!-- Modal content-->
@@ -42,8 +47,8 @@
                         <div class="box_prestaciones">
                             <div class="input-group">
                                 <select id="prestacion_planform" class="form-control " style="width: 100%"></select>
-                                <div class="input-group-addon btn">
-                                    <span onclick="" id="addprestacionPlantram" class="btnaddtrans_loadding">
+                                <div class="input-group-addon btn btnaddtrans_loadding" id="addprestacionPlantram" >
+                                    <span >
                                         <i  class="fa fa-plus-square " id="btn_refresh_addService"></i>
                                     </span>
                                 </div>
@@ -68,11 +73,12 @@
                                     <tr id="prestacionesDetalles">
                                         <th width="5%"></th>
                                         <th title="DESCRIPCION DE LA PRESTACIÓN" width="30%">Prestación</th>
-                                        <th title="SUB-TOTAL">Subtotal</th>
-                                        <th title="DESCUENTO DE CONVENIO">Desc. Conv</th>
-                                        <th title="CANTIDAD DE LA PRESTACIÓN">Cantidad</th>
-                                        <th title="DESCUENTO DE ADICIONAL">Desc. Adicional</th>
-                                        <th title="TOTAL">Total</th>
+                                        <th title="precio">Precio</th>
+<!--                                        <th title="DESCUENTO DE CONVENIO hide">Desc. Conv</th>-->
+                                        <th title="Cantidad Prestacion/Servicio">Cantidad</th>
+                                        <th title="Descuento adicional">Desc. Adicional %</th>
+                                        <th title="iva incluido">Iva</th>
+                                        <th title="sub total">Sub total</th>
                                     </tr>
                                 </thead>
                                 <tbody id="detalle-prestacionesPlantram" style="">

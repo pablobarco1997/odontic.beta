@@ -57,7 +57,7 @@ function  realizarPrestacionShowModal($Dom)
 $("#RealizarPrestacion").click(function () {
 
     if(objRealizarServicio.idcab==0 && objRealizarServicio.iddet==0){
-        notificacion('Ocurrio un error de parametros de entrada, Consulte con Soporte', 'error');
+        notificacion('Ocurrio un error de parámetros de entrada, Consulte con Soporte', 'error');
         return false;
     }else{
         RealizarPrestacionDetallePLantram(objRealizarServicio.idcab, objRealizarServicio.iddet, objRealizarServicio.idpieza);
@@ -257,6 +257,21 @@ function UpdateObservacionPlantramCab()
         {
         }
     });
+}
+
+
+function ExportDetalleTTO(){
+
+    if(!ModulePermission('Planes de Tratamientos', 'consultar')){
+        notificacion('Ud. No tiene permiso para realizar esta Operación');
+        return false;
+    }
+
+    var output = "?id_paciente="+$id_paciente+"&id_tratamiento="+$ID_PLAN_TRATAMIENTO;
+    var url = $DOCUMENTO_URL_HTTP + "/application/system/pacientes/pacientes_admin/plan_tratamiento/export/excel_detallado_tratamientos";
+    url += output;
+    window.open(url, '_blank');
+
 }
 
 $('#addCommentario').click(function() {

@@ -114,35 +114,14 @@
             <ul class="list-inline" style="border-bottom: 0.6px solid #333333; padding: 3px; background-color: #f4f4f4; width: 100%; margin-left: 0px;">
                 <li><a data-toggle="collapse"  data-target="#contentFilter" class="btnhover btn btn-sm <?= (PermitsModule('Planes de Tratamientos', 'consultar')==0)?'disabled_link3':'' ?> " style="color: #333333" > <b>   ▼  Filtrar  </b>  </a> </li>
                 <li>
-                    <a href="#" style="color: #333333" class="btnhover btn btn-sm <?= ((PermitsModule('Planes de Tratamientos', 'agregar')==0)?'disabled_link3':'') ?> " id="createPlanTratamientoCab"> <b>  <i class="fa fa-file-text"></i> Crear Plan de Tratamiento Independiente </b> </a>
+                    <a href="#" style="color: #333333" class="btnhover btn btn-sm <?= ((PermitsModule('Planes de Tratamientos', 'agregar')==0)?'disabled_link3':'') ?> " id="createPlanTratamientoCab"> <b>  <i class="fa fa-file-o"></i>  Tratamiento en blanco </b> </a>
                 </li>
 
                 <li>
                     <a href="#modal_plantrem_citas" style="color: #333333" data-toggle="modal" class="btnhover btn btn-sm hidden" onclick="attrChangAsociarCitas(null)"> <b>  <i class="fa fa-clone"></i>  Crear Plan de tratamiento desde cita de paciente  </b> </a>
                 </li>
-
-                <li>
-                    <div class="checkbox btn btnhover no-margin btn-sm <?= (PermitsModule('Planes de Tratamientos', 'consultar')==0)?'disabled_link3':'' ?>">
-                        <label for="mostrarAnuladosPlantram">
-                            <b><input type="checkbox" id="mostrarAnuladosPlantram" style="margin-top: 2px !important;">
-                                <i  class="fa fa-trash-o"></i>
-                                Mostrar Planes de tratamiento Anulados</b>
-                        </label>
-                    </div>
-                </li>
-
-                <li>
-                    <div class="checkbox btn btnhover no-margin btn-sm <?= (PermitsModule('Planes de Tratamientos', 'consultar')==0)?'disabled_link3':'' ?>">
-                        <label for="mostaraFinalizados">
-                            <b><input type="checkbox" id="mostaraFinalizados" style="margin-top: 2px !important;">
-                                <i  class="fa fa-flag"></i>
-                                Mostrar Planes de tratamiento Finalizados</b>
-                        </label>
-                    </div>
-                </li>
-
             </ul>
-            <br>
+
         </div>
 
 <!--        OTRAS OPCIONES DE FILTRO  -->
@@ -151,7 +130,7 @@
             <div class="col-md-12 col-xs-12 col-lg-12" style="background-color: #f4f4f4; padding-top: 15px; margin-bottom: 15px">
                 <div class="form-group col-md-12 col-xs-12 col-lg-12"> <h3 class="no-margin"><span>Filtrar Planes de Tratamiento</span></h3> </div>
 
-                <div class="form-group col-xs-12 col-md-4 col-sm-6">
+                <div class="form-group col-xs-12 col-md-4 col-sm-12">
                     <label for="">Fecha</label>
                     <div class="input-group form-group rango" style="margin: 0">
                         <input type="text" class="form-control filtroFecha  " readonly id="startDate" value="">
@@ -159,11 +138,21 @@
                     </div>
                 </div>
 
-                <div class="form-group col-xs-12 col-md-8 col-sm-8">
+                <div class="form-group col-xs-12 col-md-8 col-sm-12">
                     <label for="filtrPlantram">Plan de Tramamiento</label>
                     <select id="filtrPlantram" class="form-control" style="width:100% ;">
                         <option value=""></option>
                     </select>
+                </div>
+
+                <div class="form-group col-xs-12 col-md-3 col-sm-12">
+                    <label for="">Estados</label>
+                    <div class="checkbox">
+                        <label for="">
+                            <span style="display: block"> <input type="checkbox" id="mostaraFinalizados" style="margin-top: 2px !important;"> <b>Finalizados</b> </span>
+                            <span style="display: block"> <input type="checkbox" id="mostrarAnuladosPlantram" style="margin-top: 2px !important;"> <b>Anulados</b></span>
+                        </label>
+                    </div>
                 </div>
 
 
@@ -272,15 +261,14 @@
                 <div class="modal-content">
                     <div class="modal-header modal-diseng">
                         <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title"><span>Confirmar</span></h4>
+                        <h4 class="modal-title"><span>Anular</span></h4>
                     </div>
                     <div class="modal-body">
-                        <label for="">Anular Plan de tratamiento</label>
                         <p id="msg_eliminar_plantram"></p>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" style="font-weight: bolder; color: green" class="btn btnhover" id="delete_plantram_confirm" onclick="delete_confirmar_true_plantram($(this))">
-                            Aceptar
+                        <button type="button" style="font-weight: bolder; color: red" class="btn btnhover" id="delete_plantram_confirm" onclick="delete_confirmar_true_plantram($(this))">
+                            Anular
                             <span class="fa fa-refresh btnSpinner hide"></span>
                         </button>
                     </div>
@@ -315,8 +303,8 @@
                         </select>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" style="font-weight: bolder; color: green" class="btn btnhover" id="asociar_profecional_" >Confirm</button>
-                        <button type="button" style="font-weight: bolder;" class="btn btnhover" data-dismiss="modal">Close</button>
+                        <button type="button" style="font-weight: bolder; color: green" class="btn btnhover" id="asociar_profecional_" >Guardar</button>
+                        <button type="button" style="font-weight: bolder;" class="btn btnhover" data-dismiss="modal">Cerrar</button>
                     </div>
                 </div>
 

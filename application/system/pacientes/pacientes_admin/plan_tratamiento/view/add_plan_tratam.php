@@ -1,11 +1,6 @@
 
 <style>
 
-    #detalles_plantram td, #detalles_plantram th {
-        border: 1px solid #ddd;
-        /*padding: px;*/
-    }
-
     #headplantram th{
         box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
     }
@@ -19,53 +14,60 @@
 </div>
 
 <!--FORMULARIO  PLAN DE TRATAMIENTO-->
-<div class="form-group col-xs-12 col-md-12">
+<div class="form-group col-xs-12 col-md-12 no-padding">
 
      <div class="form-group col-md-6 col-xs-12">
-         <h4 id="nomb_plantram"></h4>
+         <h3 style="font-size: 2rem; margin-top: 0px" id="nomb_plantram">Finalizar Plan de tratamiento</h3>
          <table >
              <tr>
                  <td><b><i class="fa fa-user"></i> Profecional a cargo: </b></td>
-                 <td class="pull-right" id="profecional">&nbsp;</td>
+                 <td class="pull-right" id="profecional"></td>
              </tr>
              <tr>
                  <td><b><i class="fa fa-folder-open"></i> convenio: </b></td>
-                 <td class="pull-right" id="convenio">&nbsp;</td>
+                 <td class="pull-right" id="convenio"></td>
              </tr>
          </table>
      </div>
 
-<!--    DETALLES -->
+    <!--DETALLES -->
     <div class="form-group col-xs-12 col-md-12">
 
         <div class="table-responsive">
             <table class="table table-hover" width="100%" id="detalles_plantram">
                 <thead id="headplantram">
+                    <tr>
+                        <th colspan="6"></th>
+                        <th><button class="btn btn-sm btn-block  <?= !PermitsModule("Planes de Tratamientos", "consultar")?"disabled_link3":"" ?>" onclick="ExportDetalleTTO()" title="Exportar la información detallada de esta Plan de tratamiento en excel" id="exportar_detalle_Tratamiento"><i class="fa fa-print"></i> Excel</button></th>
+                    </tr>
                     <tr style="background-color: #f4f4f4">
                         <th width="40%">
                             <label  style="float: left;  padding-top: 5px; font-size: 1.4rem" class="control-label" >Prestación</label>
                             <a href="#detdienteplantram" id="asociarPrestacion" data-toggle="modal" onclick="clearModalDetalle('todo')" class="btnhover btn-sm btn" style="color: #00a157; cursor: pointer; float: right; font-weight: bold; font-size: 1.4rem "> Cargar Prestaciones</a>
                         </th>
-                        <th width="10%">
-                            <label for="" style="font-size: 1.4rem">Estado</label>
+                        <th width="10%" style="text-align: right; ">
+                            <label for="" style="font-size: 1.4rem; padding-right: 10px" >Estado</label>
                         </th>
-                        <th width="10%">
-                            <label for="" style="font-size: 1.4rem">Dcto Adicional</label>
+                        <th width="10%" style="text-align: right; ">
+                            <label for="" style="font-size: 1.4rem; padding-right: 10px">Precio</label>
                         </th>
-                        <th width="10%">
-                            <label for="" style="font-size: 1.4rem">Sub. Total</label>
+                        <th width="10%" style="text-align: right; ">
+                            <label for="" style="font-size: 1.4rem; padding-right: 10px">Cantidad</label>
                         </th>
-                        <th width="10%">
-                            <label for="" style="font-size: 1.4rem">Qty</label>
+                        <th width="10%" style="text-align: right; ">
+                            <label for="" style="font-size: 1.4rem; padding-right: 10px">Dcto Adicional</label>
                         </th>
-                        <th width="10%">
-                            <label for="" style="font-size: 1.4rem">Total</label>
+                        <th width="10%" style="text-align: right; ">
+                            <label for="" style="font-size: 1.4rem; padding-right: 10px">Iva</label>
+                        </th>
+                        <th width="10%" style="text-align: right; ">
+                            <label for="" style="font-size: 1.4rem; padding-right: 10px"> Sub. Total</label>
                         </th>
                     </tr>
                 <tr>
-                    <th colspan="5" style="font-size: 1.4rem; cursor: pointer; vertical-align: center" >Acciones Clinicas</th>
+                    <th colspan="6" style="font-size: 1.4rem; cursor: pointer; vertical-align: center" >Acciones Clinicas</th>
                     <th colspan="1"  >
-                        <button class="btn  btn-block btn-default btn-sm" title="Refresh detalle" id="refresh_detalle_table"> Actualizar <span class="fa fa-refresh btnSpinner hide"> </span> </button>
+                        <button class="btn  btn-block  btn-sm" title="Refresh detalle" id="refresh_detalle_table"> Actualizar <span class="fa fa-refresh btnSpinner hide"> </span> </button>
                     </th>
                 </tr>
                 </thead>
@@ -79,23 +81,31 @@
 
     </div>
 
-    <div class="form-group col-xs-12 col-sm-9 col-md-8 col-lg-5 pull-right">
+    <div class="form-group col-xs-12 col-sm-7 col-md-7 col-lg-4 pull-right">
             <table class="table">
                 <tr>
-                    <td>TOTAL PRESUPUESTO</td>
-                    <td id="Presu_totalPresu" style="font-weight: bold">0.00</td>
+                    <td class="text-bold">TOTAL PRESUPUESTO</td>
+                    <td id="Presu_totalPresu" style="font-weight: bold; text-align: right;">
+                        <div class="form-group col-md-12 col-xs-12"></div>
+                    </td>
                 </tr>
                 <tr>
-                    <td id="label_abonadoPagado">ABONADO</td>
-                    <td id="Presu_Abonado" style="font-weight: bold">0.00</td>
+                    <td id="label_abonadoPagado" class="text-bold">ABONADO</td>
+                    <td id="Presu_Abonado" style="font-weight: bold; text-align: right;">
+                        <div class="form-group col-md-12 col-xs-12"></div>
+                    </td>
                 </tr>
                 <tr>
-                    <td>REALIZADO</td>
-                    <td id="Presu_Realizado" style="font-weight: bold">0.00</td>
+                    <td class="text-blue text-bold">REALIZADO <i class="fa fa-info-circle"></i></td>
+                    <td id="Presu_Realizado" style="font-weight: bold; text-align: right;">
+                        <div class="form-group col-md-12 col-xs-12 text-blue"></div>
+                    </td>
                 </tr>
                 <tr>
-                    <td>SALDO</td>
-                    <td id="Presu_Saldo" style="font-weight: bold">0.00</td>
+                    <td class="text-bold">SALDO</td>
+                    <td id="Presu_Saldo" style="font-weight: bold; text-align: right;">
+                        <div class="form-group col-md-12 col-xs-12"></div>
+                    </td>
                 </tr>
             </table>
     </div>
@@ -122,7 +132,7 @@
 
 
 <!--MODAL ELIMINAR ESTA PRESTACION-->
-<div id="modDeletePrestacion" class="modal fade" role="dialog">
+<div id="modDeletePrestacion" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
     <div class="modal-dialog">
 
         <!-- Modal content-->
@@ -137,6 +147,7 @@
             </div>
             <div class="modal-footer">
                 <a href="#" class="btn btnhover" style="font-weight: bolder; color: green" id="AceptarDeletePrestacion" onclick="">Aceptar</a>
+                <a href="#" class="btn btnhover" style="font-weight: bolder; " id="" onclick="" data-dismiss="modal" >Cancelar</a>
             </div>
         </div>
 

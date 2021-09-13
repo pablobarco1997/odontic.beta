@@ -49,7 +49,7 @@ if($accion == 'addplan')
                     var abonado              =  cabezera.abonado_cab;
                     var profecional          =  cabezera.nombre_doc;
                     var convenio             =  cabezera.convenio;
-                    var Nomb_tratam          =  (cabezera.edit_nam == null) ? "Plan de Tratamiento No " + cabezera.numero : cabezera.edit_nam;
+                    var Nomb_tratam          =  (cabezera.edit_nam == null) ? "Plan de Tratamiento N." + cabezera.numero : cabezera.edit_nam;
 
                     $convenioValor           = (cabezera.valorConvenio == "") ? "No asignado" : cabezera.valorConvenio; //% Porcentage del convenio asociado
                     $AbonadoGlob             = redondear(abonado, 2, false);
@@ -63,7 +63,7 @@ if($accion == 'addplan')
                     }
                     //SI EL PLAN DE TRATAMIENTO ESTA ANULADO   == 'E'
                     if(cabezera.estados_tratamiento == 'E'){
-                        notificacion('Este plan de tratamiento se encuentra Anulado, no puede modificarlo', 'question');
+                        notificacion('Ud. No puede actualizar este plan de tratamiento se encuentra Anulado', 'error');
                         $('#asociarPrestacion').addClass('disabled_link3');
                         $('#addCommentario').addClass('disabled_link3');
                         $('#detalle-body').addClass('disabled_link3');
@@ -93,7 +93,12 @@ if($accion == 'addplan')
 
                 }else{
 
-                    notificacion(respuesta.error + ' NO SE PUDO OBTENER LA INFORMACION DETALLADA DE ESTE PLAN DE TRATAMIENTO', 'error');
+                    notificacion('Ha ocurrido un error obteniendo la información del plan de tratamiento. Consulte con soporte Técnico', 'error');
+                    $("#detdienteplantram").find('.modal-content').addClass('disabled_link3');
+                    $("#asociarPrestacion").addClass('disabled_link3');
+                    $("#refresh_detalle_table").addClass('disabled_link3');
+                    $("#addCommentario").addClass('disabled_link3');
+
                 }
             }
         });
@@ -176,7 +181,7 @@ if($accion == 'addplan')
             }
             var smallUsuarioxRealizado  = "";
             if(usuarioRealizarPrestacion!=""){
-                smallUsuarioxRealizado  = "<small  style='display: block;font-weight: bolder'>Realizado x Odontol@: " + usuarioRealizarPrestacion + " </small>";
+                smallUsuarioxRealizado  = "<small  style='display: block;font-weight: bolder'>Realizado x Doctor(a): " + usuarioRealizarPrestacion + " </small>";
             }
 
 
@@ -189,31 +194,25 @@ if($accion == 'addplan')
 
             html += "<td class='dientePieza' data-iddiente='"+iddiente+"' style='padding-left: 15px'>  " +
                         "<div class='form-group col-md-12 col-xs-12 no-padding no-margin' style='padding: 0px !important;'>" +
-                        // "  <div class='form-group col-xs-12 col-sm-12 no-padding' >  " +
-                        //     "      <a   style='font-size: 2rem; cursor:pointer;color: #9f191f'  class='terminarEstaPrestacionOpcion1' " + onclickRealizadoModal + " > " +
-                        //     "           <img id='realizadoImg-"+i+"' class='checkedRealizado'  width='20px' height='20px'>        " +  //Checkear prestacion
-                        //     "       </a>" +
-                        // "  </div>" +
-                        "<div class='form-group col-sm-11 col-xs-12 no-padding no-margin' >" +
-
-                        "<p class='' style='margin: 0px; font-size: 1.5rem' data-id='"+ fk_prestacion +"'> <b> "+ prestacion +" </b> &nbsp; <i class='fa fa-flag statusdet' data-estadodet='"+statusdet+"' data-iddet='"+rowiddetalle+"' ></i> </p>  ";
+                        "<div class='form-group col-sm-12 col-xs-12 no-padding no-margin' >" +
+                        "<p class='' style='margin: 0px; font-size: 1.5rem' data-id='"+ fk_prestacion +"'>  "+ prestacion +"  &nbsp; <i class='fa fa-flag statusdet' data-estadodet='"+statusdet+"' data-iddet='"+rowiddetalle+"' ></i> </p>  ";
 
             //Si en caso la prestacion esta relacionada an laboratorio
             if(LaboratorioPrestacion != ''){
-                html += "<p class='text-bold' style='margin: 0px' data-diente='"+iddiente+"' title='Laboratorio: "+LaboratorioPrestacion+"'> <i class='fa fa-flask'></i>  &nbsp;&nbsp; "+LaboratorioPrestacion+"  </p>";
+                html += "<small class='text-sm' style='margin: 0px' data-diente='"+iddiente+"' title='Laboratorio: "+LaboratorioPrestacion+"'> <i class='fa fa-flask'></i>  &nbsp;&nbsp; "+LaboratorioPrestacion+"  </small>";
             }
 
             //Muestra el diente asociado a esta prestacion
             if(iddiente != 0){
-                html += "<p class='text-bold' data-diente='"+iddiente+"' > Pieza: "+iddiente+" &nbsp;&nbsp; " +
+                html += "<p class='' data-diente='"+iddiente+"' > Pieza: "+iddiente+" &nbsp;&nbsp; " +
                         "     <img src='"+icoDiente+"' width='14px' height='14px' alt=''> " +
                         "</p>";
             }
 
 
-                    html +=  "<div style='padding: 3px;  background-color: rgba(221,221,221, 0.3); '>" +
-                                " <a class='btn btn-xs text-bold btnhover'  style='cursor:pointer;' "+onclickRealizadoModal+" > "+ImgRealizadoChecked+"  </a>" +
+                    html +=  "<div class='col-sm-12 col-md-12 col-lg-12' style='padding: 3px;  background-color: rgba(221,221,221, 0.3); '>" +
                                 " <a class='btn btn-xs text-bold btnhover eliminar_tratamiento'  style='cursor:pointer;color: #9f191f' onclick='UpdateDeletePrestacionAsignada($(this))' > <i class='fa fa-trash'></i> Eliminar  </a>" +
+                                " <a class='btn btn-xs text-bold btnhover'  style='cursor:pointer;' "+onclickRealizadoModal+" > "+ImgRealizadoChecked+"  </a>" +
                                 " <a style='cursor: pointer' data-toggle='collapse' data-target='#masInformacion-"+i+"' class='btn btn-xs text-bold btnhover'> <i class='fa fa-info-circle'></i> Mas información</a>" +
                                 " <a href='#detdienteplantram' data-toggle='modal' class='btn btn-xs text-bold btnhover hide'  style='cursor: pointer'  > <i class='fa fa-edit'></i> Modificar</a>" +
                                 " <a href='#modPagosxPacientes' data-toggle='modal' class='btn btn-xs text-bold btnhover "+((labelestadoPago=='')?'hidden':'')+"'  style='cursor: pointer' data-iddet='"+rowiddetalle+"' > "+ labelestadoPago +" </a>" +
@@ -239,28 +238,36 @@ if($accion == 'addplan')
                     "   </div>  " +
                     " </td>";
 
+            html += "<td>  " +
+                    "   <div class='form-group col-md-12 col-xs-12' style='margin-top: 10%'>" +
+                    "     <p class='qty' style='margin: 0px; font-size: 1.5rem; text-align: right'>  <b class='qty'>" + (parseFloat(detalleTratamiento['precio']).toFixed(2)) + " </b> </p> " +
+                    "   </div>  " +
+                    "</td>";
+
+            html += "<td>  " +
+                    "   <div class='form-group col-md-12 col-xs-12' style='margin-top: 10%'>" +
+                    "     <p class='qty' style='margin: 0px; font-size: 1.5rem; text-align: right'>  <b class='qty'>" + (parseFloat(detalleTratamiento['cantidad']).toFixed(2)) + " </b> </p> " +
+                    "   </div>  " +
+                    "</td>";
+
+
             //descuento adicional
             html += "<td>  " +
-                        "   <div class='form-group col-md-12 col-xs-12' style='margin-top: 10%'>" +
-                        "     <p class='descConvenio' style='margin: 0px; font-size: 1.5rem'>  <b class='descAdicional'>" + descAdicional + " </b> %</p> " +
-                        "   </div>  " +
-                   " </td>";
+                "   <div class='form-group col-md-12 col-xs-12' style='margin-top: 10%'>" +
+                "     <p class='descConvenio' style='margin: 0px; font-size: 1.5rem; text-align: right'>  <b class='descAdicional'>" + descAdicional + " </b> %</p> " +
+                "   </div>  " +
+                " </td>";
 
+            //iva calculado
             html += "<td>  " +
-                    "   <div class='form-group col-md-12 col-xs-12' style='margin-top: 10%'>" +
-                    "     <p class='qty' style='margin: 0px; font-size: 1.5rem'>  <b class='qty'>" + (parseFloat(detalleTratamiento['subtotal']).toFixed(2)) + " </b> </p> " +
-                    "   </div>  " +
-                    "</td>";
-
-            html += "<td>  " +
-                    "   <div class='form-group col-md-12 col-xs-12' style='margin-top: 10%'>" +
-                    "     <p class='qty' style='margin: 0px; font-size: 1.5rem'>  <b class='qty'>" + (parseFloat(detalleTratamiento['cantidad']).toFixed(2)) + " </b> </p> " +
-                    "   </div>  " +
-                    "</td>";
+                "   <div class='form-group col-md-12 col-xs-12' style='margin-top: 10%'>" +
+                "     <p class='ivaServicio' style='margin: 0px; font-size: 1.5rem; text-align: right'>  <b class='ivaServicio'>" + detalleTratamiento['iva'] + " </b></p> " +
+                "   </div>  " +
+                " </td>";
 
             html += "<td>  " +
                         "   <div class='form-group col-md-12 col-xs-12' style='margin-top: 10%'>" +
-                        "     <p class='' style='margin: 0px; font-size: 1.5rem'> $ <b class='total'>" + (parseFloat(total1).toFixed(2)) + " </b> </p> " +
+                        "     <p class='' style='margin: 0px; font-size: 1.5rem; text-align: right'> $ <b class='total' >" + (parseFloat(total1).toFixed(2)) + " </b> </p> " +
                         "   </div>  " +
                    " </td>";
 
@@ -289,13 +296,11 @@ if($accion == 'addplan')
     function fetch_prestaciones(idprest, async){
 
         if($("#btn_refresh_addService").hasClass("fa-plus-square")){
-
             $("#btn_refresh_addService").removeClass("fa-plus-square");
             $("#btn_refresh_addService").addClass("fa-refresh btnSpinner");
         }
 
         var dataPrest = [];
-
         $.ajax({
             url: $DOCUMENTO_URL_HTTP +'/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
             type:'POST',
@@ -333,17 +338,16 @@ if($accion == 'addplan')
     function print_html_cabezera_viewPrincipal(profecional, convenio, nombTratam) {
 
         $('#profecional').html("<span>&nbsp;&nbsp;"+profecional+"</span>");
-        $('#nomb_plantram').html("<span style='font-weight: bolder'>&nbsp;&nbsp;"+nombTratam+"</span>");
+        $('#nomb_plantram').text(nombTratam);
         $('#convenio').text(convenio);
     }
 
     //PINTA LAS PRESTACIONES AGREGADAS  O GUARDADAS
-    function print_html_detallePrestacion(objectPresst, idprestacion)
+    function print_html_detallePrestacion(Servicio, idprestacion)
     {
 
         var puedoAdddet = 0;
-        if($('#detalle-prestacionesPlantram').find('tr td').text() == $.trim('NO HAY DETALLE'))
-        {
+        if($('#detalle-prestacionesPlantram').find('tr td').text() == $.trim('NO HAY DETALLE')){
             //limpio las filas en caso no aya datos
             $('#detalle-prestacionesPlantram tr').remove();
         }
@@ -351,57 +355,55 @@ if($accion == 'addplan')
         //Obtengo todas las piezas seleciondas Activas
         var objPiezas =  ArrayPeizas();
 
-        console.log(objPiezas);
-
-        var htmlpress = "";
-        //Calculo de la Prestacion
-        var total = 0;
-        total = (parseFloat(objectPresst.valor) - (( parseFloat(objectPresst.valor) * parseFloat(objectPresst.convenio_valor) ) / 100)).toFixed(2) ;
-
-
         //ciclo por diente seleccionados
-        if( objPiezas.length > 0){
-
+        var detalle = "";
+        if( (objPiezas.length) > 0){
             var io = 0;
             while(io < objPiezas.length) {
 
-                // if( invalicErrorPrestacionDiente(idprestacion, detalleDiente.diente, 'diente') == 0 ) { }
                 var detalleDiente = objPiezas[io];
+
                 $formatoIndexPrestacion++;
                 //obtengo solo las caras de las piezas seleccionadas
+                var pieza="";
+                if(detalleDiente.pieza > 0){
+                    pieza="<small title='Diente: " + detalleDiente.pieza + "'>Pieza: &nbsp; " + detalleDiente.pieza + " <i class='fa fa-tooth'></i> <img src='"+$iconDienteGlob+"' width='15px' height='15px' > </small>";
+                }else{
+                    pieza="";
+                }
 
-                htmlpress += "" +
+                detalle += "" +
                     "<tr  data-idprestacion='" + idprestacion + "'  data-iddiente='" + detalleDiente.pieza + "' name='detalleRow["+$formatoIndexPrestacion+"].detalle' class='detallePrincipalPrestacion' data-caras='"+JSON.stringify(detalleDiente.carasActivas)+"' >" +
+                        //eliminar
                         "<td style='width: 500px'> <a class='btn btn-xs text-bold btnhover' style='cursor:pointer;color: #9f191f' id='del-row' onclick='delete_row($(this))'> <i class='fa fa-trash'></i> Eliminar </a> </td>" +
-                        //PRESTACION
+                        //prestacion servicio
                         "<td name='Prestacion[" + $formatoIndexPrestacion + "].detalle' class='prestacion' data-idprestacion='" + idprestacion + "'  data-iddiente='" + detalleDiente.pieza + "'>" +
-                            "<p style='margin: 0px'>" + objectPresst.descripcion + "</p>" +
-                            "<small title='Diente: " + detalleDiente.pieza + "'>Pieza: &nbsp; " + detalleDiente.pieza + " <i class='fa fa-tooth'></i> <img src='"+$iconDienteGlob+"' width='15px' height='15px' > </small>" +
+                            "<p style='margin: 0px'>" + Servicio.descripcion + "</p>" + pieza +
                         "</td>" +
-                        //subtotal
-                        "<td style='width: 160px' name='subtotalPresst[" + $formatoIndexPrestacion + "].detalle' class='subtotal' >" + objectPresst.valor + "</td>" +
-                        //desc de prestacion
-                        "<td style='width: 160px' name='convenioPresst["+$formatoIndexPrestacion+"].detalle' class='convenioSubtotal'>"+ objectPresst.convenio_valor +"</td>" +
+                        //Precio de paciente del servicio
+                        "<td style='width: 160px' name='precioServicio[" + $formatoIndexPrestacion + "].detalle' class='precioServicio' >" + Servicio.precio_paciente + "</td>" +
                         //cantidad
-                        "<td style='width: 160px'> <input name='cantPresst["+$formatoIndexPrestacion+"].detalle' type='text' class='cantidadPrest input-sm' style='width: 150px;' value='1'> </td> "+
+                        "<td style='width: 160px'> " +
+                            " <input name='cantPresst["+$formatoIndexPrestacion+"].detalle' type='text' class='cantidadPrest input-sm' style='width: 100%;' value='1'> " +
+                        "</td> "+
                         //desc adicional
-                        "<td style='width: 160px'> <input name='descAdicional["+$formatoIndexPrestacion+"].detalle' type='text' class='adicional input-sm' style='width: 150px;'> </td>" +
-                        //total
-                        "<td style='width: 160px' name='totalPrestacion["+$formatoIndexPrestacion+"].detalle' class='totalprestacion'>"+ total +"</td>" +
+                        "<td style='width: 160px'> " +
+                            "<input name='descAdicional["+$formatoIndexPrestacion+"].detalle' type='text' class='adicional input-sm' style='width: 100%' > " +
+                        "</td>" +
+                        //Iva
+                        "<td style='width: 160px' name='iva["+$formatoIndexPrestacion+"].detalle' class='detalle_iva' data-id_iva='"+Servicio.iva+"'></td>" +
+                        //Sub Total
+                        "<td style='width: 160px' name='totalPrestacion["+$formatoIndexPrestacion+"].detalle' class='totalprestacion'></td>" +
                     "</tr>";
-
                 io++;
             }
-
         }
 
         //Se limpia el las piezas activas
         clearModalDetalle('soloActivas');
 
-        $('#detalle-prestacionesPlantram').append(htmlpress);
-
+        $('#detalle-prestacionesPlantram').append(detalle);
         $(".cantidadPrest").maskMoney({precision:0, thousands:'', decimal:'.',allowZero:true,allowNegative:true, defaultZero:true,allowEmpty: true});
-
         $(".adicional").maskMoney({precision:2, thousands:'', decimal:'.',allowZero:true,allowNegative:true, defaultZero:true,allowEmpty: true})
             .keyup(function () {
                 if($(this).val()<=100){
@@ -509,45 +511,33 @@ if($accion == 'addplan')
     //OBTENER UN ARRAY DE LAS PRESTACION A AGREGAR
     function fetch_objectPrestacionDetalle()
     {
+
         var informacionPrestacion = []; //GUARDO LAS PRESTACIONES TEMPORAL
-
         var detencion = '';
-
         if($('#detencionPermanente').is('checked')){
             detencion = 'permanente';
         }
         if($('#detencionTemporal').is('checked')){
             detencion = 'temporal';
         }
+        if( $('.detallePrincipalPrestacion').length > 0 ){
 
-        if( $('.detallePrincipalPrestacion').length > 0 )
-        {
-            for( var i = 0; i <= $formatoIndexPrestacion ; i++ )
-            {
+            for( var i = 0; i <= $formatoIndexPrestacion ; i++ ){
+
                 var rowdet = $('[name="detalleRow[' + i + '].detalle"]');
-
-                if(rowdet.length > 0)
-                {
-
+                if(rowdet.length > 0){
                     var iddiente = 0;
                     var idPrestacion     = $('[name="Prestacion[' + i + '].detalle"]').data('idprestacion');
-                    iddiente        =  $('[name="Prestacion[' + i + '].detalle"]').data('iddiente');
-
-                    var descConv        = $('[name="convenioPresst[' + i + '].detalle"]').text();
-                    var subtotal        = $('[name="subtotalPresst[' + i + '].detalle"]').text();
-
-                    var descAdicional   = $('[name="descAdicional[' + i + '].detalle"]').val();
-                    var cantidad        = $('[name="cantPresst[' + i + '].detalle"]').val();
+                    iddiente             =  $('[name="Prestacion[' + i + '].detalle"]').data('iddiente');
+                    var descConv         = $('[name="convenioPresst[' + i + '].detalle"]').text();
+                    var subtotal         = $('[name="precioServicio[' + i + '].detalle"]').text(); //es precio
+                    var descAdicional    = $('[name="descAdicional[' + i + '].detalle"]').val();
+                    var cantidad         = $('[name="cantPresst[' + i + '].detalle"]').val();
+                    var iva              = $('[name="iva[' + i + '].detalle"]').text();
 
                     //JASON STRING CARAS
                     var Pieza =  rowdet.data('caras');
-
-                    console.log(rowdet.data('caras'));
-
-                    // alert(iddiente);
                     var total = $('[name="totalPrestacion[' + i + '].detalle"]').text();
-
-
 
                     informacionPrestacion.push({
                         'prestacion' : idPrestacion,
@@ -558,40 +548,56 @@ if($accion == 'addplan')
                         'descAdicional': descAdicional ,
                         'cantidad': cantidad ,
                         'total' : total ,
-                        'detencion' : detencion
+                        'detencion'  : detencion,
+                        'iva'  : iva,
                     });
-
                 }
-
             }
-
         }
-
-        console.log(informacionPrestacion.filter(Boolean));
-
+        // console.log(informacionPrestacion.filter(Boolean));
         return informacionPrestacion.filter(Boolean);
 
     }
 
-    //RECALCULAR PRESTACION  -- CUANDO SE ESTA AGREGANDO DETALLES EN LA PRESTACION
-    function recalcularPrestacion(row)
-    {
-        // console.log(row);
-        var padre = row.parents('.detallePrincipalPrestacion');
-        var subtotal = padre.find('.subtotal');
-        var convenioSubtotal = padre.find('.convenioSubtotal');
-        var cantidad = (padre.find('.cantidadPrest').val() == "") ? 0 : padre.find('.cantidadPrest').val();
-        var descuentoAdicional = (padre.find('.adicional').val() == "") ? 0 : padre.find('.adicional').val();
+    //Recalcular prestacion/Servicio
+    function recalcularPrestacion(Element){
 
-        var TOTAL = padre.find('.totalprestacion');
+        var padre               = Element.parents('.detallePrincipalPrestacion');
 
-        var subtotal2 = parseFloat(subtotal.text()) - (( parseFloat(subtotal.text()) * parseFloat(convenioSubtotal.text()) ) / 100) ;
-        var subtotal3 = ( parseFloat(subtotal2) * parseFloat(cantidad) );
-        var subtotal4 = parseFloat(subtotal3) -  ( ( parseFloat(subtotal3) * parseFloat(descuentoAdicional) ) / 100 )
-        var total2 = redondear(subtotal4, 2 , false);
+        if(padre.find('.cantidadPrest')=="")
+            padre.find('.cantidadPrest').val(1).keyup();
+        if(padre.find('.adicional')=="")
+            padre.find('.adicional').val(0).keyup();
 
-        // alert(subtotal4);
-        TOTAL.text(total2);
+        var iva = 0, CalIva=0;
+        var precio = 0;
+        var cantidad = 0;
+        var descuentoAdic = 0;
+        var subTotal  = 0;
+
+        precio          = padre.find(".precioServicio").text();
+        cantidad        = padre.find(".cantidadPrest").val();
+        descuentoAdic   = padre.find(".adicional").val();
+        iva             = padre.find(".detalle_iva").prop('dataset').id_iva||0;
+
+        var CalprecioCant   = parseFloat(precio).toFixed(2) * parseFloat(cantidad||0).toFixed(2);
+        var CalDescuento    = parseFloat(((parseFloat(CalprecioCant).toFixed(2) * parseFloat(descuentoAdic||0).toFixed(2)) / 100)).toFixed(2);
+        var CalSubtotal     = parseFloat(CalprecioCant - CalDescuento).toFixed(2); //precio * cantidad - descuento
+
+
+        if(iva==12){
+            CalIva = parseFloat(CalSubtotal).toFixed(2) * 0.12;
+        }
+        else{
+            CalIva = 0;
+        }
+
+        var Total = parseFloat((CalSubtotal + CalIva)).toFixed(2);
+
+        console.log(Total);
+
+        padre.find(".detalle_iva").text(parseFloat(CalIva).toFixed(2));
+        padre.find(".totalprestacion").text(Total);
 
     }
 
@@ -634,23 +640,31 @@ if($accion == 'addplan')
         var TOTAL_ABONADO = Total_Abonado;
 
         $('#Presu_totalPresu')
+            .find('div')
             .text( parseFloat(TOTAL_TO).toFixed(2) );
 
         $('#Presu_Abonado')
+            .find('div')
             .text( parseFloat(TOTAL_ABONADO).toFixed(2) );
 
         $('#Presu_Realizado')
+            .find('div')
             .text( parseFloat(TOTAL_TO_REALIZADO).toFixed(2) );
 
         $('#Presu_Saldo')
+            .find('div')
             .text( parseFloat(TOTAL_SALDO).toFixed(2) );
 
         $('#saldoPagado')
+            .find('div')
             .text( (parseFloat(TOTAL_SALDO)).toFixed(2) );
+
 
         //se valida si esta pagada o esta abonado
         if( totalPresupuesto == TOTAL_ABONADO) {
             $('#label_abonadoPagado').text('PAGADO');
+        }else{
+            $('#label_abonadoPagado').text('ABONADO');
         }
 
     }
@@ -980,13 +994,6 @@ if($accion == "principal")
         }
     }
 
-    //MOSTRAR PRODUCTOS ANULADOS
-    $('#mostrarAnuladosPlantram').change(function() {
-        listplaneTratamiento();
-    });
-    $('#mostaraFinalizados').change(function() {
-        listplaneTratamiento();
-    });
 }
 
 

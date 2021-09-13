@@ -57,7 +57,7 @@ switch($VISTAS)
         break;
 
 
-    case "pagospaci": #PAGOS DE PACIENTES
+    case "pagospaci":                                                       #PAGOS DE PACIENTES RECAUDACIONES
         $VIEW_GLOB_ADMIN_PACIENTES   = "pagos_principl";                    #view Pagos Principal
         $DIRECTORIO_ADMIN            = "pagos_pacientes";                   #directorio
         $_JS_DOCMENT                 = "indexpagos";                        #doc javascript
@@ -71,11 +71,11 @@ switch($VISTAS)
         $NAME_MODULO                 = "EVOLUCIONES DEL PACIENTE";
         break;
 
-    case "pagrealipricp":                                                    #PAGOS REALIZADOS DEL PACIENTE
-        $VIEW_GLOB_ADMIN_PACIENTES   = "pago_realprincp";                    #view Pagos realizados Principal
+    case "pagos_pacientes":                                                    #PAGOS REALIZADOS DEL PACIENTE
+        $VIEW_GLOB_ADMIN_PACIENTES   = "vista";                               #view Pagos realizados Principal
         $DIRECTORIO_ADMIN            = "pagos_recibidos";                    #directorio
-        $_JS_DOCMENT                 = "pagrealizadprincp";                  #doc javascript
-        $NAME_MODULO                 = "PAGOS REALIZADOS";
+        $_JS_DOCMENT                 = "pagosPacientes";                  #doc javascript
+        $NAME_MODULO                 = "PAGOS DEL PACIENTE";
         break;
 
     case "mail":
