@@ -101,10 +101,8 @@
         *{
             font-family: 'Roboto', sans-serif;
             font-size: small;
-
             /*font-family: 'Baloo Da 2', cursive;*/
         }
-
         /*Filtro Contenedor*/
         #ContenFiltroDocumentos > div > h3 > span {
             font-size: large;

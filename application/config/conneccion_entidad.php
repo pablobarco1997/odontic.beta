@@ -255,7 +255,7 @@ class CONECCION_ENTIDAD{
         if($update){
 
             if($fetch['login_idusers_entity']==""){
-                return "Ocurrio un error de parametros de entrada  code error: ".base64_encode("Update id users: vacio");
+                return "Ocurrio un error de parámetros de entrada  code error: ".base64_encode("Update id users: vacio");
             }
 
             $sql_b  = " UPDATE `tab_login_entity` SET ";
