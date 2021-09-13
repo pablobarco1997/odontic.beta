@@ -20,9 +20,74 @@ $modulo = true;
         </ul>
     </div>
 
-    <div class="form-group col-xs-12 col-md-12 col-lg-12 collapse" id="contentFilter" aria-expanded="true" style="margin-bottom: 0px">
+    <div class="form-group col-xs-12 col-md-12 col-lg-12 collapse contentFilterCajasClinicas" id="contentFilter" aria-expanded="true" style="margin-bottom: 0px">
         <div class="col-md-12 col-xs-12 col-lg-12" style="background-color: #f4f4f4; padding-top: 15px">
-            <div class="form-group col-md-12 col-xs-12 col-lg-12"> <h3 class="no-margin"><span>Filtrar Cuentas Cajas</span></h3> </div>
+            <div class="form-group col-md-12 col-xs-12 col-lg-12"> <h3 class="no-margin"><span>Filtrar Cajas Clinca</span></h3> </div>
+
+            <div class="form-group col-md-4 col-xs-12 col-lg-3">
+                <label for="">Fecha de apertura</label>
+                <div class="input-group form-group rango" style="margin: 0">
+                    <input type="text" class="form-control   date_" readonly="" id="date_apertura_caja" value="" style="font-size: small">
+                    <span class="input-group-addon" style="border-radius: 0"><i class="fa fa-calendar"></i></span>
+                </div>
+            </div>
+
+            <div class="form-group col-md-4 col-xs-12 col-lg-3">
+                <label for="">Fecha de Cierre</label>
+                <div class="input-group form-group rango" style="margin: 0">
+                    <input type="text" class="form-control   date_" readonly="" id="date_cierre_caja" value="" style="font-size: small">
+                    <span class="input-group-addon" style="border-radius: 0"><i class="fa fa-calendar"></i></span>
+                </div>
+            </div>
+
+            <div class="form-group col-md-4 col-xs-12 col-lg-3">
+                <label for="">Usuario</label>
+                <select name="usuario_caja" id="usuario_caja" style="width: 100%" class="form-control">
+                    <option value=""></option>
+                    <?php
+                        $query = "select usuario, rowid, fk_doc from tab_login_users where estado  = 'A' ";
+                        $result_usu_ape_caja = $db->query($query);
+                        if($result_usu_ape_caja){
+                            if($result_usu_ape_caja->rowCount()>0){
+                                $all = $result_usu_ape_caja->fetchAll(PDO::FETCH_ASSOC);
+                                foreach ($all as $value){
+                                    if($value['fk_doc'] != 0){
+                                        $odotc = getnombreDentiste($value['fk_doc']);
+                                        $doct = 'Doctor(a): '.$odotc->nombre_doc.' '.$odotc->apellido_doc;
+                                    }else{
+                                        $doct ="";
+                                    }
+
+                                    $label = 'usuario: '.$value['usuario'] .'&nbsp;'.$doct;
+                                    print '<option value="'.$value['rowid'].'">'.$label.'</option>';
+                                }
+                            }
+                        }
+
+                    ?>
+                </select>
+            </div>
+
+            <div class="form-group col-md-3 col-xs-12 col-lg-3">
+                <label for="">Acumulado</label>
+                <input type="text" class="form-control" id="acumulado_caja">
+            </div>
+
+            <div class="form-group col-md-4 col-xs-12 col-lg-3">
+                <label for="">Estado</label>
+                <select name="estadoCajaClinica" id="estadoCajaClinica" style="width: 100%">
+                    <option value=""></option>
+                    <option value="C">Cerrada</option>
+                    <option value="A">Abierta</option>
+                </select>
+            </div>
+
+            <div class="form-group col-md-12 col-xs-12">
+                <ul class="list-inline pull-right">
+                    <li>  <button class="limpiar btn   btn-block  btn-default" id="limpiarCajasFiltro" style="float: right; padding: 10px"> &nbsp; &nbsp; Limpiar &nbsp; &nbsp;</button> </li>
+                    <li>  <button class="aplicar btn   btn-block  btn-success" id="aplicarCajasFiltro" style="float: right; padding: 10px"> &nbsp;  &nbsp;Aplicar busqueda &nbsp;</button> </li>
+                </ul>
+            </div>
 
         </div>
     </div>
@@ -35,7 +100,7 @@ $modulo = true;
     </div>
 
     <div class="form-group col-xs-12 col-md-12">
-        <button class="aplicar btn  btn-sm btn-success" title="Abrir caja" data-target="#modal_abrir_cajas_clinicas_fn" data-toggle="modal" style="float: right; padding: 5px" > &nbsp;  &nbsp;Abrir Caja &nbsp;</button>
+        <button class="aplicar btn  btn-sm "  title="Abrir caja" data-target="#modal_abrir_cajas_clinicas_fn" data-toggle="modal" style="float: right; padding: 5px" > &nbsp;  &nbsp;<b>Abrir Caja</b> &nbsp;</button>
     </div>
 
     <div class="form-group col-xs-12 col-md-12">
@@ -58,8 +123,8 @@ $modulo = true;
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="modal_abrir_cajas_clinicas_fn" role="dialog" data-backdrop="static">
-        <div class="modal-dialog" style="margin: 2% auto; width: 40%">
+    <div class="modal fade" id="modal_abrir_cajas_clinicas_fn" role="dialog" data-backdrop="static" >
+        <div class="modal-dialog" >
 
             <!-- Modal content-->
             <div class="modal-content">
@@ -74,18 +139,26 @@ $modulo = true;
                             <select name="apertura_abrir_caja_usuario" id="apertura_abrir_caja_usuario" class="form-control" style="width: 100%">
                                 <option></option>
                                 <?php
-                                $query = "select usuario, rowid, fk_doc from tab_login_users where estado  = 'A' ";
-                                $result_usu_ape_caja = $db->query($query);
-                                if($result_usu_ape_caja){
-                                    if($result_usu_ape_caja->rowCount()>0){
-                                        $all = $result_usu_ape_caja->fetchAll(PDO::FETCH_ASSOC);
-                                        foreach ($all as $value){
-                                            $odotc = getnombreDentiste($value['fk_doc']);
-                                            $label = 'usuario: '.$value['usuario'] .'&nbsp;&nbsp;&nbsp;  Doctor(a): '.$odotc->nombre_doc.' '.$odotc->apellido_doc;
-                                            print '<option value="'.$value['rowid'].'">'.$label.'</option>';
+                                    $query = "select usuario, rowid, fk_doc from tab_login_users where estado  = 'A' ";
+                                    $result_usu_ape_caja = $db->query($query);
+                                    if($result_usu_ape_caja){
+                                        if($result_usu_ape_caja->rowCount()>0){
+                                            $all = $result_usu_ape_caja->fetchAll(PDO::FETCH_ASSOC);
+                                            foreach ($all as $value){
+
+
+                                                if($value['fk_doc'] != 0){
+                                                    $odotc = getnombreDentiste($value['fk_doc']);
+                                                    $doct = 'Doctor(a): '.$odotc->nombre_doc.' '.$odotc->apellido_doc;
+                                                }else{
+                                                    $doct ="";
+                                                }
+
+                                                $label = 'usuario: '.$value['usuario'] .'&nbsp; '.$doct;
+                                                print '<option value="'.$value['rowid'].'">'.$label.'</option>';
+                                            }
                                         }
                                     }
-                                }
 
                                 ?>
                             </select>
@@ -106,10 +179,10 @@ $modulo = true;
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-success" id="guardarEditNameCuen" onclick="" > Guardar
+                    <button type="button" class="btn "  style="color: green; font-weight: bold" id="guardarEditNameCuen" onclick="" > Guardar
                         <span class = "fa fa-refresh btnSpinner hide"> </span>
                     </button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal"> cancelar </button>
+<!--                    <button type="button" class="btn btn-default" data-dismiss="modal"> cancelar </button>-->
                 </div>
             </div>
 
@@ -334,94 +407,103 @@ $modulo = true;
         });
     }
 
-    $("#all_Cuenta_de_aperturas").DataTable({
-        searching: false,
-        "ordering":false,
-        "serverSide": true,
-        // responsive: true,
-        // destroy:true,
-        scrollX: false,
-        // scrollY: 500,
-        lengthChange: false,
-        fixedHeader: true,
-        paging:true,
-        processing: true,
-        lengthMenu:[ 10 ],
-        "ajax":{
-            "url":$DOCUMENTO_URL_HTTP + '/application/system/operacion/cajas_clinicas/controller/caja_controller.php',
-            "type":'POST',
-            "data": {
-                'ajaxSend'             : 'ajaxSend',
-                'accion'               : 'list_cajas_abiertas',
-            },
-            "dataType":'json',
-            "complete": function(xhr, status) {
+    function list_cajas_abiertas(){
 
-            }
-        },
-        columnDefs:[
-            {
-                targets:6,
-                render: function (data, type, row) {
+        $("#all_Cuenta_de_aperturas").DataTable({
+            searching: false,
+            "ordering":false,
+            "serverSide": true,
+            // responsive: true,
+            destroy:true,
+            scrollX: false,
+            // scrollY: 500,
+            lengthChange: false,
+            fixedHeader: true,
+            paging:true,
+            processing: true,
+            lengthMenu:[ 10 ],
+            "ajax":{
+                "url":$DOCUMENTO_URL_HTTP + '/application/system/operacion/cajas_clinicas/controller/caja_controller.php',
+                "type":'POST',
+                "data": {
+                    'ajaxSend'   : 'ajaxSend',
+                    'accion'     : 'list_cajas_abiertas',
+                    'apertura'   : $('#date_apertura_caja').val(),
+                    'cierre'     : $('#date_cierre_caja').val(),
+                    'users'      : $('#usuario_caja').val(),
+                    'acumulado'  : $('#acumulado_caja').val(),
+                    'estado'     : $('#estadoCajaClinica').find(":selected").val(),
+                },
+                cache:false,
+                "dataType":'json',
+                "complete": function(xhr, status) {
 
-                    var fetch = $.parseJSON(atob(row['datos']));
-                    // console.log(fetch);
-
-                    var url_detalles_caja = $DOCUMENTO_URL_HTTP+"/application/system/operacion/cajas_clinicas/index.php?view=detalles_cajas&key="+$keyGlobal+"&idcaj="+fetch['rowid'];
-
-                    var menu = "<div class='dropdown pull-right'> ";
-                            menu += "<div class='btn btnhover  btn-xs dropdown-toggle ' type='button' data-toggle='dropdown' aria-expanded='false'> <i class='fa fa-ellipsis-v'></i> </div>";
-                            menu += "<ul class='dropdown-menu'>";
-                                menu += "<li> <a href='"+url_detalles_caja+"' style='cursor: pointer; '>detalles de caja</a> </li>";
-                                menu += "<li> <a href='#'  style='cursor: pointer; ' data-id='"+fetch['rowid']+"' onclick='CerrarCajaAsociada($(this))'>Cerrar Caja</a> </li>";
-                            menu += "</ul>";
-                    menu += "</div>";
-
-                    return menu;
                 }
-            }
-        ],
-        'createdRow': function (row, data, index) {
-
-            $(row).children().eq(0).css('width','89px');
-            $(row).children().eq(1).css('width','354px');
-            $(row).children().eq(2).css('width','192px');
-            $(row).children().eq(3).css('width','164px');
-            $(row).children().eq(4).css('width','151px');
-            $(row).children().eq(5).css('width','133px');
-            $(row).children().eq(6).css('width','50px');
-            // $(row).children().eq(7).css('width','17px');
-
-        },
-        "language": {
-            "sProcessing":     "Procesando...",
-            "sLengthMenu":     "Mostrar _MENU_ registros",
-            "sZeroRecords":    "No se encontraron resultados",
-            "sEmptyTable":     "Ningún dato disponible en esta tabla",
-            "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-            "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
-            "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
-            "sInfoPostFix":    "",
-            "sSearch":         "Buscar:",
-            "sUrl":            "",
-            "sInfoThousands":  ",",
-            "oPaginate": {
-                "sFirst":    "Primero",
-                "sLast":     "Último",
-                "sNext":     "Siguiente",
-                "sPrevious": "Anterior"
             },
-            "oAria": {
-                "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
-                "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+            columnDefs:[
+                {
+                    targets:6,
+                    render: function (data, type, row) {
+
+                        var fetch = $.parseJSON(atob(row['datos']));
+                        // console.log(fetch);
+
+                        var url_detalles_caja = $DOCUMENTO_URL_HTTP+"/application/system/operacion/cajas_clinicas/index.php?view=detalles_cajas&key="+$keyGlobal+"&idcaj="+fetch['rowid'];
+
+                        var menu = "<div class='dropdown pull-right'> ";
+                        menu += "<div class='btn btnhover  btn-xs dropdown-toggle ' type='button' data-toggle='dropdown' aria-expanded='false'> <i class='fa fa-ellipsis-v'></i> </div>";
+                        menu += "<ul class='dropdown-menu'>";
+                        menu += "<li> <a href='"+url_detalles_caja+"' style='cursor: pointer; '>detalles de caja</a> </li>";
+                        menu += "<li> <a href='#'  style='cursor: pointer; ' data-id='"+fetch['rowid']+"' onclick='CerrarCajaAsociada($(this))'>Cerrar Caja</a> </li>";
+                        menu += "</ul>";
+                        menu += "</div>";
+
+                        return menu;
+                    }
+                }
+            ],
+            'createdRow': function (row, data, index) {
+
+                $(row).children().eq(0).css('width','89px');
+                $(row).children().eq(1).css('width','354px');
+                $(row).children().eq(2).css('width','192px');
+                $(row).children().eq(3).css('width','164px');
+                $(row).children().eq(4).css('width','151px');
+                $(row).children().eq(5).css('width','133px');
+                $(row).children().eq(6).css('width','50px');
+                // $(row).children().eq(7).css('width','17px');
+
+            },
+            "language": {
+                "sProcessing":     "Procesando...",
+                "sLengthMenu":     "Mostrar _MENU_ registros",
+                "sZeroRecords":    "No se encontraron resultados",
+                "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix":    "",
+                "sSearch":         "Buscar:",
+                "sUrl":            "",
+                "sInfoThousands":  ",",
+                "oPaginate": {
+                    "sFirst":    "Primero",
+                    "sLast":     "Último",
+                    "sNext":     "Siguiente",
+                    "sPrevious": "Anterior"
+                },
+                "oAria": {
+                    "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                }
+            },
+            "infoCallback": function (settings, start, end, max, total, pre){
+
+                return "Mostrando registros del "+ start +" al "+ end +" de un total de "+total+ " registros.";
             }
-        },
-        "infoCallback": function (settings, start, end, max, total, pre){
 
-            return "Mostrando registros del "+ start +" al "+ end +" de un total de "+total+ " registros.";
-        }
-
-    });
+        });
+    }
 
     //se detecta los cambios al selecionar usuaruioo caja
     $("#apertura_abrir_caja_usuario, #apertura_abrir_cuentas_caja").on('change', form_validar_apertura_caja);
@@ -434,16 +516,110 @@ $modulo = true;
     });
 
 
+    $("#limpiarCajasFiltro").click(function () {
+
+        $(".contentFilterCajasClinicas")
+            .find('input').val(null);
+
+        $(".contentFilterCajasClinicas")
+            .find('select').val(null).trigger('change');
+
+        list_cajas_abiertas();
+        
+    });
+
+
+    $("#aplicarCajasFiltro").click(function () {
+        list_cajas_abiertas();
+    });
+
+
+    $("#date_apertura_caja").change(function () {
+        if($(this).val()!=""){
+            $("#date_cierre_caja").val(null)
+        }
+
+    });
+    $("#date_cierre_caja").change(function () {
+        if($(this).val()!=""){
+            $("#date_apertura_caja").val(null)
+        }
+    });
+
 
     window.onload =  boxloading($boxContentCajasClinicas, true);
 
 
     $(window).on('load', function () {
 
+
         if(!ModulePermission('Cajas Clinicas','consultar')){
             notificacion('Ud. No tiene permiso para Consultar', 'error');
         }
         boxloading($boxContentCajasClinicas, true, 1000);
+
+        $('#usuario_caja').select2({
+            placeholder: 'buscar usuario',
+            allowClear: true,
+            language: languageEs
+        });
+
+        $('#estadoCajaClinica').select2({
+            placeholder: 'Seleccione una opción',
+            allowClear: true,
+            language: languageEs
+        });
+
+        $('.date_').daterangepicker({
+
+            locale: {
+                format: 'YYYY/MM/DD' ,
+                daysOfWeek: [
+                    "Dom",
+                    "Lun",
+                    "Mar",
+                    "Mie",
+                    "Jue",
+                    "Vie",
+                    "Sáb"
+                ],
+                monthNames: [
+                    "Enero",
+                    "Febrero",
+                    "Marzo",
+                    "Abril",
+                    "Mayo",
+                    "Junio",
+                    "Julio",
+                    "Agosto",
+                    "Septiembre",
+                    "Octubre",
+                    "Noviembre",
+                    "Diciembre"
+                ],
+            },
+
+            startDate: moment().startOf('month'),
+            endDate: moment().endOf('month'),
+            ranges: {
+                'Hoy': [moment(), moment()],
+                'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Últimos 7 Dias': [moment().subtract(6, 'days'), moment()],
+                'Últimos 30 Dias': [moment().subtract(29, 'days'), moment()],
+                'Mes Actual': [moment().startOf('month'), moment().endOf('month')],
+                'Mes Pasado': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                'Año Actual': [moment().startOf('year'), moment().endOf('year')],
+                'Año Pasado': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
+            }
+        }).val(null);
+
+        // $('.rango span').click(function() {
+        //     $(this).parent().find('input').click().val(null);
+        // });
+
+        list_cajas_abiertas();
+
+        $("#acumulado_caja").maskMoney({precision:2,thousands:'', decimal:'.',allowZero:true,allowNegative:true, defaultZero:true,allowEmpty: true});
 
     });
 

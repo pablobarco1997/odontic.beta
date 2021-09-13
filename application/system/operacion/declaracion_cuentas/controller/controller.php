@@ -235,7 +235,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             }else{
 
-                $log->log($cuenta_id, $log->error, 'Se actualizo la cuenta '.$nom.' a estado '.$subaccion.' campo de la cuenta', 'tab_ope_declare_cuentas');
+                $log->log($cuenta_id, $log->modificar, 'Se actualizo la cuenta '.$nom.' a estado '.$subaccion.' campo de la cuenta', 'tab_ope_declare_cuentas');
 
             }
 

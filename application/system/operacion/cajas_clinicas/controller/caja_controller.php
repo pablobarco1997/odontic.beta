@@ -97,6 +97,34 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
             else
                 $PermisoConsultar = " 1=1 ";
 
+
+            $users        = GETPOST('users');
+            $apertura     = GETPOST('apertura');
+            $cierre       = GETPOST('cierre');
+            $estado       = GETPOST('estado');
+            $acumulado    = GETPOST('acumulado');
+
+            $where = "";
+
+            if($apertura!=""){
+                $date = explode('-', $apertura);
+                $where .= " and cast(c.date_apertura as date) between '".(date('Y-m-d', strtotime($date[0])))."' and '".(date('Y-m-d', strtotime($date[1])))."' ";
+            }
+            if($cierre!=""){
+                $date = explode('-', $cierre);
+                $where .= " and cast(c.date_cierre as date) between '".(date('Y-m-d', strtotime($date[0])))."' and '".(date('Y-m-d', strtotime($date[1])))."' ";
+            }
+            if($acumulado!=""){
+                $where .= " and (d.saldo_acumulado - g.monto) = '$acumulado' ";
+            }
+            if($users!=""){
+                $where .= " and c.id_user_caja = $users";
+            }
+            if($estado!=""){
+                $where .= " and c.estado = '$estado' ";
+            }
+
+
             $Total          = 0;
             $start          = $_POST["start"];
             $length         = $_POST["length"];
@@ -105,27 +133,35 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
             $estado = GETPOST('estado');
 
             $query  = "SELECT 
-                            c.rowid as id_ope_caja, 
-                            c.rowid, 
-                            concat(dc.n_cuenta, ' ', dc.name_acount) as cuenta, 
-                            dc.to_caja_direccion, 
-                            c.id_caja_cuenta,
-                            c.date_registro,
-                            c.date_apertura,
-                            c.date_cierre,
-                            c.id_user_caja,
-                            us.usuario,
-                            c.saldo_inicial
-                        FROM
-                            tab_ope_cajas_clinicas c
-                            inner join
-                            tab_ope_declare_cuentas dc on dc.rowid = c.id_caja_cuenta
-                            inner join 
-                            tab_login_users us on us.rowid = c.id_user_caja 
-                            where  ".$PermisoConsultar;
-
+                    c.rowid as id_ope_caja, 
+                    c.rowid, 
+                    concat(dc.n_cuenta, ' ', dc.name_acount) as cuenta, 
+                    dc.to_caja_direccion, 
+                    c.id_caja_cuenta,
+                    c.date_registro,
+                    c.date_apertura,
+                    c.date_cierre,
+                    c.id_user_caja,
+                    us.usuario,
+                    c.saldo_inicial, 
+                    g.monto as montoGasto, 
+                    d.saldo_acumulado , 
+                    g.monto as montoGasto, 
+                    (ifnull(d.saldo_acumulado, 0) - ifnull(g.monto, 0)) as total
+                FROM
+                    tab_ope_cajas_clinicas c
+                    left join
+                    (select ifnull(round(sum(g.monto),2), 0) as monto , g.id_ope_caja as id_ope_caja_gst from tab_ope_cajas_det_gastos g where 1=1 group by g.id_ope_caja) as g on g.id_ope_caja_gst = c.rowid
+                    left join
+                    (select ifnull(round(sum(d.amount), 2), 0) as saldo_acumulado, id_ope_caja_cab from tab_ope_cajas_clinicas_det d group by d.id_ope_caja_cab) as d on d.id_ope_caja_cab = c.rowid
+                    inner join
+                    tab_ope_declare_cuentas dc on dc.rowid = c.id_caja_cuenta
+                    inner join 
+                    tab_login_users us on us.rowid = c.id_user_caja 
+                            where  ".$PermisoConsultar." ".$where;
+            $query .= " order by c.rowid desc";
+//            print_r($query); die();
             $Total = $db->query($query)->rowCount();
-
             if($start || $length){
                 $query.=" LIMIT $start,$length;";
             }
@@ -142,11 +178,14 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
                             $to_direccion = ""; 
                         }
 
+                        /*
                         //consultar saldo actual
                         $saldo_actual = 0;
                         $sql = "select round(sum(d.amount), 2) as saldo_acumulado from tab_ope_cajas_clinicas_det d where cast(date_apertura as date) = cast('".date("Y-m-d", strtotime($item["date_apertura"]))."' as date)  and id_ope_caja_cab = ".$item['id_ope_caja']."  ";
                         $resultsald = $db->query($sql);
                         $saldo_acumulado_caja = $resultsald->fetchObject()->saldo_acumulado;
+                        //se resta el saldo de gastos de caja
+                        $saldo_acumulado_caja += (($item['total']) * -1); */
 
                         $list = [];
                         $list[] = $item['usuario'];
@@ -162,7 +201,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
 
 //                        $list[] = round("0.00", 2); //saldo anterior
                         $list[] = number_format($item['saldo_inicial'], 2, '.', '');
-                        $list[] = number_format($saldo_acumulado_caja, 2, '.', '');//acumulado entre el saldo anterior y +  el saldo actual
+                        $list[] = number_format($item['total'], 2, '.', '');//acumulado entre el saldo anterior y +  el saldo actual
                         $list[] = "";
                         $list['datos'] = base64_encode(json_encode($item));
 //                        print_r($item); die();
@@ -192,11 +231,13 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
 
             $Saldo_caja_efectivo = Saldo_caja_efectivo(19, 'Efectivo', $id_ope_caja, $date_apertura);
             $Recaudado_caja      = Saldo_recaudado($id_ope_caja, $date_apertura);
+            $GastosCaja          = Saldo_Gastos($id_ope_caja);
 
 
             $output = [
                 'Saldo_caja_efectivo' => number_format($Saldo_caja_efectivo, 2, '.', ''),
                 'Recaudado_caja' => number_format($Recaudado_caja, 2, '.', ''),
+                'Gastos_caja' => number_format($GastosCaja, 2, '.', ''),
             ];
             echo json_encode($output);
 
@@ -217,6 +258,65 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
             $output = [
                 'draw' => $_POST['draw'],
                 'data' => $respuesta['data'],
+                'recordsTotal'    => $Total,
+                'recordsFiltered' => $Total
+
+            ];
+            echo json_encode($output);
+            break;
+
+        case 'gastos_list_caja':
+
+            $data = array();
+            $id_ope_caja = GETPOST('id_ope_caja');
+            $Total = 0;
+
+            $start          = $_POST["start"];
+            $length         = $_POST["length"];
+
+            $sql = "select 
+                    g.rowid as id_gasto_caja,
+                    g.date_cc , 
+                    gn.nom, 
+                    g.detalle, 
+                    gc.date_facture, 
+                    b.nom as mediop, 
+                    round(g.monto, 2) as monto
+                from tab_ope_cajas_det_gastos g
+                   inner join 
+                   (select gc.rowid, gc.id_nom_gastos, gc.desc, gc.amount, gc.date_facture, gc.estado from tab_ope_gastos_clinicos gc where gc.on_caja_clinica = 1) as gc on gc.rowid = g.id_gasto
+                   inner join
+                   tab_ope_gastos_nom gn on gn.rowid = gc.id_nom_gastos
+                   inner join 
+                   tab_bank_operacion b on b.rowid = g.fk_medio_pago
+                where gc.estado <> 'E' and g.id_ope_caja = $id_ope_caja";
+
+            $Total = $db->query($sql)->rowCount();
+
+            if($start || $length){
+                $sql .= " limit $start,$length ";
+            }
+
+            $result = $db->query($sql);
+            if($result){
+                if($result->rowCount()>0){
+                    $array = $result->fetchAll(PDO::FETCH_ASSOC);
+                    foreach ($array as $item){
+                        $fetch = array();
+                        $fetch[] = date("Y/m/d", strtotime($item['date_cc'])); //emitido
+                        $fetch[] = $item['nom'];
+                        $fetch[] = $item['detalle'];
+                        $fetch[] = date("Y/m/d", strtotime($item['date_facture']));
+                        $fetch[] = $item['mediop'];
+                        $fetch[] = $item['monto'];
+                        $data[] = $fetch;
+                    }
+                }
+            }
+
+            $output = [
+                'draw' => $_POST['draw'],
+                'data' => $data,
                 'recordsTotal'    => $Total,
                 'recordsFiltered' => $Total
 
@@ -281,6 +381,9 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
                         $query_c = "UPDATE tab_ope_cajas_clinicas SET `date_cierre`= now(), estado = 'C' WHERE rowid = '$id_ope_caja';";
                         $resul = $db->query($query_c);
                         if($resul){
+                            $valid=0;
+
+                            //planes de tratamiento
                             $query_a = "UPDATE tab_ope_cajas_clinicas_det SET `date_cierre`= now(), estado = 'C' WHERE id_ope_caja_cab = '$id_ope_caja';";
                             $resul= $db->query($query_a);
                             if(!$resul){
@@ -288,13 +391,25 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
                                 $log->log(0, $log->error, 'Ocurrio un error con la operacion cerrar caja detalles .'.$object_caja->label_caja, 'tab_ope_cajas_clinicas_det', $query_c);
                             }else{
                                 $log->log($id_ope_caja, $log->modificar, "Se actualizo los registros caja detalles .".$object_caja->label_caja." ", 'tab_ope_cajas_clinicas_det');
+                                //se actualiza la tabla gastos Clinicos a estado Generado por que se cerro caja
+                                $sql_ab = "UPDATE tab_ope_gastos_clinicos SET estado='A' WHERE rowid in( (SELECT id_gasto FROM tab_ope_cajas_det_gastos where id_ope_caja = $id_ope_caja) );";
+                                $db->query($sql_ab);
+                                $valid++;
+                            }
 
+                            //gastos Clinicos de caja
+                            $query_a = "UPDATE `tab_ope_cajas_det_gastos` SET `estado`='C' WHERE `rowid`> 0 and id_ope_caja = '$id_ope_caja';";
+                            $resul= $db->query($query_a);
+                            if(!$resul){
+                                $error = "Ocurrio un error con la Operacion consulte con soporte";
+                                $log->log(0, $log->error, 'Ocurrio un error con la operacion cerrar caja detalles .'.$object_caja->label_caja, 'tab_ope_cajas_clinicas_det', $query_c);
+                            }else{
+                                $log->log($id_ope_caja, $log->modificar, "Se actualizo los registros caja detalles .".$object_caja->label_caja." ", 'tab_ope_cajas_det_gastos');
+                                $valid++;
+                            }
+
+                            if($valid > 0){
                                 $die = operacion_cierre_caja($id_ope_caja);
-
-//                                if($die->error!="")
-//                                    $error = $die->error;
-//                                if($die->error!="")
-//                                    $question = $die->question;
                             }
                         }else{
                             $error = "Ocurrio un error con la Operacion consulte con soporte";
@@ -414,7 +529,40 @@ function Saldo_recaudado($id_ope_caja, $date_apertura){
 
 }
 
-function Saldo_caja_efectivo($id, $name, $id_ope_caja, $date_apertura){
+function Saldo_Gastos($id_ope_caja){
+
+    global  $db;
+
+    $sql = "select 
+		round(sum(a.monto), 2) as monto
+from
+	(select * from tab_ope_cajas_det_gastos a) as a
+		left join 
+    (select 
+		g.rowid as gasto_id , g.date_facture , n.nom as categoria , g.estado, g.on_caja_clinica
+	 from 
+		tab_ope_gastos_clinicos g , tab_ope_gastos_nom n where n.rowid = g.id_nom_gastos and g.on_caja_clinica = 1
+    ) as g on g.gasto_id = a.id_gasto
+WHERE 
+   a.id_ope_caja = $id_ope_caja";
+
+    $result = $db->query($sql);
+    if($result){
+        if($result->rowCount()>0){
+            $saldo = $result->fetchObject()->monto;
+            $saldo = (double)$saldo;
+            return $saldo;
+        }else{
+            return "0.00";
+        }
+    }else{
+
+        return "0.00";
+    }
+
+}
+
+function Saldo_caja_efectivo($id_type_pago, $name, $id_ope_caja, $date_apertura){
 
     global $db;
 
@@ -430,7 +578,7 @@ function Saldo_caja_efectivo($id, $name, $id_ope_caja, $date_apertura){
             tab_bank_operacion b on b.rowid = d.fk_tipo_pago
         WHERE
             d.id_ope_caja_cab = $id_ope_caja
-            and b.nom = '$name' and b.rowid = $id
+            and b.nom = '$name' and b.rowid = $id_type_pago
             and cast(d.date_apertura as date)  = '$date_apertura' 
             limit 1";
 //    print_r($query); die();
@@ -590,30 +738,21 @@ function operacion_cierre_caja($id_ope_caja){
             //todo se valida el tipo de operacion que se va a realizar sea un ingreso de plan de tratamiento de pacientes o se un gasto o costo
             $fetch            = $result->fetchObject();
 
-
             if($fetch->estado=='E'){
                 $die_errores->error = 'Operación denegada! Esta caja se encuentra Eliminada';
                 return $die_errores->error;
             }
 
-//            if($fetch->estado=='C'){
-//                $die_errores->error = 'Operación denegada! Esta caja se encuentra Cerrada';
-//                return $die_errores->error;
-//            }
-
-
             //se fetch los datos de la cabezera Operacion cierre de caja ' se realiza todas las transacciones una vez se cierra la caja sea ingreso o egreso'
+            $amount_caja = 0; //monto de caja
             $label            = "Cierre de caja: ".strtoupper($fetch->label_caja);
             $datos['label']   = $label;
             $datos['date_c']  = "now()";
-
             $datos['detalle'] = array();
             $sql_a = "select * from tab_ope_cajas_clinicas_det where id_ope_caja_cab = ".$fetch->id_ope_caja;
             $result_a = $db->query($sql_a);
             if($result_a){
                 if($result_a->rowCount()>0){
-
-                    $amount_caja = 0;
                     while ($fetch_a = $result_a->fetchObject()){
                         $datos['detalle'][] = [
                             'datec'             => "now()",
@@ -626,52 +765,80 @@ function operacion_cierre_caja($id_ope_caja){
                             'tipo_documento'    => 'plan_tratamiento', //tipo de documento y/o modulo que genero esta transaccion
                             'fk_type_payment'   => $fetch_a->fk_tipo_pago, //medio de pago
                             'table'             => 'tab_plan_tratamiento_det', //informacion opcional para saber a que table pertenece el id_documento
-                            'label'             => $fetch_a->label,
+                            'label'             => $fetch_a->label." | ".$fetch->label_caja,
 
                         ];
-                        $amount_caja += (double)$fetch_a->amount;
+                        $amount_caja += (double)$fetch_a->amount; //Monto que saldra de caja
                     }
+                }
+            }
 
-                    //saldo inicial ??
+            $nomCaja = strtoupper($fetch->label_caja);
 
-                    //hay detalles ??
-                    if(count($datos['detalle'])!=0){
-                        //detalle principal
+            //gastos Clinico desde caja en estado Cerrada
+            $sql_b = "select 
+                        g.id_gasto,
+                        gc.fk_medio_pago , 
+                        gc.fk_acount , 
+                        round(g.monto, 2) as monto, 
+                        concat('Gasto Clinico Generado por ".$nomCaja.": Detalle de Gasto | ',' ',g.detalle) as label
+                    from 
+                        tab_ope_cajas_det_gastos g
+                        inner join 
+                        tab_ope_gastos_clinicos gc on gc.rowid = g.id_gasto
+                    where g.estado = 'C' and g.id_ope_caja = ".$fetch->id_ope_caja;
+            $result_b = $db->query($sql_b);
+            if($result_b){
+                if($result_b->rowCount()>0){
+                    while($item = $result_b->fetchObject()){
                         $datos['detalle'][] = [
                             'datec'             => "now()",
-                            'id_cuenta'         => $fetch->id_caja_cuenta,
+                            'id_cuenta'         => $item->fk_acount ,   //cuenta de gasto creada por el usuario
                             'id_user_author'    => $user->id ,
-                            'tipo_mov'          => 2 , //egreso
-                            'amount_ingreso'    => 0 , //monto de ingreso a la cuenta
-                            'amount_egreso'     => $amount_caja ,
-                            'id_documento'      => $id_ope_caja, //id de la tabla
-                            'tipo_documento'    => 'cajas_clinicas', //tipo de documento y/o modulo que genero esta transaccion
-                            'fk_type_payment'   => 3, //tab_bank_operacion id 3  egreso
-                            'table'             => 'tab_ope_cajas_clinicas', //informacion opcional para saber a que table pertenece el id_documento
-                            'label'             => 'Cierre de caja: '.$fetch->label_caja,
+                            'tipo_mov'          => 2 , //gasto
+                            'amount_ingreso'    => $item->monto , //monto de ingreso a la cuenta
+                            'amount_egreso'     => 0 ,
+                            'id_documento'      => $item->id_gasto,
+                            'tipo_documento'    => 'Gastos_Clinico', //tipo de documento y/o modulo que genero esta transaccion
+                            'fk_type_payment'   => $item->fk_medio_pago, //medio de pago
+                            'table'             => 'tab_ope_gastos_clinicos', //informacion opcional para saber a que table pertenece el id_documento
+                            'label'             => $item->label,
+
                         ];
+                        $amount_caja -= ((double)$item->monto); //Monto que saldra de caja
                     }
-
-                    $result_b =  $operacion->diarioClinico($datos);
-                    if($result_b<0){
-                        $die_errores->error = 'Ocurrió un error con la Operación, Consulte con Soporte';
-                        return $die_errores->error;
-                    }
-
-                }else{
-                    $die_errores->question = 'No se encontro detalles en esta caja';
-                    return $die_errores->question;
                 }
-            }else{
+            }
+
+
+            //saldo del egreso
+            if(count($datos['detalle'])!=0){
+                //detalle principal
+                $datos['detalle'][] = [
+                    'datec'             => "now()",
+                    'id_cuenta'         => $fetch->id_caja_cuenta,
+                    'id_user_author'    => $user->id ,
+                    'tipo_mov'          => 2 , //egreso
+                    'amount_ingreso'    => 0 , //monto de ingreso a la cuenta
+                    'amount_egreso'     => $amount_caja ,
+                    'id_documento'      => $id_ope_caja, //id de la tabla
+                    'tipo_documento'    => 'cajas_clinicas', //tipo de documento y/o modulo que genero esta transaccion
+                    'fk_type_payment'   => 3, //tab_bank_operacion id 3  egreso
+                    'table'             => 'tab_ope_cajas_clinicas', //informacion opcional para saber a que table pertenece el id_documento
+                    'label'             => 'Cierre de caja: '.$fetch->label_caja .' '.date("Y/m/d H:m:s"),
+                ];
+            }
+
+
+            //Genera el diario Clinico transaccional
+            $result_b =  $operacion->diarioClinico($datos);
+            if($result_b<0){
                 $die_errores->error = 'Ocurrió un error con la Operación, Consulte con Soporte';
                 return $die_errores->error;
             }
 
-
-
         }
     }
-
     return $die_errores;
 }
 

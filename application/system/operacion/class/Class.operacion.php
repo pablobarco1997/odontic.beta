@@ -10,7 +10,7 @@ class operacion{
     }
 
     //guarda los ingresos de caja
-    public function new_trasaccion_caja($datos, $name_paciente, $plantamiento, $Documento)
+    public function new_trasaccion_caja_tratamiento($datos, $name_paciente, $plantamiento, $Documento)
     {
         global $user, $log;
 
@@ -35,7 +35,7 @@ class operacion{
 
         $name_servicio = $this->db->query("select descripcion as name from tab_conf_prestaciones where rowid = $fk_prestacion_servicio")->fetchObject()->name;
 
-        $label  = "Pago de Paciente: $name_paciente - Plan de tratamiento N.".$datos['n_tratamiento']." - Prestacion de Servicio: ".$name_servicio." - #Documento: ".$Documento;
+        $label  = "Paciente: ".$name_paciente." | Plan de tratamiento N. ".$datos['n_tratamiento']." | Prestacion/Servicio: ".$name_servicio." | Doc.".$Documento;
 
         $query  = "INSERT INTO tab_ope_cajas_clinicas_det(";
         $query .= " `datecc`, ";
@@ -75,17 +75,41 @@ class operacion{
         $query .= " )";
 
         $result = $this->db->query($query);
+
         if(!$result){
             $log->log(0, $log->error, 'Ocurrio un error con el registro. Pago de paciente '.$name_paciente. ' Plan de tratamiento N. '.$plantamiento, 'tab_ope_cajas_clinicas_det', $query);
             return -1;
         }else{
             $id = $this->db->lastInsertId("tab_ope_cajas_clinicas_det");
             $log->log($id, $log->crear, 'Se registro nuevo pago del paciente '.$name_paciente.' del Plan de tratamiento N. '.$plantamiento.' .Prestacion de Servicio '.$name_servicio.'   N.pago '.$fk_pago_cab, 'tab_ope_cajas_clinicas_det');
+            return true;
         }
 
 
     }
 
+    public  function new_trasaccion_caja_gastos($datos){
+
+        global $user, $log;
+
+        $id_ope_caja        = $datos['id_ope_caja'];
+        $id_categoria   = $datos['id_categoria'];
+        $detalle        = $datos['detalle'];
+        $monto          = $datos['monto'];
+        $medio_pago_gastos    = $datos['medio_pago_gastos'];
+        $id_gasto       = $datos['id_gasto'];
+
+        $sql     = "INSERT INTO `tab_ope_cajas_det_gastos`(`id_ope_caja`,`id_categoria`,`detalle`,`monto`,`id_gasto`,`fk_medio_pago`)";
+        $sql    .= " VALUES ($id_ope_caja, $id_categoria, '$detalle', $monto, $id_gasto, $medio_pago_gastos) ";
+        $result  = $this->db->query($sql);
+        if($result){
+            return "";
+        }else{
+            return -1;
+        }
+
+
+    }
 
     //guarda todo tipo de operacion ingreso o egreso de direntes cuentas parecido a un libro diario
     function diarioClinico($datos){
