@@ -156,7 +156,7 @@ class admin_agenda{
         global $log;
 
         $error = '';
-        $descAdicional = !empty($this->tramdet_descadicional) ? $this->tramdet_descadicional : 0.00;
+        $descAdicional = (!empty($this->tramdet_descadicional) ? $this->tramdet_descadicional : 0);
 
         $sql  = "INSERT INTO tab_plan_tratamiento_det  (`fk_plantratam_cab`, `fk_prestacion`, `fk_diente`, `json_caras`, `sub_total`, `desc_convenio`, `desc_adicional`, `total`, `cantidad`, detencion, fk_usuario, fk_laboratorio, precio_u, costo, iva) ";
         $sql .= "VALUES(";
@@ -172,14 +172,15 @@ class admin_agenda{
         $sql .= " '".$this->tramdet_detencion."' ,  "; #detencion permanente - permanente
         $sql .= " ".$this->tramdet_fk_usuario." ,  ";
         $sql .= " ".$idLaboratorio." ,  ";
-        $sql .= " ".$this->tramdet_precio_serv." ,  "; //precio
-        $sql .= " ".$this->tramdet_costo_serv." ,  "; //costo
-        $sql .= " ".$this->tramdet_iva_serv."  "; //iva
+        $sql .= " ".(!empty($this->tramdet_precio_serv)?$this->tramdet_precio_serv:0)." ,  "; //precio
+        $sql .= " ".(!empty($this->tramdet_costo_serv)?$this->tramdet_costo_serv:0)." ,  "; //costo
+        $sql .= " ".(!empty($this->tramdet_iva_serv)?$this->tramdet_iva_serv:0)."  "; //iva
         $sql .= ");";
 
+//        print_r($sql); die();
         $result = $this->db->query($sql);
         if(!$result){
-            $error = 'Ocurrió un error con la Operacion guardar detalle, Consulte con soporte Técnico';
+            $error = 'Ocurrió un error con la Operacion guardar detalle de tratamiento. Consulte con soporte Técnico';
         }else{
             $idlast =  $this->db->lastInsertId("tab_plan_tratamiento_det");
         }

@@ -128,7 +128,7 @@ $('#evolucionDoct').change(function() {
     if($(this).find(':selected').val()!=""){
         $('#msgDoctorerr').text(null);
     }else{
-        $('#msgDoctorerr').text("Seleccione un Doct@r");
+        $('#msgDoctorerr').text("Seleccione un Doctor(a) a cargo");
     }
 });
 
@@ -172,11 +172,10 @@ function UpdateDeletePrestacionAsignada(Element, AuxSatus = '')
 
         // si se puede eliminar
         if( status.data('estadodet') == 'P') {
-            if(!ModulePermission('Planes de Tratamientos', 'modificar')){
-                notificacion('Ud. No tiene permiso para realizar esta Operación', 'error');
-                return false;
-            }
-
+            // if(!ModulePermission('Planes de Tratamientos', 'modificar')){
+            //     notificacion('Ud. No tiene permiso para realizar esta Operación', 'error');
+            //     return false;
+            // }
             $('#modDeletePrestacion').modal('show');
             $('#AceptarDeletePrestacion').attr('onclick', 'DeletePrestacion('+iddetplant+')');
         }
@@ -186,28 +185,38 @@ function UpdateDeletePrestacionAsignada(Element, AuxSatus = '')
     if(AuxSatus!=''){ //cambiar de estados
         if(AuxSatus=='P'){ //cambiar el estado a EN PROCESO
 
-            var url = $DOCUMENTO_URL_HTTP +'/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php';
-            $.get(url, {
-                'ajaxSend':'ajaxSend',
-                'accion':'UpdateStatusPrestacion',
-                'iddetTratm':iddetplant
-            }, function(data) {
-                var respuesta = $.parseJSON(data);
-                if(respuesta['error'] == ''){
-                    fetch_plantratamiento('consultar');//refres
-                    notificacion('Información Actualizada', 'success');
-                }else{
-                    notificacion(respuesta['error'], 'error');
+            var paramtrs = {
+                'ajaxSend'   :'ajaxSend',
+                'accion'     :'UpdateStatusPrestacion',
+                'iddetTratm' :iddetplant
+            };
+
+            $.ajax({
+                url: $DOCUMENTO_URL_HTTP +'/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
+                type:'POST',
+                data: paramtrs,
+                dataType: "json",
+                beforeSend: function () {
+                    boxloading($boxContentViewAdminPaciente ,true);
+                },complete: function (xhr, status) {
+                    boxloading($boxContentViewAdminPaciente ,false, 1000);
+                },success: function (response) {
+                    if(response['error'] == ''){
+                        fetch_plantratamiento('consultar');//refres
+                        notificacion('Información Actualizada', 'success');
+                    }else{
+                        notificacion(response['error'], 'error');
+                    }
                 }
             });
+
         }
     }
 
 }
 
 /**Eliminar prestacion detalle */
-function DeletePrestacion(iddetplant)
-{
+function DeletePrestacion(iddetplant){
 
     $.ajax({
         url: $DOCUMENTO_URL_HTTP +'/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
@@ -221,17 +230,24 @@ function DeletePrestacion(iddetplant)
         },
         dataType: 'json',
         async: false,
-        success: function(resp)
-        {
+        cache: false,
+        beforeSend:function () {
+            boxloading($boxContentViewAdminPaciente ,true);
+        }, complete: function (xhr, status) {
+            boxloading($boxContentViewAdminPaciente ,false, 1000);
+        },success: function(resp){
             if( resp.error == ''){
-
-                notificacion('Información Actualizada', 'success');
                 fetch_plantratamiento('consultar');
                 $('#modDeletePrestacion').modal('hide');
-
+                setTimeout(function () {
+                    notificacion('Información Actualizada', 'success');
+                }, 700);
             }else{
-
-                notificacion(resp.error , 'error');
+                fetch_plantratamiento('consultar');
+                $('#modDeletePrestacion').modal('hide');
+                setTimeout(function () {
+                    notificacion(resp.error , 'error');
+                }, 700);
             }
         }
     });

@@ -1316,12 +1316,22 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
         case 'eliminar_prestacion_plantram':
 
+
+
             $error = '';
             $iddetplant = GETPOST('iddetplantram');
             $idCabplant = GETPOST('idplanCab');
             $idpaciente = GETPOST('idpaciente');
 
-            $sql = "SELECT 
+            if(!PermitsModule('Planes de Tratamientos', 'eliminar')){
+                $permits=false;
+            }else{
+                $permits=true;
+            }
+
+            if($permits){
+
+                $sql = "SELECT 
                         dt.fk_prestacion , 
                         dt.estado_pay , 
                         dt.estadodet , 
@@ -1339,52 +1349,55 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         limit 1 ";
 
 //            print_r($sql); die();
-            $result = $db->query($sql);
-            if($result && $result->rowCount() > 0){
+                $result = $db->query($sql);
+                if($result && $result->rowCount() > 0){
 
-                $obj = $result->fetchObject();
+                    $obj = $result->fetchObject();
 
-                #COMPRUEBO EL ESTADO PAGADO DE LA PRESTACION
-                if( $obj->estado_pay == 'PA'){
-                    $error = 'No puede Eliminar esta prestación <br><b>' .$obj->prestacion .'</b><br> se encuentra <i class="fa fa-dollar"></i> pagada';
-                }
-                #COMPRUEBO EL ESTADO EN ESTA PRESTACION TIENE SALDO   ABONADO
-                if( $obj->estado_pay == 'PS'){
-                    $error = 'No puede Eliminar esta prestación <br><b>' .$obj->prestacion .'</b><br> tiene <i class="fa fa-dollar"></i> saldo asociado comprueba en el modulo de pagos de este plan de tratamiento ';
-                }
-                #SALDO ASOCIADO
-                if( (double)$obj->cancelado_cobro > 0){
-                    $error = 'No puede Eliminar <br> <b> se encuentra saldo asociado '. '<span style="color: green">$ '.$obj->cancelado_cobro.'</span> </b>';
-                }
+                    #COMPRUEBO EL ESTADO PAGADO DE LA PRESTACION
+                    if( $obj->estado_pay == 'PA'){
+                        $error = 'No puede Eliminar esta prestación <br><b>' .$obj->prestacion .'</b><br> se encuentra <i class="fa fa-dollar"></i> pagada';
+                    }
+                    #COMPRUEBO EL ESTADO EN ESTA PRESTACION TIENE SALDO   ABONADO
+                    if( $obj->estado_pay == 'PS'){
+                        $error = 'No puede Eliminar esta prestación <br><b>' .$obj->prestacion .'</b><br> tiene <i class="fa fa-dollar"></i> saldo asociado comprueba en el modulo de pagos de este plan de tratamiento ';
+                    }
+                    #SALDO ASOCIADO
+                    if( (double)$obj->cancelado_cobro > 0){
+                        $error = 'No puede Eliminar <br> <b> se encuentra saldo asociado '. '<span style="color: green">$ '.$obj->cancelado_cobro.'</span> </b>';
+                    }
 
-                #REALIZADA
+                    #REALIZADA
 //                if( $obj->estadodet == 'R'){
 //                    $error = 'No puede Eliminar esta prestación <b>' .$obj->prestacion .'</b> se encuentra Realizada';
 //                }
 
-                if( $error == '' ){
-                    #Estado de pagado estado_pay
-                    #PA ==> PAGADO
-                    #PE ==> PENDIENTE
-                    #PS ==> SALDO ASOCIADO
+                    if( $error == '' ){
+                        #Estado de pagado estado_pay
+                        #PA ==> PAGADO
+                        #PE ==> PENDIENTE
+                        #PS ==> SALDO ASOCIADO
 
-                    #Estado de estadodet
-                    # A PRESTACION ACTIVA
-                    # R PRESTACION REALIZADA
-                    if( ($obj->estadodet == 'A' || $obj->estadodet == 'R' || $obj->estado_pay  == 'PE')  ){
-                         $delete   = "DELETE FROM tab_plan_tratamiento_det WHERE rowid ='$iddetplant' and fk_plantratam_cab = $idCabplant;";
-                         $result_d  = $db->query($delete);
-                         if($result_d){
-                             $prestacionDesc = getnombrePrestacionServicio($obj->fk_prestacion)->descripcion;
-                             $log->log($iddetplant, $log->eliminar, 'Ud. ha eliminado un registros del Plan de Tratamiento N.'.str_pad($idCabplant,6, "0", STR_PAD_LEFT)." | Prestación/Servio: ".$prestacionDesc, 'tab_plan_tratamiento_det');
-                         }
-                    }else{
-                        $error = '<p style="color:  red; font-weight: bolder"> Ocurrió un error no se puede eliminar esta prestación compruebe en que estado se encuentra la prestación. Consulte con Soporte Técnico</p> ';
+                        #Estado de estadodet
+                        # A PRESTACION ACTIVA
+                        # R PRESTACION REALIZADA
+                        if( ($obj->estadodet == 'A' || $obj->estadodet == 'R' || $obj->estado_pay  == 'PE')  ){
+                            $delete   = "DELETE FROM tab_plan_tratamiento_det WHERE rowid ='$iddetplant' and fk_plantratam_cab = $idCabplant;";
+                            $result_d  = $db->query($delete);
+                            if($result_d){
+                                $prestacionDesc = getnombrePrestacionServicio($obj->fk_prestacion)->descripcion;
+                                $log->log($iddetplant, $log->eliminar, 'Ud. ha eliminado un registros del Plan de Tratamiento N.'.str_pad($idCabplant,6, "0", STR_PAD_LEFT)." | Prestación/Servio: ".$prestacionDesc, 'tab_plan_tratamiento_det');
+                            }
+                        }else{
+                            $error = '<p style="color:  red; font-weight: bolder"> Ocurrió un error no se puede eliminar esta prestación compruebe en que estado se encuentra la prestación. Consulte con Soporte Técnico</p> ';
+                        }
                     }
-                }
 
+                }else{
+                    $error = 'Ocurrio un error no se puede Eliminar esta prestacion, Consulte con soporte Tecnico';
+                }
             }else{
-                $error = 'Ocurrio un error no se puede Eliminar esta prestacion, Consulte con soporte Tecnico';
+                $error = "Ud. No tiene permiso para realizar esta Operación";
             }
 
 
@@ -2064,34 +2077,43 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
         #Actualiza la prestaciones  del plan de tratamiento ----------------------
         case 'UpdateStatusPrestacion':
 
+            if(!PermitsModule('Planes de Tratamientos', 'modificar')){
+                $permits=false;
+            }else{
+                $permits=true;
+            }
             $error = '';
             $iddetTratamiento =  GETPOST("iddetTratm");
 
-            $resul = $db->query("SELECT  rowid , fk_plantratam_cab , estadodet FROM tab_plan_tratamiento_det WHERE rowid = ".$iddetTratamiento);
-            if($resul && $resul->rowCount()>0){
+            if($permits){
+                $resul = $db->query("SELECT  rowid , fk_plantratam_cab , estadodet FROM tab_plan_tratamiento_det WHERE rowid = ".$iddetTratamiento);
+                if($resul && $resul->rowCount()>0){
 
-                $objtratmdet = $resul->fetchObject();
+                    $objtratmdet = $resul->fetchObject();
 
-                if($objtratmdet->estadodet=='R'){
-                    $error = 'Ya se encuentra en estado <b>REALIZADO</b>';
-                }
-                if($objtratmdet->estadodet=='P'){
-                    $error = 'Ya se encuentra en estado <b>EN PROCESO</b>';
-                }
-
-                if($objtratmdet->estadodet=='A'){
-
-                    $comment_status = 'Cambio de estado (EN PROCESO) de la Prestación por el Usuario: '.$user->name ;
-                    $result = $db->query("UPDATE `tab_plan_tratamiento_det` SET `estadodet`='P' , `comment_laboratorio_auto` = '".$comment_status."', `date_recepcion_status_tramient`= now()   WHERE `rowid`=".$iddetTratamiento."; ");
-                    if(!$result){
-                        $error = 'Ocurrio un error con la Operación Actualizar Estado';
-                    }else{
-                        $log->log($iddetTratamiento, $log->modificar, 'Se ha actualizado el registro. '.$comment_status, 'tab_plan_tratamiento_det');
+                    if($objtratmdet->estadodet=='R'){
+                        $error = 'Ya se encuentra en estado <b>REALIZADO</b>';
                     }
-                }
+                    if($objtratmdet->estadodet=='P'){
+                        $error = 'Ya se encuentra en estado <b>EN PROCESO</b>';
+                    }
 
+                    if($objtratmdet->estadodet=='A'){
+
+                        $comment_status = 'Cambio de estado (EN PROCESO) de la Prestación por el Usuario: '.$user->name ." | Plan de Tratamiento N.".str_pad($objtratmdet->fk_plantratam_cab, 6, "0", STR_PAD_LEFT);
+                        $result = $db->query("UPDATE `tab_plan_tratamiento_det` SET `estadodet`='P' , `comment_laboratorio_auto` = '".$comment_status."', `date_recepcion_status_tramient`= now()   WHERE `rowid`=".$iddetTratamiento."; ");
+                        if(!$result){
+                            $error = 'Ocurrio un error con la Operación Actualizar Estado';
+                        }else{
+                            $log->log($iddetTratamiento, $log->modificar, 'Se ha actualizado el registro | '.$comment_status, 'tab_plan_tratamiento_det');
+                        }
+                    }
+
+                }else{
+                    $error = 'No se encontro esta Prestacion <small>compruebe la Información</small>  ';
+                }
             }else{
-                $error = 'No se encontro esta Prestacion <small>compruebe la Información</small>  ';
+                $error = 'Ud. No tiene permiso para realizar esta Operación';
             }
 
             $output = [
@@ -2717,7 +2739,7 @@ function realizarPrestacionupdate($datos = array(), $detalle_tratamiento)
 
         }else{
 
-            $comment_status_auto = "Se ha actualizado el registro. Cambio de estado (EN REALIZADO) de la Prestación $detalle_tratamiento->descripcion  por el Usuario: ".$user->name ;
+            $comment_status_auto = "Se ha actualizado el registro | Cambio de estado (EN REALIZADO) de la Prestación $detalle_tratamiento->descripcion  por el Usuario: ".$user->name ." | Plan de Tratamiento N.".str_pad($datos->fk_plantram_cab, 6, "0", STR_PAD_LEFT);
 
             $sqlUpdattramm =  "UPDATE `tab_plan_tratamiento_det` SET";
             $sqlUpdattramm .= "  `estadodet`       = 'R'  ," ;
@@ -2732,7 +2754,7 @@ function realizarPrestacionupdate($datos = array(), $detalle_tratamiento)
             if(!$rsUp){
                 return 'Ocurrion un error con la Operación Evolución';
             }else{
-                $log->log($datos->fk_plantram_det, $log->modificar, "Se ha actualizado el registro. Cambio de estado (EN REALIZADO) de la Prestación $detalle_tratamiento->descripcion  por el Usuario: ".$user->name, 'tab_plan_tratamiento_det');
+                $log->log($datos->fk_plantram_det, $log->modificar, $comment_status_auto, 'tab_plan_tratamiento_det');
             }
         }
 

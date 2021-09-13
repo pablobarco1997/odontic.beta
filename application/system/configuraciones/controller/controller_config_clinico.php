@@ -1087,14 +1087,14 @@ function newCrearServicio($id = "", $datos, $new=false, $mod=false){
     global $db, $user, $log;
 
 
-    $codigo   = $datos['codigo'];
-    $clasi    = $datos['clasi'];
-    $nomb     = $datos['nomb'];
-    $valor    = $datos['valor'];
-    $infoadi  = $datos['infoadi'];
-    $iva      = $datos['iva'];
-    $costo    = $datos['costo'];
-    $laboratorio    = $datos['laboratorio'];
+    $codigo         = $datos['codigo'];
+    $clasi          = ((!empty($datos['clasi'])?$datos['clasi']:0));
+    $nomb           = $datos['nomb'];
+    $valor          = $datos['valor'];
+    $infoadi        = $datos['infoadi'];
+    $iva            = $datos['iva'];
+    $costo          = $datos['costo'];
+    $laboratorio    = (!empty($datos['laboratorio'])?$datos['laboratorio']:0);
 
     if($new==true){
         $array = array($codigo , $nomb,  $user->id, 0,$clasi, $laboratorio, $valor, $costo, $valor, date("Y-m-d H:m:s"), 'A', $infoadi, $iva);
