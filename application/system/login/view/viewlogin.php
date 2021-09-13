@@ -9,16 +9,19 @@
 <style>
     *{
         font-family: 'Roboto', sans-serif;
-        font-size: small;
+        /*font-size: small;*/
     }
-   
+
+    input{
+        font-family: 'Roboto', sans-serif;
+    }
 </style>
 
 <div class="container">
 
     <div class="login-content">
         <div class="form">
-            <img src="img/logo.odontic.svg" style="width: 150px ;height: 150px; margin-right: 30px">
+            <img src="img/logo.odontic.svg" style="margin-right: 30px">
             <h2 class="title" >
                 <span class="title" style="color: #0866a5; font-size: 5rem; font-family: Cambria; display: inline-block; font-weight: bold">ODO</span>
                 <span class="title" style="color: #3fa9f5; font-size: 5rem; font-family: Cambria; display: inline-block; font-weight: bold">NTIC</span>
@@ -29,8 +32,8 @@
                     <i class="fa fa-2x fa-user"></i>
                 </div>
                 <div class="div">
-                    <h5 style="font-weight: bold">usuario</h5>
-                    <input type="text" class="input" style="font-size: 1.4rem" id="usu" required>
+<!--                    <h5>usuario</h5>-->
+                    <input type="text" class="input" placeholder="Usuario" style="font-size: 1.4rem" id="usu" required>
                 </div>
             </div>
             <div class="input-div pass">
@@ -38,8 +41,8 @@
                     <i class="fa fa-2x fa-lock"></i>
                 </div>
                 <div class="div">
-                    <h5 style="font-weight: bold">Password</h5>
-                    <input type="password" class="input"  style="font-size: 1.4rem" id="pass" required>
+<!--                    <h5 >Password</h5 >-->
+                    <input type="password" class="input" placeholder="Password" style="font-size: 1.4rem" id="pass" required>
                 </div>
             </div>
             <a href="#" class="" style="margin: 15px 5px 0px 0px; font-size: 1.5rem">¿Olvidó su contraseña?</a>

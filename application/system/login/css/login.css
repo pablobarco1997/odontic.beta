@@ -95,7 +95,7 @@ body{
     top: 30%;
     transform: translateY(-50%);
     color: #999;
-    font-size: 18px;
+    font-size: 15px;
     transition: .3s;
 }
 
@@ -123,7 +123,7 @@ body{
 
 .input-div.focus > div > h5{
     top: -5px;
-    font-size: 15px;
+    font-size: 18px;
 }
 
 .input-div.focus > .i > i{
@@ -139,10 +139,9 @@ body{
     border: none;
     outline: none;
     background: none;
-    padding: 0.5rem 0.7rem;
-    font-size: 1.2rem;
+    padding: 0.6rem 0.7rem;
+    font-size: 1.3rem;
     color: #555;
-    font-family: 'poppins', sans-serif;
 }
 
 .input-div.pass{
@@ -227,7 +226,7 @@ a:hover{
 
 @media screen and (max-width: 900px){
     .form{
-        width: 300px;
+        width: 400px;
     }
 
     .container{
@@ -235,7 +234,8 @@ a:hover{
     }
 
     .img{
-        display: none;
+        width: 100px;
+        height: 100px;
     }
 
     .wave{
