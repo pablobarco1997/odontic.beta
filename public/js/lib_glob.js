@@ -735,7 +735,7 @@ function  boxTableLoad(Element = false, load=false) {
     }
 }
 
-var ModulePermission = function(idModule = "", actionPermiso = ""){
+var ModulePermission = function(idModule = "", actionPermiso = "", CargarLoad = false){
 
     var Permiso = false;
 
@@ -755,6 +755,15 @@ var ModulePermission = function(idModule = "", actionPermiso = ""){
         contentType:false ,
         async:false,
         cache:false,
+        beforeSend: function(){
+            if(CargarLoad!=false){
+                CargarLoad.onload();
+            }
+        },complete: function(xhr, status){
+            if(CargarLoad!=false){
+                CargarLoad.offload();
+            }
+        },
         success:function(resp) {
             Permiso = resp['valid'];
             if(resp['valid']=='')

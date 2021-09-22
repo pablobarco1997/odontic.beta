@@ -301,6 +301,9 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 $result = $db->query($sql);
                 if(!$result){
                     $error = 'Ocurrio un error no se pudo asociar la cita a este plan de tratamiento';
+                }else{
+                    $id = $db->lastInsertId("tab_plan_asoc_tramt_citas");
+                    $log->log($id, $log->crear, 'Se ha creado un registro | Se asociado la  Cita N.'.$idcita.' a un Plan de Tratamiento: N. '.str_pad($idplantramAsociarCita, 6,"0", STR_PAD_LEFT), "tab_plan_asoc_tramt_citas");
                 }
 
                 /*$sqlP = "UPDATE `tab_plan_tratamiento_cab` SET `fk_doc`= $iddoctor, `fk_cita`= $idcita WHERE `rowid`= $idplantramAsociarCita;";

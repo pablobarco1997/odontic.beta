@@ -149,25 +149,27 @@ class operacion{
             $sql .= " `tipo_documento`,";
             $sql .= " `fk_type_payment`,";
             $sql .= " `table`, ";
-            $sql .= " `label`) ";
+            $sql .= " `label` , ";
+            $sql .= " `value` ) ";
             $sql .= " VALUES ";
 
             $inserts = array();
-            foreach ($detalle as $k => $value){
+            foreach ($detalle as $k => $item){
 
-                $datec              = $value['datec'];
-                $id_cuenta          = $value['id_cuenta'];
-                $id_user_author     = $value['id_user_author'];
-                $tipo_mov           = $value['tipo_mov'];
-                $amount_ingreso     = $value['amount_ingreso'];
-                $amount_egreso      = $value['amount_egreso'];
-                $id_documento       = $value['id_documento'];
-                $tipo_documento     = $value['tipo_documento'];
-                $fk_type_payment    = $value['fk_type_payment'];
-                $table              = $value['table'];
-                $label              = $value['label'];
+                $datec              = $item['datec'];
+                $id_cuenta          = $item['id_cuenta'];
+                $id_user_author     = $item['id_user_author'];
+                $tipo_mov           = $item['tipo_mov'];
+                $amount_ingreso     = $item['amount_ingreso'];
+                $amount_egreso      = $item['amount_egreso'];
+                $id_documento       = $item['id_documento'];
+                $tipo_documento     = $item['tipo_documento'];
+                $fk_type_payment    = $item['fk_type_payment'];
+                $table              = $item['table'];
+                $label              = $item['label'];
+                $value              = (!empty($item['value'])?$item['value']:0);
 
-                $insert = "($id_last,$datec,$id_cuenta, $id_user_author,$tipo_mov,$amount_ingreso,$amount_egreso,$id_documento,'$tipo_documento',$fk_type_payment,'$table','$label')";
+                $insert = "($id_last,$datec,$id_cuenta, $id_user_author,$tipo_mov,$amount_ingreso,$amount_egreso,$id_documento,'$tipo_documento',$fk_type_payment,'$table','$label',$value)";
                 $inserts[] = $insert;
             }
 

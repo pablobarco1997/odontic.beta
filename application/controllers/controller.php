@@ -206,7 +206,7 @@ function getnombrePaciente($id=''){
 
     $objeto = array();
 
-    $sql = "SELECT * FROM tab_admin_pacientes WHERE rowid = $id";
+    $sql = "SELECT * , concat(nombre, ' ', apellido) as nom FROM tab_admin_pacientes WHERE rowid = $id";
     $rs = $db->query($sql);
 
     if($rs->rowCount()>0)
@@ -237,6 +237,43 @@ function getnombrePrestacionServicio($id=''){
 
     return $objeto;
 }
+
+function getnombreCuenta($id=''){
+    global $db, $conf;
+
+    $objeto = array();
+
+    $sql = "SELECT *, concat(n_cuenta,' ',name_acount) as nom FROM tab_ope_declare_cuentas WHERE rowid = $id";
+    $rs = $db->query($sql);
+
+    if($rs->rowCount()>0)
+    {
+        while ($ob = $rs->fetchObject()){
+            $objeto = $ob;
+        }
+    }
+
+    return $objeto;
+}
+
+function getnombreEstadoCita($id=''){
+    global $db, $conf;
+
+    $objeto = array();
+
+    $sql = "SELECT *, text as nom FROM tab_pacientes_estado_citas WHERE rowid = $id";
+    $rs = $db->query($sql);
+
+    if($rs->rowCount()>0)
+    {
+        while ($ob = $rs->fetchObject()){
+            $objeto = $ob;
+        }
+    }
+
+    return $objeto;
+}
+
 
 #OBTENER LA FECHA EN ESPAÑOL
 function GET_DATE_SPANISH($fecha)
@@ -789,11 +826,11 @@ function ConsultarCajaUsers($id_users=0){
                 $err_caja['caja'] = $value;
             }
             if($value['estado'] == 'C'){
-                $err_caja['error'] = 'Caja Cerrada';
+                $err_caja['error'] = 'Caja Clinica Cerrada';
             }
         }
     }else{
-        $err_caja['error'] = 'Este usuario no está asociado a ninguna caja';
+        $err_caja['error'] = 'Este usuario no está asociado a ninguna Caja Clinica';
     }
 
     return $err_caja;

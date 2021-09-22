@@ -149,16 +149,7 @@ if( $('#nuevoGuardarCitas').length > 0){
 }
 
 function Notify_odontic(solo_numero_noti = false, tiempoReal=false) {
-
-
-
     if(solo_numero_noti==1){
-
-        // const Object = {
-        //     accion:'n_notify',
-        //     ajaxSend:'ajaxSend'
-        // };
-
         var numeroNotify = (parseFloat(($('#N_noti').text()=="")?0:$('#N_noti').text()));
         $.ajax({
             url:url,
@@ -177,27 +168,6 @@ function Notify_odontic(solo_numero_noti = false, tiempoReal=false) {
                 }
             }
         });
-
-        /*
-        var historial = fetch(url+'?ajaxSend=ajaxSend&accion=notification_&subaccion=noti_numero'+'&numero_notify='+(parseFloat(($('#N_noti').text()=="")?0:$('#N_noti').text())), {
-            method: 'POST',
-            body:JSON.stringify(Object),
-            headers:{
-                "Content-type" : "application/json; charset-UTF-8"
-            }
-        })
-        .then(reponse  => reponse.json())
-        .then(response => {
-
-            $('#N_noti').text(response.n_notify.result);
-            if(response.notificacion_push > 0){
-                //alert notificacion
-                if($("#swal2-container").length == 0){
-                    notificacion('Tiene notificaciones Pendientes', 'question');
-                }
-            }
-        }); */
-
         return true;
     }
 
@@ -209,7 +179,6 @@ function Notify_odontic(solo_numero_noti = false, tiempoReal=false) {
         'accion'    : 'notification_',
         'validTime' : (tiempoReal==true)?1:0,
     };
-
     $.ajax({
         url: url,
         type:'POST',

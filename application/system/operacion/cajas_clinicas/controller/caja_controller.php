@@ -151,9 +151,9 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
                 FROM
                     tab_ope_cajas_clinicas c
                     left join
-                    (select ifnull(round(sum(g.monto),2), 0) as monto , g.id_ope_caja as id_ope_caja_gst from tab_ope_cajas_det_gastos g where 1=1 group by g.id_ope_caja) as g on g.id_ope_caja_gst = c.rowid
+                    (select ifnull(round(sum(g.monto),2), 0) as monto , g.id_ope_caja as id_ope_caja_gst from tab_ope_cajas_det_gastos g where 1=1 and g.estado <> 'E' group by g.id_ope_caja) as g on g.id_ope_caja_gst = c.rowid
                     left join
-                    (select ifnull(round(sum(d.amount), 2), 0) as saldo_acumulado, id_ope_caja_cab from tab_ope_cajas_clinicas_det d group by d.id_ope_caja_cab) as d on d.id_ope_caja_cab = c.rowid
+                    (select ifnull(round(sum(d.amount), 2), 0) as saldo_acumulado, id_ope_caja_cab from tab_ope_cajas_clinicas_det d where d.estado <> 'E' group by d.id_ope_caja_cab) as d on d.id_ope_caja_cab = c.rowid
                     inner join
                     tab_ope_declare_cuentas dc on dc.rowid = c.id_caja_cuenta
                     inner join 
@@ -390,22 +390,27 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
                                 $error = "Ocurrio un error con la Operacion consulte con soporte";
                                 $log->log(0, $log->error, 'Ocurrio un error con la operacion cerrar caja detalles .'.$object_caja->label_caja, 'tab_ope_cajas_clinicas_det', $query_c);
                             }else{
-                                $log->log($id_ope_caja, $log->modificar, "Se actualizo los registros caja detalles .".$object_caja->label_caja." ", 'tab_ope_cajas_clinicas_det');
+
+                                $log->log($id_ope_caja, $log->modificar, "Se actualizo los registros caja detalles Planes de Tratamientos | ".$object_caja->label_caja." ", 'tab_ope_cajas_clinicas_det');
+
+                                //Gastos Clinicos
                                 //se actualiza la tabla gastos Clinicos a estado Generado por que se cerro caja
-                                $sql_ab = "UPDATE tab_ope_gastos_clinicos SET estado='A' WHERE rowid in( (SELECT id_gasto FROM tab_ope_cajas_det_gastos where id_ope_caja = $id_ope_caja) );";
+                                //se valida si el gasto se encuentra anulado no se actualiza a estado GENERADO
+                                $sql_ab = "UPDATE tab_ope_gastos_clinicos SET estado='A' WHERE rowid in( (SELECT id_gasto FROM tab_ope_cajas_det_gastos where estado <> 'E' and id_ope_caja = $id_ope_caja) );";
                                 $db->query($sql_ab);
                                 $valid++;
-                            }
 
-                            //gastos Clinicos de caja
-                            $query_a = "UPDATE `tab_ope_cajas_det_gastos` SET `estado`='C' WHERE `rowid`> 0 and id_ope_caja = '$id_ope_caja';";
-                            $resul= $db->query($query_a);
-                            if(!$resul){
-                                $error = "Ocurrio un error con la Operacion consulte con soporte";
-                                $log->log(0, $log->error, 'Ocurrio un error con la operacion cerrar caja detalles .'.$object_caja->label_caja, 'tab_ope_cajas_clinicas_det', $query_c);
-                            }else{
-                                $log->log($id_ope_caja, $log->modificar, "Se actualizo los registros caja detalles .".$object_caja->label_caja." ", 'tab_ope_cajas_det_gastos');
-                                $valid++;
+                                //Si el gasto se encuentra anulado no se realiza ninguna operacion
+                                //gastos Clinicos de caja
+                                $query_a = "UPDATE `tab_ope_cajas_det_gastos` SET `estado`='C' WHERE `rowid`> 0 and id_ope_caja = $id_ope_caja and estado <> 'E' ;";
+                                $resul= $db->query($query_a);
+                                if(!$resul){
+                                    $error = "Ocurrio un error con la Operacion consulte con soporte";
+                                    $log->log(0, $log->error, 'Ocurrio un error con la operacion cerrar caja detalles .'.$object_caja->label_caja, 'tab_ope_cajas_clinicas_det', $query_c);
+                                }else{
+                                    $log->log($id_ope_caja, $log->modificar, "Se actualizo los registros caja detalles Gastos |".$object_caja->label_caja." ", 'tab_ope_cajas_det_gastos');
+                                    $valid++;
+                                }
                             }
 
                             if($valid > 0){
@@ -544,7 +549,8 @@ from
 		tab_ope_gastos_clinicos g , tab_ope_gastos_nom n where n.rowid = g.id_nom_gastos and g.on_caja_clinica = 1
     ) as g on g.gasto_id = a.id_gasto
 WHERE 
-   a.id_ope_caja = $id_ope_caja";
+   a.id_ope_caja = $id_ope_caja
+   and a.estado <> 'E' ";
 
     $result = $db->query($sql);
     if($result){
@@ -654,15 +660,15 @@ function list_transaccion_caja_tratamientos($id_ope_caja, $date_apertura){
             $resultado = $result->fetchAll(PDO::FETCH_ASSOC);
             foreach ($resultado as $k => $value){
 
-                if($value['edit_name_tratamiento'] != "")
-                    $edit_name_trataminto  = "<span class='text-sm' style='display: block'>".$value['edit_name_tratamiento']."</span>";
-                else
-                    $edit_name_trataminto  = "";
+//                if($value['edit_name_tratamiento'] != "")
+//                    $edit_name_trataminto  = "<span class='text-sm' style='display: block'>".$value['edit_name_tratamiento']."</span>";
+//                else
+//                    $edit_name_trataminto  = "";
 
                 $row = [];
-                $row[]  = date("Y/m/d", strtotime($value['date_emitido_cobro']))."<small style='display: block; color: #337ab7' >Documento #: ".$value['n_fact_boleta']."</small>";
+                $row[]  = date("Y/m/d", strtotime($value['date_emitido_cobro']));
                 $row[]  = $value['paciente'];
-                $row[]  = $value['n_tratamiento'];
+                $row[]  = $value['n_tratamiento']."<small style='display: block; color: #337ab7' >Doc. #: ".$value['n_fact_boleta']."</small>";
                 $row[]  = $value['prestacion_servicio'];
                 $row[]  = $value['medio_pago'];
                 $row[]  = number_format($value['amount'], 2,'.','');
@@ -700,13 +706,13 @@ function operacion_cierre_caja($id_ope_caja){
     $cons_cuenta_system = $db->query("select rowid as id_cuenta from tab_ope_declare_cuentas where codigo = 'UFJFU1RBQ0lPTl9ERV9TRVJWSUNJT1M=' ");
     if($cons_cuenta_system){
         if($cons_cuenta_system->rowCount()==0){
-            $die_errores->error = "Cuenta principal no detectada, Consulte con soporte";
+            $die_errores->error = "Cuenta principal no detectada. Consulte con soporte";
             return $die_errores->error;
         }else{
             $id_cuenta_principal = $cons_cuenta_system->fetchObject()->id_cuenta;
         }
     }else{
-        $die_errores->error = "Cuenta principal no detectada, Consulte con soporte";
+        $die_errores->error = "Cuenta principal no detectada. Consulte con soporte";
         return $die_errores->error;
     }
 
@@ -749,12 +755,17 @@ function operacion_cierre_caja($id_ope_caja){
             $datos['label']   = $label;
             $datos['date_c']  = "now()";
             $datos['detalle'] = array();
+
+
+
+
+            //Plan de tratamiento
             $sql_a = "select * from tab_ope_cajas_clinicas_det where id_ope_caja_cab = ".$fetch->id_ope_caja;
             $result_a = $db->query($sql_a);
             if($result_a){
                 if($result_a->rowCount()>0){
                     while ($fetch_a = $result_a->fetchObject()){
-                        $datos['detalle'][] = [
+                        /*$datos['detalle'][] = [
                             'datec'             => "now()",
                             'id_cuenta'         => $id_cuenta_principal,   //cuenta del systema
                             'id_user_author'    => $user->id ,
@@ -767,8 +778,8 @@ function operacion_cierre_caja($id_ope_caja){
                             'table'             => 'tab_plan_tratamiento_det', //informacion opcional para saber a que table pertenece el id_documento
                             'label'             => $fetch_a->label." | ".$fetch->label_caja,
 
-                        ];
-                        $amount_caja += (double)$fetch_a->amount; //Monto que saldra de caja
+                        ];*/
+                        $amount_caja += (double)$fetch_a->amount; //Monto que saldra de caja cobros de plan de tratamiento
                     }
                 }
             }
@@ -781,12 +792,14 @@ function operacion_cierre_caja($id_ope_caja){
                         gc.fk_medio_pago , 
                         gc.fk_acount , 
                         round(g.monto, 2) as monto, 
-                        concat('Gasto Clinico Generado por ".$nomCaja.": Detalle de Gasto | ',' ',g.detalle) as label
+						concat('Gasto Clinico Generado por ".$nomCaja." | Detalle de Gasto ',gc.desc,' | ',' ',n.nom	) as label
                     from 
                         tab_ope_cajas_det_gastos g
-                        inner join 
+                            inner join 
                         tab_ope_gastos_clinicos gc on gc.rowid = g.id_gasto
-                    where g.estado = 'C' and g.id_ope_caja = ".$fetch->id_ope_caja;
+                            inner join 
+                        tab_ope_gastos_nom n on n.rowid = gc.id_nom_gastos
+                    where g.estado = 'C' and g.id_ope_caja = ".$fetch->id_ope_caja."";
             $result_b = $db->query($sql_b);
             if($result_b){
                 if($result_b->rowCount()>0){
@@ -795,16 +808,17 @@ function operacion_cierre_caja($id_ope_caja){
                             'datec'             => "now()",
                             'id_cuenta'         => $item->fk_acount ,   //cuenta de gasto creada por el usuario
                             'id_user_author'    => $user->id ,
-                            'tipo_mov'          => 2 , //gasto
-                            'amount_ingreso'    => $item->monto , //monto de ingreso a la cuenta
+                            'tipo_mov'          => 1 , //ingreso a la cuenta de gastos
+                            'amount_ingreso'    => $item->monto , //monto de ingreso a la cuenta de gastos
                             'amount_egreso'     => 0 ,
+                            'value'             => $item->monto,
                             'id_documento'      => $item->id_gasto,
                             'tipo_documento'    => 'Gastos_Clinico', //tipo de documento y/o modulo que genero esta transaccion
                             'fk_type_payment'   => $item->fk_medio_pago, //medio de pago
                             'table'             => 'tab_ope_gastos_clinicos', //informacion opcional para saber a que table pertenece el id_documento
                             'label'             => $item->label,
-
                         ];
+
                         $amount_caja -= ((double)$item->monto); //Monto que saldra de caja
                     }
                 }
@@ -813,21 +827,23 @@ function operacion_cierre_caja($id_ope_caja){
 
             //saldo del egreso
             if(count($datos['detalle'])!=0){
-                //detalle principal
-                $datos['detalle'][] = [
-                    'datec'             => "now()",
-                    'id_cuenta'         => $fetch->id_caja_cuenta,
-                    'id_user_author'    => $user->id ,
-                    'tipo_mov'          => 2 , //egreso
-                    'amount_ingreso'    => 0 , //monto de ingreso a la cuenta
-                    'amount_egreso'     => $amount_caja ,
-                    'id_documento'      => $id_ope_caja, //id de la tabla
-                    'tipo_documento'    => 'cajas_clinicas', //tipo de documento y/o modulo que genero esta transaccion
-                    'fk_type_payment'   => 3, //tab_bank_operacion id 3  egreso
-                    'table'             => 'tab_ope_cajas_clinicas', //informacion opcional para saber a que table pertenece el id_documento
-                    'label'             => 'Cierre de caja: '.$fetch->label_caja .' '.date("Y/m/d H:m:s"),
-                ];
             }
+
+            //detalle principal
+            $datos['detalle'][] = [
+                'datec'             => "now()",
+                'id_cuenta'         => $fetch->id_caja_cuenta,
+                'id_user_author'    => $user->id ,
+                'tipo_mov'          => 2 , //egreso
+                'amount_ingreso'    => 0 , //monto de ingreso a la cuenta
+                'amount_egreso'     => $amount_caja ,
+                'id_documento'      => $id_ope_caja, //id de la tabla
+                'value'             => ($amount_caja * -1),
+                'tipo_documento'    => 'cajas_clinicas', //tipo de documento y/o modulo que genero esta transaccion
+                'fk_type_payment'   => 3, //tab_bank_operacion id 3  egreso
+                'table'             => 'tab_ope_cajas_clinicas', //informacion opcional para saber a que table pertenece el id_documento
+                'label'             => 'Cierre de caja: '.$fetch->label_caja .' '.date("Y/m/d H:m:s"),
+            ];
 
 
             //Genera el diario Clinico transaccional

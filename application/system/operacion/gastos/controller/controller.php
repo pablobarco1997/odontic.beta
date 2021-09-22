@@ -161,6 +161,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $datos['monto_gastos']      = GETPOST('monto_gastos');
             $datos['medio_pago_gastos'] = GETPOST('medio_pago_gastos');
             $datos['fk_acount']         = GETPOST('fk_acount');
+            $datos['otras_accion']      = GETPOST('otra_accion');
 
 
             if ($id==""){ //nuevo
@@ -369,14 +370,16 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                             //no puede anular el gasto si mi fecha actual es menor o igual a la de pago
                             $date_payment = date("Y-m-d", strtotime($object->date_payent));
 
-                            if( date("Y-m-d", strtotime($object->date_payent)) >= date("Y-m-d") ){
-                                $result_c = $db->query("UPDATE `tab_ope_gastos_clinicos` SET `estado`='E' WHERE `rowid`='$id_gasto';");
-                                if($result_c){
-                                    $log->log($id_gasto, $log->eliminar, 'Se ha anulado un registro desde Modulo de Gastos Clinicos. ( Gasto Clinico id b64: ' .base64_encode($id_gasto).' )', 'tab_ope_cajas_det_gastos');
-                                }
-                            }else{
-                                $error = "No puede anular el gasto. La fecha actual no puede ser mayor a la de pago ";
-                            }
+//                            if( date("Y-m-d", strtotime($object->date_payent)) >= date("Y-m-d") ){
+//                                $result_c = $db->query("UPDATE `tab_ope_gastos_clinicos` SET `estado`='E' WHERE `rowid`='$id_gasto';");
+//                                if($result_c){
+//                                    $log->log($id_gasto, $log->eliminar, 'Se ha anulado un registro desde Modulo de Gastos Clinicos. ( Gasto Clinico id b64: ' .base64_encode($id_gasto).' )', 'tab_ope_cajas_det_gastos');
+//                                }
+//                            }else{
+//                                $error = "No puede anular el gasto. La fecha actual no puede ser mayor a la de pago ";
+//                            }
+
+                            $result_c = $db->query("UPDATE `tab_ope_gastos_clinicos` SET `estado`='E' WHERE `rowid`='$id_gasto';");
 
                         }
 
@@ -409,6 +412,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             //no puede generar un gasto si el gasto proviene de una caja
             //no puede generar el gasto si mi fecha actual es menor o igual a la de pago
 
+            $error = "";
             $id = GETPOST('id');
             $result = $db->query("select * from tab_ope_gastos_clinicos where rowid = $id");
             if($result){
@@ -423,25 +427,24 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                         //mi fecha de pago es meyor o == a la actual
                         if( date("Y-m-d", strtotime($object->date_payent)) >= date("Y-m-d") ){
-                            $result_c = $db->query("UPDATE `tab_ope_gastos_clinicos` SET `estado`='E' WHERE `rowid`='$id_gasto';");
+                            //se Genera el Gasto
+                            $result_c = $db->query("UPDATE `tab_ope_gastos_clinicos` SET `estado`='A' WHERE `rowid`='$id_gasto';");
                             if($result_c){
-                                $log->log($id_gasto, $log->eliminar, 'Se ha anulado un registro desde Modulo de Gastos Clinicos. ( Gasto Clinico id b64: ' .base64_encode($id_gasto).' )', 'tab_ope_cajas_det_gastos');
+                                $log->log($id_gasto, $log->eliminar, 'Se ha Generado un Gasto registro desde Modulo de Gastos Clinicos. ( Gasto Clinico id b64: ' .base64_encode($id_gasto).' ) | Detalle: '.$object->desc, 'tab_ope_cajas_det_gastos');
 
-
-
+                                GenerarGastoDirecto(array(),  $id_gasto);
                             }
                         }else{
-                            $error = "No puede anular el gasto. La fecha actual no puede ser mayor a la de pago ";
+                            $error = "No puede Generar el gasto. La fecha actual no puede ser mayor a la de pago ";
                         }
                     }
 
-
-                    if($error==""){
-                        $result_c = $db->query("UPDATE `tab_ope_gastos_clinicos` SET `estado`='E' WHERE `rowid`='$id_gasto';");
-                        if($result_c){
-                            $log->log($id_gasto, $log->eliminar, 'Se ha anulado un registro desde Modulo de Gastos Clinicos. ( Gasto Clinico id b64: ' .base64_encode($id_gasto).' )', 'tab_ope_cajas_det_gastos');
-                        }
-                    }
+//                    if($error==""){
+//                        $result_c = $db->query("UPDATE `tab_ope_gastos_clinicos` SET `estado`='E' WHERE `rowid`='$id_gasto';");
+//                        if($result_c){
+//                            $log->log($id_gasto, $log->eliminar, 'Se ha anulado un registro desde Modulo de Gastos Clinicos. ( Gasto Clinico id b64: ' .base64_encode($id_gasto).' )', 'tab_ope_cajas_det_gastos');
+//                        }
+//                    }
 
                 }else {
                     $error = "No hay Datos";
@@ -465,18 +468,18 @@ function GuardarGastos($id, $datos,  $create=false,  $update=false){
 
     global $db, $messErr, $log;
 
-    $id_medpago_gastos      = $datos['medio_pago_gastos']; //medio de pago para modulo de gastos
-    $id_nom_gastos          = $datos['categoria'];  //el nombre del gasto de la categoria
-    $desc               = $datos['detalleGastos'];
-    $date_facture       = date('Y-m-d', strtotime($datos['date_facture']));
+    $id_medpago_gastos       = $datos['medio_pago_gastos']; //medio de pago para modulo de gastos
+    $id_nom_gastos           = $datos['categoria'];  //el nombre del gasto de la categoria
+    $desc                    = $datos['detalleGastos'];
+    $date_facture            = date('Y-m-d', strtotime($datos['date_facture']));
     if(!empty($datos['date_pago'])){
-        $date_pago          = date('Y-m-d', strtotime($datos['date_pago']));
+        $date_pago           = date('Y-m-d', strtotime($datos['date_pago']));
     }else{
-        $date_pago          = "000-00-00";
+        $date_pago           = "000-00-00";
     }
-    $asociar_caja       = $datos['asociar_caja'];
-    $monto_gastos       = $datos['monto_gastos'];
-    $fk_acount          = $datos['fk_acount']; //fk cuenta gasto
+    $asociar_caja            = $datos['asociar_caja'];
+    $monto_gastos            = $datos['monto_gastos'];
+    $fk_acount               = $datos['fk_acount']; //fk cuenta gasto
 
     if($asociar_caja!=""){
         $on_caja = 1;
@@ -496,6 +499,16 @@ function GuardarGastos($id, $datos,  $create=false,  $update=false){
             $idlast = $db->lastInsertId('tab_ope_gastos_clinicos');
             if($on_caja!=0){ // si tiene asociado caja
                 guardarEnCajaGastos($idlast, $datos);
+            }
+            if($datos['otras_accion']=='otra_accion'){ //se genera un gasto directo desde Gasto
+                if($datos['fk_acount']!=""){ //cuenta de gasto
+//                    $result_bx = GenerarGastoDirecto($datos, $idlast);
+//                    if(!empty($result_bx)){
+//                        return $result_bx;
+//                    }
+                }else{
+                    return $messErr;
+                }
             }
             $log->log($idlast, $log->crear, 'Se ha creado nuevo Gasto Clinico Detalle: '.$desc, 'tab_ope_gastos_clinicos');
             return "";
@@ -547,6 +560,7 @@ function guardarEnCajaGastos($id, $fetch){
 
     $ope = new operacion($db);
 
+    //ingreso a caja el gasto
     $result = $ope->new_trasaccion_caja_gastos($datos);
     if($result == -1){
         return "Ocurrio un error con la Operación. Consulte con soporte";
@@ -558,33 +572,57 @@ function guardarEnCajaGastos($id, $fetch){
 
 
 
-function GenerarGastoDirecto($fetch){
+function GenerarGastoDirecto($fetch = array(), $id){
 
 
-    global $db;
+    global $db, $user;
     require_once DOL_DOCUMENT .'/application/system/operacion/class/Class.operacion.php';
 
-    $datos['label']  = "Gasto Clinico Generado";
-    $datos['date_c'] = " now() ";
+    $datos['label']   = "Gasto Clinico Generado";
+    $datos['date_c']  = "now() ";
+    $datos['detalle'] = array();
 
-//    $datos['detalle'][] = [
-//        'datec'             => "now()",
-//        'id_cuenta'         => $id_cuenta_principal,   //cuenta del systema
-//        'id_user_author'    => $user->id ,
-//        'tipo_mov'          => 1 , //ingreso
-//        'amount_ingreso'    => $fetch_a->amount , //monto de ingreso a la cuenta
-//        'amount_egreso'     => 0 ,
-//        'id_documento'      => $fetch_a->fk_plan_tratam_det,
-//        'tipo_documento'    => 'plan_tratamiento', //tipo de documento y/o modulo que genero esta transaccion
-//        'fk_type_payment'   => $fetch_a->fk_tipo_pago, //medio de pago
-//        'table'             => 'tab_plan_tratamiento_det', //informacion opcional para saber a que table pertenece el id_documento
-//        'label'             => $fetch_a->label,
-//
-//    ];
+    //Busco por id el gasto que se va a generar y realizar un movimiento
+    $sql_a = "select 
+            gc.fk_medio_pago , 
+            gc.fk_acount , 
+            round(gc.amount, 2) as monto, 
+            concat('Gasto Clinico Generado | Detalle de Gasto: ',gc.desc,' | ',' ',n.nom	) as label 
+        from 
+            tab_ope_gastos_clinicos gc
+            inner join 
+            tab_ope_gastos_nom n on n.rowid = gc.id_nom_gastos
+        where gc.rowid = ".$id ." limit 1 ";
+    $result = $db->query($sql_a)->fetchObject();
+    $desc = $result->label;
 
+    if(!empty($desc)){
+        $datos['detalle'][] = [
+            'datec'             => "now()",
+            'id_cuenta'         => $result->fk_acount,   //cuenta del systema
+            'id_user_author'    => $user->id ,
+            'tipo_mov'          => 1 , //ingreso
+            'amount_ingreso'    => $result->monto, //monto de ingreso a la cuenta
+            'amount_egreso'     => 0 ,
+            'id_documento'      => $id,
+            'tipo_documento'    => 'Gasto Clinicos', //tipo de documento y/o modulo que genero esta transaccion
+            'fk_type_payment'   => (double)$result->fk_medio_pago, //medio de pago id
+            'table'             => 'tab_ope_gastos_clinicos', //informacion opcional para saber a que table pertenece el id_documento
+            'label'             => $desc,
+            'value'             => $result->monto
 
+        ];
 
+        $operacion = new operacion($db);
+        $result_b =  $operacion->diarioClinico($datos);
 
+        if($result_b<0){
+            return "Ocurrió un error con la Operación, Consulte con Soporte";
+        }
+        return "";
+    }else{
+        return "Ocurrio un error con la Operacion Generar Gasto";
+    }
 
 }
 

@@ -238,7 +238,7 @@ $modulo = true;
                             notificacion(response.error, 'error');
                         }else{
                             notificacion("Información Actualizado", 'success');
-                            fetchGastos();
+                            gastosList();
                         }
                     }
                 });
@@ -275,7 +275,7 @@ $modulo = true;
                             notificacion(response.error, 'error');
                         }else{
                             notificacion("Información Actualizado", 'success');
-                            fetchGastos();
+                            gastosList();
                         }
                     }
                 });

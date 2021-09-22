@@ -71,8 +71,22 @@ FROM
 
     <div class="form-group col-md-12 col-xs-12">
         <span style="font-weight: bolder; font-size: 2rem; display: block">Detalles de Caja # <?= $numero_caja?></span>
-        <small class="text-sm" style="display: block"><b>Dirección:</b> <?= $direccion_caja ?></small>
-        <small class="text-sm" style="display: block"><b>Usuario asociado:</b> <?= $nom_usu ?></small>
+        <table class="table">
+            <tr>
+                <td>
+                    <b>Dirección:</b> <?= $direccion_caja ?>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Usuario asociado:</b> <?= $nom_usu ?>
+                </td>
+            </tr>
+            <tr>
+                <td style=""></td>
+            </tr>
+        </table>
+
         <?php
             $cajaEstado  = (strtoupper($cajaEstado));
             if($st=='A'){
@@ -124,7 +138,9 @@ FROM
                 </tr>
                 <tr>
                     <td style="font-weight: bolder">Total</td>
-                    <td style="text-align: right; color: #008000; font-weight: bolder"  id="valor_caja_total">0.00</td>
+                    <td style="text-align: right;">
+                        <span style="text-align: right; color: #008000; font-weight: bolder"  id="valor_caja_total" >0.00</span>
+                    </td>
                 </tr>
             </table>
         </div>
@@ -355,7 +371,16 @@ FROM
                 $("#valor_caja_gastos").text(Gastos_caja);
                 $("#valor_caja_efectivo").text(Saldo_caja_efectivo);
                 $("#valor_caja_recaudado").text(Recaudado_caja);
-                $("#valor_caja_total").text(totalCaja);
+
+                if(totalCaja>0){ //positivo
+                    $("#valor_caja_total")
+                        .css('color', '#228000')
+                        .text(parseFloat(totalCaja).toFixed(2));
+                }else{ //negativo
+                    $("#valor_caja_total")
+                        .css('color', '#ff0014')
+                        .text(parseFloat(totalCaja).toFixed(2));
+                }
             }
         });
     }

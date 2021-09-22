@@ -115,6 +115,10 @@ $id = GETPOST('id');
                             Guardar
                             <span class="fa fa-refresh btnSpinner hide"></span>
                         </button>
+                        <button class="btn btnhover pull-right hide" style="font-weight: bolder;color: green;margin-right: 10px;" id="GenerarGastos">
+                            Generar Gasto
+                            <span class="fa fa-refresh btnSpinner hide"></span>
+                        </button>
                     </div>
                 </div>
 
@@ -368,21 +372,38 @@ $id = GETPOST('id');
         if(!FormValidationGastos()){
             return false;
         }
-        var paramtrs = {
-            accion          :'GuardarGastosClinicos',
-            ajaxSend        :'ajaxSend',
-            id              : idGasto,
-            categoria       : $("#categoria_gastos").find(":selected").val(),
-            detalleGastos   : $("#detalle_gastos").val(),
-            date_facture    : $("#date_facture").val(),
-            date_pago       : $("#date_pago").val(),
-            asociar_caja       : $("#asociar_caja").find(":selected").val(),
-            monto_gastos       : $("#monto_gastos").val(),
-            medio_pago_gastos  : $("#medio_pago_gastos").find(':selected').val(),
-            fk_acount          : $("#cuentas_gastos").find(':selected').val(),
 
+        var btn = $("#guardarGastos");
+        Guardar(btn, idGasto);
+    });
+
+    $("#GenerarGastos").click(function () {
+        if(!FormValidationGastos()){
+            return false;
+        }
+
+        var btn = $("#guardarGastos");
+        Guardar(btn, idGasto, 'generar_gasto');
+    });
+
+
+    function Guardar(btn, idGasto, otra_accion = '') {
+
+        var paramtrs = {
+            accion              : 'GuardarGastosClinicos',
+            ajaxSend            : 'ajaxSend',
+            id                  : idGasto,
+            categoria           : $("#categoria_gastos").find(":selected").val(),
+            detalleGastos       : $("#detalle_gastos").val(),
+            date_facture        : $("#date_facture").val(),
+            date_pago           : $("#date_pago").val(),
+            asociar_caja        : $("#asociar_caja").find(":selected").val(),
+            monto_gastos        : $("#monto_gastos").val(),
+            medio_pago_gastos   : $("#medio_pago_gastos").find(':selected').val(),
+            fk_acount           : $("#cuentas_gastos").find(':selected').val(),
+            otra_accion         : otra_accion
         };
-        button_loadding($("#guardarGastos"), true);
+
         $.ajax({
             url: $DOCUMENTO_URL_HTTP + '/application/system/operacion/gastos/controller/controller.php',
             delay:1000,
@@ -391,13 +412,17 @@ $id = GETPOST('id');
             async:true,
             cache:false,
             dataType:'json',
+            beforeSend: function(){
+                boxloading($boxContentGastos, true);
+                button_loadding(btn, true);
+            },
             complete: function (xhr, status) {
-                button_loadding($("#guardarGastos"), false);
-            }, 
+                button_loadding(btn, false);
+                boxloading($boxContentGastos, false, 1000);
+            },
             success: function (response) {
                 if(response.error == ""){
                     notificacion('Información Actualizada', 'success');
-
                     setTimeout(()=>{
                         window.location = $DOCUMENTO_URL_HTTP+"/application/system/operacion/gastos/index.php?view=listgatos&key="+$keyGlobal;
                     }, 300);
@@ -406,8 +431,8 @@ $id = GETPOST('id');
                 }
             }
         })
-    });
-
+    }
+    
     function typePayement(){
 
         $("#t_pagos").empty().html('<option value=""></option>');
