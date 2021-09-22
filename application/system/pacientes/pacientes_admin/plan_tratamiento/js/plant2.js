@@ -402,8 +402,9 @@ if($accion == 'addplan')
         //Se limpia el las piezas activas
         clearModalDetalle('soloActivas');
 
-        $('#detalle-prestacionesPlantram').append(detalle);
-        $(".cantidadPrest").maskMoney({precision:0, thousands:'', decimal:'.',allowZero:true,allowNegative:true, defaultZero:true,allowEmpty: true});
+        //se agrega el HTML a la vista
+        $('#detalle-prestacionesPlantram').append($(detalle));
+
         $(".adicional").maskMoney({precision:2, thousands:'', decimal:'.',allowZero:true,allowNegative:true, defaultZero:true,allowEmpty: true})
             .keyup(function () {
                 if($(this).val()<=100){
@@ -413,7 +414,7 @@ if($accion == 'addplan')
                     $(this).parent().find(".invalic_descuento").remove();
                     $(this).parent().append('<small style="display: block; color: red" class="invalic_descuento">descuento Invalido</small>');
                 }
-            });
+        });
 
         // CANTIDAD ONKEYUP
         $(".cantidadPrest").keyup(function() {
@@ -424,6 +425,7 @@ if($accion == 'addplan')
             recalcularPrestacion( $(this) )
         });
 
+        $(".cantidadPrest").maskMoney({precision:0, thousands:'', decimal:'.',allowZero:true,allowNegative:true, defaultZero:true,allowEmpty: true}).keyup();
 
     }
 

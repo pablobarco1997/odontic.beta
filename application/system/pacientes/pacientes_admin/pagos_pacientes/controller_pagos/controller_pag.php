@@ -100,7 +100,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                     }
                 }else{
-                    $respuesta = "Este usuario no tiene asociada una caja <br> <b>No puede realizar esta Operación</b> <br> ".$consultar_caja_usuario['error'];
+                    $respuesta = "Este usuario no tiene asociada una Caja Clinica<br> <b>No puede realizar esta Operación</b> <br> ".$consultar_caja_usuario['error'];
                 }
             }else{
                 $respuesta = "Ud. No tiene permisos para realizar esta Operación";
@@ -772,11 +772,12 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
                         'tipo_mov'          => 1 , //ingreso
                         'amount_ingreso'    => (double)$datosdet[$i]['valorAbonar'] , //monto de ingreso a la cuenta
                         'amount_egreso'     => 0 ,
+                        'value'             => (double)$datosdet[$i]['valorAbonar'],
                         'id_documento'      => $fetch_caja['caja']['id_caja_ope'],
                         'tipo_documento'    => 'cajas_clinicas', //tipo de documento y/o modulo que genero esta transaccion
                         'fk_type_payment'   => $t_pagos, //medio de pago
                         'table'             => 'tab_ope_cajas_clinicas', //informacion opcional para saber a que table pertenece el id_documento
-                        'label'             => "Cobro de Paciente | Forma de pago: ".getnombFormaPago($t_pagos)." | Caja: ".$fetch_caja['caja']['name_caja']." | Plan de tratamiento N.".$n_tratamiento. " | Prestación/Servicios: ".getnombrePrestacionServicio($datosdet[$i]['fk_prestacion'])->descripcion,
+                        'label'             => "Cobro de Paciente ".(getnombrePaciente($datos['id_paciente'])->nom)." | Forma de pago: ".getnombFormaPago($t_pagos)." | Caja: ".$fetch_caja['caja']['name_caja']." | Plan de tratamiento N.".$n_tratamiento. " | Prestación/Servicios: ".getnombrePrestacionServicio($datosdet[$i]['fk_prestacion'])->descripcion." | Doc. ".$nfact_boleto,
                     ];
                 }
             }
@@ -788,22 +789,8 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
         //se usa para llevar un control de todo lo que ingresa en la clinica (valores monetaios)
         //registro de ingreso de caja en el diario clinico
         if($montoIngresoCaja > 0){
-            $datos2['label']   = "Cobro de paciente en ".getnombFormaPago($t_pagos)." | de caja: ".strtoupper($fetch_caja['caja']['name_caja']) ." | Plan de tratamiento N.".$n_tratamiento;
+            $datos2['label']   = "Cobro de paciente en ".getnombFormaPago($t_pagos)." | de Caja: ".strtoupper($fetch_caja['caja']['name_caja']) ." | Plan de tratamiento N.".$n_tratamiento." | Doc. ".$nfact_boleto;
             $datos2['date_c']  = "now()";
-
-//            $datos['detalle'][] = [
-//                'datec'             => "now()",
-//                'id_cuenta'         => $fetch_caja['caja']['id_cuenta'],   //cuenta del systema
-//                'id_user_author'    => $user->id ,
-//                'tipo_mov'          => 1 , //ingreso
-//                'amount_ingreso'    => $montoIngresoCaja , //monto de ingreso a la cuenta
-//                'amount_egreso'     => 0 ,
-//                'id_documento'      => $fetch_caja['caja']['id_caja_ope'],
-//                'tipo_documento'    => 'cajas_clinicas', //tipo de documento y/o modulo que genero esta transaccion
-//                'fk_type_payment'   => $t_pagos, //medio de pago
-//                'table'             => 'tab_ope_cajas_clinicas', //informacion opcional para saber a que table pertenece el id_documento
-//                'label'             => "Cobro de Paciente. Forma de pago: ".getnombFormaPago($t_pagos)." | Caja: ".$fetch_caja['caja']['name_caja'],
-//            ];
 
             $operaciones->diarioClinico($datos2); //se registra en el diario clinico
         }
@@ -831,18 +818,14 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
                 where d.fk_plantratam_cab = c.rowid 
                 and c.fk_paciente = $idpaciente
                 and c.rowid = $idplancab";
-        $rs3  = $db->query($sql3);
-        if($rs3){
-
-            while ( $ob3 = $rs3->fetchObject() ){
-
+        $result_a  = $db->query($sql3);
+        if($result_a){
+            while ( $ob3 = $result_a->fetchObject() ){
                 if( $ob3->estado == 'pagado'){ //prestacion pagado
-
                     $sql3 = "UPDATE `tab_plan_tratamiento_det` SET `estado_pay`='PA' WHERE `rowid`= ". $ob3->iddetplantram ." and fk_plantratam_cab =  ". $ob3->idcabplantram ." ;";
                     $db->query($sql3);
                 }
-                if( $ob3->estado == 'saldo') //Saldo abonado
-                {
+                if( $ob3->estado == 'saldo'){//Saldo abonado
                     $sql3 = "UPDATE `tab_plan_tratamiento_det` SET `estado_pay`='PS' WHERE `rowid`= ". $ob3->iddetplantram ." and fk_plantratam_cab =  ". $ob3->idcabplantram ." ;";
                     $db->query($sql3);
                 }
@@ -903,7 +886,7 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
         return 1;
 
     }else{
-        return 'Ocurrio un error no se guardar el pago';
+        return 'Ocurrió un error Con la Operación Guardar. Consulte con soporte';
     }
 }
 

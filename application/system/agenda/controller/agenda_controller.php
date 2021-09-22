@@ -133,12 +133,14 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 //            die();
             if($countError==0){
                 $sqlUpdateEstado = "UPDATE `tab_pacientes_citas_det` SET `fk_estado_paciente_cita` = $idestado WHERE (`rowid` = $idcita_det);";
-                $rs = $db->query($sqlUpdateEstado);
-
-                if($rs){
+                $result_u     = $db->query($sqlUpdateEstado);
+                $estado = getnombreEstadoCita($idestado);
+                if($result_u){
                     $output['success'] = "Estado $textEstado: información Actualizada";
+                    $log->log($idcita_det, $log->modificar, 'Se ha Actualizado un registro | Cita N.'.$idcita_det.' actualizo estado: '.$estado->nom, 'tab_pacientes_citas_det');
                 }else{
                     $output['error'] = 'Ocurrio un error con Update ' .'Status'.$textEstado;
+                    $log->log($idcita_det, $log->error, 'Ha ocurrido un error con la actualización de estado | Cita N.'.$idcita_det.' estado: '.$estado->nom, 'tab_pacientes_citas_det', $sqlUpdateEstado);
                 }
             }
 

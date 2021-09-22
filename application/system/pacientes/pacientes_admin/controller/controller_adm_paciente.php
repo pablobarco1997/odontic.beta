@@ -1012,16 +1012,20 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $idpaciente               = GETPOST('idpaciente');
             $fecha_range              = (GETPOST('fecha_range')!="")?explode('-', GETPOST('fecha_range')):"";
 
-            //estado
-            $estadoslist = array();
-            $estadotram               = GETPOST('mostrar_anulados');
-            $estadoMostrarFinalizados = GETPOST('mostrar_finalizados');
+            $estado_TTO               = GETPOST('estado');
 
-            if(!empty($estadotram)){ //anulado
-                $estadoslist[] = "'E'";
-            }if(!empty($estadoMostrarFinalizados)){ //finalizado
-                $estadoslist[] = "'F'";
-            }
+            if(!empty($estado_TTO)){
+                if($estado_TTO=='Finalizados')
+                    $estadoWhere = " and tc.estados_tratamiento in('F') ";//TT0 FINALIZADOS
+                if($estado_TTO=='Anulados')
+                    $estadoWhere = " and tc.estados_tratamiento in('E') "; //TT0 ANULADOS
+                if($estado_TTO=='Abonados')
+                    $estadoWhere = " and tc.estados_tratamiento in('S') ";//TT0 ABONADO
+                if($estado_TTO=='Diagnostico')
+                    $estadoWhere = " and tc.estados_tratamiento in('A') ";//TT0 DIAGNÓSTICO
+            }else
+                $estadoWhere = "";
+
 
 
             $dataprincipal = array();
@@ -1052,13 +1056,11 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     where  $permits
                    ";
             $sql .= " and tc.fk_paciente = ".$idpaciente." ";
-            if(count($estadoslist)>0) { //filtrado por estados
-                $estadoslist = implode(",", $estadoslist);
-                $sql .= " and tc.estados_tratamiento in($estadoslist) ";
+            if(!empty($estadoWhere)) { //por estados
+                $sql .= $estadoWhere;
             }else{ //Mostrando default estado Activos o saldo asociado
                 $sql .= " and tc.estados_tratamiento in('A', 'S')"; #tratamientos con saldos y Activos
             }
-
             if(!empty($idplantmiento)){
                 $sql .= " and tc.rowid = $idplantmiento";
             }
@@ -1069,13 +1071,15 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 $sql .= " and cast(tc.fecha_create as date) between cast('$fechaIni' as date) and cast('$fechaFin' as date) ";
             }
 
-            $sql .= "group by tc.rowid  order by tc.rowid desc";
+            $sql .= " group by tc.rowid  order by tc.rowid desc";
 
             $sqlTotal = $sql;
 
             if($start || $length){
                 $sql.=" LIMIT $start,$length;";
             }
+
+//            print_r($sql); die();
 
             $Total = $db->query($sqlTotal)->rowCount();
             $rul = $db->query($sql);

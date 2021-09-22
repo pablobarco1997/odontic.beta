@@ -45,8 +45,8 @@ if(!PermitsModule('Recaudaciones', 'consultar')){
                     print "            <li> <a data-toggle=\"collapse\" data-target=\"#contentFilter\" class=\"btnhover btn  $consultar btn-sm \" style=\"color: #333333\" aria-expanded=\"true\"> <b>   ▼  Filtrar  </b>  </a> </li>";
                 }
             ?>
-            <li> <a href="<?= DOL_HTTP .'/application/system/pacientes/pacientes_admin/?view=pagospaci&key='.KEY_GLOB.'&id='. tokenSecurityId($idPaciente) .'&v=paym' ?>" style="color: #333333" class="btnhover btn btn-sm <?= $consultar ?> " id=""> <b>  <i class="fa fa-dollar"></i> &nbsp; Pagos </b> </a></li>
-            <li> <a href="<?= DOL_HTTP .'/application/system/pacientes/pacientes_admin/?view=pagospaci&key='.KEY_GLOB.'&id='. tokenSecurityId($idPaciente) .'&v=paym_financier' ?>" style="color: #333333" class="btnhover btn btn-sm disabled_link3" disabled="disabled" readonly="" id=""> <b>  <i class="fa fa-dollar"></i> &nbsp; Pagos Financieros </b> </a></li>
+            <li> <a href="<?= DOL_HTTP .'/application/system/pacientes/pacientes_admin/?view=pagospaci&key='.KEY_GLOB.'&id='. tokenSecurityId($idPaciente) .'&v=paym' ?>" style="color: #333333" class="btnhover btn btn-sm <?= $consultar ?> " id=""> <b>  <i class="fa fa-dollar"></i> &nbsp; Recaudar Tratamiento</b> </a></li>
+            <li> <a href="<?= DOL_HTTP .'/application/system/pacientes/pacientes_admin/?view=pagospaci&key='.KEY_GLOB.'&id='. tokenSecurityId($idPaciente) .'&v=paym_financier' ?>" style="color: #333333" class="btnhover btn btn-sm disabled_link3" disabled="disabled" readonly="" id=""> <b>  Cargo por Financiamiento</b> </a></li>
         </ul>
     </div>
 

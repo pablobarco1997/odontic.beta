@@ -34,8 +34,7 @@ function  listplaneTratamiento(){
                 'ajaxSend'               : 'ajaxSend',
                 'accion'                 : 'list_tratamiento',
                 'idpaciente'             : $id_paciente,
-                'mostrar_anulados'       : ($('#mostrarAnuladosPlantram').prop('checked') == true) ? 'si': '',
-                'mostrar_finalizados'    : ($('#mostaraFinalizados').prop('checked') == true) ? 'si': '',
+                'estado'                 : ($('[name="estado_tratamiento"]:checked').prop('class')||''),
                 'idplantmiento'          : $('#filtrPlantram').find(':selected').val(),
                 'fecha_range'            : $('.filtroFecha').val(),
 
@@ -483,8 +482,10 @@ if($accion == "principal")
     });
     /*limpiar filtro plan tratamiento*/
     $('#limpiarFiltro').click(function() {
+
         $('#startDate').val(null);
         $('#filtrPlantram').val(null).trigger('change');
+        $('[name="estado_tratamiento"]').prop('checked', false);
         listplaneTratamiento();
     });
 
@@ -815,6 +816,29 @@ $('#asociar_profecional_').on('click', function() {
         notificacion('Debe selecionar un profecional a cargo ','question');
     }
 });
+
+function ExportPlanTratamiento(){
+
+    var objectLoad = {
+        onload:function () {
+            boxloading($boxContentViewAdminPaciente, true);
+        },
+        offload: function () {
+            boxloading($boxContentViewAdminPaciente, false, 1000);
+        }
+    };
+
+    if(!ModulePermission('Planes de Tratamientos','consultar', objectLoad)){
+             notificacion('Ud. No tiene permiso para Consultar','error');
+        return false;
+    }
+
+    // alert(($('[name="estado_tratamiento"]:checked').prop('class')||''));
+    var paramters = "?fecha="+$("#startDate").val()+"&tratmid="+$("#filtrPlantram").find(":selected").val()+"&estado="+($('[name="estado_tratamiento"]:checked').prop('class')||'');
+    paramters    += "&id_paciente="+$id_paciente;
+    window.open( $DOCUMENTO_URL_HTTP + "/application/system/pacientes/pacientes_admin/plan_tratamiento/export/excel_plantratamiento.php"+paramters , '_blank');
+
+}
 
 
 //window onload

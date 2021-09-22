@@ -147,10 +147,24 @@
 
                 <div class="form-group col-xs-12 col-md-3 col-sm-12">
                     <label for="">Estados</label>
-                    <div class="checkbox">
-                        <label for="">
-                            <span style="display: block"> <input type="checkbox" id="mostaraFinalizados" style="margin-top: 2px !important;"> <b>Finalizados</b> </span>
-                            <span style="display: block"> <input type="checkbox" id="mostrarAnuladosPlantram" style="margin-top: 2px !important;"> <b>Anulados</b></span>
+                    <div class="radio">
+                        <label for="mostaraFinalizados">
+                            <input type="radio" name="estado_tratamiento" id="mostaraFinalizados" class="Finalizados" style="margin-top: 2px !important;"> <b>Finalizados</b>
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label for="mostrarAnuladosPlantram">
+                            <input type="radio" name="estado_tratamiento" id="mostrarAnuladosPlantram" class="Anulados" style="margin-top: 2px !important;"> <b>Anulados</b>
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label for="mostrarAbonadosPlantram">
+                            <input type="radio" name="estado_tratamiento" id="mostrarAbonadosPlantram" class="Abonados" style="margin-top: 2px !important;"> <b>Abonados</b>
+                        </label>
+                    </div>
+                    <div class="radio">
+                        <label for="mostrarDiagnosticoPlantram">
+                            <input type="radio" name="estado_tratamiento" id="mostrarDiagnosticoPlantram" class="Diagnostico" style="margin-top: 2px !important;"> <b>Diagnóstico</b>
                         </label>
                     </div>
                 </div>
@@ -158,6 +172,7 @@
 
                 <div class="form-group col-md-12 col-xs-12">
                     <ul class="list-inline pull-right">
+                        <li>  <button class="exportExcelTranm btn   btn-block  btn-default text-bold" id="exportExcelTranm" onclick="ExportPlanTratamiento()" style="float: right; padding: 10px">&nbsp; &nbsp; Export Excel &nbsp; <span class="fa fa-print"></span> &nbsp;</button> </li>
                         <li>  <button class="limpiar btn   btn-block  btn-default" id="limpiarFiltro" style="float: right; padding: 10px"> &nbsp; &nbsp; Limpiar &nbsp; &nbsp;</button> </li>
                         <li>  <button class="aplicar btn   btn-block  btn-success" id="filtrar_evoluc" style="float: right; padding: 10px"> &nbsp;  &nbsp;Aplicar busqueda &nbsp;</button> </li>
                     </ul>
