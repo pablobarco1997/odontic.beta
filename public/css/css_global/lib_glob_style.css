@@ -1,8 +1,6 @@
 
 /*css styles btnSpinner o button loadding*/
 .btnSpinner{
-    width: 14.01px;
-    height: 13.33px;
     animation-name: spinnerBtnLoad;
     animation-duration: 2s;
     animation-iteration-count: infinite;

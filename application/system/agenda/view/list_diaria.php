@@ -94,7 +94,7 @@
                 <div class="form-group">
                     <div class="checkbox  ">
                         <a href="#" class="btn btnhover " title="refrescar Datos" style="color: #333333" id="refresh_agenda_list" onclick="fa_refresh_agenda()">
-                            <b><i class="fa fa-refresh btnSpinner"></i></b>
+                            <b><i class="fa fa-refresh "></i></b>
                         </a>
                     </div>
                 </div>

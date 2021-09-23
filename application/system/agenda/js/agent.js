@@ -48,7 +48,7 @@ function loadtableAgenda() {
             },
             "dataType":'json',
             "cache": false,
-            "asycn": true, 
+            "asycn": false,
             "beforeSend": function () {
                 boxTableLoad(ElemmentoContentload, true);
                 $("#refresh_agenda_list").find('i').addClass('btnSpinner');
