@@ -72,7 +72,7 @@
         #CREACION DE UN PACIENTE
         public function create_paciente()
         {
-                global $conf, $user;
+                global $conf, $user, $log;
 
                 $date_nacimiento = empty($this->fech_nacimit) ? "null" : "'$this->fech_nacimit'";
 
@@ -99,11 +99,16 @@
                 $sql .= "'0',";
                 $sql .= $user->id;
                 $sql .= ");";
-
                 $result = $this->db->query($sql);
+
+                $nom = $this->nombre.' '.$this->apellido;
+
                 if ($result) {
+                    $id = $this->db->lastInsertId('tab_admin_pacientes');
+                    $log->log($id, $log->crear,  'Se ha creado un registro ¦ Paciente: '.$nom, 'tab_admin_pacientes');
                     return 'exito';
                 }else{
+                    $log->log(0, $log->crear,  'Ha ocurrido un error con al creación de un nuevo registro ¦ Paciente: '.$nom, 'tab_admin_pacientes');
                     return 'error';
                 }
 

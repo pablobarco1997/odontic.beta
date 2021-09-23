@@ -17,6 +17,9 @@ $modulo = true;
         <label for="">LISTA DE COMPORTAMIENTOS</label>
         <ul class="list-inline" style="background-color: #f4f4f4; border-bottom: 0.6px solid #333333; padding: 3px; margin-left: 0px">
             <li><a href="#contentFilter" data-toggle="collapse" style="color: #333333" class="btnhover btn btn-sm " id="fitrar_document"> <b>  ▼ &nbsp;Filtrar <i></i> </b> </a></li>
+            <li><a id="refresh_Cajasclinica" class="btn" style="color: black" onclick="list_cajas_abiertas()">
+                    <i class="fa fa-refresh"></i>
+                </a></li>
         </ul>
     </div>
 
@@ -409,6 +412,7 @@ $modulo = true;
 
     function list_cajas_abiertas(){
 
+        var Element = $("#all_Cuenta_de_aperturas");
         $("#all_Cuenta_de_aperturas").DataTable({
             searching: false,
             "ordering":false,
@@ -435,9 +439,15 @@ $modulo = true;
                     'estado'     : $('#estadoCajaClinica').find(":selected").val(),
                 },
                 cache:false,
+                async:true,
                 "dataType":'json',
+                "beforeSend": function () {
+                    boxTableLoad(Element, true);
+                    $("#refresh_Cajasclinica").find('i').addClass('btnSpinner');
+                },
                 "complete": function(xhr, status) {
-
+                    boxTableLoad(Element, false);
+                    $("#refresh_Cajasclinica").find('i').removeClass('btnSpinner');
                 }
             },
             columnDefs:[

@@ -99,9 +99,9 @@ if(isset($_GET['id_paciente'])){
 							left join
 						(select count(*) as num, d.fk_plantratam_cab as idt_cab  from tab_plan_tratamiento_det d group by d.fk_plantratam_cab) as n_serv on n_serv.idt_cab = tc.rowid
 							left join
-						(select sum(round(d.total,2)) as realizado_mont, d.rowid as idt_cab_r from tab_plan_tratamiento_det d where d.estadodet = 'R' group by d.fk_plantratam_cab) as dr on dr.idt_cab_r = tc.rowid
+						(select sum(round(d.total,2)) as realizado_mont, d.fk_plantratam_cab as idt_cab_r from tab_plan_tratamiento_det d where d.estadodet = 'R' group by d.fk_plantratam_cab) as dr on dr.idt_cab_r = tc.rowid
                         	left join
-						(select sum(round(d.total,2)) as pendiente_mont, d.rowid as idt_cab_p from tab_plan_tratamiento_det d where d.estadodet in('A','P') group by d.fk_plantratam_cab) as dp on dp.idt_cab_p = tc.rowid
+						(select sum(round(d.total,2)) as pendiente_mont, d.fk_plantratam_cab as idt_cab_p from tab_plan_tratamiento_det d where d.estadodet in('A','P') group by d.fk_plantratam_cab) as dp on dp.idt_cab_p = tc.rowid
                     where    1=1
                     and tc.fk_paciente = ".($idpac)."   
 					".$where."

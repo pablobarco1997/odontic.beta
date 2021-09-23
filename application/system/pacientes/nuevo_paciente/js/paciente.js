@@ -201,7 +201,7 @@ $('#carga_masv_pasiente').click(function() {
 $('#subida_masiva_pasiente').change(function() {
 
     var inputFile = document.getElementById('subida_masiva_pasiente');
-    console.log(inputFile.files[0]);
+    // console.log(inputFile.files[0]);
 
     var form = new FormData();
 
@@ -214,9 +214,16 @@ $('#subida_masiva_pasiente').change(function() {
         type:"POST",
         data: form,
         dataType: 'json',
-        async: false,
         contentType:false,
         processData: false,
+        cache:false,
+        async: true,
+        beforeSend: function(){
+            boxloading($boxContentNewPaciente, true);
+        },
+        complete: function(xhr, status){
+            boxloading($boxContentNewPaciente, false, 1000);
+        },
         success: function(resp)
         {
             if(resp.errores.error == '' && resp.req == ''){
@@ -226,6 +233,8 @@ $('#subida_masiva_pasiente').change(function() {
 
                 notificacion( resp.errores.error + '<br>' + resp.req , 'error');
             }
+
+            $("#subida_masiva_pasiente").val(null);
         }
     });
 

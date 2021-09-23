@@ -685,7 +685,7 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
     }
 
     if($countValid>0){
-        return "Estas Prestaciones ya se encuentran recaudadas: <br>"."<b>".(implode("<br>", $labelServicio))."</b>";
+        return "Estas Prestaciones ya se encuentran recaudadas <br>"."<b>".(implode("<br>", $labelServicio))."</b>";
     }
 
     //se valida los pagos que el abonado no sea mayor al monto total de cada servicio

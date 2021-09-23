@@ -54,6 +54,17 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
         case 'carga_masiva_pacientes':
 
+            if(!PermitsModule('Pacientes', 'agregar')){
+                $error['error'] = "Ud. No tiene permiso para realizar esta Operación";
+
+                $output = [
+                    "errores" => $error,
+                    "req"     => "",
+                ];
+                echo json_encode($output);
+                break;
+            }
+
             $error = [];
             $puedoPasar = 0;
             $Fichero = $_FILES['file'];
@@ -85,7 +96,6 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     $ObjPHPExcel = $ObjsExcel->load($destino);
 
                     #Hoja de excel Activa
-                    $ObjPHPExcel->setActiveSheetIndex(0);
                     $colnm = $ObjPHPExcel->setActiveSheetIndex(0)->getHighestColumn();
                     $rows  = $ObjPHPExcel->setActiveSheetIndex(0)->getHighestRow();
 
@@ -105,24 +115,27 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         if($nombrepaciente != '' && $apellipaciente != '')
                         {
 
-                            $nompaciente            = trim($ObjPHPExcel->getActiveSheet()->getCell('A'.$ia)->getCalculatedValue());
-                            $Apellidpaciente        = trim($ObjPHPExcel->getActiveSheet()->getCell('B'.$ia)->getCalculatedValue());
-                            $rudcedulapaciente      = trim($ObjPHPExcel->getActiveSheet()->getCell('C'.$ia)->getCalculatedValue());
-                            $emailpaciente          = trim($ObjPHPExcel->getActiveSheet()->getCell('D'.$ia)->getCalculatedValue());
-                            $sexopaciente           = trim($ObjPHPExcel->getActiveSheet()->getCell('E'.$ia)->getCalculatedValue());
-                            $direccpaciente         = trim($ObjPHPExcel->getActiveSheet()->getCell('F'.$ia)->getCalculatedValue());
-                            $telefonopaciente       = trim($ObjPHPExcel->getActiveSheet()->getCell('G'.$ia)->getCalculatedValue());
-                            $observacion            = trim($ObjPHPExcel->getActiveSheet()->getCell('H'.$ia)->getCalculatedValue());
+                            $nompaciente            = trim($ObjPHPExcel->getActiveSheet()->getCell('A'.$ia)->getCalculatedValue()); //NOMBRE
+                            $Apellidpaciente        = trim($ObjPHPExcel->getActiveSheet()->getCell('B'.$ia)->getCalculatedValue()); //APELLIDO
+                            $CI                     = trim($ObjPHPExcel->getActiveSheet()->getCell('C'.$ia)->getCalculatedValue()); //C.I
+                            $emailpaciente          = trim($ObjPHPExcel->getActiveSheet()->getCell('D'.$ia)->getCalculatedValue()); //E-MAIL
+                            $genero                 = trim($ObjPHPExcel->getActiveSheet()->getCell('E'.$ia)->getCalculatedValue()); //GENERO
+                            $ciudadpaciente         = trim($ObjPHPExcel->getActiveSheet()->getCell('F'.$ia)->getCalculatedValue()); //CIUDAD
+                            $direccpaciente         = trim($ObjPHPExcel->getActiveSheet()->getCell('G'.$ia)->getCalculatedValue()); //DIRECCION
+                            $telef_cel              = trim($ObjPHPExcel->getActiveSheet()->getCell('H'.$ia)->getCalculatedValue()); //TELEFONO CELULAR
+                            $observacion            = trim($ObjPHPExcel->getActiveSheet()->getCell('I'.$ia)->getCalculatedValue()); //OBSERVACION
+                            $referencia             = trim($ObjPHPExcel->getActiveSheet()->getCell('J'.$ia)->getCalculatedValue()); //REFERENCIA
 
                             $ObjectPaciente[] = (object)array(
                                 'nompaciente'        => $nompaciente,
                                 'Apellidpaciente'    => $Apellidpaciente,
-                                'rudcedulapaciente'  => $rudcedulapaciente,
+                                'ci'                 => $CI,
                                 'emailpaciente'      => $emailpaciente,
-                                'sexopaciente'       => $sexopaciente,
+                                'sexopaciente'       => $genero,
                                 'direccpaciente'     => $direccpaciente,
-                                'telefonopaciente'   => $telefonopaciente,
+                                'telefonopaciente'   => $telef_cel,
                                 'observacion'        => $observacion,
+                                'referencia'         => $referencia
                             );
 
                             $hay_datos_paciente++;
@@ -134,28 +147,21 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                     unlink($destino);
 
-
                     $paciente = new Pacientes($db);
-
-                    if($hay_datos_paciente > 0)
-                    {
-
+                    if($hay_datos_paciente > 0){
                         $errorCount = 0;
                         $req_ced    = 0;
                         $req_nomb   = 0;
                         $req_apell  = 0;
                         $req_sexo   = 0;
-
-                        foreach ($ObjectPaciente as $key => $item)
-                        {
-
+                        foreach ($ObjectPaciente as $key => $item){
                             if( $item->nompaciente == '' ){
                                 $req_nomb++;
                             }
                             if( $item->Apellidpaciente == '' ){
                                 $req_apell++;
                             }
-                            if( $item->rudcedulapaciente == '' ) {
+                            if( $item->ci == '' ) {
                                 $req_ced++;
                             }
                             #SOLO UNA PUEDE SER VERDADERO
@@ -163,24 +169,22 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                                 $req_sexo++;
                             }
 
-//                            echo '<pre><br>';
-//                            print_r($req_ced  );
+                            //asigno los parametros para la insercion
                             $paciente->nombre        =    $item->nompaciente;
                             $paciente->apellido      =    $item->Apellidpaciente;
-                            $paciente->rud_dni       =    $item->rudcedulapaciente;
+                            $paciente->rud_dni       =    $item->ci;
                             $paciente->email         =    $item->emailpaciente;
                             $paciente->sexo          =    ($item->sexopaciente == 'M') ? 'masculino' : 'femenino';
                             $paciente->direcc        =    $item->direccpaciente;
                             $paciente->t_movil       =    $item->telefonopaciente;
                             $paciente->obsrv         =    $item->observacion;
-
+                            $paciente->refer         =    $item->referencia;
 
                             if( $req_nomb == 0 && $req_apell == 0 && $req_sexo == 0 && $req_ced == 0){
                                 if($paciente->create_paciente() != 'exito'){
                                     $errorCount++;
                                 }
                             }
-
 
                         }
 

@@ -139,13 +139,13 @@
                     boxTableLoad(ElemmentoContentload, true);
                     if(Element!=false) {
                         console.log(Element);
-                        Element.addClass('btnSpinner');
+                        Element.find('span').addClass('btnSpinner');
                     }
                 },
                 "complete": function(xhr, status) {
                     boxTableLoad(ElemmentoContentload, false);
                     if(Element!=false){
-                        Element.removeClass('btnSpinner');
+                        Element.find('span').removeClass('btnSpinner');
                     }
                 }
             },

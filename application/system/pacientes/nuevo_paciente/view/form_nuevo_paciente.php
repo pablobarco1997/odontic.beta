@@ -15,11 +15,11 @@
                                             <label for="">LISTA DE COMPORTAMIENTOS</label>
                                             <ul class="list-inline pull-right col-md-12 col-xs-12" style="background-color: #f4f4f4;border-bottom: 0.6px solid #333333; padding: 3px">
                                                 <li>
-                                                    <a class="btnhover btn btn-sm " id="carga_masv_pasiente" style="color: #333333" title="carga. Subida Masiva de Pacientes (excel)">
-                                                        <b> <i class="fa fa-upload"></i> Subir excel </b>
+                                                    <a class="btnhover btn btn-sm "  id="carga_masv_pasiente" style="color: #333333" title="Guardar pacientes desde un archivo (Excel)">
+                                                        <b> <i class="fa fa-upload"></i> Importar Excel </b>
                                                     </a>
                                                 </li>
-                                                <li> <a href="<?= DOL_HTTP.'/application/system/pacientes/nuevo_paciente/export/Subir paciente.xlsx' ?>" title="Descarga de Plantilla (excel)" data-target="_blank" class="btnhover btn btn-sm " style="color: #333333">
+                                                <li> <a href="<?= DOL_HTTP.'/application/system/pacientes/nuevo_paciente/export/Import_Pacientes.xlsx' ?>" title="Descarga de Plantilla (excel)" data-target="_blank" class="btnhover btn btn-sm " style="color: #333333">
                                                         <b> <i class="fa fa-download" ></i> Plantilla excel</b>
                                                     </a>
                                                 </li>
@@ -29,7 +29,7 @@
                                     </div>
 
                                             <!--FORM DE REGISTRO PACIENTE-->
-                                            <div class="form-group col-md-12  col-sm-12 ">
+                                            <div class="form-group col-md-12  col-sm-12  col-xs-12">
                                                     <div class="form-group col-md-8 col-sm-12 col-xs-12 col-lg-8 col-centered">
                                                             <div    class="form-horizontal" >
                                                                         <div class="form-group">

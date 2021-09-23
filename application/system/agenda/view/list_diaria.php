@@ -44,7 +44,7 @@
                 <div class="form-group">
                     <div class="checkbox <?= (!PermitsModule("Agenda","agregar"))?"disabled_link3":"" ?>">
                         <a href="<?= DOL_HTTP .'/application/system/agenda/index.php?view=agendadd'?>"  style="color: #333333" class="btn btnhover addCitas  ">
-                            <b>Agendar una Cita </b>&nbsp;&nbsp;<i class="fa fa-calendar-check-o"></i>
+                            <b>Agendar</b>&nbsp;&nbsp;<i class="fa fa-calendar-check-o"></i>
                         </a>
                     </div>
                 </div>
@@ -70,7 +70,7 @@
                 <div class="form-group">
                     <div class="checkbox  <?= !PermitsModule("Agenda", "consultar")?"disabled_link3":"" ?>">
                         <a href="#" class="btn btnhover" style="color: #333333" onclick="ImprimirCitasAgendadas()">
-                            <b>Agendadas PDF &nbsp;<i class="fa fa-print"></i></b>
+                            <b>Export PDF &nbsp;<i class="fa fa-print"></i></b>
                         </a>
                     </div>
                 </div>
@@ -82,7 +82,7 @@
                 <div class="form-group">
                     <div class="checkbox <?= !PermitsModule("Agenda", "consultar")?"disabled_link3":"" ?>">
                         <a href="#FiltrarAgenda" class="btn btnhover " style="color: #333333" data-toggle="collapse" >
-                            <b>Filtrar Citas</b>
+                            <b>Filtrar</b>
                         </a>
                     </div>
                 </div>
@@ -93,8 +93,8 @@
             <div class="callbox">
                 <div class="form-group">
                     <div class="checkbox  ">
-                        <a href="#" class="btn btnhover " title="refrescar Datos" style="color: #333333" onclick="fa_refresh_agenda()">
-                            <b><i class="fa fa-refresh"></i></b>
+                        <a href="#" class="btn btnhover " title="refrescar Datos" style="color: #333333" id="refresh_agenda_list" onclick="fa_refresh_agenda()">
+                            <b><i class="fa fa-refresh btnSpinner"></i></b>
                         </a>
                     </div>
                 </div>
@@ -215,7 +215,7 @@
                         <input type="checkbox" id="checkeAllCitas" >
                         <label for="checkeAllCitas"></label>
                     </th>
-                    <th class="text-center " width="8%">N.- Citas</th>
+                    <th class="text-center " width="8%">N.Citas</th>
                     <th class="text-center " width="10%">Hora</th>
                     <th class="text-center " width="23%">Paciente</th>
                     <th class="text-center " width="23%">Doctor(a)</th>

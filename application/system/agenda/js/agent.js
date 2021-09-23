@@ -20,8 +20,6 @@ function loadtableAgenda() {
 
      var ElemmentoContentload = $("#tableAgenda");
 
-     boxTableLoad(ElemmentoContentload, true);
-
      var table = $('#tableAgenda').DataTable({
         searching: false,
         "ordering":false,
@@ -50,8 +48,18 @@ function loadtableAgenda() {
             },
             "dataType":'json',
             "cache": false,
+            "asycn": true, 
+            "beforeSend": function () {
+                boxTableLoad(ElemmentoContentload, true);
+                $("#refresh_agenda_list").find('i').addClass('btnSpinner');
+            },
             "complete": function(xhr, status) {
+
+                if(xhr.responseJSON.permiso!=""){
+                    notificacion('Ud. No tiene permiso para consultar', 'error');
+                }
                 boxTableLoad(ElemmentoContentload, false);
+                $("#refresh_agenda_list").find('i').removeClass('btnSpinner');
             }
         },
         'createdRow':function(row, data, index){
@@ -130,7 +138,7 @@ function loadtableAgenda() {
 }
 
 function filtrarAgenda(validStatus="") {
-    var ElemmentoContentload = $("#tableAgenda");
+
     loadtableAgenda();
 }
 
@@ -156,10 +164,10 @@ function NOTIFICACION_CITAS_NUMEROS()
 // fa-refresh
 function fa_refresh_agenda() {
 
-    if(!ModulePermission('Agenda', 'consultar')){
-        notificacion('Ud. notiene permiso para consultar', 'error');
-        return false;
-    }
+    // if(!ModulePermission('Agenda', 'consultar')){
+    //     notificacion('Ud. notiene permiso para consultar', 'error');
+    //     return false;
+    // }
 
     filtrarAgenda();
     Notify_odontic(1, false);
@@ -650,7 +658,7 @@ function  FechaCitaCambio(idcita) {
         },
         complete: function (xhr, status) {
             boxloading($boxContent, false, 1000);
-        }, 
+        },
         success:function (response) {
 
             $("#modalCambioFechaCitas").modal("show");
@@ -663,7 +671,36 @@ function  FechaCitaCambio(idcita) {
 
 }
 
+function  FormValidReagendar() {
+
+    var errores   = [];
+    var fecha     = $("#reagendar_fecha_cita");
+    var duracion  = $("#reagendar_duracion");
+    var hora      = $("#reagendar_hora_cita");
+
+    if(fecha==""){
+        errores.push({text:'campo obligatorio', 'document':fecha});
+    }if(duracion.find(':selected').val()==""){
+        errores.push({text:'campo obligatorio', 'document':duracion});
+    }if(hora.find(':selected').val()==""){
+        errores.push({text:'campo obligatorio', 'document':hora});
+    }
+
+    if(errores.length>0){
+        notificacion('Campos Obligatorios', 'question');
+        return false;
+    }
+    else{
+        return true;
+    }
+}
+
 function reagendarCitas(Elemento) {
+
+
+    if(!FormValidReagendar()){
+        return false;
+    }
 
     var Element   =  $(Elemento);
     var padre     =  Element.parents('#modalCambioFechaCitas');
@@ -700,8 +737,10 @@ function reagendarCitas(Elemento) {
         cache:false,
         beforeSend: function(){
             boxloading($boxContent, true);
+            button_loadding($(Elemento), true);
         }, complete: function (xhr, status) {
             boxloading($boxContent, false, 1000);
+            button_loadding($(Elemento), false);
         },success:function (response) {
             // console.log(response);
             if(response.error!=""){
@@ -710,6 +749,11 @@ function reagendarCitas(Elemento) {
                 $("#modalCambioFechaCitas")
                     .modal("hide");
 
+                if(response.error==""){
+                    notificacion('Información Actualizada', 'success');
+                }
+
+                loadtableAgenda();
                 result = true;
             }
         }
@@ -860,9 +904,10 @@ $(window).on("load", function() {
         // allowClear:true,
         language:'es'
     });
-    if(!ModulePermission('Agenda', 'consultar')){
-        notificacion('Ud. notiene permiso para consultar', 'error');
-    }
+
+    // if(!ModulePermission('Agenda', 'consultar')){
+    //     notificacion('Ud. notiene permiso para consultar', 'error');
+    // }
 
     //buscar pacientes habilitados o desabilitados
     $('#buscarxPaciente').select2({

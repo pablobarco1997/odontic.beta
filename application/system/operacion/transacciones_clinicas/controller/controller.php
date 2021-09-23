@@ -229,9 +229,9 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
                             $rows[] = "<small class='text-blue' style='display: block'>".($item['descp'])."</small>";
 
                             if($item['subaccion']==1){
-                                if((double)$item['valor']<0)
+                                if((double)$item['valor']<0) //egreso
                                     $rows[] = "<small class='text-sm' style='color: red'>".$item['valor']."</small>";
-                                if((double)$item['valor']>0)
+                                if((double)$item['valor']>=0) //ingreso
                                     $rows[] = "<small class='text-sm' style='color: green'>".$item['valor']."</small>";
                             }
                             //transaccion entre cuentas
@@ -379,7 +379,7 @@ function transaccionClinicaCuentas($items=array(), $subaccion=""){
         $numero = 'TX_000001';
     }
 
-    if($subaccion=2){
+    if($subaccion==2){
         //si la subaccion es una transaccion entre cuentas el valor va positivo
         $items['valor'] = str_replace('-', $items['valor']);
     }

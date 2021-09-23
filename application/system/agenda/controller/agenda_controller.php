@@ -82,7 +82,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 "draw"            => $_POST['draw'],
                 "data"            => $resultado['datos'],
                 "recordsTotal"    => $resultado['total'],
-                "recordsFiltered" => $resultado['total']
+                "recordsFiltered" => $resultado['total'],
+                "permiso"         => $resultado['permiso'],
             );
 
             echo json_encode($output);
@@ -1255,8 +1256,9 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
     }
 
     $resultFinal = [
-        'datos' => $data,
-        'total' => $Total
+        'datos'   => $data,
+        'total'   => $Total,
+        'permiso' => (empty($PermisoConsultar)?'':'no_permiso')
     ];
 
     return $resultFinal;
