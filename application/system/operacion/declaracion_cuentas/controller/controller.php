@@ -112,7 +112,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         d.to_banco, 
                         d.to_caja,
                         d.estado, 
-                        d.saldo_current, 
+                        -- d.saldo_current, 
+                        cs.valor, 
                         cast(d.date_c as date) date_c,
                         d.to_caja_direccion,
                         d.to_banco_caja, 
@@ -122,6 +123,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         tab_ope_declare_cuentas d
                           left join
                         tab_ope_type_bancos_caja t on t.rowid = d.to_banco_caja 
+                          left join 
+	                    (select concat(c.n_cuenta, ' ', c.name_acount) as nom, sum(round(value,2)) as valor , d.id_cuenta as cuenta_id from  tab_ope_diario_admin_clinico_det d inner join tab_ope_declare_cuentas c on c.rowid = d.id_cuenta group by d.id_cuenta) as cs on cs.cuenta_id = d.rowid     
                         where  ";
 
             $query .= $PermisoConsultar;
@@ -154,7 +157,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         $row[] = strtoupper($object->tipo);
                         $row[] = $object->tipo_operacion;
                         $row[] = $object->n_cuenta;
-                        $row[] = number_format((double)$object->saldo_current, 2, '.', '');
+                        $row[] = number_format((double)$object->valor, 2, '.', '');
 
                         if($object->estado == "A"){
                             $row[] = "<label class=\"label\" style=\"background-color: #D5F5E3; color: green; font-weight: bolder\">ACTIVO</label>";

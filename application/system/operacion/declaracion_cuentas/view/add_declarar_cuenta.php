@@ -126,14 +126,21 @@ $modulo = false;
         }
     });
 
-    var validationCuentas = function(revalidate){
+    var validationCuentas = function(revalidate) {
 
-        var Errores                 = [];
-        var nombre                  = $("#Fn_nombre_cuenta");
-        var numero                  = $("#Fn_numero_cuenta");
-        var tipoCuentaBC            = $("#Fn_tipo_cuenta");
-        var Cajadireccion           = $("#Fn_direccion");
+        var Errores = [];
+        var nombre = $("#Fn_nombre_cuenta");
+        var numero = $("#Fn_numero_cuenta");
+        var tipoCuentaBC = $("#Fn_tipo_cuenta");
+        var Cajadireccion = $("#Fn_direccion");
+        var tipoperacion = $("#Fn_tipo_operacion");
 
+        if(tipoperacion.find(':selected').val()==""){
+            Errores.push({
+                "documento" :   tipoperacion,
+                "mesg" :  "Campo Obligatorio",
+            });
+        }
         if(nombre.val() == "" || (!/^\s/.test(nombre.val())) == false){
             Errores.push({
                 "documento" :   nombre,
@@ -189,7 +196,9 @@ $modulo = false;
                 menssage.setAttribute("class","error_msg_Fn_cuentas");
                 menssage.appendChild(document.createTextNode(Errores[i]['mesg']));
                 var documentoDol        = Errores[i]['documento'];
-                $(menssage).insertAfter(documentoDol);
+                var content = documentoDol.parents('.col-sm-7');
+                console.log(content);
+                content.append($(menssage));
             }
             valid = false;
         }else{
