@@ -201,16 +201,16 @@ if(isset($_GET['id_tratamiento']) && isset($_GET['id_paciente'])){
         $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit('A11', 'Direccion');
 
         $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit('B8',  $object_a['nom'] );
-        $objPHPExcel->setActiveSheetIndex(0)->mergeCells('B8:H8');
+        $objPHPExcel->setActiveSheetIndex(0)->mergeCells('B8:K8');
         $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit('B9',  $object_a['email'] );
-        $objPHPExcel->setActiveSheetIndex(0)->mergeCells('B9:H9');
+        $objPHPExcel->setActiveSheetIndex(0)->mergeCells('B9:K9');
         $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit('B10', $object_a['direccion'] );
-        $objPHPExcel->setActiveSheetIndex(0)->mergeCells('B10:H10');
+        $objPHPExcel->setActiveSheetIndex(0)->mergeCells('B10:K10');
         $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit('B11', $object_a['telefono_movil'] );
-        $objPHPExcel->setActiveSheetIndex(0)->mergeCells('B11:H11');
+        $objPHPExcel->setActiveSheetIndex(0)->mergeCells('B11:K11');
 
         $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit('A12',  'PLAN DE TRATAMIENTO N.'.$object_a['numero'] );
-        $objPHPExcel->setActiveSheetIndex(0)->mergeCells('A12:H12');
+        $objPHPExcel->setActiveSheetIndex(0)->mergeCells('A12:K12');
 
         $objPHPExcel->getActiveSheet()->getStyle('A12')->applyFromArray(array(
             'font'=> array(
@@ -232,26 +232,29 @@ if(isset($_GET['id_tratamiento']) && isset($_GET['id_paciente'])){
         ));
 
         //se aplica los estilos
-        $objPHPExcel->getActiveSheet()->getStyle('A1:H1')->applyFromArray($titulo);
-        $objPHPExcel->getActiveSheet()->getStyle('A2:H2')->applyFromArray($subtitulos);
-        $objPHPExcel->getActiveSheet()->getStyle('A7:H7')->applyFromArray($subtitulos);
+        $objPHPExcel->getActiveSheet()->getStyle('A1:K1')->applyFromArray($titulo);
+        $objPHPExcel->getActiveSheet()->getStyle('A2:K2')->applyFromArray($subtitulos);
+        $objPHPExcel->getActiveSheet()->getStyle('A7:K7')->applyFromArray($subtitulos);
 
         //otros textos informativos
-        $objPHPExcel->getActiveSheet()->getStyle('B3:H7')->applyFromArray($text_one);
+        $objPHPExcel->getActiveSheet()->getStyle('B3:K7')->applyFromArray($text_one);
         $objPHPExcel->getActiveSheet()->getStyle('A3:A6')->applyFromArray($text_one_two);
 
-        $objPHPExcel->getActiveSheet()->getStyle('B8:H11')->applyFromArray($text_one);
+        $objPHPExcel->getActiveSheet()->getStyle('B8:K11')->applyFromArray($text_one);
         $objPHPExcel->getActiveSheet()->getStyle('A8:A11')->applyFromArray($text_one_two);
 
 
         //Detalles del plan de tratamiento
         $titulos_two = array(
-            'Prestación/Servicios',
-            'Estado',
-            'Precio',
-            'Cantidad',
-            'Desc. %',
-            'Desc. $ Dolares',
+            'PRESTACIÓN/SERVICIOS',
+            'PIEZA',
+            'CARAS',
+            'LABORATORIO',
+            'ESTADO',
+            'PRECIO',
+            'CANTIDAD',
+            'DESC. %',
+            'DESC. $ Dolares',
             'Iva calculado',
             'Sub.Total'
         );
@@ -261,7 +264,7 @@ if(isset($_GET['id_tratamiento']) && isset($_GET['id_paciente'])){
             $objPHPExcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($colunm, 13, strtoupper(($value)));
             $colunm++;
         }
-        $objPHPExcel->getActiveSheet()->getStyle('A13:H13')->applyFromArray(array(
+        $objPHPExcel->getActiveSheet()->getStyle('A13:K13')->applyFromArray(array(
             'font'=> array(
                 'bold'=>true,
                 'size'=>12,
@@ -279,6 +282,7 @@ if(isset($_GET['id_tratamiento']) && isset($_GET['id_paciente'])){
         }
 
 
+//        echo '<pre>';print_r($object_b); die();
         $i = 14;
         foreach ($object_b as $valores){
 
@@ -292,25 +296,29 @@ if(isset($_GET['id_tratamiento']) && isset($_GET['id_paciente'])){
                 $caras = implode(',', $caras);
             }
 
+
             $prestacionServicio = $valores['prestacion_servicio'];
             if($valores['pieza']!=0){
-                $prestacionServicio .= "\n"."Pieza: ".$valores['pieza'];
+//                $prestacionServicio .= "\n"."Pieza: ".$valores['pieza'];
             }
             if($caras!=""){
-                $prestacionServicio .= "\n"."Caras: ".$caras;
+//                $prestacionServicio .= "\n"."Caras: ".$caras;
             }
 
 
 
             $objPHPExcel->setActiveSheetIndex(0)
-                ->setCellValue("A$i", $prestacionServicio)
-                ->setCellValue("B$i", $valores['estado_detalle'])
-                ->setCellValue("C$i", $valores['precio'])
-                ->setCellValue("D$i", $valores['cantidad'])
-                ->setCellValue("E$i", $valores['descuento_porc'])
-                ->setCellValue("F$i", $valores['desc_dolares'])
-                ->setCellValue("G$i", $valores['iva_calculado'])
-                ->setCellValue("H$i", $valores['total']);
+                ->setCellValue("A$i",  $prestacionServicio)
+                ->setCellValue("B$i",  (($valores['pieza']==0)?"":$valores['pieza']) )
+                ->setCellValue("C$i",  $caras)
+                ->setCellValue("D$i",  $valores['laboratorio']) //caras selecionadas
+                ->setCellValue("E$i",  $valores['estado_detalle'])
+                ->setCellValue("F$i", $valores['precio'])
+                ->setCellValue("G$i", $valores['cantidad'])
+                ->setCellValue("H$i", $valores['descuento_porc'])
+                ->setCellValue("I$i", $valores['desc_dolares'])
+                ->setCellValue("J$i", $valores['iva_calculado'])
+                ->setCellValue("K$i", $valores['total']);
 
 
 //            echo '<pre>';
@@ -327,14 +335,25 @@ if(isset($_GET['id_tratamiento']) && isset($_GET['id_paciente'])){
             ->setCellValueExplicit('H'.$rows, "=SUMA(H14:H".($rows-1).")");
         */
 
-        $objPHPExcel->getActiveSheet()->getStyle('A14:H'.($i-1))->applyFromArray($information);
+        $objPHPExcel->getActiveSheet()->getStyle('A14:k'.($i-1))->applyFromArray($information);
 
 
 
-        for ($i = 'A'; $i <= 'H'; $i++) {
-            $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setWidth(50);
-            if($i!='A'){
-                $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setWidth(20);
+        for ($i = 'A'; $i <= 'K'; $i++) {
+
+            switch ($i){
+                case 'A':
+                    $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setWidth(50);
+                    break;
+                case 'C':
+                    $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setWidth(50);
+                    break;
+                case 'B':
+                    $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setWidth(8);
+                    break;
+                default:
+                    $objPHPExcel->setActiveSheetIndex(0)->getColumnDimension($i)->setWidth(20);
+                    break;
             }
         }
 

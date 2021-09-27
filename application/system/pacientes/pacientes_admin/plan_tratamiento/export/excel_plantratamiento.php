@@ -120,7 +120,8 @@ if(isset($_GET['id_paciente'])){
         $sql_b = "SELECT 
                         concat('C_', lpad('0',(5-length(d.rowid)),'0'),d.rowid) as numero_c ,
                         asoc.fk_tratamiento as id_ptratamiento, 
-                        d.fecha_cita  as fecha_cita,         
+                        d.fecha_cita  as fecha_cita, 
+                        cast(concat(cast(d.fecha_cita as date),' ',d.hora_inicio) as datetime) as fechaIniCita,        
                         d.hora_inicio , 
                         d.hora_fin ,
                         concat(od.nombre_doc,' ', od.apellido_doc)  as doct ,
@@ -232,7 +233,9 @@ if(isset($_GET['id_paciente'])){
 
             $objPHPExcel->setActiveSheetIndex(0)
                 ->setCellValueExplicit('A'.$i, $value['numero'].' '.date('Y/m/d', strtotime($value['fecha_create'])) );
+
             $objPHPExcel->setActiveSheetIndex(0)->mergeCells('A'.$i.':G'.$i);
+
             $objPHPExcel->getActiveSheet()->getStyle('A'.$i.':G'.$i)->applyFromArray(
                 array(
                     'font'=> array('bold'=>true,'size'=>12,'color'=>array('argb'=>'1f497d')),
@@ -281,7 +284,7 @@ if(isset($_GET['id_paciente'])){
                 $objPHPExcel->setActiveSheetIndex(0)
                     ->setCellValueExplicit('A'.$i,$AddTitulosCitasAso[0]) //N. CITAS
                     ->setCellValueExplicit('B'.$i,$AddTitulosCitasAso[1]) //ESPECIALIDAD
-                    ->setCellValueExplicit('C'.$i,$AddTitulosCitasAso[2]) //ESTADO FINANCIERO
+                    ->setCellValueExplicit('C'.$i,$AddTitulosCitasAso[2]) //EMITIDO
                     ->setCellValueExplicit('D'.$i,$AddTitulosCitasAso[3]) //CANT. PRESTACIONES/SERVICIOS
                     ->setCellValueExplicit('E'.$i,$AddTitulosCitasAso[4]) //ATRAZADAS
                 ;
@@ -296,7 +299,7 @@ if(isset($_GET['id_paciente'])){
                     $objPHPExcel->setActiveSheetIndex(0)
                         ->setCellValueExplicit('A'.$i,$itemTC['numero_c'])
                         ->setCellValueExplicit('B'.$i,$itemTC['especialidad'])
-                        ->setCellValueExplicit('C'.$i,date('Y/m/d H:m:s', strtotime($itemTC['fecha_cita']." ".$itemTC['hora_inicio'])))
+                        ->setCellValueExplicit('C'.$i,date('Y/m/d H:m:s', strtotime($itemTC['fechaIniCita'])))
                         ->setCellValueExplicit('D'.$i,$itemTC['estado_c'])
                         ->setCellValueExplicit('E'.$i,$itemTC['cita_atrazada'])
                     ;
