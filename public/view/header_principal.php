@@ -7,27 +7,7 @@
 
     <title>Odontic</title>
 
-    <?php
-
-        /*if(!empty($conf->EMPRESA->INFORMACION->logo)){
-            if(file_exists(DOL_DOCUMENT.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$conf->EMPRESA->INFORMACION->logo)){
-                $url = DOL_DOCUMENT.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$conf->EMPRESA->INFORMACION->logo;
-                $base64 = base64_encode(file_get_contents($url));
-                $icon_64_entity = "data:image/*; base64, ".$base64;
-            }else{
-                $url = DOL_DOCUMENT.'/application/system/login/img/dental_icon.png';
-                $base64 = base64_encode(file_get_contents($url));
-                $icon_64_entity = "data:image/*; base64, ".$base64;
-            }
-        }else{
-            $url = DOL_DOCUMENT.'/application/system/login/img/odontic.beta_sistema_odontologico_online.png';
-            $base64 = base64_encode(file_get_contents($url));
-            $icon_64_entity = "data:image/*; base64, ".$base64;
-        }*/
-
-        $url = DOL_HTTP.'/application/system/login/img/odontic_ico.png';
-
-    ?>
+    <?php $url = DOL_HTTP.'/application/system/login/img/odontic_ico.png';?>
 
     <link rel="shortcut icon" href="<?= $url ?>" type = "image/x-icon">
     <!-- Tell the browser to be responsive to screen width -->
@@ -60,6 +40,8 @@
     <link rel="stylesheet" href="<?= DOL_HTTP .'/public/bower_components/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css'?>">
 
     <!--script import-->
+    <!--socket-->
+    <script src="<?php echo DOL_HTTP.'/public/js/socket_web_notify.js' ?>"></script>
     <!-- jQuery 3 -->
     <script src="<?php echo DOL_HTTP.'/public/bower_components/jquery/dist/jquery.js'?>"></script>
     <!-- Bootstrap 3.4 -->
