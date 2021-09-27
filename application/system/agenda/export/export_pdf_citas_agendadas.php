@@ -7,6 +7,15 @@ if(!isset($_SESSION['is_open']))
 {
     header("location:".DOL_HTTP."/application/system/login");
 }
+
+
+//parametros de entrada para procesa la informacion
+//configuracion de php
+define('PC_MEMORY_LIMIT', '1024M');
+ini_set('memory_limit',PC_MEMORY_LIMIT);
+set_time_limit(20000);
+//echo '<pre>'; print_r(ini_get_all()); die();
+
 require_once  DOL_DOCUMENT .'/application/system/conneccion/conneccion.php';    //Coneccion de Empresa
 require_once  DOL_DOCUMENT .'/public/lib/mpdf60/mpdf.php';
 require_once  DOL_DOCUMENT .'/application/controllers/controller.php';

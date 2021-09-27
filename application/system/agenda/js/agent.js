@@ -733,7 +733,7 @@ function reagendarCitas(Elemento) {
             "fk_doc"    : fk_doc
         },
         dataType:"json",
-        async:false,
+        async:true,
         cache:false,
         beforeSend: function(){
             boxloading($boxContent, true);
@@ -744,13 +744,18 @@ function reagendarCitas(Elemento) {
         },success:function (response) {
             // console.log(response);
             if(response.error!=""){
-                notificacion(response.error, 'error');
+                setTimeout(function () {
+                    notificacion(response.error, 'error');
+                },500)
             }else{
+
                 $("#modalCambioFechaCitas")
                     .modal("hide");
 
                 if(response.error==""){
-                    notificacion('Información Actualizada', 'success');
+                    setTimeout(function () {
+                        notificacion('Información Actualizada', 'success');
+                    },500)
                 }
 
                 loadtableAgenda();
@@ -763,9 +768,18 @@ function reagendarCitas(Elemento) {
 
 }
 
-var ImprimirCitasAgendadas = function(filter=false){
+var ImprimirCitasAgendadas = function(filter=false, Element = false){
 
-    if(!ModulePermission("Agenda","consultar")){
+    var objectLoad = {
+        onload:function () {
+            boxloading($boxContent, true);
+        },
+        offload: function () {
+            boxloading($boxContent, false, 1000);
+        }
+    };
+
+    if(!ModulePermission("Agenda","consultar", objectLoad)){
         notificacion("Ud. no tiene permiso para Consultar", "error");
         return false;
     }
@@ -791,7 +805,15 @@ var ImprimirCitasAgendadas = function(filter=false){
         parametros += "&estados="+estados.toString();
         parametros += "&pacientes="+bxpaciente.toString();
         parametros += "&n_cita="+n_citasPacientes;
-        var urlprint = $DOCUMENTO_URL_HTTP + '/application/system/agenda/export/export_pdf_citas_agendadas.php?accion_exportar=pdf_filter'+parametros;
+
+        if($(Element).hasClass('Excel')){
+            urlprint = $DOCUMENTO_URL_HTTP + '/application/system/agenda/export/export_excel_agenda.php?accion_exportar=pdf_filter'+parametros;
+        }
+        if($(Element).hasClass('PDF')){
+            urlprint = $DOCUMENTO_URL_HTTP + '/application/system/agenda/export/export_pdf_citas_agendadas.php?accion_exportar=pdf_filter'+parametros;
+        }
+
+        // alert(urlprint);
         window.open(urlprint, '_blank');
 
         return true;

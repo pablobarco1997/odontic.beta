@@ -157,7 +157,8 @@
         <div class="row">
             <div class="form-group col-md-12 ">
                 <ul class="list-inline pull-right">
-                    <li>  <button class="btn   btn-block  btn-default" onclick="ImprimirCitasAgendadas(true)" style="float: right; padding: 10px" > &nbsp; &nbsp; <small style="font-weight: bold"> Imprimir por rango de Filtro <i class="fa fa-print"></i> </small> &nbsp; &nbsp;</button> </li>
+                    <li>  <button class="btn   btn-block  btn-default Excel" onclick="ImprimirCitasAgendadas(true, this)" style="float: right; padding: 10px" > &nbsp; &nbsp; <small style="font-weight: bold"> Imprimir por rango de Filtro EXCEL <i class="fa fa-print"></i> </small> &nbsp; &nbsp;</button> </li>
+                    <li>  <button class="btn   btn-block  btn-default PDF" onclick="ImprimirCitasAgendadas(true, this)" style="float: right; padding: 10px" > &nbsp; &nbsp; <small style="font-weight: bold"> Imprimir por rango de Filtro PDF <i class="fa fa-print"></i> </small> &nbsp; &nbsp;</button> </li>
                     <li>  <button class="limpiar btn   btn-block  btn-default" style="float: right; padding: 10px" > &nbsp; &nbsp; Limpiar &nbsp; &nbsp;</button> </li>
                     <li>  <button class="aplicar btn   btn-block  btn-success" style="float: right; padding: 10px" > &nbsp;  &nbsp;Aplicar busqueda &nbsp;</button> </li>
                 </ul>

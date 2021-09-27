@@ -227,7 +227,7 @@ $horaCita = implode(" ", $hoursAxu);
                 <button type="button" class="btn text-blue " style="font-weight: bold" data-dismiss="modal"> Cancelar </button>
                 <button type="button" class="btn " style="color: green; font-weight: bold" onclick="reagendarCitas(this)" >
                     Guardar
-                    <span class="fa fa-refresh"></span>
+                    <span class="fa fa-refresh hide"></span>
                 </button>
             </div>
         </div>

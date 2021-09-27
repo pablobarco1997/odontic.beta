@@ -12,9 +12,10 @@
             <li><a data-toggle="collapse" data-target="#contentFilter" class="btnhover btn btn-sm <?= (!PermitsModule('Citas Asociadas', 'consultar'))?'disabled_link3':'' ?> " style="color: #333333" aria-expanded="true"> <b>   ▼  Filtrar  </b>  </a> </li>
             <li>
                 <a href="<?= DOL_HTTP?>/application/system/pacientes/pacientes_admin/citas_asociadas/export/exportpdf_historialcitas.php?idpaciente=<?=$idPaciente?>"  style="color: #333333" target="_blank" class="btnhover btn btn-sm <?= (!PermitsModule('Citas Asociadas', 'consultar'))?'disabled_link3':'' ?>" id="exportCitasPaciente"><b> <i class="fa fa-print"></i> PDF </b> </a>
+                <a href="<?= DOL_HTTP?>/application/system/pacientes/pacientes_admin/citas_asociadas/export/export_excel_agendada_xpaciente.php?pacientes=<?=$idPaciente?>"  style="color: #333333" target="_blank" class="btnhover btn btn-sm <?= (!PermitsModule('Citas Asociadas', 'consultar'))?'disabled_link3':'' ?>" id="exportCitasExcel"><b> <i class="fa fa-print"></i> EXCEL </b> </a>
             </li>
             <li>
-                <a href="<?= DOL_HTTP?>/application/system/agenda/index.php?view=agendadd" style="color: #333333" class="btnhover btn btn-sm <?= (!PermitsModule('Citas Asociadas', 'agregar'))?'disabled_link3':'' ?>" id=""><b> <i class="fa fa-calendar"></i> Agendar Cita</b> </a>
+                <a href="<?= DOL_HTTP?>/application/system/agenda/index.php?view=agendadd" style="color: #333333" class="btnhover btn btn-sm <?= (!PermitsModule('Citas Asociadas', 'agregar'))?'disabled_link3':'' ?>" id=""><b> <i class="fa fa-calendar-check-o"></i> Agendar</b> </a>
             </li>
         </ul>
     </div>
@@ -76,7 +77,7 @@
                             <th width="17%">Especialidad</th>
                             <th width="9%"># Cita</th>
                             <th width="27%">Información Adicional</th>
-                            <th width="20%">Plan de tratamiento asociado</th>
+<!--                            <th width="20%">Plan de tratamiento asociado</th>-->
                             <th width="17%">Estado de la Cita</th>
                         </tr>
                     </thead>

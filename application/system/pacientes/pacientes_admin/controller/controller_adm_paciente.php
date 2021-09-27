@@ -2485,9 +2485,9 @@ function listcitas_admin($idPaciente, $fechaInicio, $fechafin, $n_citas, $Estado
     global $db, $conf, $user;
 
     if(!PermitsModule('Citas Asociadas', 'consultar')){
-        $permits = " and 1<>1 ";
+        $permits = " 1<>1 ";
     }else{
-        $permits = " and 1=1 ";
+        $permits = " 1=1 ";
     }
 
     $Total          = 0;
@@ -2504,30 +2504,37 @@ function listcitas_admin($idPaciente, $fechaInicio, $fechafin, $n_citas, $Estado
                 d.hora_inicio , 
                 d.hora_fin ,
                 d.rowid  as id_cita_det,
-                (select concat(p.nombre ,' ',p.apellido) from tab_admin_pacientes p where p.rowid = c.fk_paciente) as paciente,
-                (select rowid from tab_admin_pacientes p where p.rowid = c.fk_paciente) as idpaciente,
-                (select telefono_movil from tab_admin_pacientes p where p.rowid = c.fk_paciente) as telefono_movil,
-                (select concat(o.nombre_doc,' ', o.apellido_doc) from tab_odontologos o where o.rowid = d.fk_doc) as doct ,
-                (select concat(s.text) from tab_pacientes_estado_citas s where s.rowid = d.fk_estado_paciente_cita) as estado,
-                (select s.color from tab_pacientes_estado_citas s where s.rowid = d.fk_estado_paciente_cita) as color,
+                concat(p.nombre ,' ',p.apellido) as paciente,
+                p.rowid as idpaciente,
+                concat(o.nombre_doc,' ', o.apellido_doc) as doct,
+                s.text as estado,
+                s.color,
                 d.fk_estado_paciente_cita , 
                 c.comentario ,
-                IFNULL((select es.nombre_especialidad FROM tab_especialidades_doc es where es.rowid = d.fk_especialidad), 'General') as especialidad,
-                -- (select IFNULL(tc.edit_name, concat('Plan de tratamiento #',tc.numero)) from tab_plan_tratamiento_cab tc where tc.fk_cita = c.rowid limit 1) as plantratamiento ,
-                (select p.telefono_movil from tab_admin_pacientes p where p.rowid = c.fk_paciente) as telefono_movil ,
-                
+                IFNULL(es.nombre_especialidad , 'General') as especialidad,
+                p.telefono_movil,
                 -- validaciones
                 -- citas atrazada con estado no confirmado
                 IF( now() > CAST(d.fecha_cita AS DATETIME)  
                                         && d.fk_estado_paciente_cita in(2,1,3,4,7,8,9,10,11,5,  (select statusc.rowid from tab_pacientes_estado_citas statusc where statusc.system=0) )  , 
-                                            concat(' Atrasada ', (select concat(s.text) from tab_pacientes_estado_citas s where s.rowid = d.fk_estado_paciente_cita) , 
-                                                    '\n Fecha : ' , date_format(d.fecha_cita, '%Y/%m/%d') , '\n Hora: ' , d.hora_inicio ,' h ' , d.hora_fin) , ''
+                                            concat('Atrasada ', (select concat(s.text) from tab_pacientes_estado_citas s where s.rowid = d.fk_estado_paciente_cita) , 
+                                                    ' | Fecha : ' , date_format(d.fecha_cita, '%Y/%m/%d') , ' | Hora: ' , d.hora_inicio ,' h ' , d.hora_fin) , ''
                                                     ) as cita_atrazada
          
-             from 
+             FROM
          
-             tab_pacientes_citas_cab c , tab_pacientes_citas_det d
-             where c.rowid = d.fk_pacient_cita_cab ";
+                tab_pacientes_citas_cab c 
+                    inner join
+                tab_pacientes_citas_det d on d.fk_pacient_cita_cab = c.rowid
+                    inner join 
+                tab_admin_pacientes p on c.fk_paciente = p.rowid
+                    inner join
+                tab_pacientes_estado_citas s on s.rowid = d.fk_estado_paciente_cita
+                    inner join
+                tab_odontologos o on o.rowid = d.fk_doc
+                    left join
+                tab_especialidades_doc es on es.rowid = d.fk_especialidad
+             where $permits";
 
     if(!empty($EstadosLis))
         $sql .= " and d.fk_estado_paciente_cita in($EstadosLis) ";
@@ -2541,17 +2548,13 @@ function listcitas_admin($idPaciente, $fechaInicio, $fechafin, $n_citas, $Estado
     if(!empty($n_citas))
         $sql .= " and d.rowid like '%$n_citas%' ";
 
-
-
-    $sql .= $permits; //permiso consultar
-
     $sql .= " order by d.fecha_cita desc ";
     $sqlTotal = $sql;
 
     if($start || $length)
         $sql.=" LIMIT $start,$length;";
 
-    //print_r($sql); die();
+//    print_r($sql); die();
     $resultTotal = $db->query($sqlTotal);
     $res = $db->query($sql);
     if($res->rowCount()>0){
@@ -2561,29 +2564,27 @@ function listcitas_admin($idPaciente, $fechaInicio, $fechafin, $n_citas, $Estado
         while ($obj = $res->fetchObject()){
 
             $row = array();
-            $label = "";
-            $diasTranscurridos = date('Y-m-d');
-
 
             #Citas Atrazadas
             $citas_atrazadas = "";
             if( $obj->cita_atrazada != "") {
-                $citas_atrazadas = '<small style="white-space: pre-wrap;  color: red; display: block; font-weight: bold"  class="" title="'. $obj->cita_atrazada .'">'.$obj->cita_atrazada.'</small>';
+                $citas_atrazadas = '<small style="white-space: pre-wrap;  color: red; display: block; font-weight: none"  class="" title="'. $obj->cita_atrazada .'">'.$obj->cita_atrazada.'</small>';
             }
 
-            $iconCita = 'data:image/*; base64, '.base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/cita-medica.ico'));
+//            $iconCita = 'data:image/*; base64, '.base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/cita-medica.ico'));
+//            <img  src='". $iconCita. "' class='img-rounded' style='width: 20px; height: 20px' >
 
             $numero_cita_asociada = "<table>
                                         <tr> 
-                                            <td title='número de cita' > <img  src='". $iconCita. "' class='img-rounded' style='width: 20px; height: 20px' > - </td>
-                                            <td style='font-weight: bold'> ".(str_pad($obj->id_cita_det, 6, "0", STR_PAD_LEFT))." </td> 
+                                            <td title='número de cita' > </td>
+                                            <td style='font-weight: bold'> C_".(str_pad($obj->id_cita_det, 5, "0", STR_PAD_LEFT))." </td> 
                                         </tr>
                                      </table>";
 
 
             $list_ptranm = []; //lista de plan de tratamientos asociados
             $sql_a = "SELECT 
-                    concat('Plan de tratamiento #',tc.numero) as plantratamiento , 
+                    concat('Plan de Tratamiento: N.',tc.numero) as plantratamiento , 
                     aso.fk_cita
                 FROM
                     tab_plan_asoc_tramt_citas aso
@@ -2598,7 +2599,7 @@ function listcitas_admin($idPaciente, $fechaInicio, $fechafin, $n_citas, $Estado
             }
 
             if(count($list_ptranm)>0)
-                $lista_p = implode("\n", $list_ptranm);
+                $lista_p = implode(", ", $list_ptranm);
             else
                 $lista_p = "";
 
@@ -2608,8 +2609,7 @@ function listcitas_admin($idPaciente, $fechaInicio, $fechafin, $n_citas, $Estado
 
             $row[]  = "<span style='white-space: pre-wrap;'>".$obj->especialidad."\n<b>Doctor(a):</b>$obj->doct<span>";
             $row[]  = $numero_cita_asociada;
-            $row[]  = (($obj->comentario == "")?"":$obj->comentario).$citas_atrazadas;
-            $row[]  = ($lista_p == "") ? "No Asignado" : "<span style='font-weight: bold; white-space: pre-wrap;' class='text-sm' title='$lista_p'>$lista_p</span>";
+            $row[]  = (($obj->comentario == "")?"":$obj->comentario).$citas_atrazadas."<small style='display: block;' class='text-blue' title='$lista_p'>$lista_p</small>";
             $row[]  = "<label class='control-label' style='background-color: $obj->color !important;  color: #333333; margin-top: 3%; padding: 5px;'> $obj->estado </label>";
             $row[]  = "";
             $data[] = $row;

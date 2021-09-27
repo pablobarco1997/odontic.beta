@@ -268,11 +268,6 @@ function invalic_puedoGuardar()
                 FechaNow++;
             }
 
-
-            // validFechaRepetidas.push(fecheIni.val());
-            // numFechas++;
-
-
         //Fecha menor a la actual
         if(FechaNow>0){
             puedoGuardar++;
@@ -295,7 +290,7 @@ function invalic_puedoGuardar()
         //citas agendadas dentro del mismo rango de fecha para el mismo odontologo
         if(citas_MismaFechas > 0){
             puedoGuardar++;
-            notificacion('Se detectó cita agendada con la fecha '+$("#inputFecha").val()+' Doctor(a): <b>'+$('select[name="odont[0].det"]').find('option:selected').text() + '</b>  <br><b>Compruebe la información antes de guardar</b>', "question");
+            notificacion('Se detectó cita ya agendada con la fecha '+$("#inputFecha").val()+' Doctor(a): <b>'+$('select[name="odont[0].det"]').find('option:selected').text() + '</b>  <br><b>Compruebe la información antes de guardar</b>', "question");
         }
 
         if($('#agndar_paciente').find(':selected').val()==''){
@@ -312,38 +307,46 @@ function ConsultarDateNow( dateadd, hour ) {
 
     var valid = 0;
 
-    if(dateadd=="" || hour=="")
+    if(dateadd=="")
         return false;
 
 
-    var form = new FormData();
-    form.append("accion", "validDateNow");
-    form.append("ajaxSend", "ajaxSend");
-    form.append("dateadd", dateadd);
-    form.append("hour", hour);
+    // var form = new FormData();
+    // form.append("accion", "validDateNow");
+    // form.append("ajaxSend", "ajaxSend");
+    // form.append("dateadd", dateadd);
+    // form.append("hour", hour);
+    //
+    // $.ajax({
+    //     url: $DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php",
+    //     type:"POST",
+    //     data:form,
+    //     dataType:"json",
+    //     contentType:false,
+    //     processData:false,
+    //     async:false,
+    //     success:function(resp) {
+    //         if(resp['error'] != ''){
+    //             notificacion(resp['error'], 'error');
+    //             valid++;
+    //         }else{
+    //             valid = 0;
+    //         }
+    //     }
+    // });
 
-    $.ajax({
-        url: $DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php",
-        type:"POST",
-        data:form,
-        dataType:"json",
-        contentType:false,
-        processData:false,
-        async:false,
-        success:function(resp) {
-            if(resp['error'] != ''){
-                notificacion(resp['error'], 'error');
-                valid++;
-            }else{
-                valid = 0;
-            }
-        }
-    });
+    var x=new Date();
+    var fecha = dateadd.split("/");
+    x.setFullYear(fecha[2],fecha[1]-1,fecha[0]);
+    var today = new Date();
 
-    if(valid==0)
+    console.log(x);
+    if (x >= today){
+        return false;
+    }
+    else{
         return true;
-    else
-        return false;
+    }
 
 }
 
@@ -409,14 +412,18 @@ function Consultar_CitasHorus_(fecha, hora, duracion, fk_doc)
         data:parametros,
         dataType:'json',
         async:false,
+        cache: false,
+        beforeSend: function(){
+            boxloading($boxContent,true);
+        },
+        complete: function(xhr, status  ){
+            boxloading($boxContent,false, 1000);
+        },
         success: function(res) {
             respuesta = res['respuesta'];
         }
-
     });
-
     return respuesta;
-
 }
 
 
@@ -445,6 +452,9 @@ function GuardarCitas(btn){
             dataType:'json',
             cache:false,
             async: true,
+            beforeSend: function(){
+                boxloading($boxContent,true);
+            },
             complete:function(xhr, status) {
 
                 if(xhr['status']=='200'){

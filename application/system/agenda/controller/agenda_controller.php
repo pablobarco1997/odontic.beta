@@ -705,15 +705,10 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     '') AS valid_dateadd 
                     LIMIT 1";
             $result = $db->query($Date);
-
-//            echo '<pre>'; print_r($Date); die();
             if($result){
-
                 $object  = $result->fetchObject();
-
                 $date_cita = strtotime($DateHour);
                 $now_date  = strtotime($object->Now);
-
 //                $date_cita = new DateTime(date("Y-m-d H:m:s", strtotime($DateHour)));
 //                $now_date  = new DateTime(date("Y-m-d H:m:s", strtotime($object->Now)));
 
@@ -944,22 +939,22 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
     $fecha_hoy = date("Y-m-d");
 
     $sql = "SELECT 
-            d.rowid  as id_cita_det,
-            d.fecha_cita  as fecha_cita,         
+            date_format(d.fecha_cita, '%Y/%m/%d')  as fecha_cita,         
             d.hora_inicio , 
             d.hora_fin ,
-            (select concat(p.nombre ,' ',p.apellido) from tab_admin_pacientes p where p.rowid = c.fk_paciente) as paciente,
-            (select rowid from tab_admin_pacientes p where p.rowid = c.fk_paciente) as idpaciente,                   
-            (select telefono_movil from tab_admin_pacientes p where p.rowid = c.fk_paciente) as telefono_movil,
-            (select concat(o.nombre_doc,' ', o.apellido_doc) from tab_odontologos o where o.rowid = d.fk_doc) as doct ,
-            (select concat(s.text) from tab_pacientes_estado_citas s where s.rowid = d.fk_estado_paciente_cita) as estado,
-            (select s.color from tab_pacientes_estado_citas s where s.rowid = d.fk_estado_paciente_cita) as color,
+            d.rowid  as id_cita_det,
+            concat(p.nombre ,' ',p.apellido) as paciente, 
+            p.rowid as idpaciente,                   
+            p.telefono_movil, 
+            concat(o.nombre_doc,' ', o.apellido_doc) as doct, 
+            s.text as estado,
+            s.color as color,
             d.fk_estado_paciente_cita , 
             c.comentario ,
-            ifnull((select es.nombre_especialidad FROM tab_especialidades_doc es where es.rowid = d.fk_especialidad),'General') as especialidad,
-            (select p.telefono_movil from tab_admin_pacientes p where p.rowid = c.fk_paciente) as telefono_movil,
+            ifnull(es.nombre_especialidad,'General') as especialidad,
+            p.telefono_movil as telefono_movil,
             d.fk_doc as iddoctor , 
-            (select p.email from tab_admin_pacientes p where p.rowid = c.fk_paciente) as email, 
+            p.email as email, 
             d.comentario_adicional as comentario_adicional,
             c.fk_paciente as idpaciente  ,
              -- validaciones
@@ -971,9 +966,24 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
                                     ) as cita_atrazada
 									            
          FROM 
-            tab_pacientes_citas_cab c , tab_pacientes_citas_det d
-            where c.rowid = d.fk_pacient_cita_cab
+            tab_pacientes_citas_cab c 
+				inner join
+            tab_pacientes_citas_det d on d.fk_pacient_cita_cab = c.rowid
+				inner join 
+			tab_admin_pacientes p on c.fk_paciente = p.rowid
+				inner join
+			tab_pacientes_estado_citas s on s.rowid = d.fk_estado_paciente_cita
+				inner join
+			tab_odontologos o on o.rowid = d.fk_doc
+				left join
+			tab_especialidades_doc es on es.rowid = d.fk_especialidad
+            where 
          ";
+
+    if(!empty($PermisoConsultar))
+        $sql .= $PermisoConsultar;
+    else
+        $sql .= " 1=1 ";
 
     if(!empty($doctor)) {
         $sql .= " and d.fk_doc in(".$doctor.")";
@@ -999,7 +1009,6 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
         $sql .= " and d.rowid like '%$n_citas%' ";
     }
 
-    $sql .= $PermisoConsultar;
     /*
     if ($colum_ord == 3) {
         $sql .= " order by 2 $direcc_ord";
@@ -1024,20 +1033,19 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
     }
 
 
-    #echo '<pre>';print_r($sql); die();
+//    echo '<pre>';print_r($sql); die();
 
     $resultTotal = $db->query($sqlTotal);
     $rs = $db->query($sql);
 
-    if( $rs && $rs->rowCount() > 0 )
-    {
+    if( $rs && $rs->rowCount() > 0 ){
+
         $Total = $resultTotal->rowCount();
 
         $src = "data: image/png; base64, ".base64_encode(file_get_contents(DOL_HTTP.'/logos_icon/logo_default/cita-medica.ico'));
         $iu = 0; #acumulador
 
-        while ($acced = $rs->fetchObject())
-        {
+        while ($acced = $rs->fetchObject()){
 
             $row = array();
             //checked box

@@ -118,7 +118,13 @@ function aplicarExportPdf(){
         + "&ncita=" + $("#filtra_citas").val()
         + '&estadoslist=' + listEstados;
 
+    var urlexcel = $DOCUMENTO_URL_HTTP + "/application/system/pacientes/pacientes_admin/citas_asociadas/export/export_excel_agendada_xpaciente.php?pacientes=" + $id_paciente
+        + "&date=" + $("#startDate").val()
+        + "&ncita=" + $("#filtra_citas").val()
+        + '&estadoslist=' + listEstados;
+
     $("#exportCitasPaciente").attr("href", urlpdf);
+    $("#exportCitasExcel").attr("href", urlexcel);
 
 }
 
