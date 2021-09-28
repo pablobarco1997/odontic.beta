@@ -202,7 +202,6 @@ if(isset($_GET['accion_exportar'])) {
 
 
 
-
     //Se aplica el ancho automatico
     for ($i = 'A'; $i <= 'H'; $i++) {
 

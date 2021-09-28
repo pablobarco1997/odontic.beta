@@ -250,12 +250,13 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                                 when gc.estado = 'E' then 'ANULADO'
                                 when gc.estado = 'A' then 'GENERADO'
 						   END as estado_gasto 
+						   ,concat('CJA_', lpad('0',(5-length(cgc.id_ope_caja)),'0'),cgc.id_ope_caja) as n_abierta_caja
                     FROM
                         (SELECT * FROM tab_ope_gastos_clinicos n) AS gc
                             INNER JOIN
                         (SELECT m.rowid, m.nom FROM tab_ope_gastos_nom m) AS m ON m.rowid = gc.id_nom_gastos
                         LEFT JOIN 
-                        ( select cg.id_gasto , dc.n_cuenta , dc.name_acount , dc.to_caja_direccion ,  c.id_caja_cuenta , 
+                        ( select cg.id_ope_caja, cg.id_gasto , dc.n_cuenta , dc.name_acount , dc.to_caja_direccion ,  c.id_caja_cuenta , 
 							 (select u.usuario from tab_login_users u where u.rowid = c.id_user_caja) as usuario  FROM
 							 tab_ope_cajas_det_gastos cg
 							  inner join 
@@ -267,12 +268,11 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $sql_ab .= " where ".$permits.$filtro ;
             $sql_ab .= " order by gc.rowid desc ";
 
-//            print_r($sql_ab); die();
-
             $Total = $db->query($sql_ab)->rowCount();
             if($start || $length){
                 $sql_ab.=" LIMIT $start,$length;";
             }
+
 //            print_r($sql_ab);
             $result_ab = $db->query($sql_ab);
             if($result_ab){
@@ -280,8 +280,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 foreach ($array as $key => $item){
 
                     if($item["name_acount"]){ //name de las cuentas caja
-                        $nom = $item['n_cuenta']." ".$item["name_acount"]." ".$item['to_caja_direccion']. "\nUSUARIO: ".$item['usuario'];
-                        $caja = " <span class='text-sm' style='white-space: pre-wrap;color: #0866a5; display: block'>".$nom."</span>";
+                        $nom = $item['n_cuenta']." ".$item["name_acount"]." ".$item['to_caja_direccion']. " | <i class='fa fa-user'></i> ".$item['usuario']." | ".$item['n_abierta_caja'];
+                        $caja = " <small class='text-blue' style='display: block'>".$nom."</small>";
                     }else{
                         $caja = "";
                     }

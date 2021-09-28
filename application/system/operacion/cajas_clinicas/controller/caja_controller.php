@@ -92,10 +92,15 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
 
         case 'list_cajas_abiertas':
 
-            if(!PermitsModule('Cajas Clinicas','consultar'))
+            $permitData = false;
+            if(!PermitsModule('Cajas Clinicas','consultar')){
                 $PermisoConsultar = " 1<>1 ";
-            else
+                $permitData = false;
+            }
+            else{
                 $PermisoConsultar = " 1=1 ";
+                $permitData = true;
+            }
 
 
             $users        = GETPOST('users');
@@ -115,7 +120,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
                 $where .= " and cast(c.date_cierre as date) between '".(date('Y-m-d', strtotime($date[0])))."' and '".(date('Y-m-d', strtotime($date[1])))."' ";
             }
             if($acumulado!=""){
-                $where .= " and (d.saldo_acumulado - g.monto) = '$acumulado' ";
+                $where .= " and ROUND((ifnull(d.saldo_acumulado, 0) - ifnull(g.monto, 0)), 2) = ROUND($acumulado, 2) ";
             }
             if($users!=""){
                 $where .= " and c.id_user_caja = $users";
@@ -144,23 +149,25 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
                     c.id_user_caja,
                     us.usuario,
                     c.saldo_inicial, 
-                    g.monto as montoGasto, 
-                    d.saldo_acumulado , 
-                    g.monto as montoGasto, 
+                    ifnull(g.monto, 0) as montoGasto, 
+                    ifnull(d.saldo_acumulado, 0) as saldo_acumulado, 
+                    ifnull(g.monto, 0) as montoGasto, 
                     (ifnull(d.saldo_acumulado, 0) - ifnull(g.monto, 0)) as total
                 FROM
-                    tab_ope_cajas_clinicas c
+                      tab_ope_cajas_clinicas c
                     left join
-                    (select ifnull(round(sum(g.monto),2), 0) as monto , g.id_ope_caja as id_ope_caja_gst from tab_ope_cajas_det_gastos g where 1=1 and g.estado <> 'E' group by g.id_ope_caja) as g on g.id_ope_caja_gst = c.rowid
+                      (select ifnull(round(sum(g.monto),2), 0) as monto , g.id_ope_caja as id_ope_caja_gst from tab_ope_cajas_det_gastos g where 1=1 and g.estado <> 'E' group by g.id_ope_caja) as g on g.id_ope_caja_gst = c.rowid
                     left join
-                    (select ifnull(round(sum(d.amount), 2), 0) as saldo_acumulado, id_ope_caja_cab from tab_ope_cajas_clinicas_det d where d.estado <> 'E' group by d.id_ope_caja_cab) as d on d.id_ope_caja_cab = c.rowid
+                      (select ifnull(round(sum(d.amount), 2), 0) as saldo_acumulado, id_ope_caja_cab from tab_ope_cajas_clinicas_det d where d.estado <> 'E' group by d.id_ope_caja_cab) as d on d.id_ope_caja_cab = c.rowid
                     inner join
-                    tab_ope_declare_cuentas dc on dc.rowid = c.id_caja_cuenta
+                       tab_ope_declare_cuentas dc on dc.rowid = c.id_caja_cuenta
                     inner join 
-                    tab_login_users us on us.rowid = c.id_user_caja 
+                       tab_login_users us on us.rowid = c.id_user_caja 
                             where  ".$PermisoConsultar." ".$where;
             $query .= " order by c.rowid desc";
+
 //            print_r($query); die();
+
             $Total = $db->query($query)->rowCount();
             if($start || $length){
                 $query.=" LIMIT $start,$length;";
@@ -172,8 +179,11 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
                     $array_datos = $result->fetchAll(PDO::FETCH_ASSOC);
                     foreach ($array_datos  as $item) {
 
+                        $secu = str_pad($item['id_ope_caja'], 5, "0", STR_PAD_LEFT);
+                        $secu = "<small style='display: block;' class='text-blue' title='Secuencial CJA_$secu'>CJA_$secu</small>";
+
                         if($item['to_caja_direccion'] != ""){
-                            $to_direccion = "<b>Dirección caja: </b>".$item['to_caja_direccion'];
+                            $to_direccion = "Dir.".$item['to_caja_direccion'];
                         }else{
                             $to_direccion = ""; 
                         }
@@ -189,7 +199,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
 
                         $list = [];
                         $list[] = $item['usuario'];
-                        $list[] = strtoupper($item['cuenta'])."<small style='display: block; color: #2c89cc' class='text-sm' >".$to_direccion."</small>";
+                        $list[] = strtoupper($item['cuenta'])." | <small style='display: inline-block' class='text-sm text-blue' >".$to_direccion."</small>".$secu;
                         $list[] = date('Y/m/d  H:m:s', strtotime($item['date_apertura']));
 
                         if($item['date_cierre']!=""){
@@ -216,7 +226,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
                 'draw' => $_POST['draw'],
                 'data' => $data,
                 'recordsTotal'    => $Total,
-                'recordsFiltered' => $Total
+                'recordsFiltered' => $Total,
+                'permiso' => $permitData
 
             ];
             echo json_encode($output);

@@ -17,7 +17,8 @@ $modulo = true;
         <label for="">LISTA DE COMPORTAMIENTOS</label>
         <ul class="list-inline" style="background-color: #f4f4f4; border-bottom: 0.6px solid #333333; padding: 3px; margin-left: 0px">
             <li><a href="#contentFilter" data-toggle="collapse" style="color: #333333" class="btnhover btn btn-sm " id="fitrar_document"> <b>  ▼ &nbsp;Filtrar <i></i> </b> </a></li>
-            <li><a id="refresh_Cajasclinica" class="btn" style="color: black" onclick="list_cajas_abiertas()">
+            <li><a href="#" class="btnhover btn btn-sm excel text-bold <?= (!PermitsModule("Cajas Clinicas","consultar"))?"disabled_link3":"" ?> " style="color: #333333" onclick="exports($(this))"  >EXCEL <i class="fa fa-print"></i></a></li>
+            <li><a id="refresh_Cajasclinica" class="btn" style="color: #333333" onclick="list_cajas_abiertas()">
                     <i class="fa fa-refresh"></i>
                 </a></li>
         </ul>
@@ -201,6 +202,19 @@ $modulo = true;
 
 <script>
 
+    function exports(Element) {
+
+        var parametrs = "?export=1";
+        parametrs += "&apertura="+$('#date_apertura_caja').val();
+        parametrs += "&cierre="+$('#date_cierre_caja').val();
+        parametrs += "&users="+$('#usuario_caja').val();
+        parametrs += "&acumulado="+$('#acumulado_caja').val();
+        parametrs += "&estado="+$('#estadoCajaClinica').find(":selected").val();
+        if(Element.hasClass('excel')){
+            var link = $DOCUMENTO_URL_HTTP+'/application/system/operacion/cajas_clinicas/exports/export_excel_cajas_abi.php'+parametrs;
+            window.open(link, '_blank');
+        }
+    }
 
     var CerrarCajaAsociada = function (Element) {
 
@@ -404,7 +418,7 @@ $modulo = true;
                     parent.modal('hide');
                     setTimeout(()=>{
                         notificacion('Nueva Caja abierta', 'success');
-                    },100);
+                    },500);
                 }
             }
         });
@@ -448,6 +462,9 @@ $modulo = true;
                 "complete": function(xhr, status) {
                     boxTableLoad(Element, false);
                     $("#refresh_Cajasclinica").find('i').removeClass('btnSpinner');
+                    if(xhr.responseJSON.permiso==false){
+                        notificacion('Ud. No tiene permiso para realizar esta Operación', 'error');
+                    }
                 }
             },
             columnDefs:[
@@ -463,8 +480,8 @@ $modulo = true;
                         var menu = "<div class='dropdown pull-right'> ";
                         menu += "<div class='btn btnhover  btn-xs dropdown-toggle ' type='button' data-toggle='dropdown' aria-expanded='false'> <i class='fa fa-ellipsis-v'></i> </div>";
                         menu += "<ul class='dropdown-menu'>";
-                        menu += "<li> <a href='"+url_detalles_caja+"' style='cursor: pointer; '>detalles de caja</a> </li>";
-                        menu += "<li> <a href='#'  style='cursor: pointer; ' data-id='"+fetch['rowid']+"' onclick='CerrarCajaAsociada($(this))'>Cerrar Caja</a> </li>";
+                            menu += "<li> <a href='"+url_detalles_caja+"' style='cursor: pointer; '>detalles de caja</a> </li>";
+                            menu += "<li> <a href='#'  style='cursor: pointer; ' data-id='"+fetch['rowid']+"' onclick='CerrarCajaAsociada($(this))'>Cerrar Caja</a> </li>";
                         menu += "</ul>";
                         menu += "</div>";
 

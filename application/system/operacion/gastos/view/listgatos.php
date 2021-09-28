@@ -16,6 +16,10 @@ $modulo = true;
         <ul class="list-inline" style="background-color: #f4f4f4; border-bottom: 0.6px solid #333333; padding: 3px; margin-left: 0px">
             <li><a href="#contentFilter" data-toggle="collapse" style="color: #333333" class="btnhover btn btn-sm " id="fitrar_document"> <b>  ▼ &nbsp;Filtrar <i></i> </b> </a></li>
             <li><a href="<?= DOL_HTTP.'/application/system/operacion/gastos/index.php?view=addgastos&key='.KEY_GLOB ?>" style="color: #333333" class="btnhover btn btn-sm  "> <b> Crear Gasto </b> </a></li>
+            <li><a href="#" class="btnhover btn btn-sm excel" style="color: #333333" onclick="exports($(this))"><b>EXCEL</b> <i class="fa fa-print"></i> </a></li>
+            <a id="refresh_gatoslist" class="btn" style="color: #333333" onclick="gastosList()">
+                <i class="fa fa-refresh "></i>
+            </a>
         </ul>
     </div>
 
@@ -93,13 +97,13 @@ $modulo = true;
                 <thead style="background-color: #f4f4f4; ">
                     <tr>
                         <th width="8%">Emitido</th>
-                        <th width="20%">Categoria</th>
+                        <th width="30%">Categoria</th>
                         <th width="30%">Detalle</th>
                         <th width="8%">Fecha de Factura</th>
                         <th width="8%">Fecha de Pago</th>
                         <th width="8%">Monto</th>
-                        <th width="15%">Estado</th>
-                        <th width="5%"></th>
+                        <th width="10%">Estado</th>
+                        <th width="3%"></th>
                     </tr>
                 </thead>
             </table>
@@ -109,11 +113,27 @@ $modulo = true;
 </div>
 
 <script>
+    
+    function  exports(Element) {
+
+        var parametros   = "?accion_exportar=1";
+        parametros      += "&emitido="+$("#emitido_gasto").val();
+        parametros      += "&facture="+$("#emitido_factura").val();
+        parametros      += "&pago="+$("#emitido_pago_gasto").val();
+        parametros      += "&estado="+$("#estado_gasto").val();
+        parametros      += "&cuenta="+$("#cuentas_gastos").find(':selected').val();
+
+        // alert($("#cuentas_gastos").find(':selected').val());
+        if(Element.hasClass('excel')){
+            var excel = $DOCUMENTO_URL_HTTP+'/application/system/operacion/gastos/exports/exports_excel_gastos.php'+parametros;
+            window.open(excel, '_blank');
+        }
+    }
 
     function gastosList(){
+
         var tableload = $("#all_Cuenta_de_aperturas");
-        boxTableLoad(tableload, false);
-        var table = $("#all_Cuenta_de_aperturas").DataTable({
+        var table     = $("#all_Cuenta_de_aperturas").DataTable({
             searching: false,
             "ordering":false,
             "serverSide": true,
@@ -140,10 +160,14 @@ $modulo = true;
                 },
                 dataType:'json',
                 cache: false,
+                beforeSend: function(){
+                    boxTableLoad(tableload, true);
+                    $("#refresh_gatoslist").find('i').addClass('btnSpinner');
+                },
                 complete: function(xhr, status) {
                     boxTableLoad(tableload, false);
+                    $("#refresh_gatoslist").find('i').removeClass('btnSpinner');
                 },
-
             },
             columnDefs:[
                 {

@@ -292,9 +292,9 @@ function transacciones_clinicas_list(){
     }if(!empty($valor)){
         $where .= " and d.value like '%$valor%' ";
     }if(!empty($desc)){
-        $where = " and d.label like '%$desc%' ";
+        $where .= " and d.label like '%$desc%' ";
     }if(!empty($cuenta_tc)){
-        $where = " and c.rowid = $cuenta_tc ";
+        $where .= " and c.rowid = $cuenta_tc ";
     }
 
     $query = "select 
@@ -323,7 +323,7 @@ function transacciones_clinicas_list(){
     }
 
 
-//    print_r($formp); die();
+//    print_r($query); die();
     $result = $db->query($query);
     if($result && $result->rowCount() > 0){
         $fetch = $result->fetchAll(PDO::FETCH_ASSOC);
@@ -381,8 +381,9 @@ function transaccionClinicaCuentas($items=array(), $subaccion=""){
 
     if($subaccion==2){
         //si la subaccion es una transaccion entre cuentas el valor va positivo
-        $items['valor'] = str_replace('-', $items['valor']);
+        $items['valor'] = str_replace('-','', $items['valor']);
     }
+
 
     $array   =  array();
     $array[] =  date("Y-m-d", strtotime($items['datef']));
