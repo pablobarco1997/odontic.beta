@@ -655,8 +655,8 @@ function list_transaccion_caja_tratamientos($id_ope_caja, $date_apertura){
         and d.id_ope_caja_cab = ".$id_ope_caja.
             " and cast(d.date_apertura as date)  = '$date_apertura' ";
 
-    $start          = $_POST["start"];
-    $length         = $_POST["length"];
+    $start          = GETPOST('start');
+    $length         = GETPOST('length');
 
     $total = $db->query($query)->rowCount();
 
@@ -669,6 +669,7 @@ function list_transaccion_caja_tratamientos($id_ope_caja, $date_apertura){
         if($result->rowCount() > 0){
             $data = [];
             $resultado = $result->fetchAll(PDO::FETCH_ASSOC);
+
             foreach ($resultado as $k => $value){
 
 //                if($value['edit_name_tratamiento'] != "")

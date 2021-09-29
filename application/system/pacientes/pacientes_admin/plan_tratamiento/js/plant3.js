@@ -284,7 +284,7 @@ function ExportDetalleTTO(){
     }
 
     var output = "?id_paciente="+$id_paciente+"&id_tratamiento="+$ID_PLAN_TRATAMIENTO;
-    var url = $DOCUMENTO_URL_HTTP + "/application/system/pacientes/pacientes_admin/plan_tratamiento/export/excel_detallado_tratamientos";
+    var url = $DOCUMENTO_URL_HTTP + "/application/system/pacientes/pacientes_admin/plan_tratamiento/export/excel_detallado_tratamientos.php";
     url += output;
     window.open(url, '_blank');
 

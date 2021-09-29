@@ -4,7 +4,7 @@
     <label for="">LISTA DE COMPORTAMIENTOS</label>
     <ul class="list-inline" style="background-color: #f4f4f4; border-bottom: 0.6px solid #333333; padding: 3px; margin-left: 0px">
         <li><a href="#contentFilter" data-toggle="collapse" style="color: #333333" class="btnhover btn btn-sm " id="fitrar_document"> <b>  ▼ &nbsp;Filtrar <i></i> </b> </a></li>
-        <li><a href="#"  style="color: #333333" class="btn btnhover text-bold excel" onclick="exports($(this))"><i class="fa fa-print"></i> EXCEL</a>  </li>
+        <li><a href="#"  style="color: #333333" class="btn btnhover btn-sm text-bold excel" onclick="exports($(this))"><i class="fa fa-print"></i> EXCEL</a>  </li>
 <!--        <li><a href="#" style="color: #333333" class="btnhover btn btn-sm " id="crearTransaccion" onclick="to_crear_trans()"> <b> Crear Transaccion <i></i> </b> </a></li>-->
         <li><a id="refresh_list_transsa" class="btn " style="color: black" title="refresh" onclick="transsacionesClinicas($(this))">
                 <span class="fa fa-refresh"></span>

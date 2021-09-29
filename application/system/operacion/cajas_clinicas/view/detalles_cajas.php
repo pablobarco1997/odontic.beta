@@ -70,15 +70,22 @@ FROM
     </div>
 
     <div class="form-group col-md-12 col-xs-12">
-        <span style="font-weight: bolder; font-size: 2rem; display: block">Detalles de Caja # <?= $numero_caja?></span>
-        <table class="table">
+        <table class="table" width="100%">
             <tr>
                 <td>
+                    <span style="font-weight: bolder; font-size: 2rem; display: block">Detalles de Caja # <?= $numero_caja?></span>
+                </td>
+                <td style="text-align: right">
+                    <a href="<?= DOL_HTTP.'/application/system/operacion/cajas_clinicas/exports/exports_excel_detalle.php?export=1&id_ope_caja='.GETPOST('idcaj') ?>" class="btn btn-sm btn-default"> <b>EXCEL</b> <i class="fa fa-print"></i> </a>
+                </td>
+            </tr>
+            <tr>
+                <td  colspan="2">
                     <b>Dirección:</b> <?= $direccion_caja ?>
                 </td>
             </tr>
             <tr>
-                <td>
+                <td colspan="2">
                     <b>Usuario asociado:</b> <?= $nom_usu ?>
                 </td>
             </tr>
@@ -100,14 +107,6 @@ FROM
             }
         ?>
     </div>
-
-    <style>
-
-        .table_info_caja tr td{
-            font-size: 1.5rem;
-        }
-
-    </style>
 
     <div class="form-group col-xs-12 col-md-12">
         <div class="table-responsive">
