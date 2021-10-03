@@ -75,6 +75,13 @@
         'permiso' => '',
     );
 
+    //Modulo estado de resultado clinico
+    $Permissions_Modulo_estadoClinica = array(
+        'url'     => DOL_HTTP.'/application/system/estado_clinica/index.php?view=resultado',
+        'Active'  => (isset($Active)  && $Active == 'module_estado_clinica') ? 'Active_link' : '' ,
+        'permiso' => '',
+    );
+
 ?>
 
 
@@ -180,3 +187,5 @@
     </ul>
 
 </li>
+
+<li class="<?= $Permissions_Modulo_estadoClinica['Active'] ?> "><a href="<?= $Permissions_Modulo_estadoClinica['url'] ?>"><i class="fa fa-area-chart"></i><span <?= $stylefontSmall ?> >Estado Clinico</span></a></li>
