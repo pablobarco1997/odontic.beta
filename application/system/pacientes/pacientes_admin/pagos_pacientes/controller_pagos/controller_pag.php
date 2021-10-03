@@ -777,7 +777,7 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
                         'tipo_documento'    => 'cajas_clinicas', //tipo de documento y/o modulo que genero esta transaccion
                         'fk_type_payment'   => $t_pagos, //medio de pago
                         'table'             => 'tab_ope_cajas_clinicas', //informacion opcional para saber a que table pertenece el id_documento
-                        'label'             => "Cobro de Paciente ".(getnombrePaciente($datos['id_paciente'])->nom)." | Forma de pago: ".getnombFormaPago($t_pagos)." | Caja: ".$fetch_caja['caja']['name_caja']." | Plan de tratamiento N.".$n_tratamiento. " | Prestación/Servicios: ".getnombrePrestacionServicio($datosdet[$i]['fk_prestacion'])->descripcion." | Doc. ".$nfact_boleto,
+                        'label'             => "Cobro de Paciente ".(getnombrePaciente($datos['id_paciente'])->nom)." | Forma de pago: ".getnombFormaPago($t_pagos)." | Caja: ".$fetch_caja['caja']['name_caja']." | Plan de tratamiento N.".$n_tratamiento. " | Prestación/Servicios: ".getnombrePrestacionServicio($datosdet[$i]['fk_prestacion'])->descripcion." | Doc. ".$nfact_boleto.' | CJA_'.str_pad($fetch_caja['caja']['id_caja_ope'], 5, "0", STR_PAD_LEFT),
                     ];
                 }
             }
@@ -789,7 +789,7 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
         //se usa para llevar un control de todo lo que ingresa en la clinica (valores monetaios)
         //registro de ingreso de caja en el diario clinico
         if($montoIngresoCaja > 0){
-            $datos2['label']   = "Cobro de paciente en ".getnombFormaPago($t_pagos)." | de Caja: ".strtoupper($fetch_caja['caja']['name_caja']) ." | Plan de tratamiento N.".$n_tratamiento." | Doc. ".$nfact_boleto;
+            $datos2['label']   = "Cobro de paciente en ".getnombFormaPago($t_pagos)." | de Caja: ".strtoupper($fetch_caja['caja']['name_caja']) ." | Plan de tratamiento N.".$n_tratamiento." | Doc. ".$nfact_boleto.' | CJA_'.str_pad($fetch_caja['caja']['id_caja_ope'], 5, "0", STR_PAD_LEFT);
             $datos2['date_c']  = "now()";
 
             $operaciones->diarioClinico($datos2); //se registra en el diario clinico

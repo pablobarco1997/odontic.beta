@@ -18,7 +18,7 @@ $id = GETPOST('id');
                 <div class="form-group">
                     <label for="" class="control-label col-sm-3">Cuenta Gasto:</label>
                     <div class="col-sm-7">
-                        <select name="cuentas_gastos" id="cuentas_gastos" class="form-control" style="width: 100%">
+                        <select name="cuentas_gastos" id="cuentas_gastos" class="form-control" style="width: 100%" onchange="FormValidationGastos()">
                             <option value=""></option>
                             <?php
                                 $sql_g = "select rowid, n_cuenta, name_acount, description from tab_ope_declare_cuentas where tipo_operacion = 'GASTOS' ";
@@ -115,7 +115,7 @@ $id = GETPOST('id');
                             Guardar
                             <span class="fa fa-refresh btnSpinner hide"></span>
                         </button>
-                        <button class="btn btnhover pull-right hide" style="font-weight: bolder;color: green;margin-right: 10px;" id="GenerarGastos">
+                        <button class="btn btnhover pull-right" style="font-weight: bolder;color: green;margin-right: 10px;" id="GenerarGastos">
                             Generar Gasto
                             <span class="fa fa-refresh btnSpinner hide"></span>
                         </button>
@@ -364,13 +364,16 @@ $id = GETPOST('id');
         }else{
             $(".date_pago_content").addClass('hide');
         }
-        $(".date_pago_content")
-            .find('#date_pago').val(null);
+        $(".date_pago_content").find('#date_pago').val(null);
     });
 
     $("#guardarGastos").click(function () {
         if(!FormValidationGastos()){
             return false;
+        }
+
+        if($("#date_pago").val()==""){
+            notificacion('Debe selecionar una Fecha de Pago')
         }
 
         var btn = $("#guardarGastos");
@@ -382,8 +385,13 @@ $id = GETPOST('id');
             return false;
         }
 
+        if($('#date_pago').val()==""){
+            notificacion('Debe selecionar una Fecha de Pago', 'question');
+            return false;
+        }
+
         var btn = $("#guardarGastos");
-        Guardar(btn, idGasto, 'generar_gasto');
+        Guardar(btn, idGasto, 'G'); //se genera el gasto automatico
     });
 
 

@@ -164,6 +164,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $datos['otras_accion']      = GETPOST('otra_accion');
 
 
+//            die();
+
             if ($id==""){ //nuevo
 
                 if(!PermitsModule("Gastos", "agregar")){
@@ -251,11 +253,14 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                                 when gc.estado = 'A' then 'GENERADO'
 						   END as estado_gasto 
 						   ,concat('CJA_', lpad('0',(5-length(cgc.id_ope_caja)),'0'),cgc.id_ope_caja) as n_abierta_caja
+						   ,concat(dc.n_cuenta,' ',dc.name_acount) as acount_name
                     FROM
                         (SELECT * FROM tab_ope_gastos_clinicos n) AS gc
                             INNER JOIN
                         (SELECT m.rowid, m.nom FROM tab_ope_gastos_nom m) AS m ON m.rowid = gc.id_nom_gastos
-                        LEFT JOIN 
+                            LEFT JOIN
+						tab_ope_declare_cuentas dc on dc.rowid = gc.fk_acount
+                            LEFT JOIN 
                         ( select cg.id_ope_caja, cg.id_gasto , dc.n_cuenta , dc.name_acount , dc.to_caja_direccion ,  c.id_caja_cuenta , 
 							 (select u.usuario from tab_login_users u where u.rowid = c.id_user_caja) as usuario  FROM
 							 tab_ope_cajas_det_gastos cg
@@ -286,6 +291,9 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         $caja = "";
                     }
 
+                    $cuentaGasto = "<small class='text-blue' style='display: block' >".$item['acount_name']."</small>";
+
+
                     if($item['estado']=='A')
                         $stadoGastos = "<span class=\"text-sm\" style=\"background-color: #D5F5E3; color: green; font-weight: bolder; padding: 1px 5px\">".$item['estado_gasto']."</span>";
                     if($item['estado']=='E')
@@ -295,7 +303,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                     $rows = array();
                     $rows[] = date("Y/m/d", strtotime($item['tms']));
-                    $rows[] = $item['nom'].$caja;
+                    $rows[] = $item['nom'].$caja.$cuentaGasto;
                     $rows[] = "<span class='text-sm' style='color: #0866a5; display: block'> ".$item['desc']." </span>";
                     $rows[] = date("Y/m/d", strtotime($item['date_facture']));
                     $rows[] = (($item['date_payent']=="0000-00-00") ? "" :date("Y/m/d", strtotime($item['date_payent'])));
@@ -500,12 +508,12 @@ function GuardarGastos($id, $datos,  $create=false,  $update=false){
             if($on_caja!=0){ // si tiene asociado caja
                 guardarEnCajaGastos($idlast, $datos);
             }
-            if($datos['otras_accion']=='otra_accion'){ //se genera un gasto directo desde Gasto
+            if($datos['otras_accion']=='G'){ //se genera un gasto directo desde Gasto
                 if($datos['fk_acount']!=""){ //cuenta de gasto
-//                    $result_bx = GenerarGastoDirecto($datos, $idlast);
-//                    if(!empty($result_bx)){
-//                        return $result_bx;
-//                    }
+                    $result_bx = GenerarGastoDirecto($datos, $idlast);
+                    if(!empty($result_bx)){
+                        return $result_bx;
+                    }
                 }else{
                     return $messErr;
                 }
@@ -618,6 +626,13 @@ function GenerarGastoDirecto($fetch = array(), $id){
 
         if($result_b<0){
             return "Ocurrió un error con la Operación, Consulte con Soporte";
+        }else{
+            if($fetch['otras_accion']=="G"){ //se genera desde el modulo de GASTOS
+                $result_e = $db->query("UPDATE `tab_ope_gastos_clinicos` SET `estado`='A' WHERE `rowid`='$id';");
+                if($result_e){
+
+                }
+            }
         }
         return "";
     }else{

@@ -763,7 +763,7 @@ function operacion_cierre_caja($id_ope_caja){
 
             //se fetch los datos de la cabezera Operacion cierre de caja ' se realiza todas las transacciones una vez se cierra la caja sea ingreso o egreso'
             $amount_caja = 0; //monto de caja
-            $label            = "Cierre de caja: ".strtoupper($fetch->label_caja);
+            $label            = "Cierre de caja: ".strtoupper($fetch->label_caja). ' | CJA_'.str_pad($fetch->id_ope_caja,5, "0", STR_PAD_LEFT);
             $datos['label']   = $label;
             $datos['date_c']  = "now()";
             $datos['detalle'] = array();
@@ -828,7 +828,7 @@ function operacion_cierre_caja($id_ope_caja){
                             'tipo_documento'    => 'Gastos_Clinico', //tipo de documento y/o modulo que genero esta transaccion
                             'fk_type_payment'   => $item->fk_medio_pago, //medio de pago
                             'table'             => 'tab_ope_gastos_clinicos', //informacion opcional para saber a que table pertenece el id_documento
-                            'label'             => $item->label,
+                            'label'             => $item->label.' | CJA_'.str_pad($fetch->id_ope_caja,5, "0", STR_PAD_LEFT),
                         ];
 
                         $amount_caja -= ((double)$item->monto); //Monto que saldra de caja
