@@ -16,11 +16,6 @@
     require_once  DOL_DOCUMENT .'/application/config/class.users.php';
 
     /** -------------------   MAIN  ----------------------------*/
-    /** Informacion del servidor - priviligios o credenciales del servidor - REMOTO or LOCAL */
-    #INFORMACION JSON PRIVILEGIOS SERVER
-    $Server = json_decode( file_get_contents( DOL_DOCUMENT.'/application/config/privileges.json') , true );
-
-
     $coneccion  = new CONECCION_ENTIDAD();
     $dbConectar = $coneccion::CONNECT_ENTITY();
 
@@ -89,39 +84,10 @@
     /** Se asocia el controller del sistema*/
     require_once  DOL_DOCUMENT .'/application/controllers/controller.php';
 
-    /** VARIABLE GLOBAL DE DATETIME MYSQL*/
-//    $sqlCurrentDatezone = "SELECT NOW() datezpnecurrent;";
-//    $dateZoneCurrent    = $db->query($sqlCurrentDatezone)->fetchObject()->datezpnecurrent;
-
     $NavSearchPacientes = NavSearchPacientes();
-
-
     date_default_timezone_set('America/Guayaquil');
 
-    /** PERMISOS DE USUARIO
-     * obtengo los permisos de usuario asociados con el usuario
-     */
-
-    /*
-    $sqllogin = "SELECT permisos FROM tab_login_users WHERE usuario = '$user->name' and fk_doc = '$user->id' limit 1";
-    $login  = $db->query($sqllogin)->fetchObject();
-
-    $objPermisos = json_decode($login->permisos);
-
-    #Tipo de Usuario
-    # 1 = Super Administrador
-    # 2 = Usuario normal
-
-    $permisos         = (object)array(
-        "consultar"   => ($objPermisos->consultar  == "true") ? ""   : "disabled_link3" ,
-        "agregar"     => ($objPermisos->agregar    == "true") ? ""   : "disabled_link3" ,
-        "modificar"   => ($objPermisos->modificar  == "true") ? ""   : "disabled_link3" ,
-        "eliminar"    => ($objPermisos->eliminar   == "true") ? ""   : "disabled_link3" ,
-    ); */
-
-
-//    echo '<pre>'; print_r($conf); die();
-
+    //echo '<pre>'; print_r($ServerWeb); die();
     //echo phpversion();
 
 ?>

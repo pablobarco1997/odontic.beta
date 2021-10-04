@@ -10,24 +10,39 @@ class CONECCION_ENTIDAD{
 
     public static function CONNECT_ENTITY(){
 
+        $ServerWeb = json_decode( file_get_contents( DOL_DOCUMENT.'/application/config/connmd5pass.json') , true );
+
         if(md5($_SERVER['SERVER_NAME'])=='068234a2d85a5233fd17f6d0507d3454'){
 
-            #REMOTO
+            //Remoto | Produccion
+
+            $host            = $ServerWeb['ServerProduccion']['server'];
+            $database        = $ServerWeb['ServerProduccion']['database'];
+            $usuario_server  = $ServerWeb['ServerProduccion']['usuario_server'];
+            $password_server = $ServerWeb['ServerProduccion']['password_server'];
+
             $conexion = null;
-            $host     = 'localhost'; #ip o nombre del servidor remoto o local
-            $database = 'adminnub_sch_dental_entity_login'; //SE ENCUENTRA TODAS LAS ENTIDADES REGISTRADAS
-            $username = 'adminnub_entidad_dental'; //Usuario de la Base de datos todos los privilegios
-            $password = '740631f8cd06c9b56f1190b29db9ec54'; #PASSWIRD #PASSWORD SERVIDOR REMOTO ==> Pablo_1997
+            $host     = $host; #ip o nombre del servidor remoto o local
+            $database = $database; //SE ENCUENTRA TODAS LAS ENTIDADES REGISTRADAS
+            $username = $usuario_server; //Usuario de la Base de datos todos los privilegios
+            $password = $password_server; #PASSWIRD #PASSWORD SERVIDOR REMOTO ==> Pablo_1997
             $utf8mb4  = 'utf8mb4';
 
         }else{
 
-            #LOCAL
+            //Localhost | Serve local
+
+
+            $host            = $ServerWeb['ServerLocal']['server'];
+            $database        = $ServerWeb['ServerLocal']['database'];
+            $usuario_server  = $ServerWeb['ServerLocal']['usuario_server'];
+            $password_server = $ServerWeb['ServerLocal']['password_server'];
+
             $conexion = null;
-            $host     = 'localhost'; #ip o nombre del servidor remoto o local
-            $database = 'schema_dental_entity_login'; //SE ENCUENTRA TODAS LAS ENTIDADES REGISTRADAS
-            $username = 'root';
-            $password = ''; #PASSWIRD #PASSWORD SERVIDOR REMOTO ==> Pablo_1997
+            $host     = $host; #ip o nombre del servidor remoto o local
+            $database = $database; //SE ENCUENTRA TODAS LAS ENTIDADES REGISTRADAS
+            $username = $usuario_server;
+            $password = $password_server; #PASSWIRD #PASSWORD SERVIDOR REMOTO ==> Pablo_1997
             $utf8mb4  = 'utf8mb4';
         }
 
