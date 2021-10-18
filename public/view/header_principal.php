@@ -79,46 +79,59 @@
 
     <style>
 
+        @font-face {
+            font-family: 'AmazonEmber_Rg';
+            src: local('AmazonEmber_Rg'), url('<?= DOL_HTTP ?>/public/font/AmazonEmber_Rg.ttf');
+        }
 
         *{
-            font-family: 'Roboto', sans-serif;
-            font-size: small;
+
+            font-family: 'AmazonEmber_Rg';
+            /*font-family: 'Roboto', sans-serif;*/
             /*font-family: 'Baloo Da 2', cursive;*/
+            font-size: small;
         }
+
         /*Filtro Contenedor*/
         #ContenFiltroDocumentos > div > h3 > span {
             font-size: large;
             font-weight: bold;
         }#FiltrarAgenda > div > h3 > span {
-            font-size: large;
-            font-weight: bold;
-        }#contentFilter > div > div > h3 > span {
-            font-size: large;
-            font-weight: bold;
-        }#contentFilter > div  > h3 > span {
-            font-size: large;
-            font-weight: bold;
-        }#FiltrarPagoPacientes > div  > h3 > span {
-            font-size: large;
-            font-weight: bold;
-        }
+             font-size: large;
+             font-weight: bold;
+         }#contentFilter > div > div > h3 > span {
+              font-size: large;
+              font-weight: bold;
+          }#contentFilter > div  > h3 > span {
+               font-size: large;
+               font-weight: bold;
+           }#FiltrarPagoPacientes > div  > h3 > span {
+                font-size: large;
+                font-weight: bold;
+            }
+
         .swal2-title{
-            font-family: 'Roboto', sans-serif !important;
+            font-family: 'AmazonEmber_Rg', sans-serif !important;
+            font-size: small;
+            /*font-family: 'Roboto', sans-serif !important;*/
             /*font-family: 'Baloo Da 2', cursive;*/
         }
         h3{
-            font-family: 'Roboto', sans-serif !important;
-            font-family: Cambria;
+            font-family: 'AmazonEmber_Rg', sans-serif !important;
+            font-size: small;
+            /*font-family: 'Roboto', sans-serif !important;*/
             /*font-family: 'Baloo Da 2', cursive;*/
         }
         h5{
-            font-family: 'Roboto', sans-serif !important;
+            font-family: 'AmazonEmber_Rg', sans-serif !important;
             font-size: small;
+            /*font-family: 'Roboto', sans-serif !important;*/
             /*font-family: 'Baloo Da 2', cursive;*/
         }
         div{
-            font-family: 'Roboto', sans-serif !important;
+            font-family: 'AmazonEmber_Rg', sans-serif !important;
             font-size: small;
+            /*font-family: 'Roboto', sans-serif !important;*/
             /*font-family: 'Baloo Da 2', cursive;*/
         }
 
