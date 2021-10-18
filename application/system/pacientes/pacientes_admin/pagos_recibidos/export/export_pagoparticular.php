@@ -79,7 +79,7 @@ $queryDetPag = "SELECT
 FROM
     (select *, (d.sub_total*d.cantidad) as total_tc from tab_plan_tratamiento_det d) as d 
 		inner join 
-	(select * from tab_pagos_independ_pacientes_det pd) as pd on pd.fk_plantram_det = d.rowid 
+	(select * from tab_pagos_independ_pacientes_det pd where pd.estado = 'A') as pd on pd.fk_plantram_det = d.rowid 
 		inner join 
 	tab_conf_prestaciones p on p.rowid = d.fk_prestacion
 WHERE

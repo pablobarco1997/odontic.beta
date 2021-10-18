@@ -889,7 +889,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     IFNULL((SELECT cf.valor FROM tab_conf_convenio_desc cf WHERE cf.rowid = tc.fk_convenio),0) valorConvenio ,
                     tc.edit_name as edit_name , 
                     -- ABONADO
-                    (SELECT round(sum(pd.amount),2) saldo FROM tab_pagos_independ_pacientes_det pd where pd.fk_plantram_cab = tc.rowid and pd.fk_paciente = $idpaciente) abonado_cab , 
+                    (SELECT round(sum(pd.amount),2) saldo FROM tab_pagos_independ_pacientes_det pd where pd.fk_plantram_cab = tc.rowid and pd.estado = 'A' and pd.fk_paciente = $idpaciente) abonado_cab , 
                     tc.observacion, 
                     tc.estados_tratamiento
                     
@@ -1052,7 +1052,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 						inner join
                     tab_admin_pacientes ap on ap.rowid = tc.fk_paciente
 						left join
-                    (select pd.fk_plantram_cab as id_tratamiento, round(pd.amount, 2) as abonado from tab_pagos_independ_pacientes_det pd) as pd on pd.id_tratamiento = tc.rowid
+                    (select pd.fk_plantram_cab as id_tratamiento, round(pd.amount, 2) as abonado from tab_pagos_independ_pacientes_det pd where pd.estado = 'A') as pd on pd.id_tratamiento = tc.rowid
                     where  $permits
                    ";
             $sql .= " and tc.fk_paciente = ".$idpaciente." ";
@@ -1939,7 +1939,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 $sqlplantrCab = "SELECT p.rowid,
                                 p.fk_cita,
                                 p.estados_tratamiento,
-                                CONCAT('Plan de Tratamiento: #', '', p.numero) numero,
+                                CONCAT('Plan de Tratamiento N.', p.numero, ' | Paciente: ',(select concat(ad.nombre,' ',ad.apellido) from tab_admin_pacientes ad where ad.rowid = $idpaciente limit 1)) numero,
                                 p.edit_name,
                                 (SELECT 
                                         SUM(pg.amount) AS amount
@@ -1993,12 +1993,14 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         $acierto++;  #Anular
 
                         #UPDATE ESTADO ANULADO
-                        $sqlupdatPlant = "UPDATE `tab_plan_tratamiento_cab` SET `estados_tratamiento`='E' WHERE `rowid`='$idplantcab';";
+                        $sqlupdatPlant = "UPDATE `tab_plan_tratamiento_cab` SET `estados_tratamiento`='E' , situacion = 'ANULADO' WHERE `rowid`='$idplantcab';";
                         $delUpd = $db->query($sqlupdatPlant);
                         if(!$delUpd) {
                             $error++;
                             $errores = "Ocurrio un error con la eliminación Consulte con soporte";
 
+                        }else{
+                            $log->log($idplantcab, $log->eliminar, 'Se ha Anulado el registro '.$objPlanCab->numero, 'tab_plan_tratamiento_cab');
                         }
 
                         #ELIMINACION DE PLAN DE TRATAMIENTO
@@ -2173,11 +2175,13 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         c.rowid , 
                         cast(c.fecha_create as date) as date_c , 
                         concat('Plan de Tratamiento: N.', c.numero, ' - Doc(a): ', ifnull( (select concat( od.nombre_doc , ' ', od.apellido_doc ) as nomb from tab_odontologos od where od.rowid = c.fk_doc), 'No asignado'), ' ') as plantram
-                    FROM tab_plan_tratamiento_cab c where c.fk_paciente = $paciente_id 
+                    FROM tab_plan_tratamiento_cab c where 1=1 
                     ";
+            if($paciente_id != 0){
+                $sql .= " and  c.fk_paciente = $paciente_id  ";
+            }
             if(!empty($search)){
-                $sql .= " and ";
-                $sql .= " replace((concat('Plan de Tratamiento ', 'N. ', c.numero , ' ', concat('Doc(a) ', ' ', ifnull( (select concat( od.nombre_doc , ' ', od.apellido_doc ) as nomb from tab_odontologos od where od.rowid = c.fk_doc), 'No asignado')))) , ' ','') like '%".(str_replace(' ','', $search))."%' ";
+                $sql .= " and replace((concat('Plan de Tratamiento ', 'N. ', c.numero , ' ', concat('Doc(a) ', ' ', ifnull( (select concat( od.nombre_doc , ' ', od.apellido_doc ) as nomb from tab_odontologos od where od.rowid = c.fk_doc), 'No asignado')))) , ' ','') like '%".(str_replace(' ','', $search))."%' ";
             }
 
             $sql .= " limit 5";
@@ -2383,12 +2387,15 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 AND cp.rowid            = dt.fk_prestacion
                 AND pd.fk_plantram_det  = $iddetalle 
                 AND ct.fk_paciente      = $idpaciente
-                AND ct.rowid            = $idcabtranmiento";
+                AND ct.rowid            = $idcabtranmiento
+                AND pd.estado           = 'A' ";
             $query .= " group by dt.rowid, pd.rowid  ";
 
             if($start || $length){
                 $query .= " LIMIT $start,$length;";
             }
+
+//            print_r($query); die();
             $Total = $db->query($query)->rowCount();
             $result = $db->query($query);
             if($result){
@@ -2397,7 +2404,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         foreach ($resultData as $value){
 
                             if($value['user_athor']!="")
-                                $user_author = "<small class='text-blue' style='display: block'> usuario autor: ".$value['user_athor']."</small>";
+                                $user_author = "<small class='text-blue' style='display: block'> autor user: ".$value['user_athor']."</small>";
                             else
                                 $user_author = "";
 

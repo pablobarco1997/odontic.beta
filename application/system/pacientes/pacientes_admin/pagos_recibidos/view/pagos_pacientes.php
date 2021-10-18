@@ -10,14 +10,14 @@
                 <label for="">Forma de Pago</label>
                 <select name="formaPago" id="formaPago" class="form-control" style="width: 100%">
                     <option value=""></option>
-                    <?php
-                    $quy = "select rowid, nom from tab_bank_operacion where rowid not in(1,2,3,4,7)";
-                    $result = $db->query($quy);
-                    if($result&&$result->rowCount()>0){
-                        while ($object = $result->fetchObject()){
-                            print "<option value='".$object->rowid."'>".$object->nom."</option>";
+                        <?php
+                        $quy = "select rowid, nom from tab_bank_operacion where rowid not in(1,2,3,4,7)";
+                        $result = $db->query($quy);
+                        if($result&&$result->rowCount()>0){
+                            while ($object = $result->fetchObject()){
+                                print "<option value='".$object->rowid."'>".$object->nom."</option>";
+                            }
                         }
-                    }
                     ?>
                 </select>
             </div>
@@ -31,7 +31,7 @@
 
         <div class="row">
             <div class="form-group col-md-3 col-sm-12 col-xs-12">
-                <label for="">busqueda por N. Documento</label>
+                <label for="">Doc #.</label>
                 <input type="text" class="form-control" name="n_x_documento" id="n_x_documento">
             </div>
         </div>
@@ -53,9 +53,9 @@
         <table id="pag_particular" class="table" width="100%" style="border-collapse: collapse">
             <thead style="background-color: #f4f4f4">
                 <tr>
-                    <th>&nbsp;</th>
+<!--                    <th>&nbsp;</th>-->
                     <th>Fecha</th>
-                    <th># Pago</th>
+                    <th width="15%"># Pago</th>
 <!--                    <th># Plan de Tratamiento</th>-->
                     <th>Forma de Pago</th>
                     <th>Observación</th>
@@ -72,47 +72,76 @@
 <script>
 
 
+    function Export(Element) {
+
+        var n_pago          = $("#pagPrestacion").val();
+        var n_x_documento   = $("#n_x_documento").val();
+        var formaPago       = $("#formaPago").find(':selected').val();
+        var id_tratamiento  = $("#busquedaxTratamiento").find(':selected').val();
+
+
+        var parametros = '?idpaciente='+$id_paciente;
+        parametros    += '&n_pago='+n_pago;
+        parametros    += '&n_x_documento='+n_x_documento;
+        parametros    += '&formapago='+formaPago;
+        parametros    += '&plan_tratam='+id_tratamiento;
+        var excel   = $DOCUMENTO_URL_HTTP+'/application/system/pacientes/pacientes_admin/pagos_recibidos/export/export_excel_pagos_detallados.php'+parametros;
+
+        if(Element.hasClass('PagosDetallados')){
+            window.open(excel, '_blank');
+        }
+    }
+    
     function PagosPacientes()
     {
-        var n_pago         = $("#pagPrestacion").val();
-        var n_x_documento  = $("#n_x_documento").val();
-        var formaPago      = $("#formaPago").find(':selected').val();
-        var id_tratamiento = $("#busquedaxTratamiento").find(':selected').val();
+        var n_pago          = $("#pagPrestacion").val();
+        var n_x_documento   = $("#n_x_documento").val();
+        var formaPago       = $("#formaPago").find(':selected').val();
+        var id_tratamiento  = $("#busquedaxTratamiento").find(':selected').val();
 
-        var table = $('#pag_particular').DataTable({
+        var ElementTable    = $('#pag_particular');
+
+        var table           = $('#pag_particular').DataTable({
             searching: false,
             processing: true,
             ordering:false,
             destroy:true,
             paging: true,
             serverSide:true,
+            lengthMenu:[ 5 ],
             ajax:{
                 url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/pagos_pacientes/controller_pagos/controller_pag.php',
                 type:'POST',
+                cache:false,
+                async:false,
                 data:{
-                    'ajaxSend'   :'ajaxSend',
-                    'accion'     : 'list_pagos_particular',
-                    'idpaciente' : $id_paciente,
-                    'npago'      : n_pago,
-                    'formapago'  : formaPago,
-                    'plan_tratam'   : id_tratamiento,
-                    'n_x_documento' : n_x_documento,
+                    'ajaxSend'      :'ajaxSend',
+                    'accion'        :'list_pagos_particular',
+                    'idpaciente'    :$id_paciente,
+                    'npago'         :n_pago,
+                    'formapago'     :formaPago,
+                    'plan_tratam'   :id_tratamiento,
+                    'n_x_documento' :n_x_documento,
                 },
                 dataType:'json',
+                beforeSend: function(){
+                    boxTableLoad(ElementTable, true);
+                },complete: function(xhr, status){
+                    boxTableLoad(ElementTable, false);
+                },
             },
             columnDefs:[
                 {
-                    targets:7,
+                    targets:6,
                     render: function (data, type, row) {
 
                         // console.log(row);
-                        var dropdown_menu = "<div class='dropdown col-centered col-xs-1 '>";
+                        var dropdown_menu = "<div class='dropdown pull-right col-xs-1 '>";
                         dropdown_menu += "<button class='btn btnhover  btn-xs dropdown-toggle' data-toggle=\"dropdown\" type='button' aria-expanded='false'><i class=\"fa fa-ellipsis-v\"></i></button>";
                             dropdown_menu += "<ul class='dropdown-menu pull-right' >";
                                 dropdown_menu += "<li>" + row['url_imprimir'] + "</li>";
-                                dropdown_menu += "<li><a href='#'> Enviar Email </a></li>";
-                                dropdown_menu += "<li><a href='#detalleprestacionPagos' data-toggle='modal' data-nametratam='"+row['name_tratamiento']+"' data-idp='"+row['id_pagocab']+"' data-nboleta='"+row['n_boleta']+"' onclick='detalle_prestaciones_pagosParticulares("+row['id_pagocab']+", $(this))'  >Mostrar detalle</a></li>";
-                                dropdown_menu += "<li><a href='#' data-nametratam='"+row['name_tratamiento']+"' data-valor='"+row['valor']+"' onclick='deletePagoPrestacion("+row['id_pagocab']+","+row['idPlantratamCab']+", $(this))' >Eliminar Pago</a></li>";
+                                dropdown_menu += "<li class=''><a href='#'> Email </a></li>";
+                                dropdown_menu += "<li class='hide'><a href='#' data-nametratam='"+row['name_tratamiento']+"' data-valor='"+row['valor']+"' onclick='deletePagoPrestacion("+row['id_pagocab']+","+row['idPlantratamCab']+", $(this))' >Eliminar Pago</a></li>";
                             dropdown_menu += "</ul>";
                         dropdown_menu += "</div>";
 
@@ -127,27 +156,35 @@
             createdRow: function (row, data, dataIndex) {
                 if(data['boldPlanCab'] == 1){
                     var objectTd =  $(row).children();
-                    console.log($(row).children());
+                    // console.log($(row).children());
                     $.each(objectTd, function(i , item) {
-                        $(item).attr("colspan", "7").css("background-color", "#f9f9f9");
+                        $(item).attr("colspan", "5").css("background-color", "#f9f9f9");
                         console.log($(item));
                         if($(item).text()==""){
                             $(item).css("display", "none");
                         }else{
                             if(i>2){
-                                $(item).html("<a class='btnhover btn-sm btn' onclick='PrintPagosParticulares("+(data['idPlantratamCab'])+")' style='font-weight: bolder'> <i class='fa fa-print'></i> PDF</a>");
+                                $(item).attr("colspan", "2");
+                                var printersPDF       = "<a class='btnhover btn-xs  pdf' onclick='PrintPagosParticulares("+(data['idPlantratamCab'])+", $(this))' style='font-weight: bolder'><i class='fa fa-print'></i> <small>PDF</small></a>";
+                                var printersEXCEL     = "<a class='btnhover btn-xs  excel' onclick='PrintPagosParticulares("+(data['idPlantratamCab'])+", $(this))' style='font-weight: bolder'><i class='fa fa-print'></i> <small>EXCEL</small></a>";
+                                var divPrint = "<div class='col-sm-12 col-md-12 col-lg-12 no-margin no-padding'> " +
+                                    "<ul class='list-inline pull-right no-padding no-margin'>" +
+                                        "  <li> " + printersPDF + " </li>" +
+                                        "  <li> " + printersEXCEL + " </li>" +
+                                    "</ul> </div>";
+                                $(item).html(divPrint);
                             }
                         }
                     });
                 }else{
                     $("td:eq(0)", row).css("width", "1%").css("padding","6px 6px");
-                    $("td:eq(1)", row).css("width", "3%").css("padding","6px 6px");
-                    $("td:eq(2)", row).css("width", "20%").css("padding","6px 6px");
-                    $("td:eq(3)", row).css("width", "10%").css("padding","6px 6px");
-                    $("td:eq(4)", row).css("width", "35%").css("padding","6px 6px");
-                    $("td:eq(5)", row).css("width", "15%").css("padding","6px 6px");
+                    $("td:eq(1)", row).css("width", "10%").css("padding","6px 6px");
+                    $("td:eq(2)", row).css("width", "5%").css("padding","6px 6px");
+                    $("td:eq(3)", row).css("width", "20%").css("padding","6px 6px");
+                    $("td:eq(4)", row).css("width", "7%").css("padding","6px 6px");
+                    $("td:eq(5)", row).css("width", "5%").css("padding","6px 6px");
                     $("td:eq(6)", row).css("width", "5%").css("padding","6px 6px");
-                    $("td:eq(7)", row).css("width", "5%").css("padding","6px 6px");
+                    // $("td:eq(7)", row).css("width", "5%").css("padding","6px 6px");
                 }
             },
             language:{
@@ -207,10 +244,10 @@
         }
     }
 
-    var PrintPagosParticulares = function(idTratamiento){
+    var PrintPagosParticulares = function(idTratamiento, Element){
 
-        if(!ModulePermission(24, 1)){
-            notificacion('Ud. no tiene permiso para esta Operación', 'error');
+        if(!ModulePermission('Pagos de Paciente', 'consultar')){
+            notificacion('Ud. No tiene permiso para realizar esta Operación','error');
             return false;
         }
 
@@ -220,8 +257,15 @@
         }
 
         var parametros = '?idplantratamiento='+idTratamiento;
-        var url = $DOCUMENTO_URL_HTTP+'/application/system/pacientes/pacientes_admin/pagos_recibidos/export/export_recaudaciones_realizadas.php'+parametros;
-        window.open(url, '_blank');
+        var pdf     = $DOCUMENTO_URL_HTTP+'/application/system/pacientes/pacientes_admin/pagos_recibidos/export/export_recaudaciones_realizadas.php'+parametros;
+        var excel   = $DOCUMENTO_URL_HTTP+'/application/system/pacientes/pacientes_admin/pagos_recibidos/export/export_excel_recaudaciones_realizadas.php'+parametros;
+
+        if(Element.hasClass('pdf')){
+            window.open(pdf, '_blank');
+        }
+        if(Element.hasClass('excel')){
+            window.open(excel, '_blank');
+        }
     };
 
 

@@ -79,7 +79,8 @@ tab_conf_prestaciones p
 where 
 td.rowid = pd.fk_plantram_det
 and p.rowid = pd.fk_prestacion
-and pc.rowid = pd.fk_pago_cab ";
+and pc.rowid = pd.fk_pago_cab
+and pd.estado = 'A' ";
 
 if(!empty($idplantratamiento)){
     $sql .= " and td.fk_plantratam_cab = ".$idplantratamiento;

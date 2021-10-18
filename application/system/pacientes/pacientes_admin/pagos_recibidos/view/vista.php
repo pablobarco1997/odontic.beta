@@ -23,6 +23,10 @@ if(isset($_GET['v']) && $_GET['v'] == 'pagos'){
                 <b>  Pagos  </b> </a>
         </li>
         <li>
+            <a href="#" style="color: #333333" class="btnhover btn btn-sm PagosDetallados" readonly="" id="" onclick="Export($(this))">
+                <b> <i class="fa fa-print"></i>  Pagos Detallados </b> </a>
+        </li>
+        <li>
             <a href="<?= DOL_HTTP .'/application/system/pacientes/pacientes_admin/?view=pagos_pacientes&key='.KEY_GLOB.'&id='. tokenSecurityId($idPaciente) .'&v=' ?>" style="color: #333333" class="btnhover btn btn-sm disabled_link3" disabled="disabled" readonly="" id="">
                 <b>   Pagos por Financiamientos </b> </a>
         </li>

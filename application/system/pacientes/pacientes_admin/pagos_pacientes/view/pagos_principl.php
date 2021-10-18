@@ -45,7 +45,7 @@ if(!PermitsModule('Recaudaciones', 'consultar')){
                     print "            <li> <a data-toggle=\"collapse\" data-target=\"#contentFilter\" class=\"btnhover btn  $consultar btn-sm \" style=\"color: #333333\" aria-expanded=\"true\"> <b>   ▼  Filtrar  </b>  </a> </li>";
                 }
             ?>
-            <li> <a href="<?= DOL_HTTP .'/application/system/pacientes/pacientes_admin/?view=pagospaci&key='.KEY_GLOB.'&id='. tokenSecurityId($idPaciente) .'&v=paym' ?>" style="color: #333333" class="btnhover btn btn-sm <?= $consultar ?> " id=""> <b>  <i class="fa fa-dollar"></i> &nbsp; Recaudar Tratamiento</b> </a></li>
+            <li> <a href="<?= DOL_HTTP .'/application/system/pacientes/pacientes_admin/?view=pagospaci&key='.KEY_GLOB.'&id='. tokenSecurityId($idPaciente) .'&v=paym' ?>" style="color: #333333" class="btnhover btn btn-sm <?= $consultar ?> " id="" title="Recaudar Planes de Tratamientos"> <b>Recaudar Planes de Tratamientos</b> </a></li>
             <li> <a href="<?= DOL_HTTP .'/application/system/pacientes/pacientes_admin/?view=pagospaci&key='.KEY_GLOB.'&id='. tokenSecurityId($idPaciente) .'&v=paym_financier' ?>" style="color: #333333" class="btnhover btn btn-sm disabled_link3" disabled="disabled" readonly="" id=""> <b>  Cargo por Financiamiento</b> </a></li>
         </ul>
     </div>
@@ -53,26 +53,22 @@ if(!PermitsModule('Recaudaciones', 'consultar')){
 
     <?php
 
-    #Maneja dos vista lista de pagos donde muestra los planes de tratamientos => paym
-    if(isset($_GET['v']))
-    {
-        #Maneja dos vista lista de las prestaciones realizadas de ese planes de tratamientos => paym_pay
-        if($_GET['v'] == 'paym' || $_GET['v'] == 'paym_pay'){
-            include_once 'pagos_independientes.php';
+        #Maneja dos vista lista de pagos donde muestra los planes de tratamientos => paym
+        if(isset($_GET['v'])){
+            #Maneja dos vista lista de las prestaciones realizadas de ese planes de tratamientos => paym_pay
+            if($_GET['v'] == 'paym' || $_GET['v'] == 'paym_pay'){
+                include_once 'pagos_independientes.php';
+            }
+
+            if($_GET['v'] == 'paym_financier'  ){
+                include_once 'pagos_financieros.php';
+            }
+
+            if( $_GET['v'] != 'paym' && $_GET['v'] != 'paym_financier' && $_GET['v'] != 'paym_pay'){
+                echo '<h1 style="color: red">Ocurrio un error no se encontro la vista a consultar - <b>NO TIENE ACCESO A ESTA VISTA</b></h1>';
+                die();
+            }
         }
-
-
-        if($_GET['v'] == 'paym_financier'  ){
-            include_once 'pagos_financieros.php';
-        }
-
-        if( $_GET['v'] != 'paym' && $_GET['v'] != 'paym_financier' && $_GET['v'] != 'paym_pay'){
-            echo '<h1 style="color: red">Ocurrio un error no se encontro la vista a consultar - <b>NO TIENE ACCESO A ESTA VISTA</b></h1>';
-            die();
-        }
-
-    }
-
 
     ?>
 

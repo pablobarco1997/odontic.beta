@@ -90,11 +90,11 @@ if(isset($_GET['v']) && $_GET['v'] == 'paym')
                             <tr>
                                 <th width="5%">Cobrar</th>
                                 <th width="8%">Fecha</th>
-                                <th width="25%">Plan de Tratamiento</th>
+                                <th width="30%">Plan de Tratamiento</th>
         <!--                        <th width="15%">Cita Asociada</th>-->
-                                <th width="15%">$&nbsp;Total</th>
-                                <th width="15%">$&nbsp;Realizado</th>
-                                <th width="15%">$&nbsp;Abono de Paciente</th>
+                                <th width="10%">Total</th>
+                                <th width="10%">Realizado</th>
+                                <th width="10%">Abonado</th>
                             </tr>
                             </thead>
                         </table>

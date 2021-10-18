@@ -96,9 +96,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 if($consultar_caja_usuario['error']==""){
                     $respuesta = realizar_PagoPacienteIndependiente( $datosp, $idpaciente, $idplancab );
                     if($respuesta == 1){
-                    }else{
-
-                    }
+                    }else{ }
                 }else{
                     $respuesta = "Este usuario no tiene asociada una Caja Clinica<br> <b>No puede realizar esta Operación</b> <br> ".$consultar_caja_usuario['error'];
                 }
@@ -130,23 +128,37 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             $group_pagos = []; //agrupo los pagos por plan de tratamiento
 
-            $sqlP = "SELECT
+            $sql_a = "SELECT
                          cast(p.fecha as date) as fecha ,
                          p.fk_plantram , 
-                         (select concat('Plan de Tratamiento: ', c.numero) from tab_plan_tratamiento_cab c where c.rowid = p.fk_plantram) as nombplan
-                      FROM tab_pagos_independ_pacientes_cab p where p.fk_paciente = $idpaciente and p.fk_plantram <> 0 ";
-            if(!empty($plan_tratam)){
-                $sqlP .= " and p.fk_plantram = $plan_tratam ";
-            }
-            $sqlP .= " group by p.fk_plantram";
-            $sqlTotal = $sqlP; //total agrupado x plan de tratamiento
+                         (select concat('Plan de Tratamiento N.', c.numero) from tab_plan_tratamiento_cab c where c.rowid = p.fk_plantram) as nombplan
+                      FROM 
+                        tab_pagos_independ_pacientes_cab p 
+                        		inner join 
+	                    (SELECT SUM(round(pd.amount, 2)) as monto , pd.fk_plantram_cab, pd.fk_plantram_det, pd.fk_pago_cab as idpago FROM tab_pagos_independ_pacientes_det AS pd where pd.estado = 'A' group by pd.fk_pago_cab) AS pd ON pd.idpago = p.rowid
+                      where 
+                        p.fk_paciente = $idpaciente and p.fk_plantram <> 0 ";
+
+            if(!empty($plan_tratam))
+                $sql_a .= "  and p.fk_plantram = $plan_tratam ";
+            if(!empty($formap))
+                $sql_a .= " and p.fk_tipopago = $formap ";
+            if(!empty($npago))
+                $sql_a .= " and p.rowid like '%$npago%' ";
+            if(!empty($n_x_documento))
+                $sql_a .= " and p.n_fact_boleta like '%$n_x_documento%' ";
+            if($idpaciente>0)
+                $sql_a .= " and p.fk_paciente = $idpaciente";
+
+            $sql_a .= " group by p.fk_plantram";
+            $sqlTotal = $sql_a; //total agrupado x plan de tratamiento
             if($start || $length){
-                $sqlP .= " LIMIT $start,$length;";
+                $sql_a .= " LIMIT $start,$length;";
             }
 
+//            print_r($sql_a); die();
             $Total = $db->query($sqlTotal)->rowCount();
-
-            $resultP = $db->query($sqlP)->fetchAll(PDO::FETCH_ASSOC);
+            $resultP = $db->query($sql_a)->fetchAll(PDO::FETCH_ASSOC);
 
             if(count($resultP)>0){
 
@@ -160,7 +172,6 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                     /*PLAN DE TRATAMIENTO*/
                     $row = array(); // plan de tratamineto Group
-                    $row[] = "";
                     $row[] = "<b>".$value['nombplan']."</b>";
                     $row['boldPlanCab']     = 1;
                     $row['idPlantratamCab'] = $idplanCab;//id plan de tratamiento
@@ -169,6 +180,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                             $row[] = "";
                         $index++;
                     }
+
                     $cabezera[] = $row; //cabezera
 
                     /*DETALLE X PLAN DE TRATAMIENTO PAGADO POR EL PACIENTE*/
@@ -176,16 +188,20 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         p.rowid as idpagoCabezera, 
                         cast(p.fecha as date) fecha,
                         p.fk_paciente , 
-                        (select concat('Plan de Tratamiento: ', c.numero) from tab_plan_tratamiento_cab c where c.rowid = p.fk_plantram) as nombplan,
+                        (select concat('Plan de Tratamiento N.', c.numero) from tab_plan_tratamiento_cab c where c.rowid = p.fk_plantram) as nombplan,
                         p.rowid  n_pago, 
                         p.n_fact_boleta, 
-                        p.monto, 
+                        pd.monto, 
                         p.observacion, 
                         p.fk_plantram as fk_plantramCab , 
                         (select bt.nom from tab_bank_operacion bt where bt.rowid = p.fk_tipopago) as mediopago
-                    FROM tab_pagos_independ_pacientes_cab p where p.rowid > 0 ";
+                    FROM 
+                      tab_pagos_independ_pacientes_cab p 
+                        inner join 
+                      (SELECT SUM(round(pd.amount, 2)) as monto , pd.fk_plantram_cab, pd.fk_plantram_det, pd.fk_pago_cab as idpago FROM tab_pagos_independ_pacientes_det AS pd where pd.estado = 'A' group by pd.fk_pago_cab) AS pd ON pd.idpago = p.rowid
+                    where p.rowid > 0 ";
 
-                    $query .= " and p.fk_plantram = " .$idplanCab;
+                    $query     .= " and p.fk_plantram = ".$idplanCab;
                     if(!empty($formap))
                         $query .= " and p.fk_tipopago = $formap ";
                     if(!empty($plan_tratam))
@@ -209,7 +225,6 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                             $row = array();
 
-                            $row[] = "";
                             $row[] = str_replace('-','/',$ob->fecha);
                             $row[] = $key."".$trantamiento;
                             $row[] = $ob->mediopago;
@@ -495,32 +510,22 @@ function list_pagos_independientes($idpaciente = 0, $Filtros = array())
             $pay_dom = ""; 
             if(1 == 1){
                 $pay_dom = "<div class='form-group col-md-12 col-xs-12'> 
-                                <a href='". DOL_HTTP ."/application/system/pacientes/pacientes_admin/?view=pagospaci&key=". KEY_GLOB ."&id=". tokenSecurityId($idpaciente) ."&v=paym_pay&idplantram=". $objpagos->idplantratamiento ." ' class='btn btnhover' style='color: green; background-color: #e9edf2'> 
-                                    <i class='fa fa-dollar'></i> 
+                                <a href='". DOL_HTTP ."/application/system/pacientes/pacientes_admin/?view=pagospaci&key=". KEY_GLOB ."&id=". tokenSecurityId($idpaciente) ."&v=paym_pay&idplantram=". $objpagos->idplantratamiento ." ' 
+                                    style='color: green; background-color: #e9edf2; font-weight: bold' class='btn btnhover btn-xs '   > 
+                                    cobrar
                                 </a>
                             </div>";
             }
 
-            /*
-            $CitasNum = "<table>
-                            <tbody>
-                                <tr>
-                                    <td><img  src='". $imgbase64ico. "' class=' img-rounded' style='width: 25px; height: 25px' ></td>
-                                    <td>-</td>
-                                    <td>".((($objpagos->cita == 0) ? "No asignada" : str_pad($objpagos->cita,5,'0',STR_PAD_LEFT)))."</td>
-                                </tr>
-                            </tbody>
-                        </table>";*/
-
             $row[] = $pay_dom;
             $row[] = date('Y/m/d', strtotime($objpagos->fecha_create));
-            $row[] = $objpagos->name_tratamm. (!empty($objpagos->edit_name)?'<span style="display: block; color: #4789cf" class="text-sm">'.("<b>Editado:</b> ".$objpagos->edit_name).'</span>':'');
+            $row[] = $objpagos->name_tratamm;
 
-            $row[] = "<span class='' style='padding: 1px 2px; border-radius: 5px; font-weight: bolder; background-color: #66CA86'>$ $objpagos->total </span>  ";  //total prestaciones servicios
-            $row[] = "<span class='' style='padding: 1px 2px; border-radius: 5px; font-weight: bolder; background-color: #ffcc00'>$ $objpagos->total_r </span>  "; //total realizados
+            $row[] = "<span class='' style='padding: 1px 2px; border-radius: 5px; font-weight: bolder; '> $objpagos->total </span>  ";  //total prestaciones servicios
+            $row[] = "<span class='' style='padding: 1px 2px; border-radius: 5px; font-weight: bolder; '> $objpagos->total_r </span>  "; //total realizados
 
             #pago o saldo ++
-            $row[] = "<span class='' style='padding: 1px 2px; border-radius: 5px; font-weight: bolder; background-color: #66CA86'>$ ". (($objpagos->total_sp==null) ? "0.00" : $objpagos->total_sp) ." </span>  "; //total abonados y pagadas
+            $row[] = "<span class='' style='padding: 1px 2px; border-radius: 5px; font-weight: bolder; '> ". (($objpagos->total_sp==null) ? "0.00" : $objpagos->total_sp) ." </span>  "; //total abonados y pagadas
             $row[] = "";
             $data[] = $row;
 
@@ -548,37 +553,40 @@ function listPrestacionesApagar($idpaciente, $idplantram)
 //    -- PS ABONADO (SOLO HAY ABONADO)
 
     $sql = "SELECT 
-    dt.rowid iddetplantram,
-    ct.rowid idcabplantram,
-    dt.fk_prestacion,
-    ct.fk_paciente AS paciente,
-    dt.fk_diente AS diente,
-    dt.estado_pay,
-    cp.descripcion prestacion,
-    dt.estadodet,
-    IF(dt.estadodet = 'R','Realizada','Pendiente') AS estadoprestacion,
-    ROUND(dt.total, 2) AS totalprestacion,
-    -- (SELECT  IFNULL(ROUND(SUM(pd.amount), 2), 0) FROM tab_pagos_independ_pacientes_det pd WHERE pd.fk_plantram_cab = ct.rowid AND pd.fk_plantram_det = dt.rowid) AS abonado,
-    IFNULL(ROUND(pd.abonado, 2),0)  AS abonado , 
-    IFNULL((SELECT   lb.name FROM tab_conf_laboratorios_clinicos lb WHERE lb.rowid = cp.fk_laboratorio),'') AS nom_laboratorio
-FROM
-				   -- plan de tratamiento cabezera
-    (SELECT * FROM tab_plan_tratamiento_cab AS ct) AS ct
-        INNER JOIN -- plan de tratamiento detalle
-    (SELECT * FROM tab_plan_tratamiento_det AS dt) AS dt ON dt.fk_plantratam_cab = ct.rowid
-        LEFT JOIN -- prestaciones
-    (SELECT * FROM tab_conf_prestaciones AS cp) AS cp ON cp.rowid = dt.fk_prestacion 
-		LEFT JOIN -- pagos
-	(SELECT SUM(round(pd.amount, 2)) as abonado , fk_plantram_cab, fk_plantram_det FROM tab_pagos_independ_pacientes_det AS pd group by fk_plantram_cab, fk_plantram_det) AS pd ON pd.fk_plantram_cab = ct.rowid and pd.fk_plantram_det = dt.rowid
-WHERE
-ct.fk_paciente = $idpaciente 
-  AND ct.rowid = $idplantram
-    AND dt.estado_pay IN ('PE' , 'PS', 'PA')
-      AND (ROUND(dt.total, 2) > 0)
+        dt.rowid iddetplantram,
+        ct.rowid idcabplantram,
+        dt.fk_prestacion,
+        ct.fk_paciente AS paciente,
+        dt.fk_diente AS diente,
+        dt.estado_pay,
+        cp.descripcion prestacion,
+        dt.estadodet,
+        IF(dt.estadodet = 'R','Realizada','Pendiente') AS estadoprestacion,
+        ROUND(dt.total, 2) AS totalprestacion,
+        -- (SELECT  IFNULL(ROUND(SUM(pd.amount), 2), 0) FROM tab_pagos_independ_pacientes_det pd WHERE pd.fk_plantram_cab = ct.rowid AND pd.fk_plantram_det = dt.rowid) AS abonado,
+        IFNULL(ROUND(pd.abonado, 2),0)  AS abonado , 
+        IFNULL((SELECT   lb.name FROM tab_conf_laboratorios_clinicos lb WHERE lb.rowid = cp.fk_laboratorio),'') AS nom_laboratorio
+    FROM
+    -- plan de tratamiento cabezera
+        (SELECT * FROM tab_plan_tratamiento_cab AS ct where ct.rowid = $idplantram) AS ct
+            INNER JOIN 
+    -- plan de tratamiento detalle
+        (SELECT * FROM tab_plan_tratamiento_det AS dt where dt.fk_plantratam_cab = $idplantram) AS dt ON dt.fk_plantratam_cab = ct.rowid
+            LEFT JOIN 
+    -- prestaciones
+        (SELECT * FROM tab_conf_prestaciones AS cp) AS cp ON cp.rowid = dt.fk_prestacion 
+            LEFT JOIN 
+    -- pagos
+        (SELECT SUM(round(pd.amount, 2)) as abonado , pd.fk_plantram_cab, pd.fk_plantram_det FROM tab_pagos_independ_pacientes_det AS pd where pd.fk_plantram_cab = $idplantram  and pd.estado = 'A' group by fk_plantram_cab, fk_plantram_det) AS pd ON pd.fk_plantram_cab = ct.rowid and pd.fk_plantram_det = dt.rowid
+    WHERE
+    ct.fk_paciente = $idpaciente 
+      AND ct.rowid = $idplantram
+        AND dt.estado_pay IN ('PE' , 'PS', 'PA')
+          AND (ROUND(dt.total, 2) > 0)
 ORDER BY dt.rowid DESC";
 //    print_r($sql); die();
     $resul = $db->query($sql);
-    $icoPieza = "data:image/*; base64,".base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/diente.png'));
+//    $icoPieza = "data:image/*; base64,".base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/diente.png'));
     if($resul && $resul->rowCount() > 0){
         $i = 0;
         while($objPrest =   $resul->fetchObject() ){
@@ -594,21 +602,21 @@ ORDER BY dt.rowid DESC";
             }
             #R => REALIZADO
             if($objPrest->estadodet == 'R'){
-                $estadoDetPresta = '<label class="" style="background-color: #D5F5E3; color: green; font-weight: bolder;font-size: 0.8em; margin-top: 1px; padding: 5px; border-radius: 1px " title="REALIZADO">REALIZADO</label>';
+                $estadoDetPresta = '<label class="label" style=";background-color: #D5F5E3; color: green; font-weight: bolder;font-size: 0.8em; " title="REALIZADO">REALIZADO</label>';
             }
 
             #P => EN PROCESO
             if($objPrest->estadodet == 'P'){
-                $estadoDetPresta = '<label class="" style="background-color: #7BA5E1; color: #114DA4; font-weight: bolder;font-size: 0.8em; margin-top: 1px; padding: 5px; border-radius: 1px" title="EN PROCESO">EN PROCESO</label>';
+                $estadoDetPresta = '<label class="label" style="background-color: #7BA5E1; color: #114DA4; font-weight: bolder;font-size: 0.8em; " title="EN PROCESO">EN PROCESO</label>';
             }
 
             #A => PENDIENTE
             if($objPrest->estadodet == 'A'){
-                $estadoDetPresta = '<label class="" style="background-color: #F6E944; color: #B88B1C; font-weight: bolder;font-size: 0.8em; margin-top: 1px; padding: 5px; border-radius: 1px" title="PENDIENTE">PENDIENTE</label>';
+                $estadoDetPresta = '<label class="label" style="background-color: #F6E944; color: #B88B1C; font-weight: bolder;font-size: 0.8em; " title="PENDIENTE">PENDIENTE</label>';
             }
 
             $apagar = '<span class="" style="font-weight: bolder; ">    
-                            $ <a style="color: #333333 !important;" class="total_apagar">'. $objPrest->totalprestacion .' </a> 
+                            <a style="color: #333333 !important;" class="total_apagar">'. $objPrest->totalprestacion .' </a> 
                        </span>
                             ';
 
@@ -620,7 +628,7 @@ ORDER BY dt.rowid DESC";
 
 
             $row[] = "<p class='prestaciones_det' data-idprest='$objPrest->fk_prestacion' data-iddetplantram='$objPrest->iddetplantram' data-idcabplantram='$objPrest->idcabplantram' data-status='$objPrest->estado_pay' > $objPrest->prestacion 
-                            &nbsp;&nbsp;&nbsp; ".(($objPrest->diente==0)?"":"<img src='".$icoPieza."' width='14px' height='14px'> $objPrest->diente")." 
+                            &nbsp;&nbsp;&nbsp; ".(($objPrest->diente==0)?"":"<small style='display: block; ' class='text-blue' >Pieza: ".($objPrest->diente)."</small>")." 
                             <small style='display: block; color: #2c4ea4' title='$objPrest->nom_laboratorio'> ".((!empty($objPrest->nom_laboratorio))?"<i class='fa fa-flask'></i> $objPrest->nom_laboratorio":"")."</small>".
                         ((!empty($StatusPagado))?"<small style='display: block; color: green'> Recaudación Completa </small>":"").
                       "</p>";
@@ -630,7 +638,7 @@ ORDER BY dt.rowid DESC";
             $row[] = $apagar; //total de la prestacion del tratamiento
             $row[] = '<a style="color: #333333 !important;" class="Abonado"> '. $objPrest->abonado .' </a>'; //ABONADO
             $row[] = '<a style="color: #333333 !important;" class="Pendiente"> '. $val_pendiente .' </a>'; //PENDIENTE
-            $row[] = $estadoDetPresta; #Estado prestacion
+            $row[] = "<div style='display: block; padding: 5px 5px; '>".$estadoDetPresta."</div> "; #Estado prestacion
             $row[] = "<input type='text' value='".(!empty($StatusPagado)?"":"0.00")."' ".((!empty($StatusPagado))?"disabled":"")." class='form-control input-sm Abonar ".$StatusPagado." ' onkeyup='moneyPagosInput($(this))'  onfocus='moneyPagosInput($(this))'  style='background-color: #f0f0f0; border-radius: 5px; font-weight: bolder; font-size: 1.3rem; color: black;'>
                       <small style='color: red; display: block' class='error_pag'></small> ";
 
@@ -653,8 +661,8 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
     $operaciones = new operacion($db);
 
 
-    $idpacgos = 0;
-    $datosdet   = $datos['datos'];
+    $idpacgos         = 0;
+    $datosdet         = $datos['datos'];
 
     $t_pagos          = $datos['t_pagos'];
     $observacion      = !empty($datos['observ']) ? $datos['observ'] : "";
@@ -726,24 +734,26 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
 
         for ( $i = 0; $i <= count($datosdet) -1; $i++ ){
 
-            $sql2  = " INSERT INTO `tab_pagos_independ_pacientes_det` (`feche_create`, `fk_paciente`, `fk_usuario`, `fk_plantram_cab`, `fk_plantram_det`, `fk_prestacion`, `fk_tipopago`, `amount`, fk_pago_cab)";
-            $sql2 .= " VALUES(";
-            $sql2 .= " now(),";
-            $sql2 .= " $idpaciente,";
-            $sql2 .= " $user->id,";
-            $sql2 .= " ". $datosdet[$i]['idcabplantram'] .",";
-            $sql2 .= " ". $datosdet[$i]['iddetplantram'] .",";
-            $sql2 .= " ". $datosdet[$i]['fk_prestacion'] .",";
-            $sql2 .= " $t_pagos ,";
-            $sql2 .= " ". $datosdet[$i]['valorAbonar'] ." ,";
-            $sql2 .= " $idpacgos ";
-            $sql2 .= ")";
-            $rs2 = $db->query($sql2);
+            $sql_b  = " INSERT INTO `tab_pagos_independ_pacientes_det` (`feche_create`, `fk_paciente`, `fk_usuario`, `fk_plantram_cab`, `fk_plantram_det`, `fk_prestacion`, `fk_tipopago`, `amount`, fk_pago_cab)";
+            $sql_b .= " VALUES(";
+            $sql_b .= " now(),";
+            $sql_b .= " $idpaciente,";
+            $sql_b .= " $user->id,";
+            $sql_b .= " ". $datosdet[$i]['idcabplantram'] .",";
+            $sql_b .= " ". $datosdet[$i]['iddetplantram'] .",";
+            $sql_b .= " ". $datosdet[$i]['fk_prestacion'] .",";
+            $sql_b .= " $t_pagos ,";
+            $sql_b .= " ". $datosdet[$i]['valorAbonar'] ." ,";
+            $sql_b .= " $idpacgos ";
+            $sql_b .= ")";
+            $result_b = $db->query($sql_b);
             //UPDATE PAGOS tab_plan_tratamiento_det
             // PE => pago pendiente
             // PA => Pagado
             // PS => saldo
-            if($rs2){
+            if($result_b){
+
+                $idrecaudado_det              = $db->lastInsertId('tab_pagos_independ_pacientes_det');
 
                 $datos['id_pago']             = $idpacgos;
                 $datos['plan_tram_cab']       = $datosdet[$i]['idcabplantram'];
@@ -757,6 +767,7 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
                 $datos['date_cierre']         = null;
                 $datos['estado']              = "A";
                 $datos['n_tratamiento']       = $n_tratamiento;
+                $datos['id_cobro_recaudado']  = $idrecaudado_det;
 
                 //ingreso a  caja clinicas
                 $result = $operaciones->new_trasaccion_caja_tratamiento($datos, $nom_paciente , $n_tratamiento, $nfact_boleto);
@@ -781,7 +792,7 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
                     ];
                 }
             }
-            #se realiza las transacciones ingreso o egreso de caja
+            //se realiza las transacciones ingreso o egreso de caja
             //realizarTrasaccionCobrosRecaudaciones($observacion, $idplancab, $idpacgos, $datosdet[$i]['valorAbonar'], $datosdet[$i]['fk_prestacion']);
 
         }
@@ -840,7 +851,8 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
                               AND c.rowid = $idplancab and c.fk_paciente = $idpaciente";
             $rsPag      = $db->query($sqlPagada);
 
-            if( $rsPag && $rsPag->rowCount()>0){
+            if( $rsPag && $rsPag->rowCount()>0)
+            {
                 while ( $pag = $rsPag->fetchObject() )
                 {
                     //pendiente
