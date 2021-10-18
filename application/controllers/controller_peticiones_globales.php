@@ -248,13 +248,13 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 }
 
 //                print_r($sql); die();
-                $iconcita = "data: image/png; base64, ".base64_encode(file_get_contents(DOL_HTTP.'/logos_icon/logo_default/cita-medica.ico'));
+//                $iconcita = "data: image/png; base64, ".base64_encode(file_get_contents(DOL_HTTP.'/logos_icon/logo_default/cita-medica.ico'));
 
                 $result = $db->query($sql);
                 if($result && $result->rowCount()>0){
                     while ($object = $result->fetchObject()){
                         $row = [];
-                        $row[] = "<span style='font-weight: bold'>"."<img src='$iconcita' width='25px' height='25px'>"." - ".$object->numberCitas."</span>";
+                        $row[] = "<b>"."C_".$object->numberCitas."</b>";
                         $row[] = date("Y/m/d", strtotime($object->fecha_cita));
                         $row[] = $object->hora_inicio.' h '.$object->hora_fin;
                         $row[] = $object->paciente;
@@ -275,6 +275,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 break;
 
             case 'tratamientosActivosyFinalizados':
+
                 $arr=[];
 
                 $date       = GETPOST("date");
@@ -307,7 +308,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         tc.fk_paciente AS idpaciente,
                         tc.fk_cita AS idCitas,
                         cast(tc.fecha_create as date) as fecha_create , 
-                        ifnull((select round(sum(pd.amount),2) as saldoAbonado from tab_pagos_independ_pacientes_det pd where pd.fk_plantram_cab = tc.rowid),0) as saldo_abonado
+                        ifnull((select round(sum(pd.amount),2) as saldoAbonado from tab_pagos_independ_pacientes_det pd where pd.estado = 'A' and pd.fk_plantram_cab = tc.rowid),0) as saldo_abonado
                         
                     FROM 
                       tab_plan_tratamiento_cab tc , 
@@ -328,7 +329,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 $result = $db->query($sql);
                 if($result && $result->rowCount()>0){
                     while ($object = $result->fetchObject()){
-                        $edit_name = "Plan de Tratamiento: #".$object->numero;
+                        $edit_name = "Plan de Tratamiento N.".$object->numero;
                         if($object->edit_name!=''){
                             $edit_name = $object->edit_name;
                         }
@@ -344,7 +345,9 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 //                        $row[] = $object->situacion;
 
                         if($object->estados_tratamiento=='S')
-                            $row[] = '<span style="font-weight: bold">SALDO ASOCIADO <small class="no-margin" style="color: green">$'.number_format($object->saldo_abonado,2,'.','').'</small></span>';
+                            $row[] = '<span style="font-weight: bold">SALDO ASOCIADO <small class="no-margin" style="color: green"> 
+                                            <small class="text-sm" style="display: block" > $'.number_format($object->saldo_abonado,2,'.','').' </small>
+                                      </span>';
                         if($object->estados_tratamiento=='A')
                             $row[] = '<span style="font-weight: bold">DIAGNÓSTICO</span>';
                         if($object->estados_tratamiento=='F')

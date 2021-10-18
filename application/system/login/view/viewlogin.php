@@ -4,16 +4,19 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">
+<!--<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@500&display=swap" rel="stylesheet">-->
+
 
 <style>
-    *{
-        font-family: 'Roboto', sans-serif;
-        /*font-size: small;*/
-    }
 
-    input{
-        font-family: 'Roboto', sans-serif;
+    @font-face {
+        font-family: 'AmazonEmber_Rg';
+        src: local('AmazonEmber_Rg'), url('<?= DOL_HTTP ?>/public/font/AmazonEmber_Rg.ttf');
+    }
+    *{
+        /*font-family: 'Roboto', sans-serif;*/
+        /*font-size: small;*/
+        font-family: 'AmazonEmber_Rg';
     }
 </style>
 
@@ -45,8 +48,8 @@
                     <input type="password" class="input" placeholder="Password" style="font-size: 1.4rem" id="pass" required>
                 </div>
             </div>
-            <a href="#" class="" style="margin: 15px 5px 0px 0px; font-size: 1.5rem">¿Olvidó su contraseña?</a>
-            <input type="button" class="btn_login_style" value="Login" style="font-weight: bold" id="btn_logearse">
+            <a href="#" class="" style="margin: 15px 5px 0px 0px; font-size: 1.4rem">¿Olvidó su contraseña?</a>
+            <input type="button" class="btn_login_style" value="Login" style="font-weight: bold; font-family: 'AmazonEmber_Rg'; " id="btn_logearse">
         </div>
     </div>
 </div>

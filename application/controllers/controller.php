@@ -427,13 +427,13 @@ function Breadcrumbs_Mod( $titulo, $url, $module )
 
 
         $Breadcrumbs .= '<ul style="list-style: none; " class="list-inline" >';
-                    $Breadcrumbs .= '<li> <small> <a href="'.DOL_HTTP.'/index.php?view=inicio" class="text-blue" style="font-weight: lighter;  color: #212f3d;" title="inicio"  ><i class="fa fa-dashcube"></i></a></small></li>';
+                    $Breadcrumbs .= '<li> <small> <a href="'.DOL_HTTP.'/index.php?view=inicio" class="text-blue Breadcrumbs_link" style="font-weight: lighter;  color: #212f3d;" title="inicio"  ><i class="fa fa-dashcube"></i></a></small></li>';
         for( $i = 0; $i <= $CountBread; $i++ ){
             if(isset($Breadcrumbs_Mod[$i])){
                 if($i==0){
-                    $Breadcrumbs .= '<li><small><a href=" '. $Breadcrumbs_Mod[$i]['url'] .'" class="text-blue" style="font-weight: lighter;  color: #212f3d" title="'. $Breadcrumbs_Mod[$i]['titulo'] .'">'.$Breadcrumbs_Mod[$i]['titulo'].'</a></small></li>';
+                    $Breadcrumbs .= '<li><small><a href=" '. $Breadcrumbs_Mod[$i]['url'] .'" class="text-blue Breadcrumbs_link" style="font-weight: lighter;  color: #212f3d" title="'. $Breadcrumbs_Mod[$i]['titulo'] .'">'.$Breadcrumbs_Mod[$i]['titulo'].'</a></small></li>';
                 }else{
-                    $Breadcrumbs .= '<li><small><a href=" '. $Breadcrumbs_Mod[$i]['url'] .'" class="text-blue" style="font-weight: lighter;  color: #212f3d" title="'. $Breadcrumbs_Mod[$i]['titulo'] .'"  >| &nbsp; '.$Breadcrumbs_Mod[$i]['titulo'] .' </a> </small>  </li>';
+                    $Breadcrumbs .= '<li><small><a href=" '. $Breadcrumbs_Mod[$i]['url'] .'" class="text-blue Breadcrumbs_link" style="font-weight: lighter;  color: #212f3d" title="'. $Breadcrumbs_Mod[$i]['titulo'] .'"  >| &nbsp; '.$Breadcrumbs_Mod[$i]['titulo'] .' </a> </small>  </li>';
                 }
             }
         }
@@ -611,11 +611,11 @@ function validSuperAdmin($idEntityLogin = ""){
 
     global $conf;
     $cn = new CONECCION_ENTIDAD();
-
+    $conectar = $cn::CONNECT_ENTITY();
     $valid = false;
     if($idEntityLogin!=""){
         $que = "select admin from tab_login_entity where entity = '".$conf->EMPRESA->ENTIDAD."' and login_idusers_entity = '".$idEntityLogin."' limit 1";
-        $result = $cn::CONNECT_ENTITY()->query($que);
+        $result = $conectar->query($que);
         if($result&&$result->rowCount()>0){
             $object = $result->fetchObject();
             if($object->admin == 1){
