@@ -1041,10 +1041,7 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
     if( $rs && $rs->rowCount() > 0 ){
 
         $Total = $resultTotal->rowCount();
-
-        $src = "data: image/png; base64, ".base64_encode(file_get_contents(DOL_HTTP.'/logos_icon/logo_default/cita-medica.ico'));
-        $iu = 0; #acumulador
-
+        $iu  = 0; #acumulador
         while ($acced = $rs->fetchObject()){
 
             $row = array();
@@ -1057,8 +1054,7 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
             //numero o codigo de cita
             $numeroCita = "<table style='font-weight: bold'>
                                 <tr>
-                                    <td> <img  src='".$src."' class='img-rounded' style='width: 25px; height: 25px' >  - </td>
-                                    <td> ".(str_pad($acced->id_cita_det, 5, "0", STR_PAD_LEFT))." </td>
+                                    <td> C_".(str_pad($acced->id_cita_det, 5, "0", STR_PAD_LEFT))." </td>
                                 </tr>
                            </table>";
 
