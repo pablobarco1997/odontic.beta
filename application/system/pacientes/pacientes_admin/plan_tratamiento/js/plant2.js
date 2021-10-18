@@ -970,7 +970,9 @@ if($accion == "principal")
                     if(respuesta.acierto > 0){
                         //datos actualizados
                         $('#confirm_eliminar_plantram').modal('hide');
-                        notificacion('Información Actualizada', 'success');
+                        setTimeout(()=>{
+                            notificacion('Información Actualizada', 'success');
+                        },500);
                         listplaneTratamiento();
                     }else{
                         $('#msg_eliminar_plantram').html( respuesta.msgConfirm );
