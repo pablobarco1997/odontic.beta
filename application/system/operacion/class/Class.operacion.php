@@ -32,6 +32,7 @@ class operacion{
         $estado              = $datos['estado'];
         $to_plantram         = 1;
         $to_transaccion_caja = 0;
+        $id_cobro_recaudado   = $datos['id_cobro_recaudado'];
 
         $name_servicio = $this->db->query("select descripcion as name from tab_conf_prestaciones where rowid = $fk_prestacion_servicio")->fetchObject()->name;
 
@@ -53,7 +54,8 @@ class operacion{
         $query .= " `user_author`, ";
         $query .= " `to_plantram`, ";
         $query .= " `to_transaccion_caja`, ";
-        $query .= " `label` ";
+        $query .= " `label` , ";
+        $query .= " `id_cobro_recaudado` ";
         $query .= ")";
         $query .= " VALUES(";
         $query .= " now() , ";
@@ -71,7 +73,8 @@ class operacion{
         $query .= " $user->id , ";
         $query .= " $to_plantram , ";
         $query .= " 0 , ";
-        $query .= " '$label'  ";
+        $query .= " '$label' , ";
+        $query .= " '$id_cobro_recaudado'  ";
         $query .= " )";
 
         $result = $this->db->query($query);

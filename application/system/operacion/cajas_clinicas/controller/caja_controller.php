@@ -103,11 +103,12 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
             }
 
 
-            $users        = GETPOST('users');
-            $apertura     = GETPOST('apertura');
-            $cierre       = GETPOST('cierre');
-            $estado       = GETPOST('estado');
-            $acumulado    = GETPOST('acumulado');
+            $users              = GETPOST('users');
+            $apertura           = GETPOST('apertura');
+            $cierre             = GETPOST('cierre');
+            $estado             = GETPOST('estado');
+            $acumulado          = GETPOST('acumulado');
+            $id_tratamiento     = GETPOST('id_ptratamiento');
 
             $where = "";
 
@@ -129,6 +130,13 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
                 $where .= " and c.estado = '$estado' ";
             }
 
+            if($id_tratamiento!=""){
+                $InnerJoinTratamiento = " 
+                        inner join 
+                    (select tdm.id_ope_caja_cab from tab_ope_cajas_clinicas_det as tdm where tdm.fk_plan_tratam_cab = $id_tratamiento group by tdm.id_ope_caja_cab) as tdm on tdm.id_ope_caja_cab = c.rowid";
+            }else{
+                $InnerJoinTratamiento = "";
+            }
 
             $Total          = 0;
             $start          = $_POST["start"];
@@ -163,11 +171,10 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
                        tab_ope_declare_cuentas dc on dc.rowid = c.id_caja_cuenta
                     inner join 
                        tab_login_users us on us.rowid = c.id_user_caja 
-                            where  ".$PermisoConsultar." ".$where;
+                    ".$InnerJoinTratamiento."
+                    where  ".$PermisoConsultar." ".$where;
             $query .= " order by c.rowid desc";
-
 //            print_r($query); die();
-
             $Total = $db->query($query)->rowCount();
             if($start || $length){
                 $query.=" LIMIT $start,$length;";
@@ -293,12 +300,13 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
                     gc.date_facture, 
                     b.nom as mediop, 
                     round(g.monto, 2) as monto
-                from tab_ope_cajas_det_gastos g
-                   inner join 
+                from 
+                   tab_ope_cajas_det_gastos g
+                      inner join 
                    (select gc.rowid, gc.id_nom_gastos, gc.desc, gc.amount, gc.date_facture, gc.estado from tab_ope_gastos_clinicos gc where gc.on_caja_clinica = 1) as gc on gc.rowid = g.id_gasto
-                   inner join
+                      inner join
                    tab_ope_gastos_nom gn on gn.rowid = gc.id_nom_gastos
-                   inner join 
+                      inner join 
                    tab_bank_operacion b on b.rowid = g.fk_medio_pago
                 where gc.estado <> 'E' and g.id_ope_caja = $id_ope_caja";
 
@@ -452,6 +460,44 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
             echo json_encode($output);
             break;
 
+        case 'anulacion':
+
+            $error = "";
+            $id_recaudado                = GETPOST('id_recaudado');
+            $datos['id_recaudado']       = $id_recaudado; //id plan de tratamiento
+            $datos['id_ope_caja']        = GETPOST('id_ope_caja');
+            $datos['idcajadet']          = GETPOST('idcajadet');
+            $datos['proceso']            = GETPOST('proceso');
+
+
+            //validar usuario solo usuario administrado o usuario de caja puede realizar operaciones dentro de una caja
+            //se valida si no es super administrador
+            $admin = validSuperAdmin($user->users_unique_id);
+            if(!$admin){
+
+                $id_user_caja = $db->query("select count(*) count from tab_ope_cajas_clinicas where rowid = ".($datos['id_ope_caja'])." and id_user_caja = ".($user->id)." ")->fetchObject()->count;
+                if($id_user_caja==0){ //no tiene permiso para realizar ninguna operacion
+                    $error = "Ud. no tiene permiso. Solo usuario administrador o usuario a cargo de la caja";
+                }
+            }
+
+            if(!PermitsModule('Cajas Clinicas', 'eliminar')){
+                $error = "Ud. No tiene permiso para realizar esta operación";
+            }
+
+            //anular plan de tratamiento
+            if(empty($error)){
+                if($datos['proceso'] == 'recaudar_tratam'){
+                    $error  = anulacion_desde_caja($datos);
+                }
+            }
+
+            $output =[
+                'error'    => $error ,
+            ];
+            echo json_encode($output);
+            break;
+
     }
 
 }
@@ -527,6 +573,7 @@ function Saldo_recaudado($id_ope_caja, $date_apertura){
         WHERE
             d.id_ope_caja_cab = $id_ope_caja
             and cast(d.date_apertura as date) = '$date_apertura'
+            and d.estado <> 'E'
             limit 1";
 
     $result = $db->query($sql);
@@ -596,7 +643,8 @@ function Saldo_caja_efectivo($id_type_pago, $name, $id_ope_caja, $date_apertura)
         WHERE
             d.id_ope_caja_cab = $id_ope_caja
             and b.nom = '$name' and b.rowid = $id_type_pago
-            and cast(d.date_apertura as date)  = '$date_apertura' 
+            and cast(d.date_apertura as date)  = '$date_apertura'
+            and d.estado <> 'E' 
             limit 1";
 //    print_r($query); die();
     $result = $db->query($query);
@@ -635,11 +683,14 @@ function list_transaccion_caja_tratamientos($id_ope_caja, $date_apertura){
         ps.descripcion AS prestacion_servicio,
         ROUND(d.amount, 2) AS amount,
         b.nom as medio_pago,
-        pg.n_fact_boleta
+        pg.n_fact_boleta,
+        d.id_cobro_recaudado,
+        d.rowid as idcajadet,
+        tdd.fk_diente as Pieza
     FROM
         tab_ope_cajas_clinicas c
             INNER JOIN
-        tab_ope_cajas_clinicas_det d ON c.rowid = d.id_ope_caja_cab
+        tab_ope_cajas_clinicas_det d ON c.rowid = d.id_ope_caja_cab and d.estado <> 'E'
             INNER JOIN
         tab_bank_operacion b ON b.rowid = d.fk_tipo_pago
             INNER JOIN
@@ -650,16 +701,17 @@ function list_transaccion_caja_tratamientos($id_ope_caja, $date_apertura){
         tab_conf_prestaciones ps ON ps.rowid = d.fk_prestacion_servicio
             INNER JOIN
         tab_pagos_independ_pacientes_cab pg ON pg.rowid = d.fk_pago_cab
+            INNER JOIN
+		tab_plan_tratamiento_det tdd on tdd.rowid = d.fk_plan_tratam_det
     WHERE
         c.estado <> 'E'
         and d.id_ope_caja_cab = ".$id_ope_caja.
             " and cast(d.date_apertura as date)  = '$date_apertura' ";
 
+//    print_r($query); die();
     $start          = GETPOST('start');
     $length         = GETPOST('length');
-
     $total = $db->query($query)->rowCount();
-
     if($start || $length){
         $query .= " limit $start,$length";
     }
@@ -677,13 +729,22 @@ function list_transaccion_caja_tratamientos($id_ope_caja, $date_apertura){
 //                else
 //                    $edit_name_trataminto  = "";
 
+                if(!empty($value['Pieza'])){
+                    $Pieza = "<small style='display: block' class='text-blue'>Pieza: ".$value['Pieza']."</small>";
+                }else{
+                    $Pieza = "";
+                }
+
                 $row = [];
                 $row[]  = date("Y/m/d", strtotime($value['date_emitido_cobro']));
                 $row[]  = $value['paciente'];
-                $row[]  = $value['n_tratamiento']."<small style='display: block; color: #337ab7' >Doc. #: ".$value['n_fact_boleta']."</small>";
-                $row[]  = $value['prestacion_servicio'];
+                $row[]  = $value['n_tratamiento']."<small style='display: block;' class='text-blue' >Doc. #: ".$value['n_fact_boleta']."</small>";
+                $row[]  = $value['prestacion_servicio'].$Pieza;
                 $row[]  = $value['medio_pago'];
                 $row[]  = number_format($value['amount'], 2,'.','');
+                $row[]  = "";
+                $row['idcobro_recaudado'] = $value['id_cobro_recaudado'];
+                $row['idcajadet'] = $value['idcajadet'];
                 $data[] = $row;
             }
         }else{
@@ -767,9 +828,6 @@ function operacion_cierre_caja($id_ope_caja){
             $datos['label']   = $label;
             $datos['date_c']  = "now()";
             $datos['detalle'] = array();
-
-
-
 
             //Plan de tratamiento
             $sql_a = "select * from tab_ope_cajas_clinicas_det where id_ope_caja_cab = ".$fetch->id_ope_caja;
@@ -869,6 +927,187 @@ function operacion_cierre_caja($id_ope_caja){
     }
     return $die_errores;
 }
+
+
+function anulacion_desde_caja($datos){
+
+    global $db, $user, $log;
+
+    if($datos['proceso']=='recaudar_tratam'){
+
+        if($datos['idcajadet']=="" || $datos['id_recaudado']==""){
+            return "Ocurrió un error inesperado con los parametros de entrada consulté con soporte";
+        }
+
+        //se comprueba el estado de la caja para la anulacion del registro
+        $cerrada = $db->query("select count(*) as count_n from tab_ope_cajas_clinicas where rowid = ".$datos['id_ope_caja']." and estado = 'C' ")->fetchObject()->count_n;
+        if($cerrada==1){ //caja cerrada
+            return 'Caja se encuentra cerrada no puede realizar esta Operación. Para realizar la anulación de un plan de tratamiento puede dirigirse al módulo de (Pagos Realizados) de dicho paciente ';
+        }
+
+        //caja abierta  A
+        //consulto solamente los detalles de la estado A
+        $sql_a = "SELECT 
+                        pg.fecha AS date_emitido_cobro,
+                        c.rowid AS id_ope_caja,
+                        c.id_caja_cuenta,
+                        c.date_apertura,
+                        c.date_cierre,
+                        CONCAT('Plan de Tratamiento', ' N.', td.numero) AS n_tratamiento,
+                        td.edit_name as edit_name_tratamiento, 
+                        CONCAT(p.nombre, ' ', p.apellido) AS paciente,
+                        ps.descripcion AS prestacion_servicio,
+                        ROUND(d.amount, 2) AS amount,
+                        b.nom as medio_pago,
+                        pg.n_fact_boleta, 
+                        d.id_cobro_recaudado,
+                        d.rowid as idcajadet,
+                        concat(od.n_cuenta,' ',od.name_acount, ' ',od.to_caja_direccion) as nam_cuenta, 
+                        b.rowid as idmediopago,
+                        d.estado
+                        
+                        ,d.fk_plan_tratam_cab
+                        ,d.fk_plan_tratam_det
+                   FROM
+                        tab_ope_cajas_clinicas c
+                            INNER JOIN
+                        tab_ope_cajas_clinicas_det d ON c.rowid = d.id_ope_caja_cab
+                            INNER JOIN
+                        tab_bank_operacion b ON b.rowid = d.fk_tipo_pago
+                            INNER JOIN
+                        tab_plan_tratamiento_cab td ON td.rowid = d.fk_plan_tratam_cab
+                            INNER JOIN
+                        tab_admin_pacientes p ON p.rowid = d.fk_paciente
+                            INNER JOIN
+                        tab_conf_prestaciones ps ON ps.rowid = d.fk_prestacion_servicio
+                            INNER JOIN
+                        tab_pagos_independ_pacientes_cab pg ON pg.rowid = d.fk_pago_cab
+                            INNER JOIN
+                        tab_ope_declare_cuentas od ON od.rowid = c.id_caja_cuenta
+                   WHERE
+                        d.rowid = ".$datos['idcajadet']." and d.id_cobro_recaudado = ".$datos['id_recaudado']." and d.estado in('A','C') limit 1 ";
+
+        $result_a = $db->query($sql_a);
+        if($result_a){
+            if($result_a->rowCount()>0){
+
+                $result_ab = $result_a->fetchAll(PDO::FETCH_ASSOC);
+                $result_ab = $result_ab[0];
+                if(count($result_ab)>0){
+
+                    if($result_ab['estado']=='E'){
+                        return 'No puede realizar la anulación verifiqué el estado de la caja';
+                    }
+
+                    //Proceso de egreso diario clinico
+                    require_once DOL_DOCUMENT.'/application/system/operacion/class/Class.operacion.php';
+                    $operacion = new operacion($db);
+
+
+                    $label            = "Anulación de Documento ".$result_ab['n_fact_boleta']." |  caja: ".strtoupper($result_ab['nam_cuenta']);
+                    $datos['label']   = $label;
+                    $datos['date_c']  = "now()";
+                    $datos['detalle'] = array();
+
+                    $secuencial = ' CJA_'.str_pad($result_ab['id_ope_caja'],5, "0", STR_PAD_LEFT);
+
+                    $datos['detalle'][] = [
+                        'datec'             => "now()",
+                        'id_cuenta'         => $result_ab['id_caja_cuenta'] ,
+                        'id_user_author'    => $user->id ,
+                        'tipo_mov'          => 1 ,
+                        'amount_ingreso'    => 0,
+                        'amount_egreso'     => $result_ab['amount'],
+                        'value'             => ($result_ab['amount'] * -1),
+                        'id_documento'      => $result_ab['idcajadet'],
+                        'tipo_documento'    => 'Gastos_Clinico', //tipo de documento y/o modulo que genero esta transaccion
+                        'fk_type_payment'   => $result_ab['idmediopago'], //medio de pago
+                        'table'             => 'tab_ope_cajas_clinicas_det', //informacion opcional para saber a que table pertenece el id_documento
+                        'label'             => $label." | ".$secuencial." | ".$result_ab['n_tratamiento']." | Paciente: ".$result_ab['paciente']." | Prestacion/Servicio: ".$result_ab['prestacion_servicio'].' | CJA_'.str_pad($datos['id_ope_caja'], 5, "0", STR_PAD_LEFT)
+                    ];
+
+//                    print_r($result_ab); die();
+
+                    $result_e = $db->query("UPDATE `tab_ope_cajas_clinicas_det` SET `estado`='E' WHERE `rowid`='".($datos['idcajadet'])."';");
+                    if($result_e){
+
+                        $log->log($datos['idcajadet'], $log->eliminar, $datos['detalle'][0]['label'], 'tab_ope_cajas_clinicas_det');
+
+                        //update relacionados
+                        //modulos de pagos del paciente
+                        //anulacion de pago de paciente de prestaciones de tratamiento
+
+                        $iddetpayment = $result_ab['id_cobro_recaudado'];
+                        $result_c     = $db->query("UPDATE `tab_pagos_independ_pacientes_det` SET `estado`='E' WHERE `rowid`='$iddetpayment';");
+                        if($result_c){
+
+                            $log->log($iddetpayment, $log->eliminar, 'Anulación de pago de paciente: '.$result_ab['paciente'].' desde la caja: CJA_'.str_pad($datos['id_ope_caja'], 5, "0", STR_PAD_LEFT), 'tab_pagos_independ_pacientes_det');
+                            $result_ope = $operacion->diarioClinico($datos);
+
+                            //una vez realizado la anulacion se comprueba los estados de planes de tratamiento y los detalles
+                            $sql_a = "SELECT 
+                                        ifnull(SUM(ROUND(a.amount, 2)),0) AS amount , b.total as total_tto 
+                                    FROM
+                                        tab_pagos_independ_pacientes_det as a  inner join tab_plan_tratamiento_det as b on b.rowid = a.fk_plantram_det 
+                                    WHERE
+                                        a.fk_plantram_det = ".$result_ab['fk_plan_tratam_det']."
+                                        and a.estado = 'A' ";
+                            $result_a_detalle = $db->query($sql_a)->fetchObject();
+                            if((double)$result_a_detalle->amount==0){
+                                //se actualiza a PE
+                                $db->query("UPDATE `tab_plan_tratamiento_det` SET `estado_pay`='PE' WHERE `rowid`='".$result_ab['fk_plan_tratam_det']."';");
+                            }else{
+                                //si el monto no es 0
+                                if((double)$result_a_detalle->amount != (double)$result_a_detalle->total_tto){
+                                    $db->query("UPDATE `tab_plan_tratamiento_det` SET `estado_pay`='PS' WHERE `rowid`='".$result_ab['fk_plan_tratam_det']."';");
+                                } //saldo completo
+                                if((double)$result_a_detalle->amount == (double)$result_a_detalle->total_tto){
+                                    $db->query("UPDATE `tab_plan_tratamiento_det` SET `estado_pay`='PA' WHERE `rowid`='".$result_ab['fk_plan_tratam_det']."';");
+                                }
+                            }
+
+
+                            //se verifica plan de tratamiento cabezera
+                            $sql_b = "SELECT 
+                                         ifnull(SUM(ROUND(a.amount, 2)),0) AS amount
+                                    FROM
+                                        tab_pagos_independ_pacientes_det as a inner join tab_plan_tratamiento_det as b on b.rowid = a.fk_plantram_det 
+                                    WHERE
+                                        a.fk_plantram_cab = ".$result_ab['fk_plan_tratam_cab']." and a.estado = 'A'";
+                            $amount_cab_tto = $db->query($sql_b)->fetchObject()->amount;
+                            if($amount_cab_tto!=""){
+                                if((double)$amount_cab_tto==0){
+                                    $db->query("UPDATE `tab_plan_tratamiento_cab` SET `estados_tratamiento`='A' , situacion= 'DIAGNÓSTICO' WHERE `rowid`='".$result_ab['fk_plan_tratam_cab']."';");
+                                }
+                            }
+
+                            if($result_ope!=-1){
+                                return "";
+                            }else{
+                                return "Ocurrió un error con la Operación | Anulación de caja CJA_".str_pad($datos['id_ope_caja'], 5, "0", STR_PAD_LEFT)." <small>diario Clinico</small>. Consulte con Soporte ";
+                            }
+
+                        }else{
+
+                        }
+                    }else{
+                        return "Ocurrió un error con la Operación anulacion de registro de caja";
+                    }
+
+                }else{
+                    return "No se encontraron datos del registro. Compruebe el estado del registro";
+                }
+            }else{
+                return "No se encontraron datos del registro. Compruebe el estado del registro";
+            }
+        }else{
+            return "Ocurrió un error con obteniendo los datos. Consulte con Soporte";
+        }
+    }
+
+}
+
+
 
 
 ?>

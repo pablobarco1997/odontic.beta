@@ -86,6 +86,13 @@ $modulo = true;
                 </select>
             </div>
 
+            <div class="form-group col-md-5 col-xs-12 col-lg-9">
+                <label for="">Plan de Tratamiento</label>
+                <select name="id_tratamiento" id="id_tratamiento" style="width: 100%">
+                    <option value=""></option>
+                </select>
+            </div>
+
             <div class="form-group col-md-12 col-xs-12">
                 <ul class="list-inline pull-right">
                     <li>  <button class="limpiar btn   btn-block  btn-default" id="limpiarCajasFiltro" style="float: right; padding: 10px"> &nbsp; &nbsp; Limpiar &nbsp; &nbsp;</button> </li>
@@ -99,7 +106,7 @@ $modulo = true;
     <div class="form-group col-xs-12 col-md-12" style="margin-top: 10px">
         <span style=" color: #eb9627">
                         <i class="fa fa-info-circle"></i>
-                                    Si desea eliminar un pago de una caja cerrada este es eliminada de dicha caja
+                                    No puede Anular un pago o un gasto si la caja se encuentra cerrada
                         </span>
     </div>
 
@@ -451,6 +458,7 @@ $modulo = true;
                     'users'      : $('#usuario_caja').val(),
                     'acumulado'  : $('#acumulado_caja').val(),
                     'estado'     : $('#estadoCajaClinica').find(":selected").val(),
+                    'id_ptratamiento'   : $('#id_tratamiento').find(':selected').val()
                 },
                 cache:false,
                 async:true,
@@ -643,6 +651,32 @@ $modulo = true;
         // $('.rango span').click(function() {
         //     $(this).parent().find('input').click().val(null);
         // });
+
+        $('#id_tratamiento').select2({
+            placeholder: 'buscar plan de tratamiento',
+            allowClear:true,
+            language: languageEs,
+            minimumInputLength:1,
+            ajax:{
+                url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/controller/controller_adm_paciente.php',
+                type: "POST",
+                dataType: 'json',
+                async:false,
+                cache: false,
+                data:function (params) {
+                    var query = {
+                        accion: 'filtrarPlantratamientoSearchSelect2',
+                        ajaxSend:'ajaxSend',
+                        search: params.term,
+                    };
+                    return query;
+                },
+                delay: 500,
+                processResults:function (data) {
+                    return data;
+                }
+            }
+        });
 
         list_cajas_abiertas();
 
