@@ -2,34 +2,46 @@
     <div class="form-group col-md-12 col-xs-12" style="background-color: #f4f4f4; padding: 25px; ">
         <h3 class=""><span>Filtrar Pagos de Pacientes</span></h3>
         <div class="row">
+
+            <div class="form-group col-md-3 col-sm-12 col-xs-12">
+                <label for="">Emitido</label>
+                <div class="input-group form-group rango" style="margin: 0">
+                    <input type="text" class="form-control " readonly="" id="startDateEmtpayment" value="">
+                    <span class="input-group-addon" style="border-radius: 0"><i class="fa fa-calendar"></i></span>
+                </div>
+            </div>
+
             <div class="form-group col-md-2 col-sm-12 col-xs-12">
                 <label for="">Número</label>
                 <input type="text" class="form-control" name="pagPrestacion" id="pagPrestacion">
             </div>
-            <div class="form-group col-md-3 col-sm-12 col-xs-12">
-                <label for="">Forma de Pago</label>
-                <select name="formaPago" id="formaPago" class="form-control" style="width: 100%">
-                    <option value=""></option>
-                        <?php
-                        $quy = "select rowid, nom from tab_bank_operacion where rowid not in(1,2,3,4,7)";
-                        $result = $db->query($quy);
-                        if($result&&$result->rowCount()>0){
-                            while ($object = $result->fetchObject()){
-                                print "<option value='".$object->rowid."'>".$object->nom."</option>";
-                            }
-                        }
-                    ?>
-                </select>
-            </div>
+
             <div class="form-group col-md-7 col-sm-12 col-xs-12">
                 <label for="">busqueda por Plan de Tratamiento</label>
                 <select name="" class="form-control " id="busquedaxTratamiento" style="width: 100%">
                     <option value=""></option>
                 </select>
             </div>
+
         </div>
 
         <div class="row">
+            <div class="form-group col-md-3 col-sm-12 col-xs-12">
+                <label for="">Forma de Pago</label>
+                <select name="formaPago" id="formaPago" class="form-control" style="width: 100%">
+                    <option value=""></option>
+                    <?php
+                    $quy = "select rowid, nom from tab_bank_operacion where rowid not in(1,2,3,4,7)";
+                    $result = $db->query($quy);
+                    if($result&&$result->rowCount()>0){
+                        while ($object = $result->fetchObject()){
+                            print "<option value='".$object->rowid."'>".$object->nom."</option>";
+                        }
+                    }
+                    ?>
+                </select>
+            </div>
+
             <div class="form-group col-md-3 col-sm-12 col-xs-12">
                 <label for="">Doc #.</label>
                 <input type="text" class="form-control" name="n_x_documento" id="n_x_documento">
@@ -75,6 +87,7 @@
     function Export(Element) {
 
         var n_pago          = $("#pagPrestacion").val();
+        var emitido         = $("#startDateEmtpayment").val();
         var n_x_documento   = $("#n_x_documento").val();
         var formaPago       = $("#formaPago").find(':selected').val();
         var id_tratamiento  = $("#busquedaxTratamiento").find(':selected').val();
@@ -85,6 +98,7 @@
         parametros    += '&n_x_documento='+n_x_documento;
         parametros    += '&formapago='+formaPago;
         parametros    += '&plan_tratam='+id_tratamiento;
+        parametros    += '&emitido='+emitido;
         var excel   = $DOCUMENTO_URL_HTTP+'/application/system/pacientes/pacientes_admin/pagos_recibidos/export/export_excel_pagos_detallados.php'+parametros;
 
         if(Element.hasClass('PagosDetallados')){
@@ -96,6 +110,7 @@
     {
         var n_pago          = $("#pagPrestacion").val();
         var n_x_documento   = $("#n_x_documento").val();
+        var emitido         = $("#startDateEmtpayment").val();
         var formaPago       = $("#formaPago").find(':selected').val();
         var id_tratamiento  = $("#busquedaxTratamiento").find(':selected').val();
 
@@ -122,6 +137,7 @@
                     'formapago'     :formaPago,
                     'plan_tratam'   :id_tratamiento,
                     'n_x_documento' :n_x_documento,
+                    'emitido'       :emitido,
                 },
                 dataType:'json',
                 beforeSend: function(){
@@ -215,6 +231,13 @@
             },
         });
 
+        // new $.fn.dataTable.FixedHeader( table );
+        new $.fn.dataTable.FixedHeader( table,
+            {
+                // headerOffset: 50
+            }
+        );
+
     }
 
     function deletePagoPrestacion(idpagosCab, idPlantratamCab, Element)
@@ -275,6 +298,7 @@
     $(".limpiar").click(function() {
 
         $("#pagPrestacion").val(null);
+        $("#startDateEmtpayment").val(null);
         $("#n_x_documento").val(null);
         $("#formaPago").val(null).trigger('change');
         $("#busquedaxTratamiento").val(null).trigger('change');
@@ -329,6 +353,50 @@
 
     $(window).on('load', function () {
 
+        $('#startDateEmtpayment').daterangepicker({
+            locale: {
+                format: 'YYYY/MM/DD' ,
+                daysOfWeek: [
+                    "Dom",
+                    "Lun",
+                    "Mar",
+                    "Mie",
+                    "Jue",
+                    "Vie",
+                    "Sáb"
+                ],
+                monthNames: [
+                    "Enero",
+                    "Febrero",
+                    "Marzo",
+                    "Abril",
+                    "Mayo",
+                    "Junio",
+                    "Julio",
+                    "Agosto",
+                    "Septiembre",
+                    "Octubre",
+                    "Noviembre",
+                    "Diciembre"
+                ],
+            },
+
+            startDate: moment().startOf('month'),
+            endDate: moment(),
+            ranges: {
+                'Hoy': [moment(), moment()],
+                'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Últimos 7 Dias': [moment().subtract(6, 'days'), moment()],
+                'Últimos 30 Dias': [moment().subtract(29, 'days'), moment()],
+                'Mes Actual': [moment().startOf('month'), moment().endOf('month')],
+                'Mes Pasado': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
+                'Año Actual': [moment().startOf('year'), moment().endOf('year')],
+                'Año Pasado': [moment().subtract(1, 'year').startOf('year'), moment().subtract(1, 'year').endOf('year')],
+            }
+        }).val(null);
+        $('.rango span').click(function() {
+            $(this).parent().find('input').click();
+        });
 
         PagosPacientes();
 

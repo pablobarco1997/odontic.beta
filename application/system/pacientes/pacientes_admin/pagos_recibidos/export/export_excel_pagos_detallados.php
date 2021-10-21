@@ -17,12 +17,10 @@ set_time_limit(20000);
 
 require_once  DOL_DOCUMENT .'/application/system/conneccion/conneccion.php';    //Coneccion de Empresa
 require_once  DOL_DOCUMENT .'/application/controllers/controller.php';
-require_once  DOL_DOCUMENT . '/public/lib/PHPExcel2014/PHPExcel.php';
+require_once  DOL_DOCUMENT .'/public/lib/PHPExcel2014/PHPExcel.php';
+
 
 $objPHPExcel = new PHPExcel();
-
-
-
 
 function aplicarColunmDetalle($titulos = array(), $detallesRows = array(), $rows, $objPHPExcel, $marcelTitle=false){
 
@@ -76,11 +74,14 @@ function aplicarColunmDetalle($titulos = array(), $detallesRows = array(), $rows
 }
 
 
-
 /**SE CREA LAS VARIABLES DE INICIO**/
 $cn = new ObtenerConexiondb();                    //Conexion global Empresa Fija
 $db = $cn::conectarEmpresa($_SESSION['db_name']); //coneccion de la empresa variable global
 
+//add log export excel o pdf
+require_once  DOL_DOCUMENT .'/application/config/class.log.php';
+$log = new log($db, $_SESSION['id_users_2']);
+$log->log(0, $log->consultar, 'Se exporto el reporte:  PAGOS DETALLADOS.xlsx', '', '');
 
 $fechaData =  array();
 $sql_data = "select 
@@ -131,6 +132,17 @@ if(GETPOST('n_x_documento')!=''){
 }
 if(GETPOST('formapago')!=''){
     $sql_data .= " and b.rowid = '".GETPOST('formapago')."' ";
+}
+if(GETPOST('plan_tratam')!=''){
+    $sql_data  .= " and pddc.fk_plantram = ".GETPOST('plan_tratam');
+}
+if(!empty(GETPOST('emitido'))){
+    $dateff0 = explode('-', GETPOST('emitido'))[0];
+    $dateff1 = explode('-', GETPOST('emitido'))[1];
+
+    $dateff0 = date('Y-m-d', strtotime($dateff0));
+    $dateff1 = date('Y-m-d', strtotime($dateff1));
+    $sql_data  .= " and CAST(pdd.feche_create AS DATE) between '$dateff0' and '$dateff1' ";
 }
 
 $sql_data .= " group by pdd.fk_plantram_cab, pdd.fk_plantram_det, pdd.rowid ";

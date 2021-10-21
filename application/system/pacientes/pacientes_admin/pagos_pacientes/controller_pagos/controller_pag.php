@@ -119,6 +119,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $npago          = GETPOST('npago');
             $plan_tratam    = GETPOST('plan_tratam');
             $n_x_documento  = GETPOST('n_x_documento');
+            $emitido        = GETPOST('emitido');
 
             $data = [];
 
@@ -129,34 +130,48 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $group_pagos = []; //agrupo los pagos por plan de tratamiento
 
             $sql_a = "SELECT
-                         cast(p.fecha as date) as fecha ,
-                         p.fk_plantram , 
-                         (select concat('Plan de Tratamiento N.', c.numero) from tab_plan_tratamiento_cab c where c.rowid = p.fk_plantram) as nombplan
-                      FROM 
-                        tab_pagos_independ_pacientes_cab p 
-                        		inner join 
-	                    (SELECT SUM(round(pd.amount, 2)) as monto , pd.fk_plantram_cab, pd.fk_plantram_det, pd.fk_pago_cab as idpago FROM tab_pagos_independ_pacientes_det AS pd where pd.estado = 'A' group by pd.fk_pago_cab) AS pd ON pd.idpago = p.rowid
+                        CAST(p.fecha AS DATE) AS fecha,
+                        p.fk_plantram,
+                        CONCAT('Plan de Tratamiento N.', c.numero) AS nombplan
+                    FROM
+                        tab_pagos_independ_pacientes_cab p
+                            INNER JOIN
+                        (SELECT SUM(ROUND(pd.amount, 2)) AS monto, pd.fk_plantram_cab, pd.fk_plantram_det, pd.fk_pago_cab AS idpago FROM tab_pagos_independ_pacientes_det AS pd WHERE pd.fk_paciente = $idpaciente and pd.estado = 'A' GROUP BY pd.fk_pago_cab) AS pd ON pd.idpago = p.rowid
+                            INNER JOIN 
+                        tab_plan_tratamiento_cab c on c.rowid = p.fk_plantram and  c.fk_paciente = $idpaciente 
                       where 
                         p.fk_paciente = $idpaciente and p.fk_plantram <> 0 ";
 
-            if(!empty($plan_tratam))
+            if(!empty($plan_tratam)){
                 $sql_a .= "  and p.fk_plantram = $plan_tratam ";
-            if(!empty($formap))
+            }
+            if(!empty($formap)){
                 $sql_a .= " and p.fk_tipopago = $formap ";
-            if(!empty($npago))
+            }
+            if(!empty($npago)){
                 $sql_a .= " and p.rowid like '%$npago%' ";
-            if(!empty($n_x_documento))
+            }
+            if(!empty($n_x_documento)){
                 $sql_a .= " and p.n_fact_boleta like '%$n_x_documento%' ";
-            if($idpaciente>0)
+            }
+            if($idpaciente>0){
                 $sql_a .= " and p.fk_paciente = $idpaciente";
+            }
+            if(!empty($emitido)){
+                $dateff0 = explode('-', $emitido)[0];
+                $dateff1 = explode('-', $emitido)[1];
 
-            $sql_a .= " group by p.fk_plantram";
+                $dateff0 = date('Y-m-d', strtotime($dateff0));
+                $dateff1 = date('Y-m-d', strtotime($dateff1));
+                $sql_a  .= " and CAST(p.fecha AS DATE) between '$dateff0' and '$dateff1' ";
+            }
+            $sql_a .= " group by p.fk_plantram ";
             $sqlTotal = $sql_a; //total agrupado x plan de tratamiento
             if($start || $length){
-                $sql_a .= " LIMIT $start,$length;";
+                $sql_a .= " order by c.rowid desc LIMIT $start,$length;";
             }
 
-//            print_r($sql_a); die();
+            //print_r($sql_a); die();
             $Total = $db->query($sqlTotal)->rowCount();
             $resultP = $db->query($sql_a)->fetchAll(PDO::FETCH_ASSOC);
 
@@ -202,16 +217,29 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     where p.rowid > 0 ";
 
                     $query     .= " and p.fk_plantram = ".$idplanCab;
-                    if(!empty($formap))
+                    if(!empty($formap)){
                         $query .= " and p.fk_tipopago = $formap ";
-                    if(!empty($plan_tratam))
+                    }
+                    if(!empty($plan_tratam)){
                         $query .= " and p.fk_plantram = $plan_tratam ";
-                    if(!empty($npago))
+                    }
+                    if(!empty($npago)){
                         $query .= " and p.rowid like '%$npago%' ";
-                    if(!empty($n_x_documento))
+                    }
+                    if(!empty($n_x_documento)){
                         $query .= " and p.n_fact_boleta like '%$n_x_documento%' ";
-                    if($idpaciente>0)
+                    }
+                    if($idpaciente>0){
                         $query .= " and p.fk_paciente = $idpaciente";
+                    }
+                    if(!empty($emitido)){
+                        $dateff0 = explode('-', $emitido)[0];
+                        $dateff1 = explode('-', $emitido)[1];
+
+                        $dateff0 = date('Y-m-d', strtotime($dateff0));
+                        $dateff1 = date('Y-m-d', strtotime($dateff1));
+                        $query .= " and CAST(p.fecha AS DATE) between '$dateff0' and '$dateff1' ";
+                    }
 
 
                     $detalle = [];
@@ -770,8 +798,8 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
                 $datos['id_cobro_recaudado']  = $idrecaudado_det;
 
                 //ingreso a  caja clinicas
-                $result = $operaciones->new_trasaccion_caja_tratamiento($datos, $nom_paciente , $n_tratamiento, $nfact_boleto);
-                if($result){
+                $result_id = $operaciones->new_trasaccion_caja_tratamiento($datos, $nom_paciente , $n_tratamiento, $nfact_boleto);
+                if($result_id > 0){
                     $montoIngresoCaja += (double)$datosdet[$i]['valorAbonar']; //se crear para registrar un ingreso en el diario clinico
 
                     //ingreso de transaccion clinicas
@@ -784,10 +812,10 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
                         'amount_ingreso'    => (double)$datosdet[$i]['valorAbonar'] , //monto de ingreso a la cuenta
                         'amount_egreso'     => 0 ,
                         'value'             => (double)$datosdet[$i]['valorAbonar'],
-                        'id_documento'      => $fetch_caja['caja']['id_caja_ope'],
+                        'id_documento'      => $result_id, //se guarda el id retornado desde al realizar el cobro de caja
                         'tipo_documento'    => 'cajas_clinicas', //tipo de documento y/o modulo que genero esta transaccion
                         'fk_type_payment'   => $t_pagos, //medio de pago
-                        'table'             => 'tab_ope_cajas_clinicas', //informacion opcional para saber a que table pertenece el id_documento
+                        'table'             => 'tab_ope_cajas_clinicas_det', //informacion opcional para saber a que table pertenece el id_documento
                         'label'             => "Cobro de Paciente ".(getnombrePaciente($datos['id_paciente'])->nom)." | Forma de pago: ".getnombFormaPago($t_pagos)." | Caja: ".$fetch_caja['caja']['name_caja']." | Plan de tratamiento N.".$n_tratamiento. " | Prestación/Servicios: ".getnombrePrestacionServicio($datosdet[$i]['fk_prestacion'])->descripcion." | Doc. ".$nfact_boleto.' | CJA_'.str_pad($fetch_caja['caja']['id_caja_ope'], 5, "0", STR_PAD_LEFT),
                     ];
                 }
