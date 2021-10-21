@@ -306,7 +306,8 @@ function transacciones_clinicas_list(){
                  
             d.value, 
             b.nom as operacion,
-            d.label 
+            d.label , 
+            d.estado
         from 
         tab_ope_diario_admin_clinico_det d 
             inner join 
@@ -329,13 +330,22 @@ function transacciones_clinicas_list(){
         $fetch = $result->fetchAll(PDO::FETCH_ASSOC);
         foreach ($fetch as $value){
 
-            $textOperacion = "<small style='display: block'>".$value['nomb_cuenta']."</small> <small style='display: block; color: #0866a5'>".$value['operacion']."</small>";
+            $anulado = "";
+
+            if($value['estado'] == 'A'){ //estado Activo
+                $n_acount = "<small style='display: block'>".$value['nomb_cuenta']."</small> <small style='display: block; color: #0866a5'>".$value['operacion']."</small>";
+                $desc = "<small class='' style='color: #0866a5'>".$value['label']."</small>";
+            }
+            if($value['estado'] == 'N'){ //estado Anulado
+                $n_acount = " <strike> <small style='display: block'>".$value['nomb_cuenta']."</small> <small style='display: block; color: #0866a5'>".$value['operacion']."</small> </strike>";
+                $desc = " <strike> <small class='' style='color: #0866a5'>".$value['label']."</small> </strike>" ;
+                $anulado = "<small style='display: block; color: red; '>Anulado</small>";
+            }
 
             $row = [];
-            $row[] = date("Y/m/d", strtotime($value['date_cc']));
-            $row[] = $textOperacion;
-//            $row[] = $value['operacion'];
-            $row[] = "<small class='' style='color: #0866a5'>".$value['label']."</small>";
+            $row[] = date("Y/m/d", strtotime($value['date_cc'])).$anulado;
+            $row[] = $n_acount;
+            $row[] = $desc;
             if((double)$value['value']<0){
                 $row[] = "<span style='color: red; padding: 6px 12px'>".$value['value']."</span>";
             }else{

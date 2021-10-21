@@ -85,7 +85,7 @@ class operacion{
         }else{
             $id = $this->db->lastInsertId("tab_ope_cajas_clinicas_det");
             $log->log($id, $log->crear, 'Se registro nuevo pago del paciente '.$name_paciente.' del Plan de tratamiento N. '.$plantamiento.' .Prestacion de Servicio '.$name_servicio.'   N.pago '.$fk_pago_cab, 'tab_ope_cajas_clinicas_det');
-            return true;
+            return $id;
         }
 
 
@@ -197,6 +197,19 @@ class operacion{
 
     }
 
+
+
+    //anulacion de diario clinico detalle
+    function AnulacionDiDeClinico($iddocument, $tipo_document){
+
+        global $log;
+
+        $query = "UPDATE `tab_ope_diario_admin_clinico_det` SET `estado`='N' WHERE `tipo_documento`='$tipo_document' and  id_documento=$iddocument  and rowid > 0;";
+        $result =  $this->db->query($query);
+        if($result){
+            $log->log($iddocument, $log->eliminar , 'Anulación de registro Clinico', 'tab_ope_diario_admin_clinico_det', '');
+        }
+    }
 
 
 

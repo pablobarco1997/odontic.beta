@@ -9,13 +9,14 @@ function resultClinicaEstadoListExcel($datos = array(), $export = false, $db){
     $array_resultClinica = array();
 
     $sql = "select 
-	concat(cd.n_cuenta, ' ', cd.name_acount) as name_acount, 
-    sum(round(d.value, 2)) as valor, 
-    cd.tipo_operacion
-from 
-	tab_ope_diario_admin_clinico_det d 
-		inner join 
-	(select * from tab_ope_declare_cuentas cd where cd.to_caja <> 1 ) cd on cd.rowid = d.id_cuenta";
+            concat(cd.n_cuenta, ' ', cd.name_acount) as name_acount, 
+            sum(round(d.value, 2)) as valor, 
+            cd.tipo_operacion
+        from 
+            tab_ope_diario_admin_clinico_det d 
+                inner join 
+			tab_ope_declare_cuentas cd on cd.rowid = d.id_cuenta and cd.to_caja <> 1
+            where d.estado = 'A' ";
 
     $sql .= " group by cd.rowid ";
     $result = $db->query($sql);

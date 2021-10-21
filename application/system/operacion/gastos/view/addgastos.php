@@ -361,10 +361,13 @@ $id = GETPOST('id');
     $('[name="asociar_caja"]').change(function () {
         if( $('[name="asociar_caja"]').find(':selected').val() ==""){
             $(".date_pago_content").removeClass('hide');
+            $("#GenerarGastos").removeClass('disabled_link3').attr('disabled', false);
         }else{
             $(".date_pago_content").addClass('hide');
+            $("#GenerarGastos").addClass('disabled_link3').attr('disabled', true);
         }
         $(".date_pago_content").find('#date_pago').val(null);
+
     });
 
     $("#guardarGastos").click(function () {

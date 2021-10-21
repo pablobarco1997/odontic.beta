@@ -20,9 +20,15 @@ if(isset($_GET['accion_exportar'])){
     require_once DOL_DOCUMENT . '/application/system/conneccion/conneccion.php';    //Coneccion de Empresa
     require_once DOL_DOCUMENT . '/public/lib/PHPExcel2014/PHPExcel.php';
     require_once DOL_DOCUMENT . '/application/controllers/controller.php';
+    require_once DOL_DOCUMENT . '/application/config/class.log.php';
 
     $cn = new ObtenerConexiondb();                    //Conexion global Empresa Fija
     $db = $cn::conectarEmpresa($_SESSION['db_name']); //coneccion de la empresa variable global
+
+    $log = new log($db);
+
+    $log->log(0, $log->consultar, 'Se ha realizado un export Reporte Gastos.xlsx', '', '');
+
 
     $emitido    = GETPOST("emitido");
     $facture    = GETPOST("facture");
@@ -188,7 +194,7 @@ if(isset($_GET['accion_exportar'])){
 
 
     // Se asigna el nombre a la hoja
-    $objPHPExcel->getActiveSheet()->setTitle('Reporte CITA.');
+    $objPHPExcel->getActiveSheet()->setTitle('Reporte Gastos');
     // Se activa la hoja para que sea la que se muestre cuando el archivo se abre
     $objPHPExcel->setActiveSheetIndex(0);
 
@@ -197,7 +203,7 @@ if(isset($_GET['accion_exportar'])){
 
     // Se manda el archivo al navegador web, con el nombre que se indica, en formato 2007
     header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    header('Content-Disposition: attachment;filename="Reporte CITA.xlsx"');
+    header('Content-Disposition: attachment;filename="Reporte Gastos.xlsx"');
     header('Cache-Control: max-age=0');
 
 

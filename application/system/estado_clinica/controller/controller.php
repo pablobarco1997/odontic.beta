@@ -52,6 +52,8 @@ function resultClinicaEstadoList($datos = array(), $export = false){
         $where .= " and cast(d.datec as date) between '$date_one' and '$date_two'  ";
     }
 
+    $where .= " and d.estado = 'A' ";
+
     $array_estado = array('INGRESOS', 'COSTO','GASTOS');
     $array_resultClinica = array();
 
@@ -62,12 +64,12 @@ function resultClinicaEstadoList($datos = array(), $export = false){
         from 
             tab_ope_diario_admin_clinico_det d 
                 inner join 
-            (select * from tab_ope_declare_cuentas cd where cd.to_caja <> 1 ) cd on cd.rowid = d.id_cuenta
-            
+			tab_ope_declare_cuentas cd on cd.rowid = d.id_cuenta and cd.to_caja <> 1
             where ";
 
     $sql .= $where;
     $sql .= " group by cd.rowid ";
+//    print_r($sql); die();
     $result = $db->query($sql);
     if($result){
         if($result->rowCount()>0){

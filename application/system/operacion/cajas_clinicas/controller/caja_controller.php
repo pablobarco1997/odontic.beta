@@ -1042,7 +1042,10 @@ function anulacion_desde_caja($datos){
                         if($result_c){
 
                             $log->log($iddetpayment, $log->eliminar, 'Anulación de pago de paciente: '.$result_ab['paciente'].' desde la caja: CJA_'.str_pad($datos['id_ope_caja'], 5, "0", STR_PAD_LEFT), 'tab_pagos_independ_pacientes_det');
-                            $result_ope = $operacion->diarioClinico($datos);
+
+                            //$result_ope = $operacion->diarioClinico($datos);
+                            //se anula el registro del diario clinico directamente a la table
+                            $result_ope = $operacion->AnulacionDiDeClinico($result_ab['idcajadet'], 'cajas_clinicas');
 
                             //una vez realizado la anulacion se comprueba los estados de planes de tratamiento y los detalles
                             $sql_a = "SELECT 

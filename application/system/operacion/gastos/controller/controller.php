@@ -252,6 +252,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                                 when gc.estado = 'E' then 'ANULADO'
                                 when gc.estado = 'A' then 'GENERADO'
 						   END as estado_gasto 
+                           ,gc.estado as status_gasto
 						   ,concat('CJA_', lpad('0',(5-length(cgc.id_ope_caja)),'0'),cgc.id_ope_caja) as n_abierta_caja
 						   ,concat(dc.n_cuenta,' ',dc.name_acount) as acount_name
                     FROM
@@ -294,11 +295,11 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     $cuentaGasto = "<small class='text-blue' style='display: block' >".$item['acount_name']."</small>";
 
 
-                    if($item['estado']=='A')
+                    if($item['status_gasto']=='A')
                         $stadoGastos = "<span class=\"text-sm\" style=\"background-color: #D5F5E3; color: green; font-weight: bolder; padding: 1px 5px\">".$item['estado_gasto']."</span>";
-                    if($item['estado']=='E')
+                    if($item['status_gasto']=='E')
                         $stadoGastos = "<span class=\"text-sm\" style=\"background-color: #FADBD8; color: red; font-weight: bolder; padding: 1px 5px\">".$item['estado_gasto']."</span>";
-                    if($item['estado']=='P')
+                    if($item['status_gasto']=='P')
                         $stadoGastos = "<span class=\"text-sm\" style=\"background-color: #f6e944; color: #b88b29; font-weight: bolder; padding: 1px 5px\">".$item['estado_gasto']."</span>";
 
                     $rows = array();
@@ -388,6 +389,22 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 //                            }
 
                             $result_c = $db->query("UPDATE `tab_ope_gastos_clinicos` SET `estado`='E' WHERE `rowid`='$id_gasto';");
+                            if($result_c) {
+
+                                $sql_stct = "select d.rowid as idd_diario_clinico, d.estado from tab_ope_diario_admin_clinico_det d where d.id_documento = $id_gasto and d.estado = 'A' and d.tipo_documento = 'Gasto Clinicos' order by rowid desc limit 1";
+                                $result_n = $db->query($sql_stct);
+                                if($result_n && $result_n->rowCount()>0){
+                                    $object_n = $result_n->fetchObject();
+                                    if($object_n->estado == 'A'){
+                                        if($object_n->idd_diario_clinico != 0){
+                                            $resul_dn =  $db->query("UPDATE `tab_ope_diario_admin_clinico_det` SET `estado`='N' WHERE `rowid`=".$object_n->idd_diario_clinico);
+                                            if($resul_dn){
+                                                $log->log($object_n->idd_diario_clinico, $log->eliminar, 'Se ha Anulado el registro del Modulo Transacción Clinica', 'tab_ope_diario_admin_clinico_det');
+                                            }
+                                        }
+                                    }
+                                }
+                            }
 
                         }
 
@@ -425,25 +442,35 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $result = $db->query("select * from tab_ope_gastos_clinicos where rowid = $id");
             if($result){
                 if($result->rowCount()>0){
+
                     $object   = $result->fetchObject();
-                    $id_gasto = $object->rowid;
-                    $caja     = $db->query("select count(*) as caja  from tab_ope_cajas_det_gastos where id_gasto=".$id_gasto)->fetchObject()->caja;
 
-                    if($caja!=0){
-                        $error = "No puede generar un gasto de caja. Este se genera una vez que la caja haya cerrada";
-                    }else{
+                    if($object->estado == 'A'){
+                        $error = "Se encuentra en estado Generado";
+                    }if($object->estado == 'E'){
+                        $error = "Se encuentra en estado Anulado";
+                    }
 
-                        //mi fecha de pago es meyor o == a la actual
-                        if( date("Y-m-d", strtotime($object->date_payent)) >= date("Y-m-d") ){
-                            //se Genera el Gasto
-                            $result_c = $db->query("UPDATE `tab_ope_gastos_clinicos` SET `estado`='A' WHERE `rowid`='$id_gasto';");
-                            if($result_c){
-                                $log->log($id_gasto, $log->eliminar, 'Se ha Generado un Gasto registro desde Modulo de Gastos Clinicos. ( Gasto Clinico id b64: ' .base64_encode($id_gasto).' ) | Detalle: '.$object->desc, 'tab_ope_cajas_det_gastos');
+                    if(empty($error)){
+                        $id_gasto = $object->rowid;
+                        $caja     = $db->query("select count(*) as caja  from tab_ope_cajas_det_gastos where id_gasto=".$id_gasto)->fetchObject()->caja;
 
-                                GenerarGastoDirecto(array(),  $id_gasto);
-                            }
+                        if($caja!=0){
+                            $error = "No puede generar un gasto de caja. Este se genera una vez que la caja haya cerrada";
                         }else{
-                            $error = "No puede Generar el gasto. La fecha actual no puede ser mayor a la de pago ";
+
+                            //mi fecha de pago es meyor o == a la actual
+                            if( date("Y-m-d", strtotime($object->date_payent)) >= date("Y-m-d") ){
+                                //se Genera el Gasto
+                                $result_c = $db->query("UPDATE `tab_ope_gastos_clinicos` SET `estado`='A' WHERE `rowid`='$id_gasto';");
+                                if($result_c){
+                                    $log->log($id_gasto, $log->eliminar, 'Se ha Generado un Gasto registro desde Modulo de Gastos Clinicos. ( Gasto Clinico id b64: ' .base64_encode($id_gasto).' ) | Detalle: '.$object->desc, 'tab_ope_cajas_det_gastos');
+
+                                    GenerarGastoDirecto(array(),  $id_gasto);
+                                }
+                            }else{
+                                $error = "No puede Generar el gasto. La fecha actual no puede ser mayor a la de pago ";
+                            }
                         }
                     }
 
@@ -627,7 +654,7 @@ function GenerarGastoDirecto($fetch = array(), $id){
         if($result_b<0){
             return "Ocurrió un error con la Operación, Consulte con Soporte";
         }else{
-            if($fetch['otras_accion']=="G"){ //se genera desde el modulo de GASTOS
+            if(isset($fetch['otras_accion'])=="G"){ //se genera desde el modulo de GASTOS
                 $result_e = $db->query("UPDATE `tab_ope_gastos_clinicos` SET `estado`='A' WHERE `rowid`='$id';");
                 if($result_e){
 
