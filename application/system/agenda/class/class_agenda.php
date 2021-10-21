@@ -118,6 +118,7 @@ class admin_agenda{
     #crear plan de tratamiento del lado de la agenda => PLAN DE TRATAMIENTO CABEZERA
     public function create_plantratamientocab()
     {
+        global  $log;
 
         $error = '';
 
@@ -142,8 +143,10 @@ class admin_agenda{
         $rs = $this->db->query($sql);
         if($rs){
             $error = (int)$this->db->lastInsertId("tab_plan_tratamiento_cab");
+            $log->log($error, $log->crear, 'Se ha registrado un nuevo Plan de Tratamiento: N.'.str_pad($error, '6','0',STR_PAD_LEFT), 'tab_plan_tratamiento_cab', '');
         }else{
             $error = 'Ocurrio un error al crear el Plan de tratamiento , Consulte con soporte Tecnico';
+            $log->log(0, $log->error, 'Ha ocurrido un error con la creación de un Plan de Tratamiento ', 'tab_plan_tratamiento_cab', '');
         }
 
         return $error;

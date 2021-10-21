@@ -175,125 +175,59 @@ function fa_refresh_agenda() {
 
 
 //Funciones Cambio de estados 
-function EstadosCitas(idestado, idcita, html, idpaciente) //Comprotamientos de los estados de las citas
-{
+function  AplicarStatusAgendada(idestado, idcita, JQUERYdom, idpaciente) {
 
-    if(!ModulePermission("Agenda","consultar")){
-        notificacion('ud. No tiene permiso para consultar <br>Se le han deshabilitado las opciones','error');
-        return false
+    var status = JQUERYdom.data('text');
+
+    if(idestado==1){ //email
+
+        $('#notificar_email-modal').modal('show');
+
+        setTimeout(()=>{
+            notificacion('El sistema no se responsabiliza por correo electrónico mal ingresado', 'question'); }
+        ,800);
+
+        $("#enviarEmail").click(function (e) {
+            notificaionEmail(idpaciente,idcita,idestado);
+        });
+
+        $("#para_email").keyup();
+
+        return false;
     }
 
-    var textEstado = html.data('text');
-    switch (idestado)
-    {
-        case 1: //notificar por email
+    if(idestado==12){//Nuevo Agendamiento
 
-            $('#notificar_email-modal').modal('show');
-
-            setTimeout(()=>{ notificacion('El sistema no se responsabiliza por correo electrónico mal ingresado', 'question'); },800);
-            $('#para_email').val( $.trim( html.data('email') ) ); //email destinario
-            $("#enviarEmail").attr('onclick', 'notificaionEmail('+idpaciente+','+idcita+','+idestado+','+idcita+')');
-            $("#para_email").keyup();
-
-            break;
-
-        case 2: // No confirmado
-
-            UpdateEstadoCita(idestado, idcita, html, textEstado );
-            break;
-
-        case 3: // Confirmar por Telefono
-
-            UpdateEstadoCita(idestado, idcita, html, textEstado );
-            break;
-
-        case 4: // En sala de espera
-
-            $.get($DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php" , {'ajaxSend':'ajaxSend', 'accion':'consultar_estado_cita_atrazada', 'idcita':idcita } , function(data) {
-                var dato = $.parseJSON(data);
-                if(dato.result == 'atrazada'){
-                    notificacion('Esta cita se encuentra atrasada no puede cambiar a estado <b>Atendiendose</b>', 'question');
-                }else{
-                    UpdateEstadoCita(idestado, idcita, html, textEstado );
-                }
-            });
-            break;
-
-        case 5: // Atendiendose
-
-            $.get($DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php" , {'ajaxSend':'ajaxSend', 'accion':'consultar_estado_cita_atrazada', 'idcita':idcita } , function(data) {
-                var dato = $.parseJSON(data);
-                if(dato.result == 'atrazada'){
-                    notificacion('Esta cita se encuentra atrasada no puede cambiar a estado <b>Atendiendose</b>', 'question');
-                }else{
-                    UpdateEstadoCita(idestado, idcita, html, textEstado );
-                }
-            });
-            break;
-
-        case 6: // Atendido
-
-            $.get($DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php" , {'ajaxSend':'ajaxSend', 'accion':'consultar_estado_cita_atrazada', 'idcita':idcita } , function(data) {
-                var dato = $.parseJSON(data);
-                if(dato.result == 'atrazada'){
-                    notificacion('Esta cita se encuentra atrasada no puede cambiar a estado <b>Atendido</b>', 'question');
-                }else{
-                    UpdateEstadoCita(idestado, idcita, html, textEstado );
-                }
-            });
-
-            break;
-
-        case 7: // No asiste
-
-            UpdateEstadoCita(idestado, idcita, html, textEstado );
-            break;
-
-        case 9: // Cancelada
-
-            UpdateEstadoCita(idestado, idcita, html, textEstado );
-            break;
-
-        case 8: //confirmado por whatsapp
-
-            $("#number_whasap").text(html.data("telefono"));
-            var number = html.data("telefono");
-            $("#modalWhapsapp").modal("show");
-            // $("#sendwhap").addClass('disabled_link3');
-
-            /*se cambia el attr de un onclick y herf*/
-            $("#sendwhap")
-                .attr('onclick', 'UpdateEstadoCita('+idestado+','+idcita+','+'0'+','+"'textEstado'"+')')
-                .attr('href','https://wa.me/'+number+'?text=hola');
-
-            break;
-
-        case 12: //Cambio de fecha
-
-            FechaCitaCambio(idcita);
-            break;
-
-        default:
-
-            UpdateEstadoCita(idestado, idcita, html, textEstado );
-            break;
-
+        FechaCitaCambio(idcita);
+        return false;
     }
 
+    UpdateEstadoCita(idestado,idcita,status);
 
 }
 
-function UpdateEstadoCita(idestado, idcita, html = "", textEstado) //Actualizar Estados de las citas
+
+//actualiza el estado 
+function UpdateEstadoCita(idestado, idcita, textEstado) //Actualizar Estados de las citas
 {
+
+    var parametros = {
+        'ajaxSend': 'ajaxSend',
+        'accion': 'EstadoslistCitas',
+        'idestado':idestado,
+        'idcita':idcita,
+        'estadoText':textEstado
+    };
+
     $.ajax({
         url: $DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php",
         type:'POST',
-        data:{'ajaxSend': 'ajaxSend', 'accion': 'EstadoslistCitas', 'idestado':idestado, 'idcita':idcita, 'estadoText':textEstado },
+        data: parametros ,
         dataType:'json',
         async: false,
-        success: function(resp)
-        {
-            console.log(resp);
+        cache: false,
+        success: function(resp){
+
             if(resp.error == "" && resp.errmsg == "") {
                 var table =  $('#tableAgenda').DataTable();
                 notificacion( 'Información Actualizada', 'success');
@@ -312,26 +246,13 @@ function UpdateEstadoCita(idestado, idcita, html = "", textEstado) //Actualizar 
 }
 
 
-function notificaionEmail($idPaciente, $idcita, idestado, idcita )
-{
-
-
-    // $('#emailEspere').text('Enviando mensaje espere ...');
-
-    // $(document).
-    // bind("ajaxStart", function(){
-    //     $('#emailEspere').text('Enviando mensaje espere ...');
-    // }) .bind("ajaxSend", function(){
-    //     $('#emailEspere').text('Enviando mensaje espere ...');
-    // }).bind("ajaxComplete", function(){
-    //     $('#emailEspere').text(null);
-    // });
-
-    var boxMail = $("#notificar_email-modal").find(".modal-dialog");
-    boxloading(boxMail, true);
+function notificaionEmail(idPaciente, idcita, idestado ){
 
     var error = '';
     var error_registrar_email_ = '';
+
+    var boxMail = $("#notificar_email-modal").find(".modal-dialog");
+    boxloading(boxMail, true);
 
     var programarEmail = {
         'confirmar'    : ($("#emailConfirmacion_programar").is(':checked')?1:0),
@@ -339,16 +260,14 @@ function notificaionEmail($idPaciente, $idcita, idestado, idcita )
     };
 
     setTimeout(function() {
-
-
         $.ajax({
             url: $DOCUMENTO_URL_HTTP + "/application/system/agenda/controller/agenda_controller.php",
             type:'POST',
             data:{
                 'ajaxSend'          : 'ajaxSend',
                 'accion'            : 'envio_email_notificacion',
-                'idpaciente'        : $idPaciente,
-                'idcita'            : $idcita,
+                'idpaciente'        : idPaciente,
+                'idcita'            : idcita,
                 'asunto'            : $('#asunto_email').val(),
                 'from'              : $('#de_email').val(),
                 'to'                : $('#para_email').val(),
@@ -361,7 +280,6 @@ function notificaionEmail($idPaciente, $idcita, idestado, idcita )
             cache: false,
             complete: function(xhr, status){
                 $('#emailEspere').text(null);
-
                 if(xhr['status']=='200'){
                     boxloading(boxMail,false,1000);
                 }else{
@@ -380,7 +298,6 @@ function notificaionEmail($idPaciente, $idcita, idestado, idcita )
                     }
                     boxloading(boxMail,false,1000);
                 }
-
             },
             success: function(resp){
 
@@ -452,9 +369,13 @@ function create_plandetratamiento($idpaciente, $idcitadet, $iddoct, $html)
         success:function(resp) {
             var idpacienteToken = resp.idpacientetoken;
             if(resp.error == ''){
-                notificacion('Plan de Tratamiento Creado - cargando...', 'success');
+                notificacion('Plan de Tratamiento creado con completo. espere un momento para el redireccionamiento...', 'success');
             }else {
-                notificacion('Ocurrio un error con la Operación' , 'error');
+                if(resp.error != ''){
+                    notificacion(resp.error , 'error');
+                }else{
+                    notificacion('Ocurrio un error con la Operación' , 'error');
+                }
             }
             if(resp.error == ''){
                 var $tener = 0;

@@ -96,9 +96,32 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $countError = 0;
             $output = ['error'=>"",'errmsg'=>"", 'success'=>""];
 
-            $idestado   = GETPOST('idestado'); //ID ESTADO
-            $idcita_det = GETPOST('idcita'); // ID DE LA CITA
-            $textEstado = GETPOST('estadoText'); //text estado
+            $idestado   = GETPOST('idestado');
+            $idcita_det = GETPOST('idcita');
+            $textEstado = GETPOST('estadoText');
+
+
+            //valida si tiene permiso para realizar esta accion modificar
+            if(!PermitsModule('Agenda', 'modificar')){
+                $output['errmsg'] = "Ud. No tiene permiso para realizar esta operación";
+                echo json_encode($output);
+                $countError++;
+                die();
+            }
+
+
+            //validar fecha atrazada para estos estados
+            $is_status = array(
+                '4'=>'En sala de espera',
+                '5'=>'Atendiéndose',
+                '6'=>'Atendido'
+            );
+            if(array_key_exists($idestado, $is_status)==1){
+                if(!ValidarFechaActualCita($idcita_det)){
+                    $output['errmsg'] = "Esta cita se encuentra atrasada no puede cambiar a estado <b>".$is_status[$idestado]."</b>";
+                    $countError++;
+                }
+            }
 
 
             //Consulto el estado para validar si se encuentra en estado E-mail de confirmacion Programdo
@@ -111,10 +134,10 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                                     FROM tab_pacientes_citas_det where (rowid = $idcita_det)";
             $result = $db->query($consultarStatus);
             if($result && $result->rowCount()>0){
-                $listEstados = $result->fetchObject();
+                $object_sts = $result->fetchObject();
 
                 //id 11 E-mail de confirmación Programado
-                if($listEstados->estado_id==11){
+                if($object_sts->estado_id==11){
                     $output['errmsg']  = "No puede actualizar esta cita, se encuentra en estado <b>E-mail de confirmacion programado</b>  
                                                 <br> <small style='font-weight: bold'> Verifique la información antes de actualizar para continuar y liberar la cita agendada diríjase al modulo E-mail Asociados del paciente para desactivar el registro E-mail Programado </small>";
                     $countError++;
@@ -122,20 +145,18 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                 //id 6 Atendido si el paciente se encuentra atendido y validar la fecha
                 //validar que no puede cambiar el estado Atendido si encaso la fecha es vencida
-                if($listEstados->estado_id==6){
-                    if($listEstados->vencidad_estados!=""){
+                if($object_sts->estado_id==6){
+                    if($object_sts->vencidad_estados!=""){
                         $output['errmsg'] = "Esta cita #".$idcita_det." .Ya se encuentra en estado Atendido no puede actualizar la información";
                         $countError++;
                     }
                 }
             }
 
-//            print_r($output);
-//            die();
             if($countError==0){
                 $sqlUpdateEstado = "UPDATE `tab_pacientes_citas_det` SET `fk_estado_paciente_cita` = $idestado WHERE (`rowid` = $idcita_det);";
-                $result_u     = $db->query($sqlUpdateEstado);
-                $estado = getnombreEstadoCita($idestado);
+                $result_u        = $db->query($sqlUpdateEstado);
+                $estado          = getnombreEstadoCita($idestado);
                 if($result_u){
                     $output['success'] = "Estado $textEstado: información Actualizada";
                     $log->log($idcita_det, $log->modificar, 'Se ha Actualizado un registro | Cita N.'.$idcita_det.' actualizo estado: '.$estado->nom, 'tab_pacientes_citas_det');
@@ -321,7 +342,11 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             if($subaccion == "CREATE")
             {
 
-                if($error == ''){
+                if(!PermitsModule('Agenda', 'agregar')){
+                    $error = 'Ud. No tiene permiso para realizar esta Operación';
+                }
+
+                if(empty($error)){
 
                     $sql1 = "SELECT ifnull(MAX(rowid) + 1, 1) as numero FROM tab_plan_tratamiento_cab";
                     $rs = $db->query($sql1)->fetchObject();
@@ -365,20 +390,11 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
             }
 
-
-//            echo '<pre>';
-//            print_r($idtratamiento);
-//            print_r($idcita);
-//            die();
-
-
             $output = [
                 'error'           => $error,
                 'idtratamiento'   => tokenSecurityId(($idplantramAsociarCita == 0) ? $idtratamiento : $idplantramAsociarCita), #convert id token plan de tratamiento
                 'idpacientetoken' => tokenSecurityId($idpaciente)
             ];
-
-//            print_r($output); die();
 
             echo json_encode($output);
             break;
@@ -494,6 +510,26 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             $dateProgram           = date('Y-m-d', strtotime(str_replace('/','-',$programar_email->date_program)));
 
 
+            //validar si tiene permisos
+            if(!PermitsModule("Agenda", "modificar")){
+                $output = [
+                    'registrar'   => '',
+                    'error_email' => 'Ud. No tiene permiso para realizar esta Operación'
+                ];
+                echo json_encode($output);
+                die();
+            }
+
+            //se valida que la cita no este atrazada
+            if(!ValidarFechaActualCita($idcita)){
+                $output = [
+                    'registrar'   => '',
+                    'error_email' => 'Cita Atrazada'
+                ];
+                echo json_encode($output);
+                break;
+            }
+
             //obtengo el objeto conpleto de la cita
             $sqlCitadet     = "SELECT * FROM tab_pacientes_citas_det WHERE rowid = $idcita limit 1";
             $rsuCita = $db->query($sqlCitadet)->fetchObject();
@@ -567,7 +603,6 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
             }
 
             echo json_encode($error);
-
             break;
 
         case 'UpdateComentarioAdicional':
@@ -878,7 +913,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 //            print_r(date("Y-m-d H:i:s", strtotime($fecha." ".$horaFin)) ); die();
             if($permits){
                 $idCita             = GETPOST("idCita");
-                $validarHoraFecha   = validarFechaHoraCita($idCita);
+                $validarHoraFecha   = validarFechaHoraCitaReagendamiento($idCita);
                 if($validarHoraFecha){ //true
 
                     if(date("Y-m-d H:i:s", strtotime($fechaInicio)) < date("Y-m-d H:i:s")){
@@ -1229,7 +1264,7 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
                                     $html3 .= "<li> <a class='activeEstadoCita' $todosdata   style='cursor: pointer; ' >$rowxs->text</a> </li>";
                                 }
                                 else{
-                                    $html3 .= "<li> <a class=' $addclases '  data-text='$rowxs->text' $todosdata  onclick='EstadosCitas($rowxs->rowid, $acced->id_cita_det, $(this), $acced->idpaciente)' style='cursor: pointer;$statusAdd' >$rowxs->text</a> </li>";
+                                    $html3 .= "<li> <a class=' $addclases '  data-text='$rowxs->text' $todosdata  onclick='AplicarStatusAgendada($rowxs->rowid, $acced->id_cita_det, $(this), $acced->idpaciente)' style='cursor: pointer;$statusAdd' >$rowxs->text</a> </li>";
                                 }
                             }
                         }
@@ -1540,14 +1575,12 @@ function notificarCitaEmail($datos, $token_confirmacion)
         $error = 'No esta asignado el acceso de e-mail';
     }
 
-    $Ouput = [
-
+    $output = [
         'registrar'   => $error_insert_notific_email ,
         'error_email' => ($error==1)?"":$error
-
     ];
 
-    return $Ouput;
+    return $output;
 
 }
 
@@ -1766,8 +1799,19 @@ function boxsizingMenssaje( $datosEmail = array() ){
 
 }
 
+function ValidarFechaActualCita($cita_id){
+    global $db;
+    $sql = "select count(*) as count from tab_pacientes_citas_det where cast(fecha_cita as datetime) > now() and rowid = ".$cita_id;
+    $result = $db->query($sql);
+    $count_rows = $result->fetchObject()->count;
+    if($count_rows!=0){
+        return true;
+    }else{
+        return false;
+    }
+}
 
-function validarFechaHoraCita($idCita){
+function validarFechaHoraCitaReagendamiento($idCita){
 
     global $db;
 
