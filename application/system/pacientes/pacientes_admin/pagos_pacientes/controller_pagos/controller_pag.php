@@ -724,10 +724,10 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
         return "Estas Prestaciones ya se encuentran recaudadas <br>"."<b>".(implode("<br>", $labelServicio))."</b>";
     }
 
+    //se valida todos los servicios asociados
     //se valida los pagos que el abonado no sea mayor al monto total de cada servicio
     $result_valid_pag = validar_pagos_pacientes($datosdet, $idplancab);
     if($result_valid_pag != -1){ //si es diferente a -1 el resultado contiene un mensaje de error
-
         return $result_valid_pag;
     }
 
@@ -836,27 +836,25 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
 
         //Consulto los pagos que este y actualizo el estado si ya esta pagada o solo haya saldo
         $sql3 = "SELECT 
-                 c.fk_paciente,
-                 d.rowid iddetplantram ,
-                 c.rowid idcabplantram ,
-                 round(d.total, 2) as totalprestacion , 
-                 
-                 (select ifnull( round(sum(pd.amount), 2),0 ) from tab_pagos_independ_pacientes_det pd where pd.fk_paciente = $idpaciente 
-                                and pd.fk_plantram_cab = c.rowid and pd.fk_plantram_det = d.rowid) as pagado ,
-                 
-                 if( round(d.total, 2) = (select ifnull( round(sum(pd.amount), 2),0 ) from tab_pagos_independ_pacientes_det pd where pd.fk_paciente = $idpaciente 
-					and pd.fk_plantram_cab = c.rowid and pd.fk_plantram_det = d.rowid) 
-					, 'pagado' , 
-	
-                 if((select ifnull( round(sum(pd.amount), 2),0 ) from tab_pagos_independ_pacientes_det pd where pd.fk_paciente = $idpaciente 
-                            and pd.fk_plantram_cab = c.rowid and pd.fk_plantram_det = d.rowid) = 0 
-                            , 'pendiente', 'saldo')		
-                    ) as estado
-                 
-                FROM tab_plan_tratamiento_det d , tab_plan_tratamiento_cab c 
-                where d.fk_plantratam_cab = c.rowid 
-                and c.fk_paciente = $idpaciente
-                and c.rowid = $idplancab";
+                    
+                    c.fk_paciente,
+                    d.rowid iddetplantram ,
+                    c.rowid idcabplantram ,
+                    round(d.total, 2) as totalprestacion ,  
+                    sum(round(ifnull(pd.amount, 0), 2)) as pagado , 
+                    if(round(d.total, 2) = sum(round(ifnull(pd.amount,0), 2)), 'pagado', if(sum(round(ifnull(pd.amount,0), 2))=0, 'pendiente' , 'saldo' )) as estado
+                            
+                FROM 
+                tab_plan_tratamiento_det as d
+                    inner join 
+                tab_plan_tratamiento_cab c on d.fk_plantratam_cab = c.rowid
+                    left join
+                tab_pagos_independ_pacientes_det pd on pd.estado = 'A' and pd.fk_paciente = $idpaciente and pd.fk_plantram_cab = c.rowid and pd.fk_plantram_det = d.rowid and pd.estado = 'A'
+                
+                where c.fk_paciente = $idpaciente and c.rowid = $idplancab 
+                group by d.rowid desc;";
+
+//        print_r($sql3);
         $result_a  = $db->query($sql3);
         if($result_a){
             while ( $ob3 = $result_a->fetchObject() ){
@@ -916,8 +914,7 @@ function realizar_PagoPacienteIndependiente( $datos, $idpaciente, $idplancab )
                 $db->query($sqlComplePagTram);
             }*/
 
-            if($hay_saldo > 0)
-            {
+            if($hay_saldo > 0){
                 $sqlComplePagTram = "UPDATE `tab_plan_tratamiento_cab` SET situacion = 'SALDO' , estados_tratamiento = 'S' WHERE `rowid`='$idplancab';";
                 $db->query($sqlComplePagTram);
             }
@@ -1071,10 +1068,12 @@ function realizarTrasaccionCobrosRecaudaciones($mensage = "", $idplanTratamiento
 
 }
 
+//se valida el pago que no sea mayor al total de la prestación
 function validar_pagos_pacientes($detalle = array(), $idcab){
 
     global $db;
 
+    $error_abonado      = 0;
     $id_tratam_det      = [];
     $fetch_tratam_det   = [];
 
@@ -1086,32 +1085,32 @@ function validar_pagos_pacientes($detalle = array(), $idcab){
 
     if(count($id_tratam_det)){ //no hay prestaciones
 
-        $error_abonado = 0;
-
-        $query = "select 
+        $query = "
+            select 
                 detalle.rowid as id_detalle , 
-                pagos.key_tratamiento , 
-                pagos.fk_prestacion , 
-                detalle.total_ttc , 
-                (pagos.amount) as monto_pagado, 
-                p.descrip
-                from
-            (Select detalle.rowid, detalle.fk_plantratam_cab, round(detalle.total, 2) as total_ttc from tab_plan_tratamiento_det as detalle) as detalle
-                inner join 
-            (select pagos.fk_plantram_det as key_tratamiento,  pagos.fk_plantram_det as id_tratam_det, pagos.fk_plantram_cab as id_tratam_cab, sum(round(pagos.amount, 2)) as amount, pagos.fk_prestacion from tab_pagos_independ_pacientes_det as pagos 
-                    group by pagos.fk_plantram_det, pagos.fk_plantram_cab) as pagos on 
-                    pagos.id_tratam_det = detalle.rowid
-                    and pagos.id_tratam_cab = detalle.fk_plantratam_cab
-            left join
-            (select p.rowid , concat(ifnull(p.codigo,' '),' ',p.descripcion) as descrip from tab_conf_prestaciones as p) as p on p.rowid = pagos.fk_prestacion
+                ifnull(pagos.key_tratamiento, '') as key_tratamiento , 
+                detalle.fk_prestacion , 
+                detalle.total as total_ttc , 
+                ifnull((pagos.amount),0) as monto_pagado, 
+                p.descripcion as descrip
+            from
+                tab_plan_tratamiento_det as detalle
+                    left join 
+                (select pagos.fk_plantram_det as key_tratamiento,  pagos.fk_plantram_det as id_tratam_det, pagos.fk_plantram_cab as id_tratam_cab, sum(round(pagos.amount, 2)) as amount, pagos.fk_prestacion from tab_pagos_independ_pacientes_det as pagos where pagos.estado = 'A' and pagos.fk_plantram_cab = $idcab group by pagos.fk_plantram_det, pagos.fk_plantram_cab) as pagos on pagos.id_tratam_det = detalle.rowid and pagos.id_tratam_cab = detalle.fk_plantratam_cab
+                    left join
+                tab_conf_prestaciones as p on p.rowid = pagos.fk_prestacion
             where 
                 detalle.fk_plantratam_cab = $idcab
-                and detalle.rowid =".implode(',', $id_tratam_det);
+                and detalle.rowid in(".implode(',', $id_tratam_det).") ";
+
+//        print_r($query); die();
         $result = $db->query($query);
         if($result){
             if($result->rowCount()>0){
                 while ($object = $result->fetchObject()){
+
                     if(array_key_exists($object->key_tratamiento, $fetch_tratam_det)){ //si la key no existe significa que no tiene ningun pago asociado valido el id del detalle
+
                         $abonado = $fetch_tratam_det[$object->key_tratamiento]['valorAbonar'] += (double)$object->monto_pagado; // se suma el monto pagado junto con lo abonado
 
                         if($abonado > $object->total_ttc){ //si mi abonado es mayor a mi total prestacion/Servicio (error)
