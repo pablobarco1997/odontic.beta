@@ -76,7 +76,10 @@ FROM
                     <span style="font-weight: bolder; font-size: 2rem; display: block">Detalles de Caja # <?= $numero_caja?></span>
                 </td>
                 <td style="text-align: right">
-                    <a href="<?= DOL_HTTP.'/application/system/operacion/cajas_clinicas/exports/exports_excel_detalle.php?export=1&id_ope_caja='.GETPOST('idcaj') ?>" class="btn btn-sm btn-default"> <b>EXCEL</b> <i class="fa fa-print"></i> </a>
+                    <a href="<?= DOL_HTTP.'/application/system/operacion/cajas_clinicas/exports/exports_excel_detalle.php?export=1&id_ope_caja='.GETPOST('idcaj') ?>" class="btn btn-sm btnhover "> <b>EXCEL</b> <i class="fa fa-print"></i> </a>
+                </td>
+                <td style="text-align: right">
+                    <a href="#" onclick="window.location.reload();" class="btn btn-sm btnhover "> <b>RECARGAR</b> <i class="fa fa-refresh"></i> </a>
                 </td>
             </tr>
             <tr>
@@ -187,6 +190,7 @@ FROM
                     <th>Fecha Factura</th>
                     <th>Medio de Pago</th>
                     <th>monto</th>
+                    <th></th>
                 </tr>
                 </thead>
             </table>
@@ -240,8 +244,37 @@ FROM
                 $(row).children().eq(3).css('width','10%');
                 $(row).children().eq(4).css('width','10%');
                 $(row).children().eq(5).css('width','5%');
+                $(row).children().eq(6).css('width','5%');
 
             },
+            columnDefs:[
+                {
+                    targets:6,
+                    render: function (data, type, row) {
+
+                        // var idrecaudado = row['idcobro_recaudado'];
+                        var idcajadet   = row['idcajadet']; //id detalle de la caja de gastos
+                        var statoCb     = row['status_caja_cab']; //estado principal de caja
+
+
+                        var disabled = "";
+
+                        //caja anulada o cerrada
+                        if(statoCb == 'E' || statoCb == 'C'){
+                            disabled = "disabled_link3";
+                        }
+
+                        var menu = "<div class='dropdown pull-right'> ";
+                        menu += "<div class='btn btnhover  btn-xs dropdown-toggle ' type='button' data-toggle='dropdown' aria-expanded='false'> <i class='fa fa-ellipsis-v'></i> </div>";
+                            menu += "<ul class='dropdown-menu'>";
+                                 menu += "<li> <a href='#' style='cursor: pointer;' class='anular_gasto "+disabled+" ' onclick='confirmarAnulacion($(this), null , "+idcajadet+")'>Anular Gasto</a> </li>";
+                            menu += "</ul>";
+                        menu += "</div>";
+
+                        return menu;
+                    }
+                }
+            ],
             "language": {
                 "sProcessing":     "Procesando...",
                 "sLengthMenu":     "Mostrar _MENU_ registros",
@@ -273,9 +306,9 @@ FROM
 
     }
 
-    function recaudacion_planes_tratamiento() {
+    function lista_recaudaciones() {
+
         var ElemmentoContentload = $("#recaudacion_caja_plantratamiento");
-        boxTableLoad(ElemmentoContentload, true);
         var table = $("#recaudacion_caja_plantratamiento").DataTable({
             searching: false,
             "ordering":false,
@@ -295,9 +328,12 @@ FROM
                 async:true,
                 data:{
                     'ajaxSend'          :'ajaxSend',
-                    'accion'            :'recaudacion_planestratamiento',
+                    'accion'            :'lista_recaudaciones',
                     'id_ope_caja'       : '<?= $id_ope_caja ?>',
                     'date_apertura'     : '<?= $date_apertura ?>',
+                },
+                beforeSend: function(){
+                    boxTableLoad(ElemmentoContentload, true);
                 },
                 dataType:'json',
                 "complete": function(xhr, status) {
@@ -323,14 +359,22 @@ FROM
                         // console.log(row);
                         var idrecaudado = row['idcobro_recaudado'];
                         var idcajadet   = row['idcajadet'];
+                        var statoCb     = row['status_caja_cab']; //estado principal de caja
 
+
+                        var disabled = "";
+
+                        //caja anulada o cerrada
+                        if(statoCb == 'E' || statoCb == 'C'){
+                            disabled = "disabled_link3";
+                        }
 
                         var menu = "<div class='dropdown pull-right'> ";
-                        menu += "<div class='btn btnhover  btn-xs dropdown-toggle ' type='button' data-toggle='dropdown' aria-expanded='false'> <i class='fa fa-ellipsis-v'></i> </div>";
-                            menu += "<ul class='dropdown-menu'>";
-                                menu += "<li> <a href='#' style='cursor: pointer;' class='recaudar_tratam' onclick='confirmarAnulacion($(this), "+idrecaudado+" , "+idcajadet +")'>Anular</a> </li>";
-                            menu += "</ul>";
-                        menu += "</div>";
+                            menu += "<div class='btn btnhover  btn-xs dropdown-toggle ' type='button' data-toggle='dropdown' aria-expanded='false'> <i class='fa fa-ellipsis-v'></i> </div>";
+                                menu += "<ul class='dropdown-menu'>";
+                                    menu += "<li> <a href='#' style='cursor: pointer;' class='anulacion_recaudacion  "+disabled+" ' onclick='confirmarAnulacion($(this), "+idrecaudado+" , "+idcajadet +")'>Anular</a> </li>";
+                                menu += "</ul>";
+                            menu += "</div>";
 
                         return menu;
                     }
@@ -419,12 +463,21 @@ FROM
 
         var clase = "";
 
-        if(Element.hasClass('recaudar_tratam')){
-            clase = 'recaudar_tratam';
+        //anulacion de recaudacion
+        if(Element.hasClass('anulacion_recaudacion')==true){
+            clase = 'anulacion_recaudacion';
         }
 
+        //anulacion de gasto
+        if(Element.hasClass('anular_gasto')==true){
+            clase = 'anular_gasto';
+        }
+
+        console.log(clase);
+
         if(clase==''){
-                notificacion('Ocurrió un error inesperado consulté con soporte', 'error');
+
+            notificacion('Ocurrió un error inesperado consulté con soporte', 'error');
             return false;
         }
 
@@ -468,14 +521,19 @@ FROM
             }
         };
 
-        if(clase=='recaudar_tratam') //eliminacion de cobro a paciente del plan de tratamiento | se anula pagos y realiza un egreso de caja
-            messajeQuestion = "Se realiza una transacción de egreso de caja | y se anulará del módulo Pagos realizados";
+        if(clase=='anulacion_recaudacion') //eliminacion de cobro a paciente del plan de tratamiento | se anula pagos y realiza un egreso de caja
+            messajeQuestion = "Se realiza una transacción de egreso de caja | Se anulará del módulo Pagos realizados";
+
+        else if(clase=='anular_gasto') //elimnar o anular  gasto asociado a caja clinica
+            messajeQuestion = "Se realiza una anulación del modulo de gastos y caja clinica";
+
         else
             messajeQuestion = "";
 
 
         if(messajeQuestion!=""){
-            notificacionSIoNO("Anular Transacción de Caja Clinica", messajeQuestion, object);
+            //preguntar
+            notificacionSIoNO("¿Desea Anular registro desde Caja Clinica?", messajeQuestion, object);
         }else{
             notificacion('Ocurrió un error de parámetros de entrada. Consulte con soporte', 'error');
         }
@@ -490,9 +548,9 @@ FROM
 
 
         setTimeout(function () {
-            recaudacion_planes_tratamiento();
+            lista_recaudaciones();
             gastos_list();
-        }, 1000);
+        }, 500);
     });
 
 </script>

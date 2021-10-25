@@ -261,7 +261,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
 
             break;
 
-        case 'recaudacion_planestratamiento':
+        case 'lista_recaudaciones':
 
             $date_apertura = GETPOST("date_apertura");
             $id_ope_caja = GETPOST("id_ope_caja");
@@ -299,9 +299,13 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
                     g.detalle, 
                     gc.date_facture, 
                     b.nom as mediop, 
-                    round(g.monto, 2) as monto
+                    round(g.monto, 2) as monto, 
+                    g.rowid  as idcajadet , 
+                    c.estado as status_caja_cab
                 from 
-                   tab_ope_cajas_det_gastos g
+				   tab_ope_cajas_clinicas c
+						inner join 
+                   tab_ope_cajas_det_gastos g on g.id_ope_caja = c.rowid 
                       inner join 
                    (select gc.rowid, gc.id_nom_gastos, gc.desc, gc.amount, gc.date_facture, gc.estado from tab_ope_gastos_clinicos gc where gc.on_caja_clinica = 1) as gc on gc.rowid = g.id_gasto
                       inner join
@@ -322,12 +326,14 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
                     $array = $result->fetchAll(PDO::FETCH_ASSOC);
                     foreach ($array as $item){
                         $fetch = array();
-                        $fetch[] = date("Y/m/d", strtotime($item['date_cc'])); //emitido
-                        $fetch[] = $item['nom'];
-                        $fetch[] = $item['detalle'];
-                        $fetch[] = date("Y/m/d", strtotime($item['date_facture']));
-                        $fetch[] = $item['mediop'];
-                        $fetch[] = $item['monto'];
+                            $fetch[] = date("Y/m/d", strtotime($item['date_cc'])); //emitido
+                            $fetch[] = $item['nom'];
+                            $fetch[] = $item['detalle'];
+                            $fetch[] = date("Y/m/d", strtotime($item['date_facture']));
+                            $fetch[] = $item['mediop'];
+                            $fetch[] = $item['monto'];
+                            $fetch['idcajadet']       = $item['idcajadet']; //id de caja de gasto
+                            $fetch['status_caja_cab'] = $item['id_gasto_caja']; //estado de caja cabezera
                         $data[] = $fetch;
                     }
                 }
@@ -487,9 +493,17 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
 
             //anular plan de tratamiento
             if(empty($error)){
-                if($datos['proceso'] == 'recaudar_tratam'){
+
+                //anulacion de recaudacion | pagos de pacientes plan tratamientos
+                if($datos['proceso'] == 'anulacion_recaudacion'){
                     $error  = anulacion_desde_caja($datos);
                 }
+
+                //anulacion de gastos
+                if($datos['proceso'] == 'anular_gasto'){
+                    $error  = anulacion_desde_caja($datos);
+                }
+
             }
 
             $output =[
@@ -669,8 +683,6 @@ function list_transaccion_caja_tratamientos($id_ope_caja, $date_apertura){
 
     $date_apertura = date("Y-m-d", strtotime($date_apertura));
 
-
-
     $query = "  SELECT 
         pg.fecha AS date_emitido_cobro,
         c.rowid AS id_ope_caja,
@@ -686,7 +698,9 @@ function list_transaccion_caja_tratamientos($id_ope_caja, $date_apertura){
         pg.n_fact_boleta,
         d.id_cobro_recaudado,
         d.rowid as idcajadet,
-        tdd.fk_diente as Pieza
+        tdd.fk_diente as Pieza, 
+        c.estado as estado_caja_cab, 
+        d.estado as estado_caja_det
     FROM
         tab_ope_cajas_clinicas c
             INNER JOIN
@@ -704,7 +718,8 @@ function list_transaccion_caja_tratamientos($id_ope_caja, $date_apertura){
             INNER JOIN
 		tab_plan_tratamiento_det tdd on tdd.rowid = d.fk_plan_tratam_det
     WHERE
-        c.estado <> 'E'
+        d.estado <> 'E'
+        and c.estado <> 'E'
         and d.id_ope_caja_cab = ".$id_ope_caja.
             " and cast(d.date_apertura as date)  = '$date_apertura' ";
 
@@ -736,15 +751,17 @@ function list_transaccion_caja_tratamientos($id_ope_caja, $date_apertura){
                 }
 
                 $row = [];
-                $row[]  = date("Y/m/d", strtotime($value['date_emitido_cobro']));
-                $row[]  = $value['paciente'];
-                $row[]  = $value['n_tratamiento']."<small style='display: block;' class='text-blue' >Doc. #: ".$value['n_fact_boleta']."</small>";
-                $row[]  = $value['prestacion_servicio'].$Pieza;
-                $row[]  = $value['medio_pago'];
-                $row[]  = number_format($value['amount'], 2,'.','');
-                $row[]  = "";
-                $row['idcobro_recaudado'] = $value['id_cobro_recaudado'];
-                $row['idcajadet'] = $value['idcajadet'];
+                    $row[]  = date("Y/m/d", strtotime($value['date_emitido_cobro']));
+                    $row[]  = $value['paciente'];
+                    $row[]  = $value['n_tratamiento']."<small style='display: block;' class='text-blue' >Doc. #: ".$value['n_fact_boleta']."</small>";
+                    $row[]  = $value['prestacion_servicio'].$Pieza;
+                    $row[]  = $value['medio_pago'];
+                    $row[]  = number_format($value['amount'], 2,'.','');
+                    $row[]  = "";
+                    $row['idcobro_recaudado']   = $value['id_cobro_recaudado'];
+                    $row['idcajadet']           = $value['idcajadet'];
+                    $row['status_caja_cab']     = $value['estado_caja_cab']; //estado de caja cabezera
+                    $row['status_caja_det']     = $value['estado_caja_det']; //estado de caja detalle
                 $data[] = $row;
             }
         }else{
@@ -929,13 +946,23 @@ function operacion_cierre_caja($id_ope_caja){
 }
 
 
+
+//anulacion de cobros de planes de tratamiento
+// anulacion de Gastos
 function anulacion_desde_caja($datos){
 
     global $db, $user, $log;
 
-    if($datos['proceso']=='recaudar_tratam'){
+    if($datos['id_ope_caja']==""){
+        return 'Error parámetros de entrada no detectado. Consulte con soporte';
+    }
+
+
+    /**Anulacion de recaudacion*/
+    if($datos['proceso']=='anulacion_recaudacion'){
 
         if($datos['idcajadet']=="" || $datos['id_recaudado']==""){
+
             return "Ocurrió un error inesperado con los parametros de entrada consulté con soporte";
         }
 
@@ -993,6 +1020,7 @@ function anulacion_desde_caja($datos){
 
                 $result_ab = $result_a->fetchAll(PDO::FETCH_ASSOC);
                 $result_ab = $result_ab[0];
+
                 if(count($result_ab)>0){
 
                     if($result_ab['estado']=='E'){
@@ -1108,8 +1136,83 @@ function anulacion_desde_caja($datos){
         }
     }
 
-}
 
+    /**Anulacion de Gastos asociados*/
+    if($datos['proceso']=='anular_gasto'){
+
+        //se comprueba el estado de la caja para la anulacion del registro
+        $cerrada = $db->query("select count(*) as count_n from tab_ope_cajas_clinicas where rowid = ".$datos['id_ope_caja']." and estado = 'C' ")->fetchObject()->count_n;
+        if($cerrada==1){ //caja cerrada
+            return 'Caja se encuentra cerrada no puede realizar esta Operación';
+        }
+
+        $query = "
+            SELECT 
+                nom.nom , 
+                cgd.id_ope_caja, 
+                cgd.estado , 
+                g.desc,
+                g.rowid as id_gasto_cab, 
+                cgd.rowid as detalle_caja_gasto 
+                ,concat('G_', lpad('0',(5-length(g.rowid)),'0'),g.rowid) as number_gasto
+            FROM 
+                tab_ope_cajas_clinicas as c 
+                  inner join 
+                tab_ope_cajas_det_gastos as cgd on cgd.id_ope_caja = c.rowid
+                  inner join 
+                tab_ope_gastos_clinicos as g on g.rowid = cgd.id_gasto and g.on_caja_clinica = 1
+                  inner join 
+                tab_ope_gastos_nom as nom on nom.rowid = g.id_nom_gastos
+            where cgd.estado in('A','C') and cgd.id_ope_caja =  ".$datos['id_ope_caja']." and cgd.rowid = ".$datos['idcajadet'];
+
+        $result = $db->query($query);
+        if($result){
+            if($result->rowCount()>0){
+
+                $fetch = $result->fetchAll(PDO::FETCH_ASSOC);
+                $fetch = $fetch[0];
+
+                if($fetch['detalle_caja_gasto'] > 0 && $fetch['id_gasto_cab'] > 0){
+
+                    $id_gasto_cab = $fetch['id_gasto_cab'];
+                    $detalle_id   = $fetch['detalle_caja_gasto'];
+
+                    //numero de gasto clinico
+                    $number_gasto = $fetch['number_gasto'];
+
+                    //numero de caja clinica
+                    $number_caja = "CAJ_".str_pad($datos['id_ope_caja'], '5', '0', STR_PAD_LEFT);
+
+                    //modulo cajas gastos detalle
+                    $sql_b = "UPDATE `tab_ope_cajas_det_gastos` SET `estado` = 'E' WHERE (`rowid` = '".$detalle_id."');";
+                    $result_b = $db->query($sql_b);
+                    if($result_b){
+                        $log->log($detalle_id, $log->eliminar, 'Se ha actualizado un registro caja clinica '.$number_caja.' detalle Anulación de Gasto: '.$fetch['nom'], 'tab_ope_cajas_det_gastos');
+                    }
+
+                    //modulo gastos
+                    $sql_a = "UPDATE `tab_ope_gastos_clinicos` SET `estado` = 'E' WHERE (`rowid` = '".$id_gasto_cab."');";
+                    $result_a = $db->query($sql_a);
+                    if($result_a){
+                        $log->log($id_gasto_cab, $log->eliminar, 'Se ha actualizado un registro Modulo de Gastos Anulación de Gasto: '.$fetch['nom'].' | '.$number_gasto, 'tab_ope_cajas_det_gastos');
+                    }
+
+                    return "";
+
+                }else{
+                    return 'Ocurrio un error con la Operación ';
+                }
+                
+            }else{
+                return 'No se detecto registros asociados';
+            }
+        }else{
+            return 'Ocurrio un error Consulte con Soporte';
+        }
+
+    }
+
+}
 
 
 

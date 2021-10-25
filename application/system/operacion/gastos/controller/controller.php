@@ -255,6 +255,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                            ,gc.estado as status_gasto
 						   ,concat('CJA_', lpad('0',(5-length(cgc.id_ope_caja)),'0'),cgc.id_ope_caja) as n_abierta_caja
 						   ,concat(dc.n_cuenta,' ',dc.name_acount) as acount_name
+						   ,concat('G_', lpad('0',(5-length(gc.rowid)),'0'),gc.rowid) as number_gasto
                     FROM
                         (SELECT * FROM tab_ope_gastos_clinicos n) AS gc
                             INNER JOIN
@@ -303,7 +304,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         $stadoGastos = "<span class=\"text-sm\" style=\"background-color: #f6e944; color: #b88b29; font-weight: bolder; padding: 1px 5px\">".$item['estado_gasto']."</span>";
 
                     $rows = array();
-                    $rows[] = date("Y/m/d", strtotime($item['tms']));
+                    $rows[] = date("Y/m/d", strtotime($item['tms']))."<span class='text-blue text-sm' style='display: block'>".$item['number_gasto']."</span>";
                     $rows[] = $item['nom'].$caja.$cuentaGasto;
                     $rows[] = "<span class='text-sm' style='color: #0866a5; display: block'> ".$item['desc']." </span>";
                     $rows[] = date("Y/m/d", strtotime($item['date_facture']));

@@ -132,7 +132,7 @@ FROM
         'Total'                =>$Total,
     );
 
-    $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit('A1', 'DETALLES DE CAJA #'.$numero_caja.' | FECHA DE IMPRESION' . date('Y/m/d'));
+    $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit('A1', 'DETALLES DE CAJA #'.$numero_caja.' | FECHA DE IMPRESION ' . date('Y/m/d'));
 
     $objPHPExcel->setActiveSheetIndex(0)->mergeCells('A1:I1');
     $objPHPExcel->getActiveSheet()->getStyle('A1:I1')->applyFromArray(
@@ -235,9 +235,11 @@ FROM
             INNER JOIN
         tab_pagos_independ_pacientes_cab pg ON pg.rowid = d.fk_pago_cab
     WHERE
-        c.estado <> 'E'
+        d.estado <> 'E'
+        and c.estado <> 'E'
         and d.id_ope_caja_cab = ".$id_ope_caja.
         " and cast(d.date_apertura as date)  = '".(date('Y-m-d', strtotime($date_apertura)))."'  ";
+//    print_r("<pre>".$sql_b); die();
     $result_b = $db->query($sql_b);
     if($result_b){
         if($result_b->rowCount()>0){
