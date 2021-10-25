@@ -126,6 +126,12 @@ $("#comment").click(function() {
         notificacion('Ud. No tiene permiso para esta Operación', 'error');
         return false;
     }
+
+    if($("#texto_comment").val() == ""){
+        notificacion('Ingrese un mensaje', 'question');
+        return false;
+    }
+
     var text = $("#texto_comment").val();
     ajax_load_comment_time(text);
     $("#texto_comment").val(null);

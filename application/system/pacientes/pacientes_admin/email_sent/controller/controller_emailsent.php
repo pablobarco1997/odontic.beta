@@ -176,30 +176,34 @@ function obtenerCitasSendNoti($idPaciente, $Fecha, $Status, $n_citas){
                 }
             }
 
+            $arrayStatus = array('text' => '' , 'color' => '');
+
             if($obj->noti_confirm_status!=""){
 
-                if($obj->noti_confirm_status=='ASISTIR')
-                    $confipaciente = "<label class=' text-sm' style='background-color: rgba(30, 132, 73 , 0.9); margin-top: 3%; padding: 5px' >Confirmado por Paciente <b>(Asistir)</b>  </label>";
-
-                if($obj->noti_confirm_status=='NO_ASISTIR')
-                    $confipaciente = "<label class='text-sm' style='background-color: rgba(192, 57, 43, 0.9);margin-top: 3%; padding: 5px' >Confirmado por Paciente <b>(No Asistir)</b>  </label>";
+                if($obj->noti_confirm_status=='ASISTIR'){
+                    $arrayStatus['color'] = "color: #0E6655";
+                    $arrayStatus['text']  = "Paciente ha confirmado que asistirá a la cita";
+                }
+                if($obj->noti_confirm_status=='NO_ASISTIR'){
+                    $arrayStatus['color'] = "color: #C0392B";
+                    $arrayStatus['text']  = "Paciente ha confirmado que no asistirá a la cita";
+                }
 
             }else if($obj->estado == 'P' && $obj->DateProgramEmail == 'Pendiente'){ //si esta programada
-                $confipaciente= "<label class=' text-sm' style='background-color: rgba(218, 98, 74, 0.8);margin-top: 3%; padding: 5px' >Pendiente Programado &nbsp; ".(date("Y/m/d", strtotime($obj->program_date)))."</label>";
+
+                $arrayStatus['color'] = "color: #CA6F1E";
+                $arrayStatus['text']  = "Email Pendiente estado programado ".(date("Y/m/d", strtotime($obj->program_date)));
 
             }else{
-                $confipaciente= "<label class='text-sm' style='background-color: rgba(212, 172, 13, 0.9);margin-top: 3%; padding: 5px' >No confirmado </label>";
+
+                $arrayStatus['color'] = "color: #9A7D0A";
+                $arrayStatus['text']  = "Email enviado. No Confirmado";
             }
 
-            $numCita = "<table>
-                            <tr>
-                                <td style='font-weight: bold'><img src='data:image /*; base64, ". base64_encode(file_get_contents(DOL_DOCUMENT.'/logos_icon/logo_default/cita-medica.ico'))."' alt='' class=' img-rounded' style='width: 25px; height: 25px'></td>
-                                <td style='font-weight: bold'>".(str_pad($obj->fk_cita, 5, "0", STR_PAD_LEFT))."</td>
-                            </tr>
-                        </table>";
+            $numCita = "<b>C_".(str_pad($obj->fk_cita, 5, "0", STR_PAD_LEFT))."</b>";
+            $statusEmail = "<label class=\"\" style=\" ".$arrayStatus['color']." ;font-weight: bolder; font-size:1.3rem \">".$arrayStatus['text']."</label>";
 
-            $row[] = date("Y/m/d", strtotime($obj->date_send));
-            $row[] = $confipaciente;
+            $row[] = date("Y/m/d", strtotime($obj->date_send))."<div style='display: block'>$statusEmail</div>";
             $row[] = $obj->from;
             $row[] = $obj->to;
             $row[] = $obj->message;

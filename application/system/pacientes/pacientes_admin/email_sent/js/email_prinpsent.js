@@ -34,7 +34,7 @@ function list_mail_sent(){
         },
         columnDefs:[
             {
-                'targets'   : 6,
+                'targets'   : 5,
                 'searchable':false,
                 'orderable' :false,
                 'className' : 'dt-body-center',
@@ -65,12 +65,12 @@ function list_mail_sent(){
         'createdRow':function(row, data, index){
 
             /** Aplicar el ancho */
-            $(row).children().eq(0).css('width','5%');
+            $(row).children().eq(0).css('width','20%');
             $(row).children().eq(1).css('width','15%');
-            $(row).children().eq(2).css('width','10%');
+            $(row).children().eq(2).css('width','15%');
             $(row).children().eq(3).css('width','15%');
-            $(row).children().eq(4).css('width','30%');
-            $(row).children().eq(5).css('width','5%');
+            $(row).children().eq(4).css('width','5%');
+            $(row).children().eq(5).css('width','2%');
             $(row).children().eq(6).css('width','2%');
 
         },

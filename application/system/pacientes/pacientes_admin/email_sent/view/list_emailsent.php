@@ -34,7 +34,7 @@
                 </select>
             </div>
             <div class="form-group col-md-4 col-xs-12">
-                <label for="">buscar N. Cita</label>
+                <label for="">numero de cita</label>
                 <input type="text" class="form-control" id="busqN_Cita" name="busqN_Cita">
             </div>
             <div class="form-group col-md-12 col-xs-12">
@@ -52,14 +52,14 @@
 
     <div class="form-group col-md-12 col-xs-12">
         <div class="table-responsive">
-            <table class="table table-condensed" id="mailSentTable" width="100%">
+            <table class="table table-condensed table-hover" id="mailSentTable" width="100%">
                 <thead style="background-color: #f4f4f4">
-                    <th> Emitido </th>
-                    <th> Confirmación x Paciente </th>
+<!--                    <th> Emitido </th>-->
+                    <th> Confirmación</th>
                     <th> Desde </th>
                     <th> Para </th>
                     <th> Mensaje </th>
-                    <th> N. Cita </th>
+                    <th> # Cita</th>
                     <th></th>
                 </thead>
             </table>

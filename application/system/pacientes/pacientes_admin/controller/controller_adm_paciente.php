@@ -484,7 +484,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         inner join 
                         tab_login_users s on s.rowid = c.fk_users_athor
                     WHERE
-                        c.fk_paciente = $id";
+                        c.fk_paciente = $id and c.comentario <> '' ";
             $sql .= $permits;
             $sql .= " ORDER BY c.rowid desc ";
             $total = $db->query($sql)->rowCount();
@@ -785,7 +785,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                     $delete = "<td><a class='btnhover btn btn-xs delete_odont_click ".(!PermitsModule("Odontograma", "eliminar")?"disabled_link3":"")." ' onclick='Eliminar_odontograma($(this))' style='font-weight: bolder; color: red'>
                                         <input type='text' class='hidden odont_id' id='odont_id' value='".$ob->odontograma_id."' data-id='".$ob->odontograma_id."' data-tratamiento='".$ob->label."'>
-                                        <i class='fa fa-trash'></i> ELIMINAR </a>
+                                        <i class='fa fa-trash'></i> Anular </a>
                                 </td>";
                     if($ob->estado_odont == 'E'){
                         $delete = "";
@@ -793,7 +793,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
                     $opciones = "<table>
                                    <tr>
-                                       <td class='".(($ob->estado_odont=='E')?"disabled_link3":"")." '><a href='$url_updateOdont' class='btnhover btn btn-xs ".(!PermitsModule("Odontograma", "modificar")?"disabled_link3":"")." ' style='font-weight: bolder'> <i class='fa fa-edit'></i> ACTUALIZAR </a>     </td>
+                                       <td class='".(($ob->estado_odont=='E')?"disabled_link3":"")." '><a href='$url_updateOdont' class='btnhover btn btn-xs ".(!PermitsModule("Odontograma", "modificar")?"disabled_link3":"")." ' style='font-weight: bolder'> <i class='fa fa-edit'></i> Actualizar </a>     </td>
                                        $delete
                                    </tr> 
                                 </table>";
@@ -1689,7 +1689,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         $row[] = $obj->fk_diente;
                         $row[] = str_replace(',',' , ', $obj->list_caras)  ;
                         $row[] = $obj->estado .'<span style="color: #0866a5; display: block" class="text-sm">'.$observacion.'</span>';
-                        $row[] = "<a class='btn btn-xs  ".((!PermitsModule('Odontograma', 'eliminar')?"disabled_link3":""))." ' style='padding: 4px 8px; background-color: #a55759; color:#ffffff ' onclick='anular_estado_update($obj->rowid)'  >Anular</a>";
+                        $row[] = "<a class='btn btn-xs btnhover ".((!PermitsModule('Odontograma', 'eliminar')?"disabled_link3":""))." ' style='font-weight: bold ; padding: 4px 8px; color:red; ' onclick='anular_estado_update($obj->rowid)'  >Anular</a>";
                     }
 
                     if($obj->estado_anulado == 'E'){
@@ -1697,7 +1697,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         $row[] = "<strike> ".$obj->fk_diente." </strike>";
                         $row[] = "<strike>".str_replace(',',' , ', $obj->list_caras)."</strike>"  ;
                         $row[] = "<strike>".$obj->estado ." ".$observacion."</strike>";
-                        $row[] = "<a class='btn btn-xs disabled_link3' style='padding: 4px 8px; background-color: #a55759; color:#ffffff '  >Anular</a>";
+                        $row[] = "<a class='btn btn-xs btnhover disabled_link3' style='padding: 4px 8px; color:red '  >Anular</a>";
                     }
 
 
