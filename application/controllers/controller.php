@@ -746,7 +746,7 @@ function accessoModule($nomb_module){
 
 }
 
-function errorAccessoDenegado(){
+function errorAccessoDenegado($otroTexto = ""){
 
     print "<div class=\"error-page\">
         <h2 class=\"headline text-red\">403</h2>
@@ -756,6 +756,10 @@ function errorAccessoDenegado(){
 
           <p>
             Ud. No tiene permiso asignado para este módulo
+          </p>
+                    
+           <p>
+            $otroTexto
           </p>
 
           <form class=\" hide search-form\">

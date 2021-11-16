@@ -35,13 +35,26 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 $agenda->fk_login_users = $user->id; #USUARIO LOGEADO
                 $agenda->detalle        = $array['detalle'];
 
-                $result = $agenda->GenerarCitas();
-                if($result > 0){ //me retorna el id
-                    $log->log($result, $log->crear, 'Se registro una cita Numero: '.$result, 'tab_pacientes_citas_det');
-                }else{ //caso contrario query
-                    $log->log(0, $log->crear, 'Ocurrió un error para el registro de una cita', 'tab_pacientes_citas_det', $result);
-                    $error = "Ocurrió un error al  generar la cita , consulte con soporte tecnico";
+//                date_default_timezone_set("America/Guayaquil");
+
+                //se valida la fecha que no sea menor a la actual
+                $cita_date = str_replace('/','-',$agenda->detalle[0]['fechacita']).' '.$agenda->detalle[0]['hora'].':00';
+                $resultDate = $cita_date;
+                if( $resultDate >= date('Y-m-d H:m:s') ){
+                    $result = $agenda->GenerarCitas();
+                    if($result > 0){ //me retorna el id
+                        $log->log($result, $log->crear, 'Se registro una cita Numero: '.$result, 'tab_pacientes_citas_det');
+                    }else{ //caso contrario query
+                        $log->log(0, $log->crear, 'Ocurrió un error para el registro de una cita', 'tab_pacientes_citas_det', $result);
+                        $error = "Ocurrió un error al  generar la cita , consulte con soporte tecnico";
+                    }
                 }
+
+                //si la fecha cita es menor a la actual
+                if( $resultDate < date('Y-m-d H:m:s') ){
+                    $error = 'Fecha Invalida: '.date('Y/m/d H:m:s', strtotime($resultDate));
+                }
+
             }else{
                 $error = "Ud. No tiene permiso para esta Operación";
             }
@@ -996,8 +1009,8 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
              -- citas atrazados con estado no confirmado
              IF( now() > CAST(d.fecha_cita AS DATETIME)  
                         && d.fk_estado_paciente_cita in(2,1,3,4,7,8,9,10,11,5,  (select statusc.rowid from tab_pacientes_estado_citas statusc where statusc.system=0) )  , 
-                            concat('Atrasada ', (select concat(s.text) from tab_pacientes_estado_citas s where s.rowid = d.fk_estado_paciente_cita) , 
-                                    '\n Fecha : ' , date_format(d.fecha_cita, '%Y/%m/%d') , '\n Hora: ' , d.hora_inicio ,' h ' , d.hora_fin) , ''
+                            concat('Atrasada ', s.text, 
+                                    ' | Fecha : ' , date_format(d.fecha_cita, '%Y/%m/%d') , ' | Hora: ' , d.hora_inicio ,' h ' , d.hora_fin) , ''
                                     ) as cita_atrazada
 									            
          FROM 
@@ -1140,7 +1153,7 @@ function list_citas($doctor, $estado = array(),  $fechaInicio, $fechaFin, $Mostr
                                 $html2 .= "<li>   <a style='cursor: pointer; ' class='$tienePlanTratamiento' onclick='create_plandetratamiento($acced->idpaciente, $acced->id_cita_det, $acced->iddoctor , $(this));'  >Plan de Tratamiento</a> </li>";
                                 $html2 .= "<li>   <a style='cursor: pointer; ' href='". DOL_HTTP ."/application/system/pacientes/pacientes_admin/?view=pagospaci&key=".KEY_GLOB."&id=". tokenSecurityId($acced->idpaciente) ."&v=paym' >Recaudación</a> </li>";
                                 $html2 .= "<li>   <a style='cursor: pointer; ' href='". $Url_datospersonales ."' >Datos personales</a> </li>";
-                                $html2 .= "<li class='hide'>   <a style='cursor: pointer; ' >Cambiar  fecha/cita</a> </li>";
+                                //$html2 .= "<li class='hide'>   <a style='cursor: pointer; ' >Cambiar  fecha/cita</a> </li>";
                                 $html2 .= "<li>   <a  style='cursor: pointer; ' data-toggle=\"modal\" data-target=\"#modal_coment_adicional\" onclick='clearModalCommentAdicional($acced->id_cita_det, $(this))' class='$tieneComentarioadicional'  >Agregar Comentario Adicional</a> </li>";
 
                          $html2 .= "</ul>";
@@ -1441,7 +1454,7 @@ function notificarCitaEmail($datos, $token_confirmacion)
 
     $labelPaciente = getnombrePaciente($datos->idpaciente)->nombre.' '.getnombrePaciente($datos->idpaciente)->apellido;
 
-//    $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
+
     $mail = new PHPMailer();
 
     $messabody = "";
@@ -1465,38 +1478,25 @@ function notificarCitaEmail($datos, $token_confirmacion)
     $htmlSend = "<br><div style='font-size: 18px'> <b>Estimado/a:</b>&nbsp;$labelPaciente  <br><br> </div>";
 
 
-    /*
-    $headerLine  = "";
-    $headerLine .= $this->HeaderLine("Organization" , SITE);
-    $headerLine .= $this->HeaderLine("Content-Transfer-encoding" , "8bit");
-    $headerLine .= $this->HeaderLine("Message-ID" , "<".md5(uniqid(time()))."@{$_SERVER['SERVER_NAME']}>");
-    $headerLine .= $this->HeaderLine("X-MSmail-Priority" , "Normal");
-    $headerLine .= $this->HeaderLine("X-Mailer" , "Microsoft Office Outlook, Build 11.0.5510");
-    $headerLine .= $this->HeaderLine("X-MimeOLE" , "Produced By Microsoft MimeOLE V6.00.2800.1441");
-    $headerLine .= $this->HeaderLine("X-Sender" , $this->Sender);
-    $headerLine .= $this->HeaderLine("X-AntiAbuse" , "This is a solicited email for - ".SITE." mailing list.");
-    $headerLine .= $this->HeaderLine("X-AntiAbuse" , "Servername - {$_SERVER['SERVER_NAME']}");
-    $headerLine .= $this->HeaderLine("X-AntiAbuse" , $this->Sender); */
-
-
     $mail->IsSMTP();
     $mail->Mailer = "smtp";
     $mail->CharSet = 'UTF-8';
-    $mail->Host = "mail.adminnube.com";
+    $mail->Host = "smtp.gmail.com";
     $mail->SMTPDebug = 0;
     $mail->SMTPAuth = true;
-    $mail->Port = 465;
+    $mail->Port = 587;
     $mail->SMTPAutoTLS = TRUE;
-    $mail->SMTPSecure = "ssl";
+    $mail->SMTPSecure = "tls";
 
-    $mail->Username = $conf->EMPRESA->INFORMACION->correo_service;//correo del servidor
-    $mail->Password = $conf->EMPRESA->INFORMACION->password_service;//password de servidor de correo
+    //credenciales acceso al servidor de correo
+    $mail->Username = $conf->EMPRESA->INFORMACION->conf_email;
+    $mail->Password = $conf->EMPRESA->INFORMACION->conf_password;
 
     $mail->Subject = "Clinica dental ".$conf->EMPRESA->INFORMACION->nombre; //nombre de la clinica
     $mail->addCustomHeader("'Reply-to:".$conf->EMPRESA->INFORMACION->correo_service."'");
     $mail->isHTML(TRUE);
     $mail->msgHTML("Notificación Clinica ".$conf->EMPRESA->INFORMACION->nombre);
-    $mail->setFrom($conf->EMPRESA->INFORMACION->correo_service, $conf->EMPRESA->INFORMACION->nombre);
+    $mail->setFrom($conf->EMPRESA->INFORMACION->conf_email, $conf->EMPRESA->INFORMACION->nombre);
     $mail->addAddress($to);
 
     #$mail->msgHTML("");

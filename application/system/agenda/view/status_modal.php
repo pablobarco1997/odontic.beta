@@ -8,11 +8,12 @@
                 <div class="modal-header modal-diseng">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h4 class="modal-title"> <span>Notificar  e-mail</h4>
+                    <input type="text" class="hidden" name="SendEmailData64">
                 </div>
                 <div class="modal-body">
                     <div class="form-horizontal">
 
-                        <div class="form-group">
+                        <div class="form-group ">
                             <label for="" class="control-label col-sm-3">Programa e-mail <small>(opcional)</small></label>
                             <div class="col-sm-7">
                                 <table class="table" width="100%" style="border-collapse: collapse">
@@ -42,7 +43,7 @@
                         <div class="form-group">
                             <label for="" class="control-label col-sm-3">From</label>
                             <div class="col-sm-7">
-                                <input type="text" class="form-control" disabled id="de_email" placeholder="" value="<?= $conf->EMPRESA->INFORMACION->email ?>">
+                                <input type="text" class="form-control" disabled id="de_email" placeholder="" value="<?= $conf->EMPRESA->INFORMACION->conf_email ?>">
                             </div>
                         </div>
 

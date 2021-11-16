@@ -25,6 +25,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
         case "UpdateEntidad":
 
+//            die();
             $logo            = "";
             $type            = "";
             $name_fichero    = "";
@@ -562,15 +563,18 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     od.fk_especialidad ,
                     od.cedula as cedula_odontologo, 
                     od.celular,
-                    lu.id_caja_account
-                 FROM tab_login_users lu , tab_odontologos od 
-                 where 
-                 lu.fk_doc = od.rowid 
-                 and lu.rowid = ".$user->id;
+                    lu.id_caja_account,
+                    ifnull(od.rowid,0) as asociado_doc
+                 FROM 
+                    tab_login_users lu 
+					    left join 
+                    tab_odontologos od on od.rowid = lu.fk_doc
+                 where lu.rowid = ".$user->id;
 
             $rs = $db->query($sql);
             if($rs && $rs->rowCount()>0){
-                $data = $rs->fetchObject();
+                $data = $rs->fetchAll(PDO::FETCH_ASSOC);
+                $data = $data[0];
             }
 
             $output = [
@@ -811,7 +815,7 @@ function UpdatePerfilOdont($datos = array(), $UsuarioCurrent = "")
                     //si no existe ese usuario - y se puede update
                     if($usuarioYaExiste==0)
                     {
-                        $sqldblogin = "UPDATE `tab_login_users` SET `usuario`='".$datos['usuario']."', `passwor_abc`='".$datos['passwd']."' , `passwords` = md5('".(base64_decode($datos['passwd']))."') , `cedula` =  '".$datos['cedula']."' , `id_caja_account` = ".$datos['CajaUsers']."   WHERE `rowid`>0 and fk_doc = $user->id;";
+                        $sqldblogin = "UPDATE `tab_login_users` SET `usuario`='".$datos['usuario']."', `passwor_abc`='".$datos['passwd']."' , `passwords` = md5('".(base64_decode($datos['passwd']))."') , `cedula` =  '".$datos['cedula']."'  WHERE `rowid`>0 and fk_doc = $user->id;";
                         $rslogin = $db->query($sqldblogin);
                         if($rslogin)
                         {

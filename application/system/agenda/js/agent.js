@@ -181,21 +181,40 @@ function  AplicarStatusAgendada(idestado, idcita, JQUERYdom, idpaciente) {
 
     if(idestado==1){ //email
 
-        $('#notificar_email-modal').modal('show');
+        var modalpadre = $('#notificar_email-modal');
+        modalpadre.modal('show');
 
         setTimeout(()=>{
             notificacion('El sistema no se responsabiliza por correo electrónico mal ingresado', 'question'); }
         ,800);
 
-        $("#enviarEmail").click(function (e) {
-            notificaionEmail(idpaciente,idcita,idestado);
-        });
+        var parametrosEmail = [];
+            parametrosEmail = {
+                'idpaciente' : idpaciente,
+                'idcita'     : idcita,
+                'idestado'   : idestado,
+            };
+                 parametrosEmail = JSON.stringify(parametrosEmail); //se pasa a string
+                    var encry64 = btoa(parametrosEmail); //se incryta en 64
+                                // console.log(encry64);
+
+        if(encry64 != ""){
+            modalpadre.find('input[name=SendEmailData64]').val(encry64);
+        }else{
+            encry64 = "";
+            modalpadre.find('input[name=SendEmailData64]').val(encry64);
+        }
+
+        if(encry64==""){
+            notificacion('Ocurrió un error con los parámetros. Consulte con soporte Técnico', 'error');
+        }
 
         $("#para_email").keyup();
 
         return false;
     }
 
+    //otro estado
     if(idestado==12){//Nuevo Agendamiento
 
         FechaCitaCambio(idcita);
@@ -205,6 +224,32 @@ function  AplicarStatusAgendada(idestado, idcita, JQUERYdom, idpaciente) {
     UpdateEstadoCita(idestado,idcita,status);
 
 }
+//Envio de email de confirmación
+$("button#enviarEmail").on("click", function () {
+
+    var ElementoParent = $(this).parents("#notificar_email-modal");
+          var response = ElementoParent.find('input[name=SendEmailData64]').val();
+
+    if(ElementoParent.find('#para_email').val()==""){
+            notificacion('Campos Obligatorio Email', 'warning');
+        return false;
+    }
+
+    if(response != ""){
+
+        response = atob(response);
+            response = JSON.parse(response);
+                notificaionEmail(response.idpaciente, response.idcita, response.idestado);
+
+        // console.log(response);
+
+    }else{
+        notificacion('Ocurrió un error con los parámetros. Consulte con soporte Técnico', 'error');
+        $("button#enviarEmail").addClass('disabled_link3');
+    }
+
+
+});
 
 
 //actualiza el estado 
@@ -305,6 +350,7 @@ function notificaionEmail(idPaciente, idcita, idestado ){
                 error_registrar_email_  = resp.registrar;
 
                 boxloading(boxMail,false,1000);
+                $('#notificar_email-modal').modal('hide');
 
                 if(error == "" && error_registrar_email_ == "") {
 
@@ -313,8 +359,6 @@ function notificaionEmail(idPaciente, idcita, idestado ){
                     $('#para_email').val();
                     $('#titulo_email').val();
                     $('#messge_email').val();
-
-                    $('#notificar_email-modal').modal('hide');
 
                     //si es diferente a email programado
                     if(!$("#emailConfirmacion_programar").is(':checked')){
