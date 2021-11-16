@@ -320,6 +320,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
                 $sql .= " limit $start,$length ";
             }
 
+//            print_r($sql)
             $result = $db->query($sql);
             if($result){
                 if($result->rowCount()>0){
@@ -333,7 +334,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
                             $fetch[] = $item['mediop'];
                             $fetch[] = $item['monto'];
                             $fetch['idcajadet']       = $item['idcajadet']; //id de caja de gasto
-                            $fetch['status_caja_cab'] = $item['id_gasto_caja']; //estado de caja cabezera
+                            $fetch['status_caja_cab'] = $item['status_caja_cab']; //estado de caja cabezera
                         $data[] = $fetch;
                     }
                 }
@@ -409,7 +410,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend'])){
                             $valid=0;
 
                             //planes de tratamiento
-                            $query_a = "UPDATE tab_ope_cajas_clinicas_det SET `date_cierre`= now(), estado = 'C' WHERE id_ope_caja_cab = '$id_ope_caja';";
+                            $query_a = "UPDATE tab_ope_cajas_clinicas_det SET `date_cierre`= now(), estado = 'C' WHERE id_ope_caja_cab = '$id_ope_caja' and estado <> 'E' ;";
                             $resul= $db->query($query_a);
                             if(!$resul){
                                 $error = "Ocurrio un error con la Operacion consulte con soporte";
@@ -704,7 +705,7 @@ function list_transaccion_caja_tratamientos($id_ope_caja, $date_apertura){
     FROM
         tab_ope_cajas_clinicas c
             INNER JOIN
-        tab_ope_cajas_clinicas_det d ON c.rowid = d.id_ope_caja_cab and d.estado <> 'E'
+        tab_ope_cajas_clinicas_det d ON c.rowid = d.id_ope_caja_cab 
             INNER JOIN
         tab_bank_operacion b ON b.rowid = d.fk_tipo_pago
             INNER JOIN
@@ -718,8 +719,8 @@ function list_transaccion_caja_tratamientos($id_ope_caja, $date_apertura){
             INNER JOIN
 		tab_plan_tratamiento_det tdd on tdd.rowid = d.fk_plan_tratam_det
     WHERE
-        d.estado <> 'E'
-        and c.estado <> 'E'
+        -- d.estado <> 'E'
+        c.estado <> 'E'
         and d.id_ope_caja_cab = ".$id_ope_caja.
             " and cast(d.date_apertura as date)  = '$date_apertura' ";
 
@@ -750,18 +751,26 @@ function list_transaccion_caja_tratamientos($id_ope_caja, $date_apertura){
                     $Pieza = "";
                 }
 
+                //se valida el estado
+                if($value['estado_caja_det']=='E'){
+                    $Docs_estado = "<strike> <small style='display: block;' class='text-blue' >Doc. #: ".$value['n_fact_boleta']."</small> </strike> <small style='display: block; color: red;'>Detalle Anulado</small>";
+                }else{
+                    $Docs_estado = "<small style='display: block;' class='text-blue' >Doc. #: ".$value['n_fact_boleta']."</small>";
+                }
+
+
                 $row = [];
-                    $row[]  = date("Y/m/d", strtotime($value['date_emitido_cobro']));
-                    $row[]  = $value['paciente'];
-                    $row[]  = $value['n_tratamiento']."<small style='display: block;' class='text-blue' >Doc. #: ".$value['n_fact_boleta']."</small>";
-                    $row[]  = $value['prestacion_servicio'].$Pieza;
-                    $row[]  = $value['medio_pago'];
-                    $row[]  = number_format($value['amount'], 2,'.','');
-                    $row[]  = "";
-                    $row['idcobro_recaudado']   = $value['id_cobro_recaudado'];
-                    $row['idcajadet']           = $value['idcajadet'];
-                    $row['status_caja_cab']     = $value['estado_caja_cab']; //estado de caja cabezera
-                    $row['status_caja_det']     = $value['estado_caja_det']; //estado de caja detalle
+                $row[]  = date("Y/m/d", strtotime($value['date_emitido_cobro']));
+                $row[]  = $value['paciente'];
+                $row[]  = $value['n_tratamiento'].$Docs_estado;
+                $row[]  = $value['prestacion_servicio'].$Pieza;
+                $row[]  = $value['medio_pago'];
+                $row[]  = number_format($value['amount'], 2,'.','');
+                $row[]  = "";
+                $row['idcobro_recaudado']   = $value['id_cobro_recaudado'];
+                $row['idcajadet']           = $value['idcajadet'];
+                $row['status_caja_cab']     = $value['estado_caja_cab']; //estado de caja cabezera
+                $row['status_caja_det']     = $value['estado_caja_det']; //estado de caja detalle
                 $data[] = $row;
             }
         }else{
@@ -807,7 +816,6 @@ function operacion_cierre_caja($id_ope_caja){
     }
 
     require_once DOL_DOCUMENT.'/application/system/operacion/class/Class.operacion.php';
-
     $operacion = new operacion($db);
 
     //todo caja clinicas asignada con la operacion cerrar caja
@@ -846,8 +854,9 @@ function operacion_cierre_caja($id_ope_caja){
             $datos['date_c']  = "now()";
             $datos['detalle'] = array();
 
+            //cobros por planes de tratamiento
             //Plan de tratamiento
-            $sql_a = "select * from tab_ope_cajas_clinicas_det where id_ope_caja_cab = ".$fetch->id_ope_caja;
+            $sql_a = "select * from tab_ope_cajas_clinicas_det where id_ope_caja_cab = ".$fetch->id_ope_caja." and estado = 'C' ";
             $result_a = $db->query($sql_a);
             if($result_a){
                 if($result_a->rowCount()>0){
@@ -929,7 +938,7 @@ function operacion_cierre_caja($id_ope_caja){
                 'tipo_documento'    => 'cajas_clinicas', //tipo de documento y/o modulo que genero esta transaccion
                 'fk_type_payment'   => 3, //tab_bank_operacion id 3  egreso
                 'table'             => 'tab_ope_cajas_clinicas', //informacion opcional para saber a que table pertenece el id_documento
-                'label'             => 'Cierre de caja: '.$fetch->label_caja .' '.date("Y/m/d H:m:s"),
+                'label'             => 'Cierre de caja: '.$fetch->label_caja .' '.date("Y/m/d H:m:s").' | CJA_'.str_pad($fetch->id_ope_caja,5, "0", STR_PAD_LEFT),
             ];
 
 

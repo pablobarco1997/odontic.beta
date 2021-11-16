@@ -79,16 +79,16 @@ FROM
                     <a href="<?= DOL_HTTP.'/application/system/operacion/cajas_clinicas/exports/exports_excel_detalle.php?export=1&id_ope_caja='.GETPOST('idcaj') ?>" class="btn btn-sm btnhover "> <b>EXCEL</b> <i class="fa fa-print"></i> </a>
                 </td>
                 <td style="text-align: right">
-                    <a href="#" onclick="window.location.reload();" class="btn btn-sm btnhover "> <b>RECARGAR</b> <i class="fa fa-refresh"></i> </a>
+                    <a href="#" onclick="toReloadCaja()" class="btn btn-sm btnhover "> <b>RECARGAR</b> <i class="fa fa-refresh"></i> </a>
                 </td>
             </tr>
             <tr>
-                <td  colspan="2">
+                <td  colspan="3">
                     <b>Dirección:</b> <?= $direccion_caja ?>
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <b>Usuario asociado:</b> <?= $nom_usu ?>
                 </td>
             </tr>
@@ -359,13 +359,14 @@ FROM
                         // console.log(row);
                         var idrecaudado = row['idcobro_recaudado'];
                         var idcajadet   = row['idcajadet'];
-                        var statoCb     = row['status_caja_cab']; //estado principal de caja
+                        var statoCb     = row['status_caja_cab']; //estado principal de caja cabezera
+                        var statoCDet   = row['status_caja_det']; //estado principal de caja detalle
 
 
                         var disabled = "";
 
                         //caja anulada o cerrada
-                        if(statoCb == 'E' || statoCb == 'C'){
+                        if(statoCb == 'E' || statoCb == 'C' || statoCDet == 'E'){
                             disabled = "disabled_link3";
                         }
 
@@ -411,6 +412,12 @@ FROM
 
     }
 
+    function toReloadCaja() {
+        lista_recaudaciones();
+        gastos_list();
+        recursos_caja();
+    }
+    
     function recursos_caja(){
 
         var params = {
@@ -522,7 +529,7 @@ FROM
         };
 
         if(clase=='anulacion_recaudacion') //eliminacion de cobro a paciente del plan de tratamiento | se anula pagos y realiza un egreso de caja
-            messajeQuestion = "Se realiza una transacción de egreso de caja | Se anulará del módulo Pagos realizados";
+            messajeQuestion = "No podra Anular el pago si la caja se encuentra en estado cerrada";
 
         else if(clase=='anular_gasto') //elimnar o anular  gasto asociado a caja clinica
             messajeQuestion = "Se realiza una anulación del modulo de gastos y caja clinica";
@@ -545,7 +552,6 @@ FROM
 
         boxloading($boxContentCajasClinicas, true, 1000);
         recursos_caja();
-
 
         setTimeout(function () {
             lista_recaudaciones();

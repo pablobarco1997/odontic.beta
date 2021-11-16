@@ -115,7 +115,7 @@ class operacion{
     }
 
     //guarda todo tipo de operacion ingreso o egreso de direntes cuentas parecido a un libro diario
-    function diarioClinico($datos){
+    function diarioClinico($datos=array()){
 
         global $user, $log;
 
