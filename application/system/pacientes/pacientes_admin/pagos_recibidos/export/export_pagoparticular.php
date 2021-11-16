@@ -72,14 +72,15 @@ $queryDetPag = "SELECT
 	p.descripcion as nom, 
     d.fk_diente as pieza , 
     d.cantidad , 
+    if(d.iva = 12, ((d.precio_u * d.cantidad ) * 12) / 100 , 0) calculado_iva,
     d.precio_u as precioU , 
-    (d.total_tc*d.desc_adicional/100) as descuento , 
-    (total_tc - (d.total_tc*d.desc_adicional/100)) as Subtotal , 
+    (d.total*d.desc_adicional/100) as descuento , 
+    (d.total - (d.total*d.desc_adicional/100)) as Subtotal , 
     sum(pd.amount) as monto_abonado
 FROM
-    (select *, (d.sub_total*d.cantidad) as total_tc from tab_plan_tratamiento_det d) as d 
+     tab_plan_tratamiento_det as d
 		inner join 
-	(select * from tab_pagos_independ_pacientes_det pd where pd.estado = 'A') as pd on pd.fk_plantram_det = d.rowid 
+	tab_pagos_independ_pacientes_det pd  on  pd.fk_plantram_det =  d.rowid  and pd.estado = 'A' 
 		inner join 
 	tab_conf_prestaciones p on p.rowid = d.fk_prestacion
 WHERE
@@ -91,7 +92,7 @@ if($result && $result->rowCount()>0){
     $dataPagosDet = $result->fetchAll(PDO::FETCH_ASSOC);
 }
 
-//echo '<pre>'; print_r($dataPagosCab); die();
+//echo '<pre>'; print_r($queryDetPag); die();
 
 $objectInfoPaciente = getnombrePaciente($idpaciente);
 
@@ -224,15 +225,16 @@ $pdf .= ' <br><br>
                           <td  class="detalle" align="right">'.number_format($item['precioU'], 2, '.', '').'</td>
                           <td  class="detalle" align="right">'.number_format($item['descuento'], 2, '.', '').'</td>
                           <td  class="detalle" align="right">'.number_format($item['Subtotal'], 2, '.', '').'</td>
-                          <td  class="detalle" align="right">'.number_format($item['monto_abonado'],2,'.','').'</td>  
+                          <td  class="detalle" align="right" style="color:#1e3762; font-weight: bold ">'.number_format($item['monto_abonado'],2,'.','').'</td>  
                     </tr>';
 
 
             $subTotal  += (double)$item['Subtotal'];
             $descuento += (double)$item['descuento'];
             $abonado   += (double)$item['monto_abonado'];
-            $iva       += (double)0.00;
+            $iva       += (double)$item['calculado_iva'];
         }
+
 $pdf .='</tbody>
     </table>';
 
@@ -245,13 +247,13 @@ $pdf .='</tbody>
                                             <td>Sub. Total</td> 
                                             <td style='text-align: right'>$subTotal</td>
                                         </tr>
-                                         <tr>
+                                         <!--<tr style='display: none'>
                                             <td>Descuento</td> 
                                             <td style='text-align: right'>$descuento</td>
-                                        </tr>
+                                        </tr>-->
                                         <tr>
                                             <td>Iva</td> 
-                                            <td style='text-align: right'>0.00</td>
+                                            <td style='text-align: right'>".$iva."</td>
                                         </tr>
                                         <tr>
                                             <td style='color: #1e3762; '><h4>Abonado</h4></td> 
@@ -259,10 +261,10 @@ $pdf .='</tbody>
                                                 <h4>".($abonado)."</h4>
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td><h4>Total</h4></td> 
+                                       <tr >
+                                            <td><h4>Total <small>(sub.total - abonado)</small></h4></td> 
                                             <td style='text-align: right'>
-                                                <h4>".($subTotal - $descuento)."</h4>
+                                                 <h4>".($subTotal-$abonado)."</h4>
                                             </td>
                                         </tr>
                                     </table>

@@ -377,7 +377,7 @@ if($accion == "principal")
                     if(subaccion=="CREATE"){
                         notificacion('Plan de Tratamiento Creado - cargando...', 'success');
                     }if(subaccion=="ASOCIAR_CITAS"){
-                        notificacion('Información Actualizada', 'success');
+                        // notificacion('Información Actualizada', 'success');
                     }
                 }else {
                     //Error esta cita ya esta asociada a un plan de tratamiento

@@ -571,21 +571,21 @@ if($accion == 'addplan')
         if(padre.find('.adicional')=="")
             padre.find('.adicional').val(0).keyup();
 
-        var iva = 0, CalIva=0;
-        var precio = 0;
-        var cantidad = 0;
-        var descuentoAdic = 0;
-        var subTotal  = 0;
+        let iva = 0;
+        let CalIva=0;
+        let precio = 0;
+        let cantidad = 0;
+        let descuentoAdic = 0;
+        let subTotal  = 0;
 
         precio          = padre.find(".precioServicio").text();
         cantidad        = padre.find(".cantidadPrest").val();
         descuentoAdic   = padre.find(".adicional").val();
         iva             = padre.find(".detalle_iva").prop('dataset').id_iva||0;
 
-        var CalprecioCant   = parseFloat(precio).toFixed(2) * parseFloat(cantidad||0).toFixed(2);
-        var CalDescuento    = parseFloat(((parseFloat(CalprecioCant).toFixed(2) * parseFloat(descuentoAdic||0).toFixed(2)) / 100)).toFixed(2);
-        var CalSubtotal     = parseFloat(CalprecioCant - CalDescuento).toFixed(2); //precio * cantidad - descuento
-
+        let CalprecioCant   = parseFloat(precio).toFixed(2) * parseFloat(cantidad||0).toFixed(2);
+        let CalDescuento    = parseFloat(((parseFloat(CalprecioCant).toFixed(2) * parseFloat(descuentoAdic||0).toFixed(2)) / 100)).toFixed(2);
+        let CalSubtotal     = parseFloat(CalprecioCant - CalDescuento); //precio * cantidad - descuento
 
         if(iva==12){
             CalIva = parseFloat(CalSubtotal).toFixed(2) * 0.12;
@@ -593,10 +593,8 @@ if($accion == 'addplan')
         else{
             CalIva = 0;
         }
-
-        var Total = parseFloat((CalSubtotal + CalIva)).toFixed(2);
-
-        console.log(Total);
+        CalSubtotal += parseFloat(CalIva);
+        let Total = parseFloat(parseFloat(CalSubtotal)).toFixed(2);
 
         padre.find(".detalle_iva").text(parseFloat(CalIva).toFixed(2));
         padre.find(".totalprestacion").text(Total);

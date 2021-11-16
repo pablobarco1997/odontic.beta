@@ -60,14 +60,27 @@ function aplicarColunmDetalle($titulos = array(), $detallesRows = array(), $rows
         )
     );
 
+    $RowsColorRed = [];
     $acuRowis++; //agrego el detalle
     foreach ($detallesRows as $k => $itemValue){
         $col=0;
         foreach ($itemValue as $value){
             $objPHPExcel->setActiveSheetIndex(0)->setCellValueByColumnAndRow($col, $acuRowis, $value);
             $col++;
+            if($value=="Anulado"){ //campo anulado
+                $RowsColorRed[] = $acuRowis;
+            }
         }
         $acuRowis++;
+    }
+
+    if(count($RowsColorRed)>0){
+        foreach ($RowsColorRed as $cell){
+            $fill = array('type' => PHPExcel_Style_Fill::FILL_SOLID,'color' => array('argb' => 'd99795'));
+            $objPHPExcel->getActiveSheet()->getStyle('L'.$cell)->applyFromArray(array('font' => array('bold' => false,'size' => 12,),'fill' => $fill));
+//            print_r('L'.$cell.':'.$last.$cell);
+        }
+//        die();
     }
 
     return $acuRowis;
@@ -108,8 +121,14 @@ $sql_data = "select
         
 	pddc.n_fact_boleta as boleta,
 	b.nom as typebank,
-	ttp.idttp
-		
+	ttp.idttp,
+	pdd.feche_create,
+	
+	case 
+	  when pdd.estado = 'A' then 'Activo'
+	  when pdd.estado = 'E' then 'Anulado'
+    end as estado 
+    
 from 
 	tab_pagos_independ_pacientes_det pdd 
 		left join
@@ -147,7 +166,7 @@ if(!empty(GETPOST('emitido'))){
 
 $sql_data .= " group by pdd.fk_plantram_cab, pdd.fk_plantram_det, pdd.rowid ";
 
-//print_r($sql_data); die();
+//print_r('<pre>'.$sql_data); die();
 
 $data = array();
 $result = $db->query($sql_data);
@@ -158,7 +177,7 @@ if($result){
 
             $fechaData[$value['idttp']]['text'] = $value['tratamiento'];
             $fechaData[$value['idttp']]['detalle'][] = array(
-                'emitido'            => $value['emitido'],
+                'emitido'            => $value['feche_create'],
                 'n_pago'             => 'P_'.str_pad($value['n_pago'],6,'0',STR_PAD_LEFT),
                 'servicio'           => $value['servicio'],
                 'pieza'              => $value['pieza'],
@@ -169,6 +188,7 @@ if($result){
                 'estado_ttp'         => $value['estado_ttp'],
                 'typebank'           => $value['typebank'],
                 'boleta'             => $value['boleta'],
+                'estado'             => $value['estado'],
             );
         }
     }else{
@@ -184,7 +204,7 @@ if($result){
 //echo '<pre>'; print_r($fechaData); die();
 
 
-$Titulos = array('Emitido','N.Pagos','Prestación/Servicios', 'Pieza','Total','Abonado','Pendiente','Recaudación Estado','Tratamiento Estado','Forma de pago', 'Boleta');
+$Titulos = array('Emitido','N.Pagos','Prestación/Servicios', 'Pieza','Total','Abonado','Pendiente','Recaudación Estado','Tratamiento Estado','Forma de pago', 'Boleta', 'Estado Anulado');
 
 $objPHPExcel->setActiveSheetIndex(0)->setCellValueExplicit('A1', "PAGOS DETALLADOS ".date("Y/m/d"));
 $objPHPExcel->setActiveSheetIndex(0)->mergeCells('A1:K1');

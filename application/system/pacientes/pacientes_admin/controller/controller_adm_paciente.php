@@ -2298,7 +2298,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 $sql .= " limit $start, $length";
             }
 
-            $ico_cita = "<img src='"."data: image/png; base64, ".base64_encode(file_get_contents(DOL_HTTP.'/logos_icon/logo_default/cita-medica.ico'))."' style='width: 25px; height: 25px'>";
+//            $ico_cita = "<img src='"."data: image/png; base64, ".base64_encode(file_get_contents(DOL_HTTP.'/logos_icon/logo_default/cita-medica.ico'))."' style='width: 25px; height: 25px'>";
 
             $result = $db->query($sql);
             if($result){
@@ -2306,7 +2306,7 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                     while ($object = $result->fetchObject()){
 
                         $row = [];
-                        $row[] =  "<span style='font-weight: bold' > $ico_cita - $object->numberCitas</span>";
+                        $row[] =  "<span style='font-weight: bold'>C_".$object->numberCitas."</span>";
                         $row[] = $object->especialidad;
                         $row[] = date("Y/m/d", strtotime($object->fecha_cita))."   ".$object->hora_inicio;
                         $row[] = "<span style='font-weight: bold; background-color: $object->color '>".$object->estado."</span>";

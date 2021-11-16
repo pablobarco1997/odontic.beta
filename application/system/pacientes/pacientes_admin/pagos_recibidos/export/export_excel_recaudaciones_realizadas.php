@@ -44,28 +44,34 @@ $sql = "SELECT
 	round(td.total,2) as total_prestacion, 
     round(sum(pd.amount),2)  abonado , 
     if(td.estadodet = 'A', 'Pendiente', if(td.estadodet = 'P' , 'En Proceso', if(td.estadodet = 'R' , 'Realizada' , ''))) as estado, 
-    if(round(td.total,2)>round(sum(pd.amount),2), (round(td.total,2)-round(sum(pd.amount),2)),0) as  pendiente,
-    (select t.nom from tab_bank_operacion t where t.rowid = pc.fk_tipopago) as tipo_p
+    if(round(td.total,2)>round(sum(pd.amount),2), (round(td.total,2)-round(sum(pd.amount),2)),0) as  pendiente ,
+    t.nom as tipo_p, 
+    
+    case 
+	  when pd.estado = 'A' then 'Activo'
+	  when pd.estado = 'E' then 'Anulado'
+    end as estado 
 FROM
-tab_plan_tratamiento_det td , 
-tab_pagos_independ_pacientes_det pd, 
-tab_pagos_independ_pacientes_cab pc, 
-tab_conf_prestaciones p
-where 
-td.rowid = pd.fk_plantram_det
-and p.rowid = pd.fk_prestacion
-and pc.rowid = pd.fk_pago_cab
-and pd.estado = 'A' ";
+     tab_plan_tratamiento_det td
+        inner join 
+    tab_pagos_independ_pacientes_det pd on td.rowid = pd.fk_plantram_det
+        inner join
+    tab_pagos_independ_pacientes_cab pc on pc.rowid = pd.fk_pago_cab
+        inner join 
+    tab_conf_prestaciones p on p.rowid = pd.fk_prestacion
+        inner join 
+    tab_bank_operacion t on t.rowid = pc.fk_tipopago
+where 1=1 ";
 
 if(!empty($idplantratamiento)){
     $sql .= " and td.fk_plantratam_cab = ".$idplantratamiento;
 }
 
-$sql .= " group by pd.fk_prestacion, pd.fk_plantram_cab, td.fk_diente ";
+$sql .= " group by pd.fk_plantram_det,pd.fk_prestacion, pd.fk_plantram_cab, td.fk_diente";
 $result = $db->query($sql);
 $data = $result->fetchAll(PDO::FETCH_ASSOC);
 
-//echo '<pre>'; print_r($data); die();
+//echo '<pre>'; print_r($sql); die();
 
 
 //esta funcion me arma la tabla
@@ -149,7 +155,7 @@ $objPHPExcel->getActiveSheet()->getStyle('B2:B2')->applyFromArray(
 );
 
 
-$titulos_array = array('Emitido', 'Prestación/Servicios', 'Pieza', 'Total', 'Abonado', 'Pendiente', 'Forma de Pago', 'Estado');
+$titulos_array = array('Emitido', 'Prestación/Servicios', 'Pieza', 'Total', 'Abonado', 'Pendiente', 'Forma de Pago');
 $detallesRow = [];
 foreach ($data as $k => $value){
 
@@ -161,15 +167,20 @@ foreach ($data as $k => $value){
         $rows[] = $value['abonado'];
         $rows[] = $value['pendiente'];
         $rows[] = $value['tipo_p'];
-        $rows[] = $value['estado'];
+//        $rows[] = $value['estado'];
     $detallesRow[] = $rows;
 }
 
+//obtengo la ultima fila insertada
 $rowsFila = aplicarColunmDetalle($titulos_array, $detallesRow , 3, $objPHPExcel);
 
+//aplico estylos a la columna que quiero
+$objPHPExcel->getActiveSheet()->getStyle('E4:E'.$rowsFila)->getBorders()->getBottom()->setBorderStyle(PHPExcel_Style_Border::BORDER_THIN);
+
+//print_r('E3:E'.$rowsFila);die();
+
 foreach(range('A','F') as $columnID) {
-    $objPHPExcel->getActiveSheet()->getColumnDimension($columnID)
-        ->setAutoSize(true);
+    $objPHPExcel->getActiveSheet()->getColumnDimension($columnID)->setAutoSize(true);
 }
 
 $objPHPExcel->getActiveSheet()->calculateColumnWidths();

@@ -6,10 +6,13 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
 
     include_once '../../../../../config/lib.global.php';
     require_once DOL_DOCUMENT .'/application/config/main.php';
+    require_once DOL_DOCUMENT .'/application/system/pacientes/pacientes_admin/plan_tratamiento/class/Class.Tratamiento.php';
 
     global  $db , $conf, $user, $messErr;
 
-    $accion = GETPOST('accion');
+
+    $PlanTratamiento = new PlanTratamiento($db);
+    $accion          = GETPOST('accion');
 
     switch ($accion)
     {
@@ -209,7 +212,8 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                         pd.monto, 
                         p.observacion, 
                         p.fk_plantram as fk_plantramCab , 
-                        (select bt.nom from tab_bank_operacion bt where bt.rowid = p.fk_tipopago) as mediopago
+                        (select bt.nom from tab_bank_operacion bt where bt.rowid = p.fk_tipopago) as mediopago, 
+                        (select count(*) from tab_ope_cajas_clinicas_det ddp where ddp.fk_plan_tratam_cab = pd.fk_plantram_cab and  ddp.estado = 'C') as anular
                     FROM 
                       tab_pagos_independ_pacientes_cab p 
                         inner join 
@@ -251,25 +255,29 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                             $key = 'P_'.str_pad($ob->idpagoCabezera, 6, "0", STR_PAD_LEFT);
                             $name_plantratamiento = $ob->nombplan;
 
-                            $row = array();
+                            $rows = array();
 
-                            $row[] = str_replace('-','/',$ob->fecha);
-                            $row[] = $key."".$trantamiento;
-                            $row[] = $ob->mediopago;
-                            $row[] = "<small class='text-blue' style='display: block' title='".$ob->observacion."'>".$ob->observacion."</small>";
-                            $row[] = $ob->n_fact_boleta;
-                            $row[] = number_format($ob->monto, 2,'.',',');
-                            $row[] = "";
+                            $rows[] = str_replace('-','/',$ob->fecha);
+                            $rows[] = $key."".$trantamiento;
+                            $rows[] = $ob->mediopago;
+                            $rows[] = "<small class='text-blue text-sm' style='display: block' title='".$ob->observacion."'>".$ob->observacion."</small>";
+                            $rows[] = $ob->n_fact_boleta;
+                            $rows[] = number_format($ob->monto, 2,'.',',');
+                            $rows[] = "";
 
-                            $row[] = $ob->idpagoCabezera; #id del pago cabezara
-                            $row['n_boleta'] = $ob->n_fact_boleta;
-                            $row['url_imprimir'] = "<a href='".DOL_HTTP."/application/system/pacientes/pacientes_admin/pagos_recibidos/export/export_pagoparticular.php?npag=$ob->n_pago&idpac=$idpaciente' target='_blank'>Imprimir PDF</a>";
-                            $row['name_tratamiento'] = $name_plantratamiento;
-                            $row['idPlantratamCab']  = $ob->fk_plantramCab;
-                            $row['id_pagocab']  = $ob->idpagoCabezera;
-                            $row['valor']  = $ob->monto;
+                            $rows[]                    = $ob->idpagoCabezera; #id del pago cabezara
+                            $rows['n_boleta']          = $ob->n_fact_boleta;
+                            $rows['url_imprimir']      = "<a href='".DOL_HTTP."/application/system/pacientes/pacientes_admin/pagos_recibidos/export/export_pagoparticular.php?npag=$ob->n_pago&idpac=$idpaciente' target='_blank'>Imprimir PDF</a>";
+                            $rows['name_tratamiento']  = $name_plantratamiento;
+                            $rows['idPlantratamCab']   = $ob->fk_plantramCab;
+                            $rows['id_pagocab']        = $ob->idpagoCabezera;
+                            $rows['valor']             = $ob->monto;
 
-                            $detalle[] = $row;
+                            if($ob->anular >= 1){
+                                $rows['anular']        = 1;
+                            }
+
+                            $detalle[] = $rows;
                         }
 
                         $i++;
@@ -472,6 +480,153 @@ if(isset($_GET['ajaxSend']) || isset($_POST['ajaxSend']))
                 'error' => $error ,
             ];
             echo json_encode($Output);
+            break;
+
+
+        case 'anular_detalle_tratamiento':
+
+            $error          =  "";
+            $question       =  "";
+            $data           = array();
+
+            $pago_id        = GETPOST('idpago');
+            $paciente_id    = GETPOST('paciente_id');
+            $tratamiento_id = GETPOST('tratamiento_id');
+
+            $fetch_id['idpago']       = $pago_id;
+            $fetch_id['paciente_id']  = $paciente_id;
+            $fetch_id['tratamiento_id']  = $tratamiento_id;
+
+            //anular
+            if(!PermitsModule('Pagos de Paciente', 'eliminar')){
+                $error = "Ud. No tiene permiso para realizar esta operación";
+            }
+
+            if(empty($error)){
+
+                if(count($fetch_id)>0){
+
+                    //consulto si encuentro prestaciones activas en una caja asociada abierta
+                    $resultArray = $PlanTratamiento->AnularListTratamientoValid($fetch_id['idpago'], $fetch_id['paciente_id'], $fetch_id['tratamiento_id'], true, 'A');
+                    if(count($resultArray)==0){ //si no se detecta prestaciones asignadas a una caja abierta
+                        //fetch estado cerradas | prstaciones de caja
+                        $listTratamientos = $PlanTratamiento->AnularListTratamientoValid($fetch_id['idpago'], $fetch_id['paciente_id'], $fetch_id['tratamiento_id'], false, 'C');
+
+                        foreach ($listTratamientos as $item){
+                            $rows = array();
+                                $rows[] = date('Y/m/d', strtotime($item['emitido']));
+                                $rows[] = $item['servicio'];
+                                $rows[] = $item['amount'];
+                                $rows[] = "<button class='btn btn-xs' style='color: red' title='Anular Recaudación' onclick='confirmar_anulacion_pago(".$item['idpagodet'].", ".$item['fk_plan_tratam_det'].",".$fetch_id['idpago'].",".$fetch_id['tratamiento_id'].")'><i class='fa fa-trash'></i></button>";
+                                $rows['iddpagos']       = $item['idpagodet'];
+                                $rows['iddtratamiento'] = $item['fk_plan_tratam_det'];
+                            $data[] = $rows;
+                        }
+
+                    }else{
+                        $question = 'No se puede anular este Documento asociado a una caja abierta. <br> Para poder anular un documento desde el módulo de pagos. El plan de tratamiento recaudado no puede estar asociado a una caja abierta<br> Compruebe la información antes de realizar la operación';
+                    }
+
+                }
+            }
+
+
+            $output= [
+                'error'         => $error ,
+                'warning'       => $question ,
+                'data'          => $data ,
+            ];
+            echo json_encode($output);
+            break;
+
+
+        case 'AnularRecaudacion':
+
+            $error = "";
+            $question = "";
+
+
+            //cabezera
+            $fetch_id['tratamiento_id'] = GETPOST('idtratamiento_c'); //cabezera tratamiento id
+            $fetch_id['idpago']         = GETPOST('idpago_c'); // id pago cabezera
+
+            //detalle
+            $fetch_id['iddtratamiento'] = GETPOST('iddtratamiento'); //detalle id tratamiento
+            $fetch_id['iddpago']        = GETPOST('iddpago'); //detalle id pago
+
+            //id paciente
+            $fetch_id['paciente_id']    = GETPOST('idpaciente');
+
+            //consulto si encuentro prestaciones activas en una caja asociada abierta
+            $resultArray = $PlanTratamiento->AnularListTratamientoValid($fetch_id['idpago'], $fetch_id['paciente_id'], $fetch_id['tratamiento_id'], true, 'A');
+            if(count($resultArray)>0 ){
+                $question = 'No se puede anular este Documento asociado a una caja abierta. <br> Para poder anular un documento desde el módulo de pagos. El plan de tratamiento recaudado no puede estar asociado a una caja abierta<br> Compruebe la información antes de realizar la operación';
+            }else{
+
+                //obtengo la informacion de la caja asociado y pago acosiado del detalle
+                $fetch = $PlanTratamiento->AnularListTratamientoValid($fetch_id['idpago'], $fetch_id['paciente_id'], $fetch_id['tratamiento_id'], false, 'C');
+
+//                print_r($fetch); die();
+                if(count($fetch)>0){
+                    foreach ($fetch as $value){
+                        if($value['idpagodet'] == $fetch_id['iddpago']){
+
+                            $npago_sc = "P_".str_pad($fetch_id['idpago'], 6, "0", STR_PAD_LEFT);
+
+                            $query = "UPDATE `tab_pagos_independ_pacientes_det` SET `estado` = 'E' WHERE (`rowid` = '".$value['idpagodet']."');";
+                            $result_update = $db->query($query);
+                            if($result_update){
+
+                                $log->log($value['idpagodet'], $log->eliminar, 'Anulación Detalle IDDET:'.$value['idpagodet'].' de Pago N. '.$npago_sc, 'tab_pagos_independ_pacientes_det');
+
+                                require_once DOL_DOCUMENT.'/application/system/operacion/class/Class.operacion.php';
+                                $operacion = new operacion($db);
+
+                                $amount           = (double)$value['amount']; //monto de caja
+                                $label            = "Anulación de Pago Numero: ".$npago_sc." | Prestación/Servicio: ".$value['servicio']." | Documento: ".$value['n_fact_boleta'];
+                                $datos['label']   = $label;
+                                $datos['date_c']  = "now()";
+                                $datos['detalle'] = array();
+
+                                $datos['detalle'][] = [
+                                    'datec'             => "now()",
+                                    'id_cuenta'         => "3" ,   //40102 PRESTACIÓN DE SERVICIOS CUENTA DEL SYSTEMA
+                                    'id_user_author'    => $user->id ,
+                                    'tipo_mov'          => 1 , //ingreso a la cuenta de gastos
+                                    'amount_ingreso'    => 0 , //monto de ingreso a la cuenta de gastos
+                                    'amount_egreso'     => $amount,
+                                    'value'             => ($amount * -1),
+                                    'id_documento'      => $value['idpagodet'],
+                                    'tipo_documento'    => 'tab_pagos_independ_pacientes_det', //tipo de documento y/o modulo que genero esta transaccion
+                                    'fk_type_payment'   => 3, //medio de pago en ese caso es egreso de la cuenta de RECAUDACIONES
+                                    'table'             => 'tab_pagos_independ_pacientes_det', //informacion opcional para saber a que table pertenece el id_documento
+                                    'label'             => $label,
+                                ];
+
+                                $result =  $operacion->diarioClinico($datos);
+                                if($result==-1){
+                                    $error = "Ocurrio un error con la Operación Transaccion clinica (Anulación del pago del paciente). Consulte con soporte";
+                                }
+
+                            }else{
+                                $log->log($value['idpagodet'], $log->error, 'Ha ocurrido un error con la Operación ( Anulación Detalle IDDET:'.$value['idpagodet'].' de Pago N. '.$npago_sc." ) ", 'tab_pagos_independ_pacientes_det');
+                            }
+                        }
+                    }
+                }else{
+                    $error = "Ocurrió un error con la Operación: no se encontró data asociado";
+                }
+
+//                die();
+
+
+            }
+
+            $output= [
+                'error'         => $error ,
+                'warning'      =>  $question
+            ];
+            echo json_encode($output);
             break;
 
     }
@@ -1134,10 +1289,6 @@ function validar_pagos_pacientes($detalle = array(), $idcab){
 
 }
 
-
-
-
-
 function trasacionEgresoDeletePago($idPago, $objectPago, $numeroPlantramiento, $valor){
 
     global $db, $user;
@@ -1161,9 +1312,10 @@ function trasacionEgresoDeletePago($idPago, $objectPago, $numeroPlantramiento, $
         return $error;
 
     }
-
-
 }
+
+
+
 
 
 ?>

@@ -62,7 +62,7 @@
 
 <div class="form-group col-md-12 col-xs-12 col-lg-12">
     <div class="table-responsive">
-        <table id="pag_particular" class="table" width="100%" style="border-collapse: collapse">
+        <table id="pag_particular" class="table table-hover table-condensed" width="100%" style="border-collapse: collapse">
             <thead style="background-color: #f4f4f4">
                 <tr>
 <!--                    <th>&nbsp;</th>-->
@@ -80,6 +80,40 @@
     </div>
 </div>
 
+
+<div id="modal_anulacion_recaudada" class="modal fade " role="dialog" >
+    <div class="modal-dialog " >
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header modal-diseng">
+                <button type="button" class="close" data-dismiss="modal">×</button>
+                <h4 class="modal-title"><span>Anular Recaudación</span></h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="form-group col-xs-12 col-md-12" style="margin-top: 10px">
+                        <label for="#" style="display: block">Anular Recaudación</label>
+                            <span style=" color: #eb9627; display: block;" class="text-sm">
+                            <i class="fa fa-info-circle"></i>
+                                <b>Tener en cuenta</b>  Cuando se realiza una Anulación de Recaudación Asociado a un Documento. Este realiza un egreso de la Cuenta del sistema RECAUDACIONES </span>
+                    </div>
+                    <div class="form-group col-xs-12 col-md-12">
+                        <table class="table table-condensed table-hover" style="width: 100%" id="anular_recaudado_list">
+                            <thead style="background-color: #f4f4f4">
+                                <th>Emitido</th>
+                                <th>Detalle</th>
+                                <th>Monto</th>
+                                <th></th>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
 
 <script>
 
@@ -151,6 +185,9 @@
                     targets:6,
                     render: function (data, type, row) {
 
+                        var idtratamiento   = row['idPlantratamCab'];
+                        var idpcab          = row['id_pagocab'];
+
                         // console.log(row);
                         var dropdown_menu = "<div class='dropdown pull-right col-xs-1 '>";
                         dropdown_menu += "<button class='btn btnhover  btn-xs dropdown-toggle' data-toggle=\"dropdown\" type='button' aria-expanded='false'><i class=\"fa fa-ellipsis-v\"></i></button>";
@@ -158,6 +195,11 @@
                                 dropdown_menu += "<li>" + row['url_imprimir'] + "</li>";
                                 dropdown_menu += "<li class=''><a href='#'> Email </a></li>";
                                 dropdown_menu += "<li class='hide'><a href='#' data-nametratam='"+row['name_tratamiento']+"' data-valor='"+row['valor']+"' onclick='deletePagoPrestacion("+row['id_pagocab']+","+row['idPlantratamCab']+", $(this))' >Eliminar Pago</a></li>";
+
+                                if(row['anular'] >= 1){
+                                    dropdown_menu += "<li class='' > <a href='#' onclick='Anular_detalle_pagos("+idpcab+","+idtratamiento+")'>Anular</a> </li>";
+                                }
+
                             dropdown_menu += "</ul>";
                         dropdown_menu += "</div>";
 
@@ -330,6 +372,7 @@
                 type: "POST",
                 dataType: 'json',
                 async:false,
+                cache: false,
                 data:function (params) {
                     var query = {
                         accion: 'filtrarPlantratamientoSearchSelect2',
@@ -347,6 +390,139 @@
         });
 
     });
+
+    //verificar e Anular
+    function Anular_detalle_pagos(id, tratamiento_id){
+
+        var idpago = id;
+
+        var parametrs = {
+            'accion'         : 'anular_detalle_tratamiento',
+            'ajaxSend'       : 'ajaxSend',
+            'idpago'         : idpago,
+            'paciente_id'    : $id_paciente,
+            'tratamiento_id' : tratamiento_id,
+        };
+
+        $.ajax({
+            url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/pagos_pacientes/controller_pagos/controller_pag.php',
+            type: "POST",
+            data: parametrs,
+            dataType: 'json',
+            async:false,
+            cache: false,
+            beforeSend: function(){
+                boxloading($boxContentViewAdminPaciente ,true);
+            }, 
+            complete: function (xhr, status) {
+                boxloading($boxContentViewAdminPaciente ,false, 1000);
+            }, 
+            success: function ( response ) {
+                console.log( response );
+                if(response.error != ''){
+                    notificacion(response.error, 'error');
+                }else{
+                    if(response.warning != ""){
+                        notificacion(response.warning, 'warning');
+                    }else{
+
+                        $("#modal_anulacion_recaudada").modal('show');
+
+                        var table = $("#anular_recaudado_list").DataTable({
+                            searching: false,
+                            "ordering":false,
+                            "serverSide": false,
+                            // responsive: true,
+                            destroy:true,
+                            paging:false,
+                            processing: true,
+                            lengthMenu:false,
+                            bLengthChange: false,
+                            data: response.data,
+                            'createdRow':function(row, data, index){
+                                $(row).children().eq(0).css('width','2%');
+                                $(row).children().eq(1).css('width','10%');
+                                $(row).children().eq(2).css('width','2%');
+                                $(row).children().eq(3).css('width','1%');
+
+                            },
+                            "language": {
+                                "sProcessing":     "Procesando...",
+                                "sLengthMenu":     "Mostrar _MENU_ registros",
+                                "sZeroRecords":    "No se encontraron resultados",
+                                "sEmptyTable":     "Ningún dato disponible en esta tabla",
+                                "sInfo":           "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                                "sInfoEmpty":      "Mostrando registros del 0 al 0 de un total de 0 registros",
+                                "sInfoFiltered":   "(filtrado de un total de _MAX_ registros)",
+                                "sInfoPostFix":    "",
+                                "sSearch":         "Buscar:",
+                                "sUrl":            "",
+                                "sInfoThousands":  ",",
+                                "oPaginate": {
+                                    "sFirst":    "Primero",
+                                    "sLast":     "Último",
+                                    "sNext":     "Siguiente",
+                                    "sPrevious": "Anterior"
+                                },
+                                "oAria": {
+                                    "sSortAscending":  ": Activar para ordenar la columna de manera ascendente",
+                                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                                }
+                            },
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+
+    var confirmar_anulacion_pago = function (iddpago, iddtratamiento, idpago_c, idtratamiento_c) {
+
+        //crea el ojecto y guardas la funcion en el
+        var object = {
+            id: "",
+            callback: function () {
+                boxloading($boxContentViewAdminPaciente, true);
+                $.ajax({
+                    url: $DOCUMENTO_URL_HTTP + '/application/system/pacientes/pacientes_admin/pagos_pacientes/controller_pagos/controller_pag.php',
+                    delay:1000,
+                    type:'POST',
+                    data:{
+                        'accion'         : 'AnularRecaudacion',
+                        'ajaxSend'       : 'ajaxSend',
+                        'iddpago'        : iddpago,
+                        'idpago_c'       : idpago_c,
+                        'iddtratamiento' : iddtratamiento,
+                        'idtratamiento_c' : idtratamiento_c,
+                        'idpaciente'     : $id_paciente
+                    },
+                    async:true,
+                    cache:false,
+                    dataType:'json',
+                    complete: function(xhr, status){
+                        boxloading($boxContentViewAdminPaciente, false);
+                    },
+                    success:function (response) {
+                        boxloading($boxContentViewAdminPaciente, false);
+                        if(response.error != ""){
+                            notificacion(response.error, 'error');
+                        }else{
+                            if(response.warning != ""){
+                                notificacion(response.warning, 'warning');
+                            }else{
+                                //success
+                                notificacion('Información Actualizada', 'success');
+                                PagosPacientes();
+                            }
+                        }
+                    }
+                });
+            }
+        };
+
+        notificacionSIoNO("¿Anular esta recaudación?",null, object);
+    };
 
     //window onload
     window.onload = boxloading($boxContentViewAdminPaciente ,true);
