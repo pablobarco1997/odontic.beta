@@ -1,18 +1,17 @@
 
 <?php
 
-include_once '../application/config/lib.global.php';
+include_once '../../../application/config/lib.global.php';
 require_once 'class_connecion_and_process.php';
 
 
-
 //El proceso que ejecutara el email
-function ProccessCronSendEmail(){
+function ProccessCronSendEmail($db_clinica){
 
     $dbconectar       = new db_and_procesos();
 
     //obtengos la clinicas registradas
-    $fetchClinicas    = $dbconectar->fetchClinicas($dbconectar->Connection);
+    $fetchClinicas    = $dbconectar->fetchClinicas($dbconectar->Connection, $db_clinica);
 
 //    echo '<pre>'; print_r($fetchClinicas); die();
     $ArraySendProgram = array();

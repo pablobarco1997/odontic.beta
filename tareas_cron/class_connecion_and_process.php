@@ -1,10 +1,10 @@
 <?php
 
-include_once '../application/config/lib.global.php';
+include_once '../../../application/config/lib.global.php';
 
 class db_and_procesos{
 
-    private $hosting = "a03be9415be4179e42b7d2aff6032911";
+    private $hosting   = "a03be9415be4179e42b7d2aff6032911";
 //    private $hosting = "";
 
     var $db;
@@ -17,6 +17,7 @@ class db_and_procesos{
     function Connection(){
 
         if($this->hosting=='a03be9415be4179e42b7d2aff6032911'){
+
             #REMOTO
             $conexion = null;
             $host     = 'localhost'; #ip o nombre del servidor remoto o local
@@ -25,6 +26,7 @@ class db_and_procesos{
             $password = '740631f8cd06c9b56f1190b29db9ec54'; #PASSWIRD #PASSWORD SERVIDOR REMOTO ==> Pablo_1997
             $utf8mb4  = 'utf8mb4';
         }else{
+
             #LOCAL
             $conexion = null;
             $host     = 'localhost'; #ip o nombre del servidor remoto o local
@@ -73,16 +75,20 @@ class db_and_procesos{
         }
     }
 
-    function fetchClinicas($db){
+    function fetchClinicas($db, $clinicadb = ''){
+
+        if($clinicadb==""){
+            return array();
+        }
 
         $fetchClinicas=[];
         $sql = "SELECT 
                     d.rowid, d.nombre_db_entity AS db_name, d.numero_entity AS entity, 
-                    (SELECT e.correo FROM tab_cuentas_correos_clinica e WHERE e.entidad_clinica_id = d.rowid AND e.entity = d.numero_entity) as mail_service, 
-                    (SELECT e.password_email FROM tab_cuentas_correos_clinica e WHERE e.entidad_clinica_id = d.rowid AND e.entity = d.numero_entity) as password_service, 
-                    (SELECT e.disabled FROM tab_cuentas_correos_clinica e WHERE e.entidad_clinica_id = d.rowid AND e.entity = d.numero_entity) as disabled_mail
-            FROM
-                tab_entidades_dental d;";
+                    d.conf_email as mail_service, 
+                    d.conf_password as password_service
+                 FROM
+                    tab_entidades_dental d where d.rowid = $clinicadb ";
+
         $result = $db->query($sql);
         if($result && $result->rowCount()>0){
             $fetchClinicas = $result->fetchAll(PDO::FETCH_ASSOC);

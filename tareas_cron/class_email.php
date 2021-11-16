@@ -134,7 +134,8 @@ class send_email_program{
 
     private function btn_token_confirmacion(){
 
-        require_once  '../application/config/class.log.php';
+        require_once  '../../../application/config/class.log.php';
+
         $log = new log($this->db,0);
 
         $idcita = $this->id_cita_agendada;
@@ -183,9 +184,9 @@ class send_email_program{
 
         $Update="";
 
-        require_once  '../application/controllers/controller.php';
-        require_once  '../public/lib/PHPMailer/PHPMailerAutoload.php';
-        require_once  '../application/config/class.log.php';
+        require_once  '../../../application/controllers/controller.php';
+        require_once  '../../../public/lib/PHPMailer/PHPMailerAutoload.php';
+        require_once  '../../../application/config/class.log.php';
         $log = new log($this->db, 0);
 
         //obtengo la fecha spanish
@@ -208,14 +209,14 @@ class send_email_program{
         $mail->IsSMTP();
         $mail->Mailer = "smtp";
         $mail->CharSet = 'UTF-8';
-        $mail->Host = "mail.adminnube.com";
+        $mail->Host = "smtp.gmail.com";
         $mail->SMTPDebug = 0;
         $mail->SMTPAuth = true;
-        $mail->Port = 465;
+        $mail->Port = 587;
         $mail->SMTPAutoTLS = TRUE;
-        $mail->SMTPSecure = "ssl";
+        $mail->SMTPSecure = "tls";
 
-        //servidor de correo
+        //servidor de correo SMTP DE GOOGLE CUENTA EMIL
         $mail->Username = $this->service_Email;//correo del servidor
         $mail->Password = $this->service_Password;//password de servidor de correo
 
@@ -250,7 +251,8 @@ class send_email_program{
 
     private function Actualizar_notificacion_email(){
 
-        require_once  '../application/config/class.log.php';
+        require_once  '../../../application/config/class.log.php';
+
         $log = new log($this->db,0);
 
         $err_count = 0;
