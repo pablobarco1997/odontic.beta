@@ -23,20 +23,6 @@
             <a href="#">
                 <div class="pull-left" style="position: relative">
                     <img src="<?= DOL_HTTP.'/logos_icon/logo_default/icon_avatar.svg' ?>" class="img-circle notify_cita_img_paciente" title="Paciente" style="width: 70px; height: 70px; " alt="Paciente">
-                    <i style="
-                                position: absolute;
-                                border-radius: 100%;
-                                top: 40px;
-                                right: 15px;
-                                background-image: url('https://static.xx.fbcdn.net/rsrc.php/v3/yj/r/YIUMZFrXRCb.png?_nc_eui2=AeHVYdxh1DhAMVT3yIQmiSdsTUg3UAarw9lNSDdQBqvD2XIDaRNRfwJosU1s70CS1JgiCUWqb-gIhUQdE0DPY1zb');
-                                background-position: 0px -319px;
-                                background-size: auto;
-                                width: 28px;
-                                height: 28px;
-                                background-repeat: no-repeat;
-                                display: inline-block;
-                                box-shadow: 1px 1px 2px 0.01em #ecf0f5;
-                                    "></i>
                 </div>
                 <table style="width: 260px ">
                     <tr>

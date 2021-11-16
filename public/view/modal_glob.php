@@ -35,71 +35,74 @@
                                <br>
                            </div>
 
-                           <label for="" class="control-label control-label col-sm-4 col-md-4 col-xs-12">Caja</label>
-                           <div class="col-sm-6 col-md-8 col-xs-12">
-                               <select name="perf_cajaUsers" id="perf_cajaUsers" class="form-control">
+                           <label for="" class="control-label control-label col-sm-4 col-md-4 col-xs-12 hide">Caja</label>
+                           <div class="col-sm-6 col-md-8 col-xs-12 hide">
+                               <select name="perf_cajaUsers" id="perf_cajaUsers" class="form-control hide">
                                    <option value=""></option>
                                    <?php
-                                   $resulCajasPerfil = $db->query("select rowid, concat('Caja #',rowid) as nom from tab_cajas_clinicas")->fetchAll(PDO::FETCH_ASSOC);
-                                   foreach ($resulCajasPerfil as $value){
-                                       print '<option value="'.$value['rowid'].'">'.$value['nom'].'</option>';
-                                   }
+//                                       $resulCajasPerfil = $db->query("select rowid, concat('Caja #',rowid) as nom from tab_cajas_clinicas")->fetchAll(PDO::FETCH_ASSOC);
+//                                       foreach ($resulCajasPerfil as $value){
+//                                           print '<option value="'.$value['rowid'].'">'.$value['nom'].'</option>';
+//                                       }
                                    ?>
                                </select>
                            </div>
 
 
-                           <!--                            Datos Odontologos-->
-                           <div  style="border-bottom: 1px solid #e9edf2" class="col-xs-12 col-md-12 margin-bottom"> <small><b>DATOS DE ODONTOLOGOS</b></small> </div>
+                           <div class="boxDatosOdontologos">
 
-                           <!--                            nombre-->
-                           <label for="" class="control-label control-label col-sm-4 col-md-4 col-xs-12">nombre</label>
-                           <div class="col-sm-6 col-md-8 col-xs-12">
-                               <input type="text" class="form-control" id="perf_nom" onkeyup="FormValidationPerfilGlobal()">
-                               <br>
-                           </div>
-                           <!--                            apellido-->
-                           <label for="" class="control-label control-label col-sm-4 col-md-4 col-xs-12">apellido</label>
-                           <div class="col-sm-6 col-md-8 col-xs-12">
-                               <input type="text" class="form-control" id="perf_apell" onkeyup="FormValidationPerfilGlobal()">
-                               <br>
-                           </div>
-                           <!--                            cedula-->
-                           <label for="" class="control-label control-label col-sm-4 col-md-4 col-xs-12">cedula</label>
-                           <div class="col-sm-6 col-md-8 col-xs-12">
-                               <input type="text" class="form-control" id="perf_cedula" onkeyup="FormValidationPerfilGlobal()">
-                               <br>
-                           </div>
-                           <!--                            email-->
-                           <label for="" class="control-label control-label col-sm-4 col-md-4 col-xs-12">email</label>
-                           <div class="col-sm-6 col-md-8 col-xs-12">
-                               <input type="text" class="form-control" id="perf_email" onkeyup="FormValidationPerfilGlobal()">
-                               <br>
-                           </div>
-                           <!--                            Celular-->
-                           <label for="" class="control-label control-label col-sm-4 col-md-4 col-xs-12">Celular</label>
-                           <div class="col-sm-6 col-md-8 col-xs-12">
-                               <input type="text" class="form-control" id="perf_celular" >
-                               <br>
-                           </div>
+                               <!--                            Datos Odontologos-->
+                               <div  style="border-bottom: 1px solid #e9edf2" class="col-xs-12 col-md-12 margin-bottom"> <small><b>DATOS DE ODONTOLOGOS</b></small> </div>
 
-                           <label for="" class="control-label control-label col-sm-4 col-md-4 col-xs-12">especialidad</label>
-                           <div class="col-sm-6 col-md-8 col-xs-12">
-                               <select  id="especialidadPerfil" class="form-control " style="width: 100%" onchange="FormValidationPerfilGlobal()">
-                                   <option value="0">General</option>
-                                   <?php
+                               <!--                            nombre-->
+                               <label for="" class="control-label control-label col-sm-4 col-md-4 col-xs-12">nombre</label>
+                               <div class="col-sm-6 col-md-8 col-xs-12">
+                                   <input type="text" class="form-control" id="perf_nom" onkeyup="FormValidationPerfilGlobal()">
+                                   <br>
+                               </div>
+                               <!--                            apellido-->
+                               <label for="" class="control-label control-label col-sm-4 col-md-4 col-xs-12">apellido</label>
+                               <div class="col-sm-6 col-md-8 col-xs-12">
+                                   <input type="text" class="form-control" id="perf_apell" onkeyup="FormValidationPerfilGlobal()">
+                                   <br>
+                               </div>
+                               <!--                            cedula-->
+                               <label for="" class="control-label control-label col-sm-4 col-md-4 col-xs-12">cedula</label>
+                               <div class="col-sm-6 col-md-8 col-xs-12">
+                                   <input type="text" class="form-control" id="perf_cedula" onkeyup="FormValidationPerfilGlobal()">
+                                   <br>
+                               </div>
+                               <!--                            email-->
+                               <label for="" class="control-label control-label col-sm-4 col-md-4 col-xs-12">email</label>
+                               <div class="col-sm-6 col-md-8 col-xs-12">
+                                   <input type="text" class="form-control" id="perf_email" onkeyup="FormValidationPerfilGlobal()">
+                                   <br>
+                               </div>
+                               <!--                            Celular-->
+                               <label for="" class="control-label control-label col-sm-4 col-md-4 col-xs-12">Celular</label>
+                               <div class="col-sm-6 col-md-8 col-xs-12">
+                                   <input type="text" class="form-control" id="perf_celular" >
+                                   <br>
+                               </div>
 
-                                   $sql = "select nombre_especialidad , rowid from tab_especialidades_doc";
-                                   $rs  = $db->query($sql);
-                                   if($rs&&$rs->rowCount()>0){
-                                       while ($obj = $rs->fetchObject()){
-                                           print "<option value='".$obj->rowid."' >".$obj->nombre_especialidad."</option>";
+                               <label for="" class="control-label control-label col-sm-4 col-md-4 col-xs-12">especialidad</label>
+                               <div class="col-sm-6 col-md-8 col-xs-12">
+                                   <select  id="especialidadPerfil" class="form-control " style="width: 100%" onchange="FormValidationPerfilGlobal()">
+                                       <option value="0">General</option>
+                                       <?php
+
+                                       $sql = "select nombre_especialidad , rowid from tab_especialidades_doc";
+                                       $rs  = $db->query($sql);
+                                       if($rs&&$rs->rowCount()>0){
+                                           while ($obj = $rs->fetchObject()){
+                                               print "<option value='".$obj->rowid."' >".$obj->nombre_especialidad."</option>";
+                                           }
                                        }
-                                   }
 
-                                   ?>
-                               </select>
-                               <br>
+                                       ?>
+                                   </select>
+                                   <br>
+                               </div>
                            </div>
 
                        </div>
@@ -107,7 +110,7 @@
                </div>
             </div>
             <div class="modal-footer">
-                <a href="#" class="btn btnhover pull-right" data-dismiss="modal" style="font-weight: bolder">Close</a>
+                <a href="#" class="btn btnhover pull-right" data-dismiss="modal" style="font-weight: bolder">Cerrar</a>
                 <a href="#" class="btn btnhover pull-right" style="font-weight: bolder; color: green" id="guadarPerfil" onclick="GuardarPerfilGlob()">Aceptar</a>
             </div>
         </div>

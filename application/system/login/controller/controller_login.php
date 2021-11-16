@@ -177,7 +177,7 @@ function concretar_validacion_usuario_coneccion_entidad($user, $pass)
             while ($object_b = $result_b->fetchObject()){
                 $en_session =  0;
 
-                $sql_a = "SELECT rowid,  nombre_db_entity , numero_entity , nombre, direccion , telefono , celular , email , logo, pais , ciudad FROM tab_entidades_dental where rowid = $object_b->fk_entidad and numero_entity = '".$object_b->entity."' ;";
+                $sql_a = "SELECT rowid,  nombre_db_entity , numero_entity , nombre, direccion , telefono , celular , conf_email , logo, pais , ciudad FROM tab_entidades_dental where rowid = $object_b->fk_entidad and numero_entity = '".$object_b->entity."' ;";
                 $result_a    =$dbEntity->query($sql_a);
                 if($result_a){
                     if($result_a->rowCount() == 1){
@@ -190,7 +190,7 @@ function concretar_validacion_usuario_coneccion_entidad($user, $pass)
                         $direccionClinica           = $object_a->direccion;
                         $telefonoClinica            = $object_a->telefono;
                         $celularClinica             = $object_a->celular;
-                        $emailClinica               = $object_a->email;
+                        $emailClinica               = $object_a->conf_email;
                         $logoClinica                = $object_a->logo;
                         $admin                      = $object_b->admin;
 

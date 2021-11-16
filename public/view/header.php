@@ -2,7 +2,7 @@
 <header class="main-header">
 
     <!-- Logo -->
-    <a href="#Informacion_clinica_modal" data-toggle="modal" class="logo" style="background-color: #212F3D!important;">
+    <a href="#" class="logo" style="background-color: #212F3D!important;">
         <?php
             $urllogoEntity=DOL_DOCUMENT.'/logos_icon/'.$conf->NAME_DIRECTORIO.'/'.$conf->EMPRESA->INFORMACION->logo;
             if(file_exists($urllogoEntity) && !empty($conf->EMPRESA->INFORMACION->logo)){ //si existe el logo de la clinica

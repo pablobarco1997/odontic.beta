@@ -54,6 +54,7 @@
                     </div>
                     <div class="pull-right">
                         <a  href="#" id="modificarPerfil"  data-toggle="modal" data-target="#ModificarPerfilUsuario" class="btn btn-default btn-flat"><i class="fa fa-user"></i></a>
+                        <a href="<?= DOL_HTTP.'/application/system/clinica/index.php?view=vista_clinica' ?>" class="btn btn-default btn-flat" > <i class="fa fa-hospital-o"></i> </a>
                         <a  id="cerrarSesionlink"  class="btn btn-default btn-flat"><i class="fa fa-power-off"></i></a>
                     </div>
                 </li>

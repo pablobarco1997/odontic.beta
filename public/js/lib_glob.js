@@ -26,6 +26,7 @@ var languageEs =  {
 
 var FormValidationPerfilGlobal = function(el){
 
+
     var Errores = [];
 
     var perfil_usu                   = $("#perf_usu");
@@ -36,19 +37,39 @@ var FormValidationPerfilGlobal = function(el){
     var perfil_email                 = $("#perf_email");
     var perfil_especialida           = $("#especialidadPerfil");
 
+    if($(".boxDatosOdontologos").hasClass('hide')){
 
-    if(perfil_usu.val() == "" || (!/^\s/.test(perfil_usu.val())) == false){
-        Errores.push({
-            "documento" :   perfil_usu,
-            "mesg" :  "Campo Obligatorio",
-        });
+        if(perfil_usu.val() == "" || (!/^\s/.test(perfil_usu.val())) == false){
+            Errores.push({
+                "documento" :   perfil_usu,
+                "mesg" :  "Campo Obligatorio",
+            });
+        }
+        if(perfil_pass.val() == "" || (!/^\s/.test(perfil_pass.val())) == false){
+            Errores.push({
+                "documento" :   perfil_pass,
+                "mesg" :  "Campo Obligatorio",
+            });
+        }
+        var valid = validinput(Errores);
+        return valid;
+
+    }else{
+        if(perfil_usu.val() == "" || (!/^\s/.test(perfil_usu.val())) == false){
+            Errores.push({
+                "documento" :   perfil_usu,
+                "mesg" :  "Campo Obligatorio",
+            });
+        }
+        if(perfil_pass.val() == "" || (!/^\s/.test(perfil_pass.val())) == false){
+            Errores.push({
+                "documento" :   perfil_pass,
+                "mesg" :  "Campo Obligatorio",
+            });
+        }
     }
-    if(perfil_pass.val() == "" || (!/^\s/.test(perfil_pass.val())) == false){
-        Errores.push({
-            "documento" :   perfil_pass,
-            "mesg" :  "Campo Obligatorio",
-        });
-    }
+
+
     if(perfil_nom.val() == "" || (!/^\s/.test(perfil_nom.val())) == false){
         Errores.push({
             "documento" :   perfil_nom,
@@ -84,32 +105,35 @@ var FormValidationPerfilGlobal = function(el){
 
     }
 
-    console.log(Errores);
+    var valid = validinput(Errores);
 
-    var valid = true;
-
-    $(".error_perfil").remove();
-
-    if(Errores.length>0){
-        for (var i=0; i<=Errores.length-1;i++ ){
-
-            var menssage =  document.createElement("small");
-            menssage.setAttribute("style","display: block; color:blue;");
-            menssage.setAttribute("class","error_perfil");
-            menssage.appendChild(document.createTextNode(Errores[i]['mesg']));
-            var documentoDol        = Errores[i]['documento'];
-
-            if(documentoDol.attr("id")=="perf_passd"){
-                $(menssage).insertAfter(documentoDol.parent('.input-group'))
-            }else{
-                $(menssage).insertAfter(documentoDol);
-            }
-
-        }
+    function validinput(Errores) {
+        $(".error_perfil").remove();
         valid = false;
-    }else{
-        valid = true;
+        if(Errores.length>0){
+            for (var i=0; i<=Errores.length-1;i++ ){
+
+                var menssage =  document.createElement("small");
+                menssage.setAttribute("style","display: block; color:blue;");
+                menssage.setAttribute("class","error_perfil");
+                menssage.appendChild(document.createTextNode(Errores[i]['mesg']));
+                var documentoDol        = Errores[i]['documento'];
+
+                if(documentoDol.attr("id")=="perf_passd"){
+                    $(menssage).insertAfter(documentoDol.parent('.input-group'))
+                }else{
+                    $(menssage).insertAfter(documentoDol);
+                }
+
+            }
+            valid = false;
+        }else{
+            valid = true;
+        }
+
+        return valid;
     }
+
     return valid;
 
 };
@@ -331,15 +355,15 @@ function notificacion(mensage, accion)
 
     if(accion == "error")
     {
-        label="Error!";
+        label="Ocurrió un error!";
     }
     if(accion == "success")
     {
-        label="Exito!";
+        label="Actualizado!";
     }
     if(accion == "question")
     {
-        label = "Información";
+        label = "Informativo";
     }
     if(accion == "warning")
     {
@@ -381,15 +405,6 @@ function notificacionSIoNO(title, text, object ){
 }
 
 
-
-//CARGAR LOGO E GUARDAR INFOMACION COMPLETA DE LA EMPRESA
-$("#subirLogo").change(function(event){
-
-    console.log(this.files);
-    SubirImagenes( this, $("#imgLogo"), $DOCUMENTO_URL_HTTP + '/logos_icon/logo_default/icon_software_dental.png');
-
-});
-
 function SubirImagenes(Este,imageid,url)
 {
     // var file     = event.target.files[0]; //Img
@@ -417,48 +432,6 @@ function SubirImagenes(Este,imageid,url)
     }
     return file;
 }
-
-//Update Informacion Entidad Actualiza la informacion de la clinica dental - informacion personal de la clinica dental
-$("#Update_entidad").click(function() {
-
-    var form = new FormData();
-    var input = document.getElementById('subirLogo');
-
-    // console.log(input.files[0]);
-    form.append('accion',   'UpdateEntidad');
-    form.append('ajaxSend', 'ajaxSend');
-
-    form.append('nombre'    , $("#entidad_clinica").val());
-    form.append('pais'      , $("#entidad_pais").val() );
-    form.append('ciudad'    , $("#entidad_ciudad").val() );
-    form.append('direccion' , $("#entidad_direccion").val() );
-    form.append('telefono'  , $("#entidad_telefono").val());
-    form.append('celular'   , $("#entidad_celular").val());
-    form.append('email'     , $("#entidad_email").val());
-    form.append('logo'      , input.files[0]);
-
-    //configuracion de email para envios de correo
-    form.append('conf_emil'      ,     $("#conf_email_entidad").val());
-    form.append('conf_password'      , $("#conf_password_entidad").val());
-
-    $.ajax({
-        url:  $DOCUMENTO_URL_HTTP + '/application/controllers/controller_peticiones_globales.php',
-        type:'POST',
-        data: form,
-        dataType:'json',
-        async:false,
-        contentType: false,
-        processData:false,
-        success:function(resp) {
-            if(resp.error == 1) {
-                location.reload();
-            }
-            if(resp.error != 1){
-                notificacion('Ocurrio un error con la actualización de Información consulte con soporte', 'error');
-            }
-        }
-    });
-});
 
 //recarga la pagina con f5
 function reloadPagina(){
@@ -527,22 +500,26 @@ function fetch_perfil()
 
     $.get(url, parametros , function(data) {
 
-        var prf = $.parseJSON(data).objPerfil;
-        console.log(prf);
+        var result = $.parseJSON(data).objPerfil;
+        console.log(result);
 
-        $('#perf_usu').val(prf.usuario) //se aplica el id de la cedula y el nom usuario
-            .attr('data-idcedulalogin', prf.cedulalogin)
-            .attr('data-usurcurrent', prf.usuario);
+        $('#perf_usu').val(result.usuario) //se aplica el id de la cedula y el nom usuario
+            .attr('data-idcedulalogin', result.cedulalogin)
+            .attr('data-usurcurrent', result.usuario);
 
-        $('#perf_passd').val( atob(prf.passwor_abc) );
-        $('#perf_cedula').val( prf.cedulalogin );
-        $('#perf_nom').val(prf.nombre_doc);
-        $('#perf_apell').val(prf.apellido_doc);
-        $('#perf_email').val(prf.email);
-        $('#perf_celular').val(prf.celular);
-        $('#especialidadPerfil').val(prf.fk_especialidad).trigger('change');
-        $('#perf_cajaUsers').val(prf.id_caja_account).trigger('change');
+        $('#perf_passd').val( atob(result.passwor_abc) );
 
+        if(result.asociado_doc!=0){
+            $('#perf_cedula').val( result.cedulalogin );
+            $('#perf_nom').val(result.nombre_doc);
+            $('#perf_apell').val(result.apellido_doc);
+            $('#perf_email').val(result.email);
+            $('#perf_celular').val(result.celular);
+            $('#especialidadPerfil').val(result.fk_especialidad).trigger('change');
+            $('#perf_cajaUsers').val(result.id_caja_account).trigger('change');
+        }else{
+            $(".boxDatosOdontologos").addClass("hide");
+        }
 
     });
 }

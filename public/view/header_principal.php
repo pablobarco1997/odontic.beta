@@ -142,8 +142,6 @@
 
 <body class="skin-blue sidebar-mini sidebar-collapse" style="padding-right:0px !important; ">
 
-<?php include_once DOL_DOCUMENT .'/public/view/informacion_entidad.php'; ?>
-
 <!--MODAL GLOBALES-->
 <?php include_once DOL_DOCUMENT .'/public/view/modal_glob.php'; ?>
 
